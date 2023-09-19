@@ -3,6 +3,7 @@ import { useState, Fragment } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
+import { Button, Grid, Link, Stack } from '@mui/material'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -22,7 +23,7 @@ import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
-import LockIcon from '@mui/icons-material/Lock';
+import LockIcon from '@mui/icons-material/Lock'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -123,19 +124,25 @@ const UserDropdown = () => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <AccountOutline sx={{ marginRight: 2 }} />
-            Hồ sơ cá nhân
+            <Link href={`/profile/1`} underline='none'>
+              Hồ sơ cá nhân
+            </Link>
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <LockIcon sx={{ marginRight: 2 }} />
-            Đổi mật khẩu
+            <Link href='/user/password' underline='none'>
+              Đổi mật khẩu
+            </Link>
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <LogoutVariant sx={{ marginRight: 2 }} />
-            Đăng xuất
+            <Link href='/user/logout' underline='none'>
+              Đăng xuất
+            </Link>
           </Box>
         </MenuItem>
         {/* <Divider />
