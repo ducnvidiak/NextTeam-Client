@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
+import Link from '@mui/material/Link'
 import Menu from '@mui/material/Menu'
 import Badge from '@mui/material/Badge'
 import Avatar from '@mui/material/Avatar'
@@ -22,7 +23,7 @@ import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
-import LockIcon from '@mui/icons-material/Lock';
+import LockIcon from '@mui/icons-material/Lock'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({

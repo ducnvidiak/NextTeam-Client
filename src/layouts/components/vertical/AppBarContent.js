@@ -41,16 +41,16 @@ const AppBarContent = props => {
       </Box>
       <Stack direction='row' gap={12}>
         <Link href='/' underline='hover'>
-          Giới thiệu
+          <b>Giới thiệu</b>
         </Link>
         <Link href='/events' underline='hover'>
-          Sự kiện
+          <b>Sự kiện</b>
         </Link>
         <Link href='/clubs' underline='hover'>
-          Câu lạc bộ
+          <b>Câu lạc bộ</b>
         </Link>
         <Link href='/dashboard' underline='hover'>
-          (TEST) Dashboard
+          <b>Dashboard</b>
         </Link>
       </Stack>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>

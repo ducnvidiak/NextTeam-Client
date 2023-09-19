@@ -59,10 +59,56 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 
 const LoginPage = () => {
   // ** State
-  const [values, setValues] = useState({
-    password: '',
-    showPassword: false
-  })
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [emailError, setEmailError] = useState(false)
+  const [passwordError, setPasswordError] = useState(false)
+
+  const handleSubmit = event => {
+    event.preventDefault() // 👈️ prevent page refresh
+    setEmailError(false)
+    setPasswordError(false)
+
+    if (email == '') {
+      setEmailError(true)
+      console.log('Không được để trống email')
+    }
+    if (password == '') {
+      setPasswordError(true)
+      console.log('Không được để trống mật khẩu')
+    }
+
+    if (email && password) {
+      async function postJSON(data) {
+        try {
+          const response = await fetch('http://localhost:8080/NextTeam/login?action=login', {
+            method: 'POST', // or 'PUT'
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          })
+
+          const result = await response.json()
+          console.log('Success:', result)
+        } catch (error) {
+          console.error('Error:', error)
+        }
+      }
+
+      const data = { username: 'example' }
+      postJSON(data)
+
+      // 👇️ access input values here
+      console.log({
+        email: email,
+        password: password
+      })
+
+      // 👇️ clear all input values in the form
+      // setFirstName('')
+    }
+  }
 
   // ** Hook
   const theme = useTheme()
@@ -73,7 +119,7 @@ const LoginPage = () => {
   }
 
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
+    setPassword({ password: password, showPassword: !password.showPassword })
   }
 
   const handleMouseDownPassword = event => {
@@ -161,20 +207,32 @@ const LoginPage = () => {
           </a>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-              Welcome to {themeConfig.templateName}! 👋🏻
+              {themeConfig.templateName} chào bạn 👋🏻
             </Typography>
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>Chúc bạn một ngày tốt lành!</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
+          <form noValidate autoComplete='off'>
+            <TextField
+              autoFocus
+              fullWidth
+              id='email'
+              label='Email'
+              name='email'
+              onChange={event => setEmail(event.target.value)}
+              value={email}
+              error={emailError}
+              sx={{ marginBottom: 4 }}
+            />
             <FormControl fullWidth>
-              <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
+              <InputLabel htmlFor='auth-password'>Mật khẩu</InputLabel>
               <OutlinedInput
+                sx={{ marginBottom: 4 }}
                 label='Password'
-                value={values.password}
-                id='auth-login-password'
-                onChange={handleChange('password')}
-                type={values.showPassword ? 'text' : 'password'}
+                name='password'
+                id='auth-password'
+                onChange={e => setPassword(e.target.value)}
+                error={passwordError}
+                type={password.showPassword ? 'text' : 'password'}
                 endAdornment={
                   <InputAdornment position='end'>
                     <IconButton
@@ -183,7 +241,7 @@ const LoginPage = () => {
                       onMouseDown={handleMouseDownPassword}
                       aria-label='toggle password visibility'
                     >
-                      {values.showPassword ? <EyeOutline /> : <EyeOffOutline />}
+                      {password.showPassword ? <EyeOutline fontSize='small' /> : <EyeOffOutline fontSize='small' />}
                     </IconButton>
                   </InputAdornment>
                 }
@@ -192,54 +250,35 @@ const LoginPage = () => {
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              <FormControlLabel control={<Checkbox />} label='Remember Me' />
+              <FormControlLabel control={<Checkbox />} label='Lưu mật khẩu' />
               <Link passHref href='/'>
-                <LinkStyled onClick={e => e.preventDefault()}>Forgot Password?</LinkStyled>
+                <LinkStyled onClick={e => e.preventDefault()}>Quên mật khẩu?</LinkStyled>
               </Link>
             </Box>
-            <Button
-              fullWidth
-              size='large'
-              variant='contained'
-              sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
-            >
-              Login
+            <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} onClick={e => handleSubmit(e)}>
+              ĐĂNG NHẬP
             </Button>
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
-                New on our platform?
+                Bạn chưa có tài khoản?
               </Typography>
               <Typography variant='body2'>
                 <Link passHref href='/auth/register'>
-                  <LinkStyled>Create an account</LinkStyled>
+                  <LinkStyled>Tạo tài khoản</LinkStyled>
                 </Link>
               </Typography>
             </Box>
-            <Divider sx={{ my: 5 }}>or</Divider>
+            <Divider sx={{ my: 5 }}>hoặc đăng nhập bằng</Divider>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Facebook sx={{ color: '#497ce2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Twitter sx={{ color: '#1da1f2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Github
-                    sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
-                  />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Google sx={{ color: '#db4437' }} />
-                </IconButton>
-              </Link>
+              <Button
+                fullWidth
+                size='large'
+                variant='contained'
+                sx={{ marginBottom: 7, backgroundColor: 'red' }}
+                onClick={() => router.push('/')}
+              >
+                <Google sx={{ marginRight: '10px' }}></Google> ĐĂNG NHẬP BẰNG GOOGLE
+              </Button>
             </Box>
           </form>
         </CardContent>
