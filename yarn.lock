@@ -2024,6 +2024,13 @@ natural-compare@^1.4.0:
   resolved "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
+next-navigation@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.npmjs.org/next-navigation/-/next-navigation-1.0.6.tgz"
+  integrity sha512-D4JXnngfeDFA+zsIWFcl8tr/rnCOXEUgJElfQ6zdcpHuNgR4peHKsk+FE1AGykEufKC7xgwv9oOSGK16c1VGiQ==
+  dependencies:
+    react "^16.2.0"
+
 next-transpile-modules@^9.0.0:
   version "9.0.0"
   resolved "https://registry.npmjs.org/next-transpile-modules/-/next-transpile-modules-9.0.0.tgz"
@@ -2395,6 +2402,15 @@ react-transition-group@^4.4.1, react-transition-group@^4.4.2:
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
+
+react@^16.2.0:
+  version "16.14.0"
+  resolved "https://registry.npmjs.org/react/-/react-16.14.0.tgz"
+  integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
 
 readable-stream@^2.0.2:
   version "2.3.7"

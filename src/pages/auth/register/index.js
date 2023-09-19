@@ -3,6 +3,7 @@ import { useState, Fragment } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -23,6 +24,11 @@ import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
@@ -64,35 +70,43 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 const RegisterPage = () => {
   // ** States
 
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+  const [firstname, setFirstname] = useState('')
+  const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [studentId, setStudentId] = useState('')
-  const [major, setMajor] = useState('')
-  const [firstNameError, setFirstnameError] = useState('')
-  const [lastNameError, setLastNameError] = useState('')
+  const [studentCode, setStudentCode] = useState('')
+  const [firstnameError, setFirstnameError] = useState('')
+  const [lastnameError, setLastnameError] = useState('')
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
-  const [studentIdError, setStudentIdError] = useState('')
-  const [majorError, setMajorError] = useState('')
+  const [studentCodeError, setStudentCodeError] = useState('')
 
   // ** Hook
   const theme = useTheme()
+  const router = useRouter()
+
+  const [open, setOpen] = useState(false)
+
+  const handleLogin = () => {
+    router.push('/auth/login')
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   const handleSubmit = event => {
     event.preventDefault() // 👈️ prevent page refresh
     setFirstnameError(false)
-    setLastNameError(false)
+    setLastnameError(false)
     setEmailError(false)
     setPasswordError(false)
-    setStudentIdError(false)
-    setMajorError(false)
-    if (firstName == '') {
+    setStudentCodeError(false)
+    if (firstname == '') {
       setFirstnameError(true)
     }
-    if (lastName == '') {
-      setLastNameError(true)
+    if (lastname == '') {
+      setLastnameError(true)
     }
     if (email == '') {
       setEmailError(true)
@@ -100,51 +114,40 @@ const RegisterPage = () => {
     if (password == '') {
       setPasswordError(true)
     }
-    if (studentId == '') {
-      setStudentIdError(true)
-    }
-    if (major == '') {
-      setMajorError(true)
+    if (studentCode == '') {
+      setStudentCodeError(true)
     }
 
-    if (firstName && lastName && email && password && studentId && major) {
-      async function postJSON(data) {
-        try {
-          const response = await fetch('http://localhost:8080/NextTeam/register', {
-            method: 'POST', // or 'PUT'
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-          })
-
-          const result = await response.json()
-          console.log('Success:', result)
-        } catch (error) {
-          console.error('Error:', error)
+    if (firstname && lastname && email && password && studentCode) {
+      fetch('http://localhost:8080/NextTeam/user-register', {
+        method: 'POST',
+        body: JSON.stringify({
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          password: password,
+          studentCode: studentCode
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8'
         }
-      }
-
-      const data = { username: 'example' }
-      postJSON(data)
-
-      // 👇️ access input values here
-      console.log({
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-        studentId: studentId,
-        major: major
       })
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (data) {
+          if (data.id == null) {
+            error.innerHTML = data
+            console.log(data)
+          } else {
+            setOpen(true)
+          }
+        })
+        .catch(error => console.error('Error:', error))
     }
 
     // 👇️ clear all input values in the form
     // setFirstName('')
-  }
-
-  const handleClickShowPassword = () => {
-    setPassword({ password: password, showPassword: !password.showPassword })
   }
 
   const handleMouseDownPassword = event => {
@@ -236,17 +239,38 @@ const RegisterPage = () => {
             </Typography>
             <Typography variant='body2'>Mọi thứ đơn giản và dễ dàng hơn cùng NextTeam!</Typography>
           </Box>
-          <form noValidate autoComplete='off'>
+          <div>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby='alert-dialog-title'
+              aria-describedby='alert-dialog-description'
+            >
+              <DialogTitle id='alert-dialog-title'>{'Đăng ký tài khoản thành công!'}</DialogTitle>
+              <DialogContent>
+                <DialogContentText id='alert-dialog-description'>
+                  Chúc mừng bạn đã đăng ký thành công tài khoản NextTeam, vui lòng đăng nhập để sử dụng nền tảng.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Đóng</Button>
+                <Button onClick={handleLogin} autoFocus>
+                  Đăng nhập
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </div>
+          <form noValidate autoComplete='off' method='POST'>
             <Grid container spacing={2}>
               <Grid item xs={7}>
                 <TextField
                   fullWidth
                   type='text'
                   label='Họ và tên đệm'
-                  name='firstName'
-                  onChange={event => setFirstName(event.target.value)}
-                  value={firstName}
-                  error={firstNameError}
+                  name='firstname'
+                  onChange={event => setFirstname(event.target.value)}
+                  value={firstname}
+                  error={firstnameError}
                   sx={{ marginBottom: 4 }}
                 />
               </Grid>
@@ -255,10 +279,10 @@ const RegisterPage = () => {
                   fullWidth
                   type='text'
                   label='Tên'
-                  name='lastName'
-                  onChange={event => setLastName(event.target.value)}
-                  value={lastName}
-                  error={lastNameError}
+                  name='lastname'
+                  onChange={event => setLastname(event.target.value)}
+                  value={lastname}
+                  error={lastnameError}
                   sx={{ marginBottom: 4 }}
                 />
               </Grid>
@@ -283,18 +307,6 @@ const RegisterPage = () => {
                 onChange={e => setPassword(e.target.value)}
                 error={passwordError}
                 type={password.showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      aria-label='toggle password visibility'
-                    >
-                      {password.showPassword ? <EyeOutline fontSize='small' /> : <EyeOffOutline fontSize='small' />}
-                    </IconButton>
-                  </InputAdornment>
-                }
               />
             </FormControl>
 
@@ -302,29 +314,13 @@ const RegisterPage = () => {
               fullWidth
               type='text'
               label='Mã số sinh viên'
-              name='studentId'
-              onChange={event => setStudentId(event.target.value)}
-              value={studentId}
-              error={studentIdError}
+              name='studentCode'
+              onChange={event => setStudentCode(event.target.value)}
+              value={studentCode}
+              error={studentCodeError}
               sx={{ marginBottom: 4 }}
             />
-            <FormControl fullWidth>
-              <InputLabel id='major_select'>Chuyên ngành</InputLabel>
-              <Select
-                labelId='major_select'
-                id='major'
-                label='Chuyên ngành'
-                name='major'
-                onChange={event => setMajor(event.target.value)}
-                value={major}
-                error={majorError}
-              >
-                <MenuItem>Chọn chuyên ngành</MenuItem>
-                <MenuItem value={'SE'}>Kỹ thuật phần mềm</MenuItem>
-                <MenuItem value={'IA'}>Trí tuệ nhân tạo</MenuItem>
-                <MenuItem value={'AI'}>An toàn thông tin</MenuItem>
-              </Select>
-            </FormControl>
+
             <FormControlLabel
               control={<Checkbox />}
               label={

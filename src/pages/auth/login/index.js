@@ -19,7 +19,6 @@ import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
-import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
 import Alert from '@mui/material/Alert'
 import Collapse from '@mui/material/Collapse'
@@ -27,11 +26,6 @@ import Stack from '@mui/material/Stack'
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
-import Github from 'mdi-material-ui/Github'
-import Twitter from 'mdi-material-ui/Twitter'
-import Facebook from 'mdi-material-ui/Facebook'
-import EyeOutline from 'mdi-material-ui/EyeOutline'
-import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
@@ -71,13 +65,24 @@ const LoginPage = () => {
     event.preventDefault() // 👈️ prevent page refresh
     setEmailError(false)
     setPasswordError(false)
+    var error = document.getElementById('error')
 
     if (email == '') {
       setEmailError(true)
+      error.innerHTML = 'Không được để trống email'
+      setOpen(true)
       console.log('Không được để trống email')
     }
     if (password == '') {
       setPasswordError(true)
+      error.innerHTML = 'Không được để trống mật khẩu'
+      setOpen(true)
+      console.log('Không được để trống mật khẩu')
+    }
+    if (password == '' && password == '') {
+      setPasswordError(true)
+      error.innerHTML = 'Không được để trống email và mật khẩu'
+      setOpen(true)
       console.log('Không được để trống mật khẩu')
     }
 
@@ -97,13 +102,13 @@ const LoginPage = () => {
         })
         .then(function (data) {
           if (data.id == null) {
-            var error = document.getElementById('error')
             error.innerHTML = data
             setOpen(true)
             console.log(data)
           } else {
             console.log('Đăng nhập thành công')
             setOpen(false)
+            router.push('/dashboard')
           }
         })
         .catch(error => console.error('Error:', error))
@@ -268,13 +273,7 @@ const LoginPage = () => {
                 passHref
                 href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/NextTeam/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
               >
-                <Button
-                  fullWidth
-                  size='large'
-                  variant='contained'
-                  sx={{ marginBottom: 7, backgroundColor: 'red' }}
-                  onClick={() => router.push('/')}
-                >
+                <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7, backgroundColor: 'red' }}>
                   <Google sx={{ marginRight: '10px' }}></Google> ĐĂNG NHẬP BẰNG GOOGLE
                 </Button>
               </Link>
