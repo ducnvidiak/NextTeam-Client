@@ -3,10 +3,10 @@ import { useState, Fragment } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
+import { Button, Grid, Link, Stack } from '@mui/material'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import Link from '@mui/material/Link'
 import Menu from '@mui/material/Menu'
 import Badge from '@mui/material/Badge'
 import Avatar from '@mui/material/Avatar'
@@ -124,19 +124,25 @@ const UserDropdown = () => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <AccountOutline sx={{ marginRight: 2 }} />
-            Hồ sơ cá nhân
+            <Link href={`/profile/1`} underline='none'>
+              Hồ sơ cá nhân
+            </Link>
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <LockIcon sx={{ marginRight: 2 }} />
-            Đổi mật khẩu
+            <Link href='/user/password' underline='none'>
+              Đổi mật khẩu
+            </Link>
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <LogoutVariant sx={{ marginRight: 2 }} />
-            Đăng xuất
+            <Link href='/user/logout' underline='none'>
+              Đăng xuất
+            </Link>
           </Box>
         </MenuItem>
         {/* <Divider />

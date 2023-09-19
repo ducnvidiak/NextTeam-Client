@@ -21,6 +21,9 @@ import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
+import Alert from '@mui/material/Alert'
+import Collapse from '@mui/material/Collapse'
+import Stack from '@mui/material/Stack'
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
@@ -79,34 +82,31 @@ const LoginPage = () => {
     }
 
     if (email && password) {
-      async function postJSON(data) {
-        try {
-          const response = await fetch('http://localhost:8080/NextTeam/login?action=login', {
-            method: 'POST', // or 'PUT'
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-          })
-
-          const result = await response.json()
-          console.log('Success:', result)
-        } catch (error) {
-          console.error('Error:', error)
+      fetch('http://localhost:8080/NextTeam/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email,
+          password: password
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8'
         }
-      }
-
-      const data = { username: 'example' }
-      postJSON(data)
-
-      // 👇️ access input values here
-      console.log({
-        email: email,
-        password: password
       })
-
-      // 👇️ clear all input values in the form
-      // setFirstName('')
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (data) {
+          if (data.id == null) {
+            var error = document.getElementById('error')
+            error.innerHTML = data
+            setOpen(true)
+            console.log(data)
+          } else {
+            console.log('Đăng nhập thành công')
+            setOpen(false)
+          }
+        })
+        .catch(error => console.error('Error:', error))
     }
   }
 
@@ -118,13 +118,14 @@ const LoginPage = () => {
     setValues({ ...values, [prop]: event.target.value })
   }
 
-  const handleClickShowPassword = () => {
-    setPassword({ password: password, showPassword: !password.showPassword })
-  }
+  // const handleClickShowPassword = () => {
+  //   setPassword({ value: password, showPassword: !password.showPassword })
+  // }
 
   const handleMouseDownPassword = event => {
     event.preventDefault()
   }
+  const [open, setOpen] = useState(false)
 
   return (
     <Box className='content-center'>
@@ -211,7 +212,7 @@ const LoginPage = () => {
             </Typography>
             <Typography variant='body2'>Chúc bạn một ngày tốt lành!</Typography>
           </Box>
-          <form noValidate autoComplete='off'>
+          <form noValidate autoComplete='off' method='POST'>
             <TextField
               autoFocus
               fullWidth
@@ -233,20 +234,13 @@ const LoginPage = () => {
                 onChange={e => setPassword(e.target.value)}
                 error={passwordError}
                 type={password.showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      aria-label='toggle password visibility'
-                    >
-                      {password.showPassword ? <EyeOutline fontSize='small' /> : <EyeOffOutline fontSize='small' />}
-                    </IconButton>
-                  </InputAdornment>
-                }
               />
             </FormControl>
+            <Collapse in={open}>
+              <Stack sx={{ width: '100%' }} spacing={2}>
+                <Alert variant='filled' severity='error' id='error'></Alert>
+              </Stack>
+            </Collapse>
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
@@ -270,19 +264,25 @@ const LoginPage = () => {
             </Box>
             <Divider sx={{ my: 5 }}>hoặc đăng nhập bằng</Divider>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Button
-                fullWidth
-                size='large'
-                variant='contained'
-                sx={{ marginBottom: 7, backgroundColor: 'red' }}
-                onClick={() => router.push('/')}
+              <Link
+                passHref
+                href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/NextTeam/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
               >
-                <Google sx={{ marginRight: '10px' }}></Google> ĐĂNG NHẬP BẰNG GOOGLE
-              </Button>
+                <Button
+                  fullWidth
+                  size='large'
+                  variant='contained'
+                  sx={{ marginBottom: 7, backgroundColor: 'red' }}
+                  onClick={() => router.push('/')}
+                >
+                  <Google sx={{ marginRight: '10px' }}></Google> ĐĂNG NHẬP BẰNG GOOGLE
+                </Button>
+              </Link>
             </Box>
           </form>
         </CardContent>
       </Card>
+
       <FooterIllustrationsV1 />
     </Box>
   )

@@ -26,14 +26,23 @@ const CustomInput = forwardRef((props, ref) => {
   return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
 })
 
-const TabInfo = () => {
+const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
   // ** State
   const [date, setDate] = useState(null)
+
+  const handleSubmit = event => {
+    event.preventDefault()
+  }
+
+  const handleReset = event => {
+    event.preventDefault()
+    setUserInfoCopy({ ...userInfo })
+  }
 
   return (
     <CardContent>
       <form>
-        <Grid container spacing={7}>
+        {/* <Grid container spacing={7}>
           <Grid item xs={12} sx={{ marginTop: 4.8 }}>
             <TextField
               fullWidth
@@ -58,20 +67,81 @@ const TabInfo = () => {
             </DatePickerWrapper>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth type='number' label='Phone' placeholder='(123) 456-7890' />
+            <TextField
+              fullWidth
+              type='text'
+              label='Phone'
+              placeholder='(123) 456-7890'
+              value={userInfoCopy.phoneNumber}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, phoneNumber: event.target.value })
+              }}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Website'
+              type='text'
+              label='Student code'
+              placeholder='(123) 456-7890'
+              value={userInfoCopy.studentCode}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, studentCode: event.target.value })
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              type='text'
+              label='Major'
+              placeholder='(123) 456-7890'
+              value={userInfoCopy.major}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, major: event.target.value })
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Facebook Url'
+              placeholder='https://www.facebook.com/user_id'
+              defaultValue='https://themeselection.com/'
+              value={userInfoCopy.facebookUrl}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, facebookUrl: event.target.value })
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='LinkedIn Url'
               placeholder='https://example.com/'
               defaultValue='https://themeselection.com/'
+              value={userInfoCopy.linkedinUrl}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, linkedinUrl: event.target.value })
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Country</InputLabel>
               <Select label='Country' defaultValue='USA'>
+                <MenuItem value='USA'>USA</MenuItem>
+                <MenuItem value='UK'>UK</MenuItem>
+                <MenuItem value='Australia'>Australia</MenuItem>
+                <MenuItem value='Germany'>Germany</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>City</InputLabel>
+              <Select label='City' defaultValue='USA'>
                 <MenuItem value='USA'>USA</MenuItem>
                 <MenuItem value='UK'>UK</MenuItem>
                 <MenuItem value='Australia'>Australia</MenuItem>
@@ -110,14 +180,14 @@ const TabInfo = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <Button variant='contained' sx={{ marginRight: 3.5 }}>
+            <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
               Save Changes
             </Button>
-            <Button type='reset' variant='outlined' color='secondary' onClick={() => setDate(null)}>
+            <Button type='reset' variant='outlined' color='secondary' onClick={handleReset}>
               Reset
             </Button>
           </Grid>
-        </Grid>
+        </Grid> */}
       </form>
     </CardContent>
   )
