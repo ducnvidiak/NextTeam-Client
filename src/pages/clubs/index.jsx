@@ -9,6 +9,7 @@ import { Container, Stack, Tab, Typography } from '@mui/material'
 import { useState } from 'react'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import ClubList from './ClubList'
+import Ranking from './Ranking'
 
 const FormControl = styled(MuiFormControl)(({ theme }) => ({
   '& .MuiFormLabel-root.Mui-focused': {
@@ -121,10 +122,7 @@ function Clubs() {
           <ClubList></ClubList>
         </TabPanel>
         <TabPanel value='2'>
-          <Typography>
-            Chocolate bar carrot cake candy canes sesame snaps. Cupcake pie gummi bears jujubes candy canes. Chupa chups
-            sesame snaps halvah.
-          </Typography>
+          <Ranking></Ranking>
         </TabPanel>
       </TabContext>
     </Container>
