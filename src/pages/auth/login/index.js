@@ -20,9 +20,6 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
-import Alert from '@mui/material/Alert'
-import Collapse from '@mui/material/Collapse'
-import Stack from '@mui/material/Stack'
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
@@ -35,6 +32,10 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -58,6 +59,7 @@ const LoginPage = () => {
   // ** State
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [save, setSave] = useState('')
   const [emailError, setEmailError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
 
@@ -65,25 +67,14 @@ const LoginPage = () => {
     event.preventDefault() // 👈️ prevent page refresh
     setEmailError(false)
     setPasswordError(false)
-    var error = document.getElementById('error')
 
     if (email == '') {
       setEmailError(true)
-      error.innerHTML = 'Không được để trống email'
-      setOpen(true)
-      console.log('Không được để trống email')
+      toast.error('Không được để trống email')
     }
     if (password == '') {
       setPasswordError(true)
-      error.innerHTML = 'Không được để trống mật khẩu'
-      setOpen(true)
-      console.log('Không được để trống mật khẩu')
-    }
-    if (password == '' && password == '') {
-      setPasswordError(true)
-      error.innerHTML = 'Không được để trống email và mật khẩu'
-      setOpen(true)
-      console.log('Không được để trống mật khẩu')
+      toast.error('Không được để trống mật khẩu')
     }
 
     if (email && password) {
@@ -102,13 +93,19 @@ const LoginPage = () => {
         })
         .then(function (data) {
           if (data.id == null) {
-            error.innerHTML = data
-            setOpen(true)
             console.log(data)
+            toast.error(data)
           } else {
+            if (save) {
+            }
+            if (!save) {
+            }
+            window.localStorage.setItem('userData', JSON.stringify(data))
             console.log('Đăng nhập thành công')
-            setOpen(false)
-            router.push('/dashboard')
+            toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
+            setTimeout(() => {
+              router.push('/dashboard')
+            }, 1000)
           }
         })
         .catch(error => console.error('Error:', error))
@@ -130,7 +127,6 @@ const LoginPage = () => {
   const handleMouseDownPassword = event => {
     event.preventDefault()
   }
-  const [open, setOpen] = useState(false)
 
   return (
     <Box className='content-center'>
@@ -197,6 +193,7 @@ const LoginPage = () => {
                   </g>
                 </g>
               </svg>
+              <ToastContainer></ToastContainer>
               <Typography
                 variant='h6'
                 sx={{
@@ -241,15 +238,13 @@ const LoginPage = () => {
                 type={password.showPassword ? 'text' : 'password'}
               />
             </FormControl>
-            <Collapse in={open}>
-              <Stack sx={{ width: '100%' }} spacing={2}>
-                <Alert variant='filled' severity='error' id='error'></Alert>
-              </Stack>
-            </Collapse>
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              <FormControlLabel control={<Checkbox />} label='Lưu mật khẩu' />
+              <FormControlLabel
+                control={<Checkbox onChange={event => setSave(event.target.value)} />}
+                label='Lưu mật khẩu'
+              />
               <Link passHref href='/'>
                 <LinkStyled onClick={e => e.preventDefault()}>Quên mật khẩu?</LinkStyled>
               </Link>

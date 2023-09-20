@@ -25,7 +25,7 @@ const AppBarContent = props => {
   return (
     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
       <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
-        {/* {hidden ? (
+        {hidden ? (
           <IconButton
             color='inherit'
             onClick={toggleNavVisibility}
@@ -33,7 +33,7 @@ const AppBarContent = props => {
           >
             <Menu />
           </IconButton>
-        ) : null} */}
+        ) : null}
       </Box>
       {/* <TextField
           placeholder='Tìm kiếm...'
@@ -47,7 +47,7 @@ const AppBarContent = props => {
             )
           }}
         /> */}
-      <Typography variant='h4' sx={{color: '#F27123'}}>
+      <Typography variant='h4' sx={{ color: '#F27123' }}>
         FU-DEVER
       </Typography>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>

@@ -5,6 +5,10 @@ import { useState, Fragment } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 // ** MUI Components
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -29,14 +33,6 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
-
-// ** Icons Imports
-import Google from 'mdi-material-ui/Google'
-import Github from 'mdi-material-ui/Github'
-import Twitter from 'mdi-material-ui/Twitter'
-import Facebook from 'mdi-material-ui/Facebook'
-import EyeOutline from 'mdi-material-ui/EyeOutline'
-import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
@@ -75,6 +71,7 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [studentCode, setStudentCode] = useState('')
+  const [agree, setAgree] = useState('')
   const [firstnameError, setFirstnameError] = useState('')
   const [lastnameError, setLastnameError] = useState('')
   const [emailError, setEmailError] = useState('')
@@ -85,16 +82,6 @@ const RegisterPage = () => {
   const theme = useTheme()
   const router = useRouter()
 
-  const [open, setOpen] = useState(false)
-
-  const handleLogin = () => {
-    router.push('/auth/login')
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-  }
-
   const handleSubmit = event => {
     event.preventDefault() // 👈️ prevent page refresh
     setFirstnameError(false)
@@ -104,21 +91,29 @@ const RegisterPage = () => {
     setStudentCodeError(false)
     if (firstname == '') {
       setFirstnameError(true)
+      toast.error('Vui lòng điền họ và tên đệm')
     }
     if (lastname == '') {
       setLastnameError(true)
+      toast.error('Vui lòng điền tên')
     }
     if (email == '') {
       setEmailError(true)
+      toast.error('Vui lòng điền email')
     }
     if (password == '') {
       setPasswordError(true)
+      toast.error('Vui lòng điền mật khẩu')
     }
     if (studentCode == '') {
       setStudentCodeError(true)
+      toast.error('Vui lòng điền mã số sinh viên')
+    }
+    if (agree == '') {
+      toast.error('Vui lòng đồng ý với điều khoản của nền tảng')
     }
 
-    if (firstname && lastname && email && password && studentCode) {
+    if (firstname && lastname && email && password && studentCode && agree) {
       fetch('http://localhost:8080/NextTeam/user-register', {
         method: 'POST',
         body: JSON.stringify({
@@ -137,10 +132,12 @@ const RegisterPage = () => {
         })
         .then(function (data) {
           if (data.id == null) {
-            error.innerHTML = data
-            console.log(data)
+            toast.error(data)
           } else {
-            setOpen(true)
+            toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
+            setTimeout(() => {
+              router.push('/auth/login')
+            }, 3000)
           }
         })
         .catch(error => console.error('Error:', error))
@@ -219,6 +216,7 @@ const RegisterPage = () => {
                   </g>
                 </g>
               </svg>
+              <ToastContainer></ToastContainer>
               <Typography
                 variant='h6'
                 sx={{
@@ -239,27 +237,7 @@ const RegisterPage = () => {
             </Typography>
             <Typography variant='body2'>Mọi thứ đơn giản và dễ dàng hơn cùng NextTeam!</Typography>
           </Box>
-          <div>
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              aria-labelledby='alert-dialog-title'
-              aria-describedby='alert-dialog-description'
-            >
-              <DialogTitle id='alert-dialog-title'>{'Đăng ký tài khoản thành công!'}</DialogTitle>
-              <DialogContent>
-                <DialogContentText id='alert-dialog-description'>
-                  Chúc mừng bạn đã đăng ký thành công tài khoản NextTeam, vui lòng đăng nhập để sử dụng nền tảng.
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Đóng</Button>
-                <Button onClick={handleLogin} autoFocus>
-                  Đăng nhập
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </div>
+
           <form noValidate autoComplete='off' method='POST'>
             <Grid container spacing={2}>
               <Grid item xs={7}>
@@ -322,7 +300,7 @@ const RegisterPage = () => {
             />
 
             <FormControlLabel
-              control={<Checkbox />}
+              control={<Checkbox onChange={event => setAgree(event.target.value)} />}
               label={
                 <Fragment>
                   <span>Tôi đồng ý với </span>

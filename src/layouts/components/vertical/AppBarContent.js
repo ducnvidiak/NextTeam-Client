@@ -54,11 +54,11 @@ const AppBarContent = props => {
         </Link>
       </Stack>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        <ModeToggler settings={settings} saveSettings={saveSettings} />
+        {/* <ModeToggler settings={settings} saveSettings={saveSettings} />
         <NotificationDropdown />
-        <UserDropdown />
+        <UserDropdown /> */}
 
-        {/* <Grid item xs={12}>
+        <Grid item xs={12}>
           <Link href='/auth/login'>
             <Button variant='contained' sx={{ marginRight: 3.5 }}>
               Đăng nhập
@@ -72,7 +72,7 @@ const AppBarContent = props => {
           <Link href='/user/info'>
             <Button>My Account</Button>
           </Link>
-        </Grid> */}
+        </Grid>
       </Box>
     </Box>
   )
