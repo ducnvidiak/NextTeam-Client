@@ -21,7 +21,7 @@ import { useRouter } from 'next/router'
 const UserLayout = ({ children }) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
-  
+
   /**
    *  The below variable will hide the current layout menu at given screen size.
    *  The menu will be accessible from the Hamburger icon only (Vertical Overlay Menu).
@@ -52,7 +52,7 @@ const UserLayout = ({ children }) => {
 
   return (
     <>
-      {router.pathname.startsWith("/dashboard") ? (
+      {router.pathname.startsWith('/dashboard') ? (
         <DashboardLayout
           hidden={hidden}
           settings={settings}
