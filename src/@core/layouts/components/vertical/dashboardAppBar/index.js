@@ -4,11 +4,13 @@ import MuiAppBar from '@mui/material/AppBar'
 import MuiToolbar from '@mui/material/Toolbar'
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
+  position: "flexed",
+  background: "#fff",
+  boxShadow: theme.shadows[4],
   transition: 'none',
   alignItems: 'center',
   justifyContent: 'center',
   padding: theme.spacing(0, 6),
-  backgroundColor: 'transparent',
   color: theme.palette.text.primary,
   minHeight: theme.mixins.toolbar.minHeight,
   [theme.breakpoints.down('sm')]: {
@@ -38,7 +40,7 @@ const LayoutAppBar = props => {
   const { contentWidth } = settings
 
   return (
-    <AppBar elevation={0} color='default' className='layout-navbar' position='static'>
+    <AppBar elevation={0} color='default' className='layout-navbar' position='fixed'>
       <Toolbar
         className='navbar-content-container'
         sx={{

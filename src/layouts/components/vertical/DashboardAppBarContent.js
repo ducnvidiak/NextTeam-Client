@@ -14,6 +14,7 @@ import ModeToggler from 'src/@core/layouts/components/shared-components/ModeTogg
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
 import { Typography } from '@mui/material'
+import Link from 'next/link'
 
 const AppBarContent = props => {
   // ** Props
@@ -35,7 +36,7 @@ const AppBarContent = props => {
           </IconButton>
         ) : null}
       </Box>
-      {/* <TextField
+      <TextField
           placeholder='Tìm kiếm...'
           size='small'
           sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: "50%" }}
@@ -46,10 +47,10 @@ const AppBarContent = props => {
               </InputAdornment>
             )
           }}
-        /> */}
-      <Typography variant='h4' sx={{ color: '#F27123' }}>
+        />
+      {/* <Typography variant='h4' sx={{ color: '#F27123' }}>
         FU-DEVER
-      </Typography>
+      </Typography> */}
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         <ModeToggler settings={settings} saveSettings={saveSettings} />
         <NotificationDropdown />

@@ -13,12 +13,15 @@ import Magnify from 'mdi-material-ui/Magnify'
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
-import { Button, Grid, Link, Stack, Typography } from '@mui/material'
+import { Button, Grid, Stack, Typography, styled } from '@mui/material'
+import Link from 'next/link'
 import VerticalNavHeader from 'src/@core/layouts/components/vertical/navigation/VerticalNavHeader'
 
-const pages = ['Products', 'Pricing', 'Blog']
+const LinkStyled = styled('Typography')(({ theme }) => ({
+  color: '#27123'
+}))
 
-const AppBarContent = props => {
+const LandingAppContent = props => {
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
 
@@ -40,37 +43,33 @@ const AppBarContent = props => {
         <VerticalNavHeader></VerticalNavHeader>
       </Box>
       <Stack direction='row' gap={12}>
-        <Link href='/' underline='hover'>
-          <b>Giới thiệu</b>
+        <Link href='/' underline='hover' passHref>
+          <Button>Giới thiệu</Button>
         </Link>
-        <Link href='/events' underline='hover'>
-          <b>Sự kiện</b>
+        <Link href='/events' underline='hover' passHref>
+          <Button>Sự kiện</Button>
         </Link>
-        <Link href='/clubs' underline='hover'>
-          <b>Câu lạc bộ</b>
+        <Link href='/clubs' underline='hover' passHref>
+          <Button>Câu lạc bộ</Button>
         </Link>
-        <Link href='/dashboard' underline='hover'>
-          <b>Dashboard</b>
+        <Link href='/dashboard' underline='hover' passHref>
+          <Button>(TEST) Dashboard</Button>
         </Link>
       </Stack>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <ModeToggler settings={settings} saveSettings={saveSettings} />
-        <NotificationDropdown />
+        {/* <ModeToggler settings={settings} saveSettings={saveSettings} /> */}
+        {/* <NotificationDropdown />
         <UserDropdown /> */}
-
         <Grid item xs={12}>
-          <Link href='/auth/login'>
+          <Link passHref href='/auth/login'>
             <Button variant='contained' sx={{ marginRight: 3.5 }}>
               Đăng nhập
             </Button>
           </Link>
-          <Link href='/auth/register'>
-            <Button type='reset' variant='outlined' color='secondary'>
+          <Link passHref href='/auth/register'>
+            <Button  variant='outlined' >
               Đăng ký
             </Button>
-          </Link>
-          <Link href='/user/info'>
-            <Button>My Account</Button>
           </Link>
         </Grid>
       </Box>
@@ -78,4 +77,4 @@ const AppBarContent = props => {
   )
 }
 
-export default AppBarContent
+export default LandingAppContent

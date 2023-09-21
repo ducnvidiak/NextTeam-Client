@@ -10,7 +10,7 @@ import DashboardLayout from 'src/@core/layouts/DashboardLayout'
 import { landingLayoutVavigation, dashboardLayoutVavigation } from 'src/navigation'
 
 // ** Component Import
-import VerticalAppBarContent from './components/vertical/AppBarContent'
+import VerticalLandingBarContent from './components/vertical/LandingAppContent'
 import VerticalDashboardAppBarContent from './components/vertical/DashboardAppBarContent'
 
 // ** Hook Import
@@ -83,7 +83,7 @@ const UserLayout = ({ children }) => {
           verticalAppBarContent={(
             props // AppBar Content
           ) => (
-            <VerticalAppBarContent
+            <VerticalLandingBarContent
               hidden={hidden}
               settings={settings}
               saveSettings={saveSettings}
