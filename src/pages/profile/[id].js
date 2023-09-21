@@ -23,7 +23,10 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
-import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
+import { set } from 'nprogress'
+
+// import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
+const axios = require('axios')
 
 const Tab = styled(MuiTab)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -58,16 +61,17 @@ const AccountSettings = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/NextTeam/api/user?id=' + router.query.id, { method: 'GET' })
-
-        const jsonData = await response.json()
-        setUserInfo({ ...jsonData })
-        setUserInfoCopy({ ...jsonData })
-        console.log('data: ', jsonData)
-      } catch (error) {
-        console.log('Error fetching data:', error)
-      }
+      axios
+        .get('http://localhost:8080/NextTeam/api/user?id=' + router.query.id)
+        .then(response => {
+          const jsonData = response.data
+          console.log(jsonData)
+          setUserInfo({ ...jsonData })
+          setUserInfoCopy({ ...jsonData })
+        })
+        .catch(error => {
+          console.log('Error: ', error)
+        })
     }
     fetchData()
   }, [router.query.id])

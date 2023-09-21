@@ -22,13 +22,24 @@ import DatePicker from 'react-datepicker'
 // ** Styled Components
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
+import { Autocomplete, Box } from '@mui/material'
+import { Country, State, City } from 'country-state-city'
+
 const CustomInput = forwardRef((props, ref) => {
   return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
 })
 
 const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
   // ** State
-  const [date, setDate] = useState(null)
+
+  const [date, setDate] = useState(userInfoCopy != null ? new Date(userInfoCopy.dob) : null)
+
+  const [countryCode, setCountryCode] = useState()
+  const [stateCode, setStateCode] = useState()
+  const [states, setStates] = useState([])
+  const countries = Country.getAllCountries()
+
+  // console.log(State.getStatesOfCountry('VN'))
 
   const handleSubmit = event => {
     event.preventDefault()
@@ -42,7 +53,7 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
   return (
     <CardContent>
       <form>
-        {/* <Grid container spacing={7}>
+        <Grid container spacing={7}>
           <Grid item xs={12} sx={{ marginTop: 4.8 }}>
             <TextField
               fullWidth
@@ -54,37 +65,12 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <DatePickerWrapper>
-              <DatePicker
-                selected={date}
-                showYearDropdown
-                showMonthDropdown
-                id='account-settings-date'
-                placeholderText='MM-DD-YYYY'
-                customInput={<CustomInput />}
-                onChange={date => setDate(date)}
-              />
-            </DatePickerWrapper>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              type='text'
-              label='Phone'
-              placeholder='(123) 456-7890'
-              value={userInfoCopy.phoneNumber}
-              onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, phoneNumber: event.target.value })
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               type='text'
               label='Student code'
               placeholder='(123) 456-7890'
-              value={userInfoCopy.studentCode}
+              value={userInfoCopy !== null ? userInfoCopy.studentCode : ''}
               onChange={event => {
                 setUserInfoCopy({ ...userInfoCopy, studentCode: event.target.value })
               }}
@@ -96,20 +82,109 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
               type='text'
               label='Major'
               placeholder='(123) 456-7890'
-              value={userInfoCopy.major}
+              value={userInfoCopy !== null ? userInfoCopy.major : ''}
               onChange={event => {
                 setUserInfoCopy({ ...userInfoCopy, major: event.target.value })
               }}
             />
           </Grid>
-
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              type='text'
+              label='Phone'
+              placeholder='(123) 456-7890'
+              value={userInfoCopy !== null ? userInfoCopy.phoneNumber : ''}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, phoneNumber: event.target.value })
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <DatePickerWrapper>
+              <DatePicker
+                selected={date}
+                showYearDropdown
+                showMonthDropdown
+                id='account-settings-date'
+                placeholderText='MM-DD-YYYY'
+                customInput={<CustomInput />}
+                onChange={date => {
+                  setDate(date)
+                }}
+              />
+            </DatePickerWrapper>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <Autocomplete
+                onChange={(event, newValue) => {
+                  if (newValue !== null) {
+                    setCountryCode(newValue.isoCode)
+                    setStates(State.getStatesOfCountry(newValue.isoCode))
+                  }
+                }}
+                sx={{ width: 300 }}
+                options={countries}
+                autoHighlight
+                getOptionLabel={option => option.name}
+                renderOption={(props, option) => (
+                  <Box component='li' sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                    <img
+                      loading='lazy'
+                      width='20'
+                      srcSet={`https://flagcdn.com/w40/${option.isoCode.toLowerCase()}.png 2x`}
+                      src={`https://flagcdn.com/w20/${option.isoCode.toLowerCase()}.png`}
+                      alt=''
+                    />
+                    {option.name} ({option.isoCode}) +{option.phonecode}
+                  </Box>
+                )}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label='Choose a country'
+                    inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
+                  />
+                )}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <Autocomplete
+                onChange={(event, newValue) => {
+                  if (newValue !== null) {
+                    setStateCode(newValue.isoCode)
+                    console.log(newValue.isoCode)
+                  }
+                }}
+                sx={{ width: 300 }}
+                options={states}
+                autoHighlight
+                getOptionLabel={option => option.name}
+                renderOption={(props, option) => (
+                  <Box component='li' {...props}>
+                    {option.name}
+                  </Box>
+                )}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label='City'
+                    inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
+                  />
+                )}
+              />
+            </FormControl>
+          </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               label='Facebook Url'
-              placeholder='https://www.facebook.com/user_id'
-              defaultValue='https://themeselection.com/'
-              value={userInfoCopy.facebookUrl}
+              placeholder='https://www.facebook.com/profile.php?id=[user_id]'
+              defaultValue='https://www.facebook.com/profile.php?id=100054151497842'
+              value={userInfoCopy !== null ? userInfoCopy.facebookUrl : ''}
               onChange={event => {
                 setUserInfoCopy({ ...userInfoCopy, facebookUrl: event.target.value })
               }}
@@ -119,55 +194,17 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
             <TextField
               fullWidth
               label='LinkedIn Url'
-              placeholder='https://example.com/'
-              defaultValue='https://themeselection.com/'
-              value={userInfoCopy.linkedinUrl}
+              placeholder='https://www.linkedin.com/in/[user_id]/'
+              defaultValue='https://www.linkedin.com/in/%C4%91%E1%BB%A9c-nguy%E1%BB%85n-s%E1%BB%B9-34a240292/'
+              value={userInfoCopy !== null ? userInfoCopy.linkedinUrl : ''}
               onChange={event => {
                 setUserInfoCopy({ ...userInfoCopy, linkedinUrl: event.target.value })
               }}
             />
           </Grid>
+
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Country</InputLabel>
-              <Select label='Country' defaultValue='USA'>
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Germany'>Germany</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>City</InputLabel>
-              <Select label='City' defaultValue='USA'>
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Germany'>Germany</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel id='form-layouts-separator-multiple-select-label'>Languages</InputLabel>
-              <Select
-                multiple
-                defaultValue={['English']}
-                id='account-settings-multiple-select'
-                labelId='account-settings-multiple-select-label'
-                input={<OutlinedInput label='Languages' id='select-multiple-language' />}
-              >
-                <MenuItem value='English'>English</MenuItem>
-                <MenuItem value='French'>French</MenuItem>
-                <MenuItem value='Spanish'>Spanish</MenuItem>
-                <MenuItem value='Portuguese'>Portuguese</MenuItem>
-                <MenuItem value='Italian'>Italian</MenuItem>
-                <MenuItem value='German'>German</MenuItem>
-                <MenuItem value='Arabic'>Arabic</MenuItem>
-              </Select>
-            </FormControl>
+            <FormControl fullWidth></FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl>
@@ -187,7 +224,7 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
               Reset
             </Button>
           </Grid>
-        </Grid> */}
+        </Grid>
       </form>
     </CardContent>
   )

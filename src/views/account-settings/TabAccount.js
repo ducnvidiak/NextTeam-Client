@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -17,6 +17,8 @@ import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
+
+const axios = require('axios')
 
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
@@ -49,54 +51,41 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
   // ** State
   const [openAlert, setOpenAlert] = useState(true)
 
+  const [imgSrc, setImgSrc] = useState('')
+
   const onChange = file => {
     const reader = new FileReader()
     const { files } = file.target
     if (files && files.length !== 0) {
-      // reader.onload = () => setImgSrc(reader.result)
+      reader.onload = () => setImgSrc(reader.result)
       reader.readAsDataURL(files[0])
     }
   }
 
-  const another = {
-    id: 3,
-    email: 'jane.smith@example.com',
-    username: 'janesmith(edited)',
-    password: 'password456',
-    avatarURL: 'https://example.com/avatar2.jpg',
-    firstname: 'Jane',
-    lastname: 'Smith',
-    studentCode: '987654321',
-    phoneNumber: '0987654321',
-    major: '2',
-    academicYear: '2022',
-    gender: 'Female',
-    dob: '1995-08-20',
-    homeTown: '2',
-    facebookUrl: 'https://www.facebook.com/janesmith',
-    linkedInUrl: 'https://www.linkedin.com/in/janesmith',
-    createdAt: '2023-09-18',
-    updatedAt: '2023-09-18'
-  }
-
   const fetchData = async () => {
-    console.log(userInfo)
+    const formData = new FormData()
 
-    const requestConfig = {
-      method: 'POST',
-
-      headers: {},
-      body: JSON.stringify(userInfoCopy)
+    if (imgSrc !== '') {
+      formData.append('image', imgSrc.split(',')[1])
     }
 
-    try {
-      const response = await fetch('http://localhost:8080/NextTeam/api/user', requestConfig)
-      const jsonData = await response.json()
-      console.log(jsonData)
-      setUserInfo({ ...jsonData })
-    } catch (error) {
-      console.log('Error fetching data:', error)
+    formData.append('data', JSON.stringify(userInfoCopy))
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Accept: 'application/json'
+      }
     }
+    axios
+      .put('http://localhost:8080/NextTeam/api/user', formData, config)
+      .then(response => {
+        console.log(response.data)
+        setUserInfo({ ...response.data })
+      })
+      .catch(error => {
+        console.error(error)
+      })
   }
 
   const handleSubmit = event => {
@@ -105,9 +94,15 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
     fetchData()
   }
 
-  const handleReset = event => {
+  const handleResetAvatar = event => {
     event.preventDefault()
-    setUserInfoCopy({ ...userInfo })
+    setImgSrc('')
+    setUserInfoCopy({ ...userInfoCopy, avatarURL: userInfo.avatarURL })
+  }
+
+  const handleResetAccountInfo = event => {
+    event.preventDefault()
+    setUserInfoCopy({ ...userInfo, avatarURL: userInfoCopy.avatarURL })
   }
 
   return (
@@ -116,7 +111,16 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
         <Grid container spacing={7}>
           <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <ImgStyled src={userInfoCopy !== null ? userInfoCopy.avatarUrl : ''} alt='Profile Pic' />
+              <ImgStyled
+                src={
+                  imgSrc !== ''
+                    ? imgSrc
+                    : userInfoCopy !== null && userInfoCopy.avatarURL !== 'undefined'
+                    ? userInfoCopy.avatarURL
+                    : '/images/avatars/1.png'
+                }
+                alt='Profile Pic'
+              />
               <Box>
                 <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
                   Upload New Photo
@@ -128,7 +132,7 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
                     id='account-settings-upload-image'
                   />
                 </ButtonStyled>
-                <ResetButtonStyled color='error' variant='outlined' onClick={() => setImgSrc('/images/avatars/1.png')}>
+                <ResetButtonStyled color='error' variant='outlined' onClick={handleResetAvatar}>
                   Reset
                 </ResetButtonStyled>
                 <Typography variant='body2' sx={{ marginTop: 5 }}>
@@ -252,7 +256,7 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
             <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
               Save Changes
             </Button>
-            <Button type='reset' variant='outlined' color='secondary' onClick={handleReset}>
+            <Button type='reset' variant='outlined' color='secondary' onClick={handleResetAccountInfo}>
               Reset
             </Button>
           </Grid>

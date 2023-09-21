@@ -21,7 +21,9 @@ import KeyOutline from 'mdi-material-ui/KeyOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 
-const TabSecurity = () => {
+const axios = require('axios')
+
+const TabSecurity = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
   // ** States
   const [values, setValues] = useState({
     newPassword: '',
@@ -69,6 +71,37 @@ const TabSecurity = () => {
 
   const handleMouseDownConfirmNewPassword = event => {
     event.preventDefault()
+  }
+
+  const fetchData = async () => {
+    const formData = new FormData()
+
+    if (imgSrc !== '') {
+      formData.append('image', imgSrc.split(',')[1])
+    }
+
+    formData.append('data', JSON.stringify(userInfoCopy))
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Accept: 'application/json'
+      }
+    }
+    axios
+      .put('http://localhost:8080/NextTeam/api/user', formData, config)
+      .then(response => {
+        console.log(response.data)
+        setUserInfo({ ...response.data })
+      })
+      .catch(error => {
+        console.error(error)
+      })
+  }
+
+  const handleSubmit = event => {
+    event.preventDefault()
+    fetchData()
   }
 
   return (
@@ -200,7 +233,7 @@ const TabSecurity = () => {
         </Box>
 
         <Box sx={{ mt: 11 }}>
-          <Button variant='contained' sx={{ marginRight: 3.5 }}>
+          <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
             Save Changes
           </Button>
           <Button
