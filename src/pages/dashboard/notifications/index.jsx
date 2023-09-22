@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 // ** MUI Imports
@@ -17,9 +17,11 @@ import TablePagination from '@mui/material/TablePagination'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
 
 const Notifications = () => {
   const router = useRouter()
+  const [notificationsData, setNotificationsData] = useState([])
 
   const cardStyle = {
     margin: '10px' // Thiết lập margin 10px
@@ -28,6 +30,21 @@ const Notifications = () => {
   const handleSubmit = event => {
     router.push('/dashboard/notifications/view-all')
   }
+  useEffect(() => {
+    fetch('http://localhost:8080/public-notification-list-10', {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+      .then(function (response) {
+        return response.json()
+      })
+      .then(function (data) {
+        setNotificationsData(data)
+      })
+      .catch(error => console.error('Error:', error))
+  }, [])
 
   return (
     <Grid item xs={12} style={{ height: '100%' }}>
@@ -39,34 +56,27 @@ const Notifications = () => {
           </Button>
         </div>
 
-        <Card style={cardStyle}>
-          <CardContent>
-            <Grid container spacing={0}>
-              <Grid item xs={4} md={2}>
-                21/09/23 16:20
-              </Grid>
-              <Grid item xs={8} md={10}>
-                <Typography variant='body1' style={{ fontWeight: 'bold' }}>
-                  FUDN [Khảo thí] Danh sách phòng thi Retake môn SSL101c ngày 23/09/2023 (đợt 2 kỳ Summer 2023)
-                </Typography>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-        <Card style={cardStyle}>
-          <CardContent>
-            <Grid container spacing={0}>
-              <Grid item xs={4} md={2}>
-                21/09/23 16:20
-              </Grid>
-              <Grid item xs={8} md={10}>
-                <Typography variant='body1' style={{ fontWeight: 'bold' }}>
-                  FUDN [Khảo thí] Danh sách phòng thi Retake môn SSL101c ngày 23/09/2023 (đợt 2 kỳ Summer 2023)
-                </Typography>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
+        {notificationsData.map(notification => {
+          return (
+            <Card style={cardStyle} key={notification.id}>
+              <CardContent onClick={() => router.push(`/dashboard/notifications/detail/${notification.id}`)}>
+                <Grid container spacing={0}>
+                  <Grid item xs={4} md={2}>
+                    {notification.updatedAt}
+                  </Grid>
+                  <Grid item xs={8} md={10}>
+                    <Typography variant='body1' style={{ fontWeight: 'bold' }}>
+                      {notification.title}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+              {/* <Link passHref href={`/dashboard/notifications/detail/${notification.id}`}>
+                
+              </Link> */}
+            </Card>
+          )
+        })}
       </Card>
     </Grid>
   )

@@ -1,9 +1,21 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useRef, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
-import { Button, Grid, Link, Stack } from '@mui/material'
+import {
+  Button,
+  ButtonGroup,
+  ClickAwayListener,
+  Grid,
+  Grow,
+  Link,
+  MenuList,
+  Modal,
+  Paper,
+  Popper,
+  Stack
+} from '@mui/material'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -24,6 +36,8 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 import LockIcon from '@mui/icons-material/Lock'
+import Groups3Icon from '@mui/icons-material/Groups3'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -34,9 +48,24 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
   boxShadow: `0 0 0 2px ${theme.palette.background.paper}`
 }))
 
+const ClubModal = styled('Modal')(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 600,
+  background: '#fff',
+  boxShadow: 24,
+  padding: 20,
+  borderRadius: 8
+}))
+
+const options = ['Create a merge commit', 'Squash and merge', 'Rebase and merge']
+
 const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
+  const [open, setOpen] = useState(false)
 
   // ** Hooks
   const router = useRouter()
@@ -52,10 +81,9 @@ const UserDropdown = () => {
     setAnchorEl(null)
   }
 
-  const handleLogout = event => {
+  const handleLogout = () => {
     localStorage.removeItem('userData')
-    router.push('/')
-    window.location.reload()
+    router.push('/auth/login')
   }
 
   const styles = {
@@ -72,8 +100,108 @@ const UserDropdown = () => {
     }
   }
 
+  const [openButton, setOpenButton] = useState(false)
+  const anchorRef = useRef(null)
+  const [selectedIndex, setSelectedIndex] = useState(1)
+
+  const handleClick = () => {
+    console.info(`You clicked ${options[selectedIndex]}`)
+  }
+
+  const handleMenuItemClick = (event, index) => {
+    setSelectedIndex(index)
+    setOpenButton(false)
+  }
+
+  const handleToggle = () => {
+    setOpenButton(prevOpen => !prevOpen)
+  }
+
+  const handleClose = event => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return
+    }
+
+    setOpen(false)
+  }
+
+  const [userData, setUserData] = useState(null)
+
+  useEffect(() => {
+    // Lấy dữ liệu từ localStorage khi component được tạo
+    const userDataFromLocalStorage = localStorage.getItem('userData')
+
+    if (userDataFromLocalStorage) {
+      // Nếu userData tồn tại trong localStorage, cập nhật state
+      setUserData(JSON.parse(userDataFromLocalStorage))
+    }
+  }, [])
+
   return (
     <Fragment>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby='modal-modal-title'
+        aria-describedby='modal-modal-description'
+      >
+        <ClubModal>
+          <Typography id='modal-modal-title' variant='h5' component='h2' textAlign={'center'} marginBottom={4}>
+            Truy cập vào câu lạc bộ
+          </Typography>
+          <Stack direction={'row'} justifyContent={'center'}>
+            <ButtonGroup variant='contained' ref={anchorRef} aria-label='split button'>
+              <Button onClick={handleClick}>{options[selectedIndex]}</Button>
+              <Button
+                size='small'
+                aria-controls={openButton ? 'split-button-menu' : undefined}
+                aria-expanded={openButton ? 'true' : undefined}
+                aria-label='select merge strategy'
+                aria-haspopup='menu'
+                onClick={handleToggle}
+              >
+                <ArrowDropDownIcon />
+              </Button>
+            </ButtonGroup>
+            <Popper
+              sx={{
+                zIndex: 1
+              }}
+              open={openButton}
+              anchorEl={anchorRef.current}
+              role={undefined}
+              transition
+              disablePortal
+            >
+              {({ TransitionProps, placement }) => (
+                <Grow
+                  {...TransitionProps}
+                  style={{
+                    transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'
+                  }}
+                >
+                  <Paper>
+                    <ClickAwayListener onClickAway={handleClose}>
+                      <MenuList id='split-button-menu' autoFocusItem>
+                        {options.map((option, index) => (
+                          <MenuItem
+                            key={option}
+                            disabled={index === 2}
+                            selected={index === selectedIndex}
+                            onClick={event => handleMenuItemClick(event, index)}
+                          >
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </ClickAwayListener>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper>
+          </Stack>
+        </ClubModal>
+      </Modal>
       <Badge
         overlap='circular'
         onClick={handleDropdownOpen}
@@ -82,10 +210,10 @@ const UserDropdown = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Avatar
-          alt='John Doe'
+          alt={userData?.lastname}
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
-          src='/images/avatars/1.png'
+          src={userData?.avatarURL}
         />
       </Badge>
       <Menu
@@ -103,7 +231,7 @@ const UserDropdown = () => {
               badgeContent={<BadgeContentSpan />}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt={userData?.lastname} src={userData?.avatarURL} sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box
               sx={{
@@ -113,7 +241,7 @@ const UserDropdown = () => {
                 flexDirection: 'column'
               }}
             >
-              <Typography sx={{ fontWeight: 600 }}>Bảo Thắng</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{userData?.lastname}</Typography>
               <Typography
                 variant='body2'
                 sx={{
@@ -121,7 +249,7 @@ const UserDropdown = () => {
                   color: 'text.disabled'
                 }}
               >
-                Thành viên
+                {userData?.studentCode}
               </Typography>
             </Box>
           </Box>
@@ -130,9 +258,24 @@ const UserDropdown = () => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <AccountOutline sx={{ marginRight: 2 }} />
-            <Link href={`/profile/1`} underline='none'>
+            <Link href={`/profile/${userData?.id}`} underline='none'>
               Hồ sơ cá nhân
             </Link>
+          </Box>
+        </MenuItem>
+        <MenuItem
+          sx={{ p: 0 }}
+          onClick={() => {
+            handleDropdownClose()
+            setOpen(true)
+          }}
+        >
+          <Box sx={styles}>
+            <Groups3Icon sx={{ marginRight: 2 }} />
+            <Typography color={'#F27123'}>CLB của bạn</Typography>
+            {/* <Link href={`/profile/1`} underline='none'>
+              CLB của bạn
+            </Link> */}
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
@@ -144,7 +287,7 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles} onClick={() => handleLogout()}>
+          <Box sx={styles} onClick={handleLogout}>
             <LogoutVariant sx={{ marginRight: 2 }} />
             <Link underline='none'>Đăng xuất</Link>
           </Box>

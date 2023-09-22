@@ -142,6 +142,16 @@ export const dashboardLayoutVavigation = () => {
   ]
 }
 
+export const adminLayoutVavigation = () => {
+  return [
+    {
+      title: 'Câu lạc bộ',
+      icon: 'Groups2Icon',
+      path: '/admin/club'
+    }
+  ]
+}
+
 export const landingLayoutVavigation = () => {
   return [
     {

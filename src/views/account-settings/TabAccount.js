@@ -90,7 +90,7 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
     }
 
     try {
-      const response = await fetch('http://localhost:8080/NextTeam/api/user', requestConfig)
+      const response = await fetch('http://localhost:8080/api/user', requestConfig)
       const jsonData = await response.json()
       console.log(jsonData)
       setUserInfo({ ...jsonData })
@@ -110,13 +110,15 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
     setUserInfoCopy({ ...userInfo })
   }
 
+  console.log(userInfoCopy)
+
   return (
     <CardContent>
       <form>
         <Grid container spacing={7}>
           <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <ImgStyled src={userInfoCopy !== null ? userInfoCopy.avatarUrl : ''} alt='Profile Pic' />
+              <ImgStyled src={userInfoCopy !== null ? userInfoCopy.avatarURL : ''} alt='Profile Pic' />
               <Box>
                 <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
                   Upload New Photo

@@ -5,14 +5,14 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 // ** Layout Imports
 // !Do not remove this Layout import
 import DashboardLayout from 'src/@core/layouts/DashboardLayout'
-
+import AdminLayout from 'src/@core/layouts/AdminLayout'
 // ** Navigation Imports
-import { landingLayoutVavigation, dashboardLayoutVavigation } from 'src/navigation'
+import { adminLayoutVavigation, landingLayoutVavigation, dashboardLayoutVavigation } from 'src/navigation'
 
 // ** Component Import
 import VerticalLandingBarContent from './components/vertical/LandingAppContent'
 import VerticalDashboardAppBarContent from './components/vertical/DashboardAppBarContent'
-
+import VerticalAdminAppBarContent from './components/vertical/AdminAppBarContent'
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
 import BlankLayout from 'src/@core/layouts/LandingLayout'
@@ -73,7 +73,28 @@ const UserLayout = ({ children }) => {
           {children}
           {/* <UpgradeToProButton /> */}
         </DashboardLayout>
-      ) : (
+      ) : router.pathname.startsWith('/admin') ? (
+        <AdminLayout
+          hidden={hidden}
+          settings={settings}
+          saveSettings={saveSettings}
+          verticalNavItems={adminLayoutVavigation()} // Navigation Items
+          afterVerticalNavMenuContent={UpgradeToProImg}
+          verticalAppBarContent={(
+            props // AppBar Content
+          ) => (
+            <VerticalAdminAppBarContent
+              hidden={hidden}
+              settings={settings}
+              saveSettings={saveSettings}
+              toggleNavVisibility={props.toggleNavVisibility}
+            />
+          )}
+        >
+          {children}
+          {/* <UpgradeToProButton /> */}
+        </AdminLayout>
+      ):(
         <BlankLayout
           hidden={hidden}
           settings={settings}
@@ -94,7 +115,7 @@ const UserLayout = ({ children }) => {
           {children}
           {/* <UpgradeToProButton /> */}
         </BlankLayout>
-      )}
+      )  }
     </>
   )
 }

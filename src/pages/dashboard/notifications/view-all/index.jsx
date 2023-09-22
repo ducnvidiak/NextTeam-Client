@@ -1,5 +1,6 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Paper from '@mui/material/Paper'
@@ -10,60 +11,42 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
+import Grid from '@mui/material/Grid'
+import Card from '@mui/material/Card'
+import CardHeader from '@mui/material/CardHeader'
+import TextField from '@mui/material/TextField'
+import IconButton from '@mui/material/IconButton'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import InputAdornment from '@mui/material/InputAdornment'
+
+// ** Icons Imports
+import Menu from 'mdi-material-ui/Menu'
+import Magnify from 'mdi-material-ui/Magnify'
 
 const columns = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-  {
-    id: 'population',
-    label: 'Population',
-    minWidth: 170,
-    align: 'right',
-    format: value => value.toLocaleString('en-US')
-  },
-  {
-    id: 'size',
-    label: 'Size\u00a0(km\u00b2)',
-    minWidth: 170,
-    align: 'right',
-    format: value => value.toLocaleString('en-US')
-  },
-  {
-    id: 'density',
-    label: 'Density',
-    minWidth: 170,
-    align: 'right',
-    format: value => value.toFixed(2)
-  }
+  { id: 'updateAt', label: 'Thời gian', width: 200 },
+  { id: 'title', label: 'Nội dung' }
 ]
-function createData(name, code, population, size) {
-  const density = population / size
-
-  return { name, code, population, size, density }
+function createData(id, updateAt, title) {
+  return { id, updateAt, title }
 }
 
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767)
-]
-
 const TableStickyHeader = () => {
+  const router = useRouter()
+
   // ** States
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [notificationsData, setNotificationsData] = useState([])
+  const [search, setSearch] = useState()
+
+  // const rows = [
+  //   createData('India', 'IN', 1324171354, 3287263),
+  // ]
+
+  const rows = notificationsData.map(item => {
+    return createData(item.id, item.updatedAt, item.title)
+  })
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -74,48 +57,116 @@ const TableStickyHeader = () => {
     setPage(0)
   }
 
-  return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label='sticky table'>
-          <TableHead>
-            <TableRow>
-              {columns.map(column => (
-                <TableCell key={column.id} align={column.align} sx={{ minWidth: column.minWidth }}>
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
-              return (
-                <TableRow hover role='checkbox' tabIndex={-1} key={row.code}>
-                  {columns.map(column => {
-                    const value = row[column.id]
+  const handleEnterKeyPress = event => {
+    if (event.key === 'Enter') {
+      // Gọi hàm của bạn ở đây khi người dùng nhấn phím Enter
+      handleSearch()
+    }
+  }
 
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
-                      </TableCell>
-                    )
-                  })}
-                </TableRow>
+  const handleSearch = () => {
+    // Thực hiện tìm kiếm hoặc gọi hàm bạn muốn khi người dùng nhấn Enter
+    fetch('http://localhost:8080/public-notification-list-search?search=' + search, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+      .then(function (response) {
+        return response.json()
+      })
+      .then(function (data) {
+        setNotificationsData(data)
+        console.log(data)
+      })
+      .catch(error => console.error('Error:', error))
+  }
+
+  useEffect(() => {
+    fetch('http://localhost:8080/all-public-notification-list', {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+      .then(function (response) {
+        return response.json()
+      })
+      .then(function (data) {
+        setNotificationsData(data)
+        console.log(data)
+      })
+      .catch(error => console.error('Error:', error))
+  }, [])
+
+  return (
+    <Grid item xs={12}>
+      <Card style={{ height: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '10px' }}>
+          <CardHeader title='Tất cả thông báo' titleTypographyProps={{ variant: 'h6' }} />
+          <TextField
+            placeholder='Tìm kiếm...'
+            size='small'
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Magnify fontSize='small' />
+                </InputAdornment>
               )
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component='div'
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
+            }}
+            onChange={event => setSearch(event.target.value)}
+            onKeyPress={handleEnterKeyPress} // Gọi handleEnterKeyPress khi có sự kiện keypress
+          />
+        </div>
+
+        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+          <TableContainer sx={{ height: '100%' }}>
+            <Table stickyHeader aria-label='sticky table'>
+              <TableHead>
+                <TableRow>
+                  {columns.map(column => (
+                    <TableCell key={column.id} align={column.align} sx={{ width: column.width }}>
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
+                  return (
+                    <TableRow hover role='checkbox' tabIndex={-1} key={row.code}>
+                      {columns.map(column => {
+                        const value = row[column.id]
+
+                        return (
+                          <TableCell
+                            key={column.id}
+                            align={column.align}
+                            onClick={() => router.push(`/dashboard/notifications/detail/${row.id}`)}
+                          >
+                            {column.format && typeof value === 'number' ? column.format(value) : value}
+                          </TableCell>
+                        )
+                      })}
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component='div'
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </Card>
+    </Grid>
   )
 }
 
