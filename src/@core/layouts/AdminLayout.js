@@ -46,7 +46,8 @@ const ContentWrapper = styled('main')(({ theme }) => ({
   }
 }))
 
-const DashboardLayout = props => {
+const AdminLayout = props => {
+    
   // ** Props
   const { settings, children, scrollToTop } = props
 
@@ -107,4 +108,4 @@ const DashboardLayout = props => {
   )
 }
 
-export default DashboardLayout
+export default AdminLayout

@@ -13,12 +13,9 @@ import Magnify from 'mdi-material-ui/Magnify'
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
-import { Button, Grid, Link, Stack, Typography } from '@mui/material'
-import VerticalNavHeader from 'src/@core/layouts/components/vertical/navigation/VerticalNavHeader'
+import { Typography } from '@mui/material'
 
-const pages = ['Products', 'Pricing', 'Blog']
-
-const AppBarContent = props => {
+const AdminAppBarContent = props => {
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
 
@@ -37,41 +34,29 @@ const AppBarContent = props => {
             <Menu />
           </IconButton>
         ) : null} */}
-        <VerticalNavHeader></VerticalNavHeader>
       </Box>
-      <Stack direction='row' gap={12}>
-        <Link href='/' underline='hover'>
-          Giới thiệu
-        </Link>
-        <Link href='/events' underline='hover'>
-          Sự kiện
-        </Link>
-        <Link href='/clubs' underline='hover'>
-          Câu lạc bộ
-        </Link>
-        <Link href='/dashboard' underline='hover'>
-          (TEST) Dashboard
-        </Link>
-      </Stack>
+      {/* <TextField
+          placeholder='Tìm kiếm...'
+          size='small'
+          sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: "50%" }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position='start'>
+                <Magnify fontSize='small' />
+              </InputAdornment>
+            )
+          }}
+        /> */}
+      <Typography variant='h4' sx={{color: '#F27123'}}>
+        ADMIN
+      </Typography>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <ModeToggler settings={settings} saveSettings={saveSettings} /> */}
-        {/* <NotificationDropdown />
-        <UserDropdown /> */}
-        <Grid item xs={12}>
-          <a href='/auth/login'>
-            <Button variant='contained' sx={{ marginRight: 3.5 }}>
-              Đăng nhập
-            </Button>
-          </a>
-          <a href='/auth/register'>
-            <Button type='reset' variant='outlined' color='secondary'>
-              Đăng ký
-            </Button>
-          </a>
-        </Grid>
+        <ModeToggler settings={settings} saveSettings={saveSettings} />
+        <NotificationDropdown />
+        <UserDropdown />
       </Box>
     </Box>
   )
 }
 
-export default AppBarContent
+export default AdminAppBarContent

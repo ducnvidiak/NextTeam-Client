@@ -1,7 +1,4 @@
-// ** React Imports
-import { useState } from 'react'
-
-// ** MUI Imports
+import { useState, useEffect } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
@@ -10,60 +7,89 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
+import DeleteIcon from '@mui/icons-material/Delete'
+import Stack from '@mui/material/Stack'
+import ModeEditIcon from '@mui/icons-material/ModeEdit'
+import ImageListItem from '@mui/material/ImageListItem'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import TextField from '@mui/material/TextField'
+import { Button, FormControl, FormLabel, Input, Card, CardMedia } from '@mui/material'
+import { CloudUpload } from '@mui/icons-material'
 
 const columns = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
+  { id: 'id', label: 'ID', minWidth: 50, align: 'center' },
+  { id: 'name', label: 'Tên', minWidth: 100, align: 'center' },
   {
-    id: 'population',
-    label: 'Population',
-    minWidth: 170,
-    align: 'right',
-    format: value => value.toLocaleString('en-US')
+    id: 'avatarUrl',
+    label: 'Ảnh',
+    minWidth: 80,
+    align: 'center'
   },
   {
-    id: 'size',
-    label: 'Size\u00a0(km\u00b2)',
-    minWidth: 170,
-    align: 'right',
-    format: value => value.toLocaleString('en-US')
+    id: 'description',
+    label: 'Mô tả',
+    minWidth: 100,
+    align: 'left',
+    format: value => value.toLocaleString('en-VN')
   },
   {
-    id: 'density',
-    label: 'Density',
-    minWidth: 170,
-    align: 'right',
-    format: value => value.toFixed(2)
+    id: 'movementPoint',
+    label: 'Điểm Hoạt Động',
+    minWidth: 150,
+    align: 'left'
+  },
+  {
+    id: 'createAt',
+    label: 'Ngày lập',
+    minWidth: 100,
+    align: 'left'
+  },
+  {
+    id: 'updateAt',
+    label: 'Ngày cập nhật',
+    minWidth: 150,
+    align: 'left'
+  },
+  {
+    id: 'action',
+    label: 'Hành động',
+    minWidth: 100,
+    align: 'left'
   }
 ]
-function createData(name, code, population, size) {
-  const density = population / size
 
-  return { name, code, population, size, density }
+function createData(id, name, avatarUrl, description, movementPoint, createAt, updateAt, button) {
+  return { id, name, avatarUrl, description, movementPoint, createAt, updateAt, button }
 }
 
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767)
-]
-
-const TableStickyHeader = () => {
+const TableStickyHeader = props => {
+  const { refreshClubData, clubs } = props
   // ** States
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [rows, setRows] = useState([]) // Initialize rows with an empty array
+  refreshClubData()
+  useEffect(() => {
+    // Assuming your 'clubs' state has the required data structure
+    const newRows = clubs.map(club => {
+      return createData(
+        club.id,
+        club.name,
+        club.avatarUrl,
+        club.description,
+        club.movementPoint,
+        club.createdAt,
+        club.updatedAt,
+        ''
+      )
+    })
+
+    // Update 'rows' only when 'clubs' change
+    setRows(newRows)
+  }, [clubs])
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -81,7 +107,7 @@ const TableStickyHeader = () => {
           <TableHead>
             <TableRow>
               {columns.map(column => (
-                <TableCell key={column.id} align={column.align} sx={{ minWidth: column.minWidth }}>
+                <TableCell key={column.id} align={column.align} sx={{ width: column.minWidth }}>
                   {column.label}
                 </TableCell>
               ))}
@@ -91,14 +117,43 @@ const TableStickyHeader = () => {
             {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.code}>
-                  {columns.map(column => {
+                  {columns.map((column, index) => {
                     const value = row[column.id]
-
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
-                      </TableCell>
-                    )
+                    const length = columns.length
+                    if (index !== length - 1) {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          {column.id === 'avatarUrl' ? (
+                            <img src={value} alt={value} style={{ maxWidth: '50%', maxHeight: '50%' }} />
+                          ) : (
+                            value
+                          )}
+                        </TableCell>
+                      )
+                    } else {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          <Stack direction='row' spacing={2} sx={{ width: '300px' }}>
+                            <Button
+                              variant='contained'
+                              color='warning'
+                              endIcon={<ModeEditIcon />}
+                              onClick={() => props.openEditClubHandle(row)}
+                            >
+                              Cập Nhật
+                            </Button>
+                            <Button
+                              variant='contained'
+                              color='error'
+                              startIcon={<DeleteIcon />}
+                              onClick={() => props.openDeleteClubHandle(row)}
+                            >
+                              Xóa
+                            </Button>
+                          </Stack>
+                        </TableCell>
+                      )
+                    }
                   })}
                 </TableRow>
               )

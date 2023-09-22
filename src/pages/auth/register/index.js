@@ -3,6 +3,11 @@ import { useState, Fragment } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -10,6 +15,9 @@ import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
+import MenuItem from '@mui/material/MenuItem'
+import Grid from '@mui/material/Grid'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Typography from '@mui/material/Typography'
 import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
@@ -20,14 +28,11 @@ import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
-
-// ** Icons Imports
-import Google from 'mdi-material-ui/Google'
-import Github from 'mdi-material-ui/Github'
-import Twitter from 'mdi-material-ui/Twitter'
-import Facebook from 'mdi-material-ui/Facebook'
-import EyeOutline from 'mdi-material-ui/EyeOutline'
-import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
@@ -60,20 +65,102 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 
 const RegisterPage = () => {
   // ** States
-  const [values, setValues] = useState({
-    password: '',
-    showPassword: false
-  })
+
+  const [firstname, setFirstname] = useState('')
+  const [lastname, setLastname] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [studentCode, setStudentCode] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [gender, setGender] = useState('')
+  const [agree, setAgree] = useState('')
+  const [firstnameError, setFirstnameError] = useState('')
+  const [lastnameError, setLastnameError] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [studentCodeError, setStudentCodeError] = useState('')
+  const [phoneNumberError, setPhoneNumberError] = useState('')
+  const [genderError, setGenderError] = useState('')
 
   // ** Hook
   const theme = useTheme()
+  const router = useRouter()
 
-  const handleChange = prop => event => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
+  const handleSubmit = event => {
+    event.preventDefault() // 👈️ prevent page refresh
+    setFirstnameError(false)
+    setLastnameError(false)
+    setEmailError(false)
+    setPasswordError(false)
+    setStudentCodeError(false)
+    setPhoneNumberError(false)
+    setGenderError(false)
+    if (firstname == '') {
+      setFirstnameError(true)
+      toast.error('Vui lòng điền họ và tên đệm')
+    }
+    if (lastname == '') {
+      setLastnameError(true)
+      toast.error('Vui lòng điền tên')
+    }
+    if (email == '') {
+      setEmailError(true)
+      toast.error('Vui lòng điền email')
+    }
+    if (password == '') {
+      setPasswordError(true)
+      toast.error('Vui lòng điền mật khẩu')
+    }
+    if (studentCode == '') {
+      setStudentCodeError(true)
+      toast.error('Vui lòng điền mã số sinh viên')
+    }
+    if (phoneNumber == '') {
+      setPhoneNumberError(true)
+      toast.error('Vui lòng điền số điện thoại')
+    }
+    if (gender == '') {
+      setGenderError(true)
+      toast.error('Vui lòng chọn giới tính')
+    }
+    if (agree == '') {
+      toast.error('Vui lòng đồng ý với điều khoản của nền tảng')
+    }
 
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
+    if (firstname && lastname && email && password && studentCode && phoneNumber && gender && agree) {
+      fetch('http://localhost:8080/user-register', {
+        method: 'POST',
+        body: JSON.stringify({
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          password: password,
+          studentCode: studentCode,
+          phoneNumber: phoneNumber,
+          gender: gender
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8'
+        }
+      })
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (data) {
+          if (data.id == null) {
+            toast.error(data)
+          } else {
+            toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
+            setTimeout(() => {
+              router.push('/auth/login')
+            }, 3000)
+          }
+        })
+        .catch(error => console.error('Error:', error))
+    }
+
+    // 👇️ clear all input values in the form
+    // setFirstName('')
   }
 
   const handleMouseDownPassword = event => {
@@ -84,7 +171,7 @@ const RegisterPage = () => {
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
-          <a href={"/"} style={{textDecoration: 'none'}}>
+          <Link passHref href={'/'} style={{ textDecoration: 'none' }}>
             <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg
                 width={35}
@@ -145,6 +232,7 @@ const RegisterPage = () => {
                   </g>
                 </g>
               </svg>
+              <ToastContainer></ToastContainer>
               <Typography
                 variant='h6'
                 sx={{
@@ -158,63 +246,132 @@ const RegisterPage = () => {
                 {themeConfig.templateName}
               </Typography>
             </Box>
-          </a>
+          </Link>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-              Adventure starts here 🚀
+              Sẵn sàng để khám phá 🚀
             </Typography>
-            <Typography variant='body2'>Make your app management easy and fun!</Typography>
+            <Typography variant='body2'>Mọi thứ đơn giản và dễ dàng hơn cùng NextTeam!</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='username' label='Username' sx={{ marginBottom: 4 }} />
-            <TextField fullWidth type='email' label='Email' sx={{ marginBottom: 4 }} />
+
+          <form noValidate autoComplete='off' method='POST'>
+            <Grid container spacing={2}>
+              <Grid item xs={7}>
+                <TextField
+                  fullWidth
+                  type='text'
+                  label='Họ và tên đệm'
+                  name='firstname'
+                  onChange={event => setFirstname(event.target.value)}
+                  value={firstname}
+                  error={firstnameError}
+                  sx={{ marginBottom: 4 }}
+                />
+              </Grid>
+              <Grid item xs={5}>
+                <TextField
+                  fullWidth
+                  type='text'
+                  label='Tên'
+                  name='lastname'
+                  onChange={event => setLastname(event.target.value)}
+                  value={lastname}
+                  error={lastnameError}
+                  sx={{ marginBottom: 4 }}
+                />
+              </Grid>
+            </Grid>
+            <TextField
+              fullWidth
+              type='email'
+              label='Email'
+              name='email'
+              onChange={event => setEmail(event.target.value)}
+              value={email}
+              error={emailError}
+              sx={{ marginBottom: 4 }}
+            />
             <FormControl fullWidth>
-              <InputLabel htmlFor='auth-register-password'>Password</InputLabel>
+              <InputLabel htmlFor='auth-register-password'>Mật khẩu</InputLabel>
               <OutlinedInput
+                sx={{ marginBottom: 4 }}
                 label='Password'
-                value={values.password}
+                name='password'
                 id='auth-register-password'
-                onChange={handleChange('password')}
-                type={values.showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      aria-label='toggle password visibility'
-                    >
-                      {values.showPassword ? <EyeOutline fontSize='small' /> : <EyeOffOutline fontSize='small' />}
-                    </IconButton>
-                  </InputAdornment>
-                }
+                onChange={e => setPassword(e.target.value)}
+                error={passwordError}
+                type={password.showPassword ? 'text' : 'password'}
               />
             </FormControl>
+
+            <TextField
+              fullWidth
+              type='text'
+              label='Mã số sinh viên'
+              name='studentCode'
+              onChange={event => setStudentCode(event.target.value)}
+              value={studentCode}
+              error={studentCodeError}
+              sx={{ marginBottom: 4 }}
+            />
+            <TextField
+              fullWidth
+              type='text'
+              label='Số điện thoại'
+              name='phoneNumber'
+              onChange={event => setPhoneNumber(event.target.value)}
+              value={phoneNumber}
+              error={phoneNumberError}
+              sx={{ marginBottom: 4 }}
+            />
+            <FormControl fullWidth>
+              <InputLabel htmlFor='gender-select'>Giới tính</InputLabel>
+              <Select
+                label='Giới tính'
+                id='gender-select'
+                name='gender'
+                onChange={event => setGender(event.target.value)}
+                value={gender}
+                error={genderError}
+              >
+                <MenuItem>Lựa chọn</MenuItem>
+                <MenuItem value={'0'}>Nam</MenuItem>
+                <MenuItem value={'1'}>Nữ</MenuItem>
+              </Select>
+            </FormControl>
+
             <FormControlLabel
-              control={<Checkbox />}
+              control={<Checkbox onChange={event => setAgree(event.target.value)} />}
               label={
                 <Fragment>
-                  <span>I agree to </span>
+                  <span>Tôi đồng ý với </span>
                   <Link href='/' passHref>
-                    <LinkStyled onClick={e => e.preventDefault()}>privacy policy & terms</LinkStyled>
+                    <LinkStyled onClick={e => e.preventDefault()}>các điều khoản của nền tảng</LinkStyled>
                   </Link>
                 </Fragment>
               }
             />
-            <Button fullWidth size='large' type='submit' variant='contained' sx={{ marginBottom: 7 }}>
-              Sign up
+            <Button
+              fullWidth
+              size='large'
+              type='submit'
+              variant='contained'
+              sx={{ marginBottom: 7 }}
+              onClick={e => handleSubmit(e)}
+            >
+              ĐĂNG KÝ
             </Button>
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
-                Already have an account?
+                Bạn đã có tài khoản?
               </Typography>
               <Typography variant='body2'>
                 <Link passHref href='/auth/login'>
-                  <LinkStyled>Sign in instead</LinkStyled>
+                  <LinkStyled>Đăng nhập ngay</LinkStyled>
                 </Link>
               </Typography>
             </Box>
-            <Divider sx={{ my: 5 }}>or</Divider>
+            {/* <Divider sx={{ my: 5 }}>or</Divider>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Link href='/' passHref>
                 <IconButton component='a' onClick={e => e.preventDefault()}>
@@ -238,7 +395,7 @@ const RegisterPage = () => {
                   <Google sx={{ color: '#db4437' }} />
                 </IconButton>
               </Link>
-            </Box>
+            </Box> */}
           </form>
         </CardContent>
       </Card>

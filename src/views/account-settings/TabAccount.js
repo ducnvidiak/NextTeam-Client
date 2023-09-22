@@ -45,19 +45,72 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
   }
 }))
 
-const TabAccount = () => {
+const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
   // ** State
   const [openAlert, setOpenAlert] = useState(true)
-  const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
 
   const onChange = file => {
     const reader = new FileReader()
     const { files } = file.target
     if (files && files.length !== 0) {
-      reader.onload = () => setImgSrc(reader.result)
+      // reader.onload = () => setImgSrc(reader.result)
       reader.readAsDataURL(files[0])
     }
   }
+
+  const another = {
+    id: 3,
+    email: 'jane.smith@example.com',
+    username: 'janesmith(edited)',
+    password: 'password456',
+    avatarURL: 'https://example.com/avatar2.jpg',
+    firstname: 'Jane',
+    lastname: 'Smith',
+    studentCode: '987654321',
+    phoneNumber: '0987654321',
+    major: '2',
+    academicYear: '2022',
+    gender: 'Female',
+    dob: '1995-08-20',
+    homeTown: '2',
+    facebookUrl: 'https://www.facebook.com/janesmith',
+    linkedInUrl: 'https://www.linkedin.com/in/janesmith',
+    createdAt: '2023-09-18',
+    updatedAt: '2023-09-18'
+  }
+
+  const fetchData = async () => {
+    console.log(userInfo)
+
+    const requestConfig = {
+      method: 'POST',
+
+      headers: {},
+      body: JSON.stringify(userInfoCopy)
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/api/user', requestConfig)
+      const jsonData = await response.json()
+      console.log(jsonData)
+      setUserInfo({ ...jsonData })
+    } catch (error) {
+      console.log('Error fetching data:', error)
+    }
+  }
+
+  const handleSubmit = event => {
+    event.preventDefault()
+
+    fetchData()
+  }
+
+  const handleReset = event => {
+    event.preventDefault()
+    setUserInfoCopy({ ...userInfo })
+  }
+
+  console.log(userInfoCopy)
 
   return (
     <CardContent>
@@ -65,7 +118,7 @@ const TabAccount = () => {
         <Grid container spacing={7}>
           <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <ImgStyled src={imgSrc} alt='Profile Pic' />
+              <ImgStyled src={userInfoCopy !== null ? userInfoCopy.avatarURL : ''} alt='Profile Pic' />
               <Box>
                 <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
                   Upload New Photo
@@ -88,10 +141,16 @@ const TabAccount = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Username' placeholder='johnDoe' defaultValue='johnDoe' />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Name' placeholder='John Doe' defaultValue='John Doe' />
+            <TextField
+              fullWidth
+              label='Username'
+              placeholder='johnDoe'
+              defaultValue='johnDoe'
+              value={userInfoCopy !== null ? userInfoCopy.username : ''}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, username: event.target.value })
+              }}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -100,17 +159,55 @@ const TabAccount = () => {
               label='Email'
               placeholder='johnDoe@example.com'
               defaultValue='johnDoe@example.com'
+              value={userInfoCopy !== null ? userInfoCopy.email : ''}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, email: event.target.value })
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='First name'
+              placeholder='John Doe'
+              defaultValue='John Doe'
+              value={userInfoCopy !== null ? userInfoCopy.firstname : ''}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, firstname: event.target.value })
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Last name'
+              placeholder='John Doe'
+              defaultValue='John Doe'
+              value={userInfoCopy !== null ? userInfoCopy.lastname : ''}
+              onChange={event => {
+                setUserInfoCopy({ ...userInfoCopy, lastname: event.target.value })
+              }}
+            />
+          </Grid>
+          {/* <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Role</InputLabel>
               <Select label='Role' defaultValue='admin'>
-                <MenuItem value='admin'>Admin</MenuItem>
-                <MenuItem value='author'>Author</MenuItem>
-                <MenuItem value='editor'>Editor</MenuItem>
-                <MenuItem value='maintainer'>Maintainer</MenuItem>
-                <MenuItem value='subscriber'>Subscriber</MenuItem>
+                <MenuItem value='admin' selected={userInfo.role == 'admin'}>
+                  Admin
+                </MenuItem>
+                <MenuItem value='author' selected={userInfo.role == 'author'}>
+                  Author
+                </MenuItem>
+                <MenuItem value='editor' selected={userInfo.role == 'editor'}>
+                  Editor
+                </MenuItem>
+                <MenuItem value='maintainer' selected={userInfo.role == 'maintainer'}>
+                  Maintainer
+                </MenuItem>
+                <MenuItem value='subscriber' selected={userInfo.role == 'subscriber'}>
+                  Subscriber
+                </MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -118,15 +215,21 @@ const TabAccount = () => {
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select label='Status' defaultValue='active'>
-                <MenuItem value='active'>Active</MenuItem>
-                <MenuItem value='inactive'>Inactive</MenuItem>
-                <MenuItem value='pending'>Pending</MenuItem>
+                <MenuItem value='active' selected={userInfo.status == 'active'}>
+                  Active
+                </MenuItem>
+                <MenuItem value='inactive' selected={userInfo.status == 'inactive'}>
+                  Inactive
+                </MenuItem>
+                <MenuItem value='pending' selected={userInfo.status == 'pending'}>
+                  Pending
+                </MenuItem>
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label='Company' placeholder='ABC Pvt. Ltd.' defaultValue='ABC Pvt. Ltd.' />
-          </Grid>
+          </Grid> */}
 
           {openAlert ? (
             <Grid item xs={12} sx={{ mb: 3 }}>
@@ -148,10 +251,10 @@ const TabAccount = () => {
           ) : null}
 
           <Grid item xs={12}>
-            <Button variant='contained' sx={{ marginRight: 3.5 }}>
+            <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
               Save Changes
             </Button>
-            <Button type='reset' variant='outlined' color='secondary'>
+            <Button type='reset' variant='outlined' color='secondary' onClick={handleReset}>
               Reset
             </Button>
           </Grid>

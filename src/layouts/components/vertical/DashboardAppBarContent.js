@@ -14,6 +14,7 @@ import ModeToggler from 'src/@core/layouts/components/shared-components/ModeTogg
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
 import { Typography } from '@mui/material'
+import Link from 'next/link'
 
 const AppBarContent = props => {
   // ** Props
@@ -25,7 +26,7 @@ const AppBarContent = props => {
   return (
     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
       <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
-        {/* {hidden ? (
+        {hidden ? (
           <IconButton
             color='inherit'
             onClick={toggleNavVisibility}
@@ -33,23 +34,23 @@ const AppBarContent = props => {
           >
             <Menu />
           </IconButton>
-        ) : null} */}
+        ) : null}
       </Box>
-      {/* <TextField
-          placeholder='Tìm kiếm...'
-          size='small'
-          sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: "50%" }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <Magnify fontSize='small' />
-              </InputAdornment>
-            )
-          }}
-        /> */}
-      <Typography variant='h4' sx={{color: '#F27123'}}>
+      <TextField
+        placeholder='Tìm kiếm...'
+        size='small'
+        sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '50%' }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position='start'>
+              <Magnify fontSize='small' />
+            </InputAdornment>
+          )
+        }}
+      />
+      {/* <Typography variant='h4' sx={{ color: '#F27123' }}>
         FU-DEVER
-      </Typography>
+      </Typography> */}
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         <ModeToggler settings={settings} saveSettings={saveSettings} />
         <NotificationDropdown />

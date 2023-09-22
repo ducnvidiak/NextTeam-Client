@@ -5,14 +5,14 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 // ** Layout Imports
 // !Do not remove this Layout import
 import DashboardLayout from 'src/@core/layouts/DashboardLayout'
-
+import AdminLayout from 'src/@core/layouts/AdminLayout'
 // ** Navigation Imports
-import { landingLayoutVavigation, dashboardLayoutVavigation } from 'src/navigation'
+import { adminLayoutVavigation, landingLayoutVavigation, dashboardLayoutVavigation } from 'src/navigation'
 
 // ** Component Import
-import VerticalAppBarContent from './components/vertical/AppBarContent'
+import VerticalLandingBarContent from './components/vertical/LandingAppContent'
 import VerticalDashboardAppBarContent from './components/vertical/DashboardAppBarContent'
-
+import VerticalAdminAppBarContent from './components/vertical/AdminAppBarContent'
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
 import BlankLayout from 'src/@core/layouts/LandingLayout'
@@ -21,7 +21,7 @@ import { useRouter } from 'next/router'
 const UserLayout = ({ children }) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
-  
+
   /**
    *  The below variable will hide the current layout menu at given screen size.
    *  The menu will be accessible from the Hamburger icon only (Vertical Overlay Menu).
@@ -52,7 +52,7 @@ const UserLayout = ({ children }) => {
 
   return (
     <>
-      {router.pathname.startsWith("/dashboard") ? (
+      {router.pathname.startsWith('/dashboard') ? (
         <DashboardLayout
           hidden={hidden}
           settings={settings}
@@ -73,7 +73,28 @@ const UserLayout = ({ children }) => {
           {children}
           {/* <UpgradeToProButton /> */}
         </DashboardLayout>
-      ) : (
+      ) : router.pathname.startsWith('/admin') ? (
+        <AdminLayout
+          hidden={hidden}
+          settings={settings}
+          saveSettings={saveSettings}
+          verticalNavItems={adminLayoutVavigation()} // Navigation Items
+          afterVerticalNavMenuContent={UpgradeToProImg}
+          verticalAppBarContent={(
+            props // AppBar Content
+          ) => (
+            <VerticalAdminAppBarContent
+              hidden={hidden}
+              settings={settings}
+              saveSettings={saveSettings}
+              toggleNavVisibility={props.toggleNavVisibility}
+            />
+          )}
+        >
+          {children}
+          {/* <UpgradeToProButton /> */}
+        </AdminLayout>
+      ):(
         <BlankLayout
           hidden={hidden}
           settings={settings}
@@ -83,7 +104,7 @@ const UserLayout = ({ children }) => {
           verticalAppBarContent={(
             props // AppBar Content
           ) => (
-            <VerticalAppBarContent
+            <VerticalLandingBarContent
               hidden={hidden}
               settings={settings}
               saveSettings={saveSettings}
@@ -94,7 +115,7 @@ const UserLayout = ({ children }) => {
           {children}
           {/* <UpgradeToProButton /> */}
         </BlankLayout>
-      )}
+      )  }
     </>
   )
 }
