@@ -266,7 +266,7 @@ const LoginPage = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Link
                 passHref
-                href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/NextTeam/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
+                href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
               >
                 <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7, backgroundColor: 'red' }}>
                   <Google sx={{ marginRight: '10px' }}></Google> ĐĂNG NHẬP BẰNG GOOGLE
