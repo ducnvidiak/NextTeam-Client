@@ -152,7 +152,7 @@ export const landingLayoutVavigation = () => {
     {
       title: 'Sự kiện',
       icon: HomeOutline,
-      path: '/activities'
+      path: '/events'
     },
     {
       title: 'Câu lạc bộ',

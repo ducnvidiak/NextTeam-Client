@@ -132,7 +132,7 @@ const LoginPage = () => {
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
-          <a href={'/'} style={{ textDecoration: 'none' }}>
+          <Link passHref href={'/'} style={{ textDecoration: 'none' }}>
             <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg
                 width={35}
@@ -207,7 +207,7 @@ const LoginPage = () => {
                 {themeConfig.templateName}
               </Typography>
             </Box>
-          </a>
+          </Link>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
               {themeConfig.templateName} chào bạn 👋🏻
