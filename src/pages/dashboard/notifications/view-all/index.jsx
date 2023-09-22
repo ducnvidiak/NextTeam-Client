@@ -69,7 +69,7 @@ const TableStickyHeader = () => {
   const handleSearch = () => {
     // Thực hiện tìm kiếm hoặc gọi hàm bạn muốn khi người dùng nhấn Enter
     fetch(
-      `http://localhost:8080/public-notification-list-search?search=${search}&clubId=${cookies['clubData'].clubId}`,
+      `http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}`,
       {
         method: 'GET',
         headers: {
@@ -88,7 +88,7 @@ const TableStickyHeader = () => {
   }
 
   useEffect(() => {
-    fetch('http://localhost:8080/all-public-notification-list?clubId=' + cookies['clubData'].clubId, {
+    fetch('http://localhost:8080/notification?action=list-noti&clubId=' + cookies['clubData'].clubId, {
       method: 'GET',
       headers: {
         'Content-type': 'application/json; charset=UTF-8'

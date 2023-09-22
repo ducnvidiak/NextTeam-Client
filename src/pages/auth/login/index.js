@@ -58,7 +58,7 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 
 const LoginPage = () => {
   // ** State
-  const [cookies, setCookie] = useCookies(['userData'])
+  const [cookies, setCookie, removeCookie] = useCookies(['userData'])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [save, setSave] = useState('')

@@ -27,6 +27,13 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+import InputLabel from '@mui/material/InputLabel'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
+
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 // ** Icons Imports
 import CogOutline from 'mdi-material-ui/CogOutline'
@@ -61,13 +68,29 @@ const ClubModal = styled('Modal')(({ theme }) => ({
   borderRadius: 8
 }))
 
-const options = ['Create a merge commit', 'Squash and merge', 'Rebase and merge']
-
 const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
   const [open, setOpen] = useState(false)
-  const [cookies, setCookie] = useCookies(['userData'])
+  const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+  const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
+  const [clubOfMeData, setClubOfMeData] = useState([])
+
+  useEffect(() => {
+    fetch(`http://localhost:8080/club-user?action=view-my-list&userId=${cookies['userData']?.id}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+      .then(function (response) {
+        return response.json()
+      })
+      .then(function (data) {
+        setClubOfMeData(data)
+      })
+      .catch(error => console.error('Error:', error))
+  }, [])
 
   // ** Hooks
   const router = useRouter()
@@ -84,8 +107,20 @@ const UserDropdown = () => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('userData')
+    removeCookie('userData')
     router.push('/auth/login')
+  }
+
+  const handleChange = event => {
+    var clubData = {
+      clubId: event.target.value
+    }
+    setSelectedValue(event.target.value)
+
+    setclubData('clubData', JSON.stringify(clubData), { path: '/' })
+    toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
+
+    router.push('/dashboard')
   }
 
   const styles = {
@@ -102,13 +137,8 @@ const UserDropdown = () => {
     }
   }
 
-  const [openButton, setOpenButton] = useState(false)
   const anchorRef = useRef(null)
-  const [selectedIndex, setSelectedIndex] = useState(1)
-
-  const handleClick = () => {
-    console.info(`You clicked ${options[selectedIndex]}`)
-  }
+  const [selectedValue, setSelectedValue] = useState('')
 
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index)
@@ -140,55 +170,24 @@ const UserDropdown = () => {
             Truy cập vào câu lạc bộ
           </Typography>
           <Stack direction={'row'} justifyContent={'center'}>
-            <ButtonGroup variant='contained' ref={anchorRef} aria-label='split button'>
-              <Button onClick={handleClick}>{options[selectedIndex]}</Button>
-              <Button
-                size='small'
-                aria-controls={openButton ? 'split-button-menu' : undefined}
-                aria-expanded={openButton ? 'true' : undefined}
-                aria-label='select merge strategy'
-                aria-haspopup='menu'
-                onClick={handleToggle}
+            <FormControl fullWidth>
+              <InputLabel htmlFor='gender-select'>Câu lạc bộ</InputLabel>
+              <Select
+                label='Câu lạc bộ'
+                id='club-select'
+                name='club'
+                onChange={e => handleChange(e)}
+                value={selectedValue}
               >
-                <ArrowDropDownIcon />
-              </Button>
-            </ButtonGroup>
-            <Popper
-              sx={{
-                zIndex: 1
-              }}
-              open={openButton}
-              anchorEl={anchorRef.current}
-              role={undefined}
-              transition
-              disablePortal
-            >
-              {({ TransitionProps, placement }) => (
-                <Grow
-                  {...TransitionProps}
-                  style={{
-                    transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'
-                  }}
-                >
-                  <Paper>
-                    <ClickAwayListener onClickAway={handleClose}>
-                      <MenuList id='split-button-menu' autoFocusItem>
-                        {options.map((option, index) => (
-                          <MenuItem
-                            key={option}
-                            disabled={index === 2}
-                            selected={index === selectedIndex}
-                            onClick={event => handleMenuItemClick(event, index)}
-                          >
-                            {option}
-                          </MenuItem>
-                        ))}
-                      </MenuList>
-                    </ClickAwayListener>
-                  </Paper>
-                </Grow>
-              )}
-            </Popper>
+                <MenuItem>Lựa chọn</MenuItem>
+
+                {clubOfMeData.map(option => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.subname} - {option.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Stack>
         </ClubModal>
       </Modal>
@@ -206,6 +205,7 @@ const UserDropdown = () => {
           src={cookies['userData']?.avatarURL}
         />
       </Badge>
+      <ToastContainer></ToastContainer>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

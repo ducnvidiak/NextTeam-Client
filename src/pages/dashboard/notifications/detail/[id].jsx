@@ -32,10 +32,11 @@ const Notifications = () => {
     // Return true if content is safe, false otherwise
     return !/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/i.test(content)
   }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/public-notification-detail?id=' + router.query.id, {
+        const response = await fetch('http://localhost:8080/notification?action=view-detail&id=' + router.query.id, {
           method: 'GET'
         })
 
@@ -51,7 +52,14 @@ const Notifications = () => {
   return (
     <Grid item xs={12} style={{ height: '100%' }}>
       <Card style={{ height: '100%' }}>
-        <CardHeader title={notificationsData.title} titleTypographyProps={{ variant: 'h6', sx: { fontWeight: 900 } }} />
+        <Grid container spacing={0}>
+          <CardHeader
+            title={notificationsData.title}
+            titleTypographyProps={{ variant: 'h3' }}
+            style={{ fontWeight: 'bold' }}
+          />
+        </Grid>
+
         <CardContent>
           {true ? <div dangerouslySetInnerHTML={{ __html: notificationsData.content }} /> : <p>Unsafe content</p>}
         </CardContent>

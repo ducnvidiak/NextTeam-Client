@@ -35,7 +35,7 @@ const Notifications = () => {
     router.push('/dashboard/notifications/view-all')
   }
   useEffect(() => {
-    fetch(`http://localhost:8080/public-notification-list-10?clubId=${cookies['clubData']?.clubId}`, {
+    fetch(`http://localhost:8080/notification?action=list-10-noti&clubId=${cookies['clubData']?.clubId}`, {
       method: 'GET',
       headers: {
         'Content-type': 'application/json; charset=UTF-8'

@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState, useEffect } from 'react'
+import { useCookies } from 'react-cookie'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -30,17 +31,7 @@ const LandingAppContent = props => {
 
   // ** Hook
   const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
-  const [userData, setUserData] = useState(null)
-
-  useEffect(() => {
-    // Lấy dữ liệu từ localStorage khi component được tạo
-    const userDataFromLocalStorage = localStorage.getItem('userData')
-
-    if (userDataFromLocalStorage) {
-      // Nếu userData tồn tại trong localStorage, cập nhật state
-      setUserData(userDataFromLocalStorage)
-    }
-  }, [])
+  const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 
   return (
     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -66,12 +57,9 @@ const LandingAppContent = props => {
         <Link href='/clubs' underline='hover' passHref>
           <Button>Câu lạc bộ</Button>
         </Link>
-        <Link href='/dashboard' underline='hover' passHref>
-          <Button>(TEST) Dashboard</Button>
-        </Link>
       </Stack>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        {userData ? (
+        {cookies['userData'] ? (
           <div>
             <ModeToggler settings={settings} saveSettings={saveSettings} />
             <NotificationDropdown />
