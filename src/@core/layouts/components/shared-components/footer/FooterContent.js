@@ -22,16 +22,19 @@ const FooterContent = () => {
             target='_blank'
             href='https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/blob/main/LICENSE'
           >
-            MIT License
-          </Link>
-          <Link target='_blank' href='https://themeselection.com/'>
-            More Themes
+            Source code free Github
           </Link>
           <Link
             target='_blank'
-            href='https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/blob/main/README.md'
+            href='https://demos.themeselection.com/materio-mui-react-nextjs-admin-template/demo-1/dashboards/analytics/'
           >
-            Documentation
+            Demo Template Pro
+          </Link>
+          <Link
+            target='_blank'
+            href='https://demos.themeselection.com/materio-mui-react-nextjs-admin-template-free/'
+          >
+            Demo Template Free
           </Link>
           <Link
             target='_blank'
