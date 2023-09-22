@@ -30,7 +30,8 @@ const HeaderTitle = styled(Typography)(({ theme }) => ({
 const StyledLink = styled('a')({
   display: 'flex',
   alignItems: 'center',
-  textDecoration: 'none'
+  textDecoration: 'none',
+  cursor: 'pointer'
 })
 
 const VerticalNavHeader = props => {

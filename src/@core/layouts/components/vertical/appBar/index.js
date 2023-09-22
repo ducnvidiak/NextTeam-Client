@@ -4,7 +4,6 @@ import MuiAppBar from '@mui/material/AppBar'
 import MuiToolbar from '@mui/material/Toolbar'
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
-  backgroundColor: "#fff ",
   position: "fixed",
   zIndex: 5,
   top: 0,
@@ -44,7 +43,7 @@ const LayoutAppBar = props => {
   const { contentWidth } = settings
 
   return (
-    <AppBar elevation={0} color='default' className='layout-navbar' position='static'>
+    <AppBar elevation={0} color='default' className='layout-navbar' position='fixed'>
       <Toolbar
         className='navbar-content-container'
         sx={{

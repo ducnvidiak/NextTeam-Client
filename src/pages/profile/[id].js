@@ -1,5 +1,6 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -22,6 +23,7 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
+import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 
 const Tab = styled(MuiTab)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -45,9 +47,30 @@ const AccountSettings = () => {
   // ** State
   const [value, setValue] = useState('account')
 
+  const [userInfo, setUserInfo] = useState(null)
+  const [userInfoCopy, setUserInfoCopy] = useState(null)
+
+  const router = useRouter()
+
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/NextTeam/api/user?id=' + router.query.id, { method: 'GET' })
+
+        const jsonData = await response.json()
+        setUserInfo({ ...jsonData })
+        setUserInfoCopy({ ...jsonData })
+        console.log('data: ', jsonData)
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+    }
+    fetchData()
+  }, [router.query.id])
 
   return (
     <Card>
@@ -87,13 +110,23 @@ const AccountSettings = () => {
         </TabList>
 
         <TabPanel sx={{ p: 0 }} value='account'>
-          <TabAccount />
+          <TabAccount
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+            userInfoCopy={userInfoCopy}
+            setUserInfoCopy={setUserInfoCopy}
+          />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='security'>
-          <TabSecurity />
+          <TabSecurity userInfo={userInfo} userInfoCopy={userInfoCopy} setUserInfoCopy={setUserInfoCopy} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='info'>
-          <TabInfo />
+          <TabInfo
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+            userInfoCopy={userInfoCopy}
+            setUserInfoCopy={setUserInfoCopy}
+          />
         </TabPanel>
       </TabContext>
     </Card>

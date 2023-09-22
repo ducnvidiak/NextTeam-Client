@@ -19,16 +19,10 @@ import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
-import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
-import Github from 'mdi-material-ui/Github'
-import Twitter from 'mdi-material-ui/Twitter'
-import Facebook from 'mdi-material-ui/Facebook'
-import EyeOutline from 'mdi-material-ui/EyeOutline'
-import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
@@ -38,6 +32,10 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -59,10 +57,60 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 
 const LoginPage = () => {
   // ** State
-  const [values, setValues] = useState({
-    password: '',
-    showPassword: false
-  })
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [save, setSave] = useState('')
+  const [emailError, setEmailError] = useState(false)
+  const [passwordError, setPasswordError] = useState(false)
+
+  const handleSubmit = event => {
+    event.preventDefault() // 👈️ prevent page refresh
+    setEmailError(false)
+    setPasswordError(false)
+
+    if (email == '') {
+      setEmailError(true)
+      toast.error('Không được để trống email')
+    }
+    if (password == '') {
+      setPasswordError(true)
+      toast.error('Không được để trống mật khẩu')
+    }
+
+    if (email && password) {
+      fetch('http://localhost:8080/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email,
+          password: password
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8'
+        }
+      })
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (data) {
+          if (data.id == null) {
+            console.log(data)
+            toast.error(data)
+          } else {
+            if (save) {
+            }
+            if (!save) {
+            }
+            window.localStorage.setItem('userData', JSON.stringify(data))
+            console.log('Đăng nhập thành công')
+            toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
+            setTimeout(() => {
+              router.push('/dashboard')
+            }, 1000)
+          }
+        })
+        .catch(error => console.error('Error:', error))
+    }
+  }
 
   // ** Hook
   const theme = useTheme()
@@ -72,9 +120,9 @@ const LoginPage = () => {
     setValues({ ...values, [prop]: event.target.value })
   }
 
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
-  }
+  // const handleClickShowPassword = () => {
+  //   setPassword({ value: password, showPassword: !password.showPassword })
+  // }
 
   const handleMouseDownPassword = event => {
     event.preventDefault()
@@ -84,7 +132,7 @@ const LoginPage = () => {
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
-          <a href={'/'} style={{ textDecoration: 'none' }}>
+          <Link passHref href={'/'} style={{ textDecoration: 'none' }}>
             <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg
                 width={35}
@@ -145,6 +193,7 @@ const LoginPage = () => {
                   </g>
                 </g>
               </svg>
+              <ToastContainer></ToastContainer>
               <Typography
                 variant='h6'
                 sx={{
@@ -158,92 +207,76 @@ const LoginPage = () => {
                 {themeConfig.templateName}
               </Typography>
             </Box>
-          </a>
+          </Link>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-              Welcome to {themeConfig.templateName}! 👋🏻
+              {themeConfig.templateName} chào bạn 👋🏻
             </Typography>
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>Chúc bạn một ngày tốt lành!</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
+          <form noValidate autoComplete='off' method='POST'>
+            <TextField
+              autoFocus
+              fullWidth
+              id='email'
+              label='Email'
+              name='email'
+              onChange={event => setEmail(event.target.value)}
+              value={email}
+              error={emailError}
+              sx={{ marginBottom: 4 }}
+            />
             <FormControl fullWidth>
-              <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
+              <InputLabel htmlFor='auth-password'>Mật khẩu</InputLabel>
               <OutlinedInput
+                sx={{ marginBottom: 4 }}
                 label='Password'
-                value={values.password}
-                id='auth-login-password'
-                onChange={handleChange('password')}
-                type={values.showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      aria-label='toggle password visibility'
-                    >
-                      {values.showPassword ? <EyeOutline /> : <EyeOffOutline />}
-                    </IconButton>
-                  </InputAdornment>
-                }
+                name='password'
+                id='auth-password'
+                onChange={e => setPassword(e.target.value)}
+                error={passwordError}
+                type={password.showPassword ? 'text' : 'password'}
               />
             </FormControl>
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              <FormControlLabel control={<Checkbox />} label='Remember Me' />
+              <FormControlLabel
+                control={<Checkbox onChange={event => setSave(event.target.value)} />}
+                label='Lưu mật khẩu'
+              />
               <Link passHref href='/'>
-                <LinkStyled onClick={e => e.preventDefault()}>Forgot Password?</LinkStyled>
+                <LinkStyled onClick={e => e.preventDefault()}>Quên mật khẩu?</LinkStyled>
               </Link>
             </Box>
-            <Button
-              fullWidth
-              size='large'
-              variant='contained'
-              sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
-            >
-              Login
+            <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} onClick={e => handleSubmit(e)}>
+              ĐĂNG NHẬP
             </Button>
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
-                New on our platform?
+                Bạn chưa có tài khoản?
               </Typography>
               <Typography variant='body2'>
                 <Link passHref href='/auth/register'>
-                  <LinkStyled>Create an account</LinkStyled>
+                  <LinkStyled>Tạo tài khoản</LinkStyled>
                 </Link>
               </Typography>
             </Box>
-            <Divider sx={{ my: 5 }}>or</Divider>
+            <Divider sx={{ my: 5 }}>hoặc đăng nhập bằng</Divider>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Facebook sx={{ color: '#497ce2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Twitter sx={{ color: '#1da1f2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Github
-                    sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
-                  />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Google sx={{ color: '#db4437' }} />
-                </IconButton>
+              <Link
+                passHref
+                href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
+              >
+                <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7, backgroundColor: 'red' }}>
+                  <Google sx={{ marginRight: '10px' }}></Google> ĐĂNG NHẬP BẰNG GOOGLE
+                </Button>
               </Link>
             </Box>
           </form>
         </CardContent>
       </Card>
+
       <FooterIllustrationsV1 />
     </Box>
   )

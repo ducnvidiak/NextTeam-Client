@@ -20,13 +20,13 @@ import { Button, FormControl, FormLabel, Input, Card, CardMedia } from '@mui/mat
 import { CloudUpload } from '@mui/icons-material'
 
 const columns = [
-  { id: 'id', label: 'ID', minWidth: 100 },
-  { id: 'name', label: 'Tên', minWidth: 100 },
+  { id: 'id', label: 'ID', minWidth: 50, align: 'center' },
+  { id: 'name', label: 'Tên', minWidth: 100, align: 'center' },
   {
     id: 'avatarUrl',
     label: 'Ảnh',
-    minWidth: 50,
-    align: 'left'
+    minWidth: 80,
+    align: 'center'
   },
   {
     id: 'description',
@@ -38,7 +38,7 @@ const columns = [
   {
     id: 'movementPoint',
     label: 'Điểm Hoạt Động',
-    minWidth: 100,
+    minWidth: 150,
     align: 'left'
   },
   {
@@ -50,7 +50,7 @@ const columns = [
   {
     id: 'updateAt',
     label: 'Ngày cập nhật',
-    minWidth: 100,
+    minWidth: 150,
     align: 'left'
   },
   {
@@ -107,7 +107,7 @@ const TableStickyHeader = props => {
           <TableHead>
             <TableRow>
               {columns.map(column => (
-                <TableCell key={column.id} align={column.align} sx={{ minWidth: column.minWidth }}>
+                <TableCell key={column.id} align={column.align} sx={{ width: column.minWidth }}>
                   {column.label}
                 </TableCell>
               ))}
@@ -133,13 +133,12 @@ const TableStickyHeader = props => {
                     } else {
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          <Stack direction='row' spacing={2} sx={{width:'300px'}}>
+                          <Stack direction='row' spacing={2} sx={{ width: '300px' }}>
                             <Button
                               variant='contained'
                               color='warning'
                               endIcon={<ModeEditIcon />}
                               onClick={() => props.openEditClubHandle(row)}
-                              
                             >
                               Cập Nhật
                             </Button>

@@ -28,6 +28,7 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom'
 import FilePresentIcon from '@mui/icons-material/FilePresent'
 import SummarizeIcon from '@mui/icons-material/Summarize'
+import { Account } from 'mdi-material-ui'
 
 export const dashboardLayoutVavigation = () => {
   return [
@@ -159,7 +160,7 @@ export const landingLayoutVavigation = () => {
     {
       title: 'Sự kiện',
       icon: HomeOutline,
-      path: '/activities'
+      path: '/events'
     },
     {
       title: 'Câu lạc bộ',
@@ -177,6 +178,11 @@ export const landingLayoutVavigation = () => {
       icon: Login,
       path: '/auth/register',
       openInNewTab: true
+    },
+    {
+      title: 'Thông tin người dùng',
+      icon: Account,
+      path: '/profile/[id]'
     }
   ]
 }

@@ -13,12 +13,15 @@ import Magnify from 'mdi-material-ui/Magnify'
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
-import { Button, Grid, Link, Stack, Typography } from '@mui/material'
+import { Button, Grid, Stack, Typography, styled } from '@mui/material'
+import Link from 'next/link'
 import VerticalNavHeader from 'src/@core/layouts/components/vertical/navigation/VerticalNavHeader'
 
-const pages = ['Products', 'Pricing', 'Blog']
+const LinkStyled = styled('Typography')(({ theme }) => ({
+  color: '#27123'
+}))
 
-const AppBarContent = props => {
+const LandingAppContent = props => {
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
 
@@ -40,17 +43,17 @@ const AppBarContent = props => {
         <VerticalNavHeader></VerticalNavHeader>
       </Box>
       <Stack direction='row' gap={12}>
-        <Link href='/' underline='hover'>
-          Giới thiệu
+        <Link href='/' underline='hover' passHref>
+          <Button>Giới thiệu</Button>
         </Link>
-        <Link href='/events' underline='hover'>
-          Sự kiện
+        <Link href='/events' underline='hover' passHref>
+          <Button>Sự kiện</Button>
         </Link>
-        <Link href='/clubs' underline='hover'>
-          Câu lạc bộ
+        <Link href='/clubs' underline='hover' passHref>
+          <Button>Câu lạc bộ</Button>
         </Link>
-        <Link href='/dashboard' underline='hover'>
-          (TEST) Dashboard
+        <Link href='/dashboard' underline='hover' passHref>
+          <Button>(TEST) Dashboard</Button>
         </Link>
       </Stack>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
@@ -58,20 +61,20 @@ const AppBarContent = props => {
         {/* <NotificationDropdown />
         <UserDropdown /> */}
         <Grid item xs={12}>
-          <a href='/auth/login'>
+          <Link passHref href='/auth/login'>
             <Button variant='contained' sx={{ marginRight: 3.5 }}>
               Đăng nhập
             </Button>
-          </a>
-          <a href='/auth/register'>
-            <Button type='reset' variant='outlined' color='secondary'>
+          </Link>
+          <Link passHref href='/auth/register'>
+            <Button  variant='outlined' >
               Đăng ký
             </Button>
-          </a>
+          </Link>
         </Grid>
       </Box>
     </Box>
   )
 }
 
-export default AppBarContent
+export default LandingAppContent

@@ -16,7 +16,7 @@ const categories = [
   },
   {
     icon: <StadiumIcon fontSize='large'></StadiumIcon>,
-    category: 'Tài năng'
+    category: 'Năng khiếu'
   },
   {
     icon: <Diversity2Icon fontSize='large'></Diversity2Icon>,
@@ -27,22 +27,19 @@ const categories = [
 function Categories() {
   return (
     <>
-      <section className={styles["category"]}>
-        <div className="container">
-          <h3>MUÔN VÀN CÂU LẠC BỘ</h3>
+      <section className={styles['category']}>
+        <div className='container'>
+          <h3>ĐA DẠNG CÁC CÂU LẠC BỘ</h3>
           <ul>
             {categories.map((item, index) => (
               <li key={index}>
-                {
-                  item.icon
-                }
+                {item.icon}
                 <p>{item.category}</p>
               </li>
             ))}
           </ul>
         </div>
       </section>
-      
     </>
   )
 }

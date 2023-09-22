@@ -11,13 +11,9 @@ const FooterContent = () => {
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
       <Typography sx={{ mr: 2 }}>
-        {`© ${new Date().getFullYear()}, Made with `}
-        <Box component='span' sx={{ color: 'error.main' }}>
-          ❤️
-        </Box>
-        {` by `}
-        <Link target='_blank' href='https://themeselection.com/'>
-          ThemeSelection
+        {`© ${new Date().getFullYear()}, Được vận hành bởi `}
+        <Link target='_blank' href='mailto:nextteam.fpt@gmail.com'>
+          NextTeam
         </Link>
       </Typography>
       {hidden ? null : (
@@ -26,16 +22,19 @@ const FooterContent = () => {
             target='_blank'
             href='https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/blob/main/LICENSE'
           >
-            MIT License
-          </Link>
-          <Link target='_blank' href='https://themeselection.com/'>
-            More Themes
+            Source code free Github
           </Link>
           <Link
             target='_blank'
-            href='https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/blob/main/README.md'
+            href='https://demos.themeselection.com/materio-mui-react-nextjs-admin-template/demo-1/dashboards/analytics/'
           >
-            Documentation
+            Demo Template Pro
+          </Link>
+          <Link
+            target='_blank'
+            href='https://demos.themeselection.com/materio-mui-react-nextjs-admin-template-free/'
+          >
+            Demo Template Free
           </Link>
           <Link
             target='_blank'

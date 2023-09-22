@@ -35,6 +35,7 @@ const MainContentWrapper = styled(Box)({
 })
 
 const ContentWrapper = styled('main')(({ theme }) => ({
+  marginTop: 64,
   flexGrow: 1,
   width: '100%',
   padding: theme.spacing(6),
