@@ -52,6 +52,11 @@ const UserDropdown = () => {
     setAnchorEl(null)
   }
 
+  const handleLogout = event => {
+    localStorage.removeItem('userData')
+    router.push('/')
+  }
+
   const styles = {
     py: 2,
     px: 4,
@@ -138,11 +143,9 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
+          <Box sx={styles} onClick={() => handleLogout()}>
             <LogoutVariant sx={{ marginRight: 2 }} />
-            <Link href='/user/logout' underline='none'>
-              Đăng xuất
-            </Link>
+            <Link underline='none'>Đăng xuất</Link>
           </Box>
         </MenuItem>
         {/* <Divider />

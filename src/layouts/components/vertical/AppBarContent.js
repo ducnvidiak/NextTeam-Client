@@ -41,24 +41,24 @@ const AppBarContent = props => {
       </Box>
       <Stack direction='row' gap={12}>
         <Link href='/' underline='hover'>
-          Giới thiệu
+          <b>Giới thiệu</b>
         </Link>
         <Link href='/events' underline='hover'>
-          Sự kiện
+          <b>Sự kiện</b>
         </Link>
         <Link href='/clubs' underline='hover'>
-          Câu lạc bộ
+          <b>Câu lạc bộ</b>
         </Link>
         <Link href='/dashboard' underline='hover'>
-          (TEST) Dashboard
+          <b>Dashboard</b>
         </Link>
       </Stack>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        <ModeToggler settings={settings} saveSettings={saveSettings} />
+        {/* <ModeToggler settings={settings} saveSettings={saveSettings} />
         <NotificationDropdown />
-        <UserDropdown />
+        <UserDropdown /> */}
 
-        {/* <Grid item xs={12}>
+        <Grid item xs={12}>
           <Link href='/auth/login'>
             <Button variant='contained' sx={{ marginRight: 3.5 }}>
               Đăng nhập
@@ -72,7 +72,7 @@ const AppBarContent = props => {
           <Link href='/user/info'>
             <Button>My Account</Button>
           </Link>
-        </Grid> */}
+        </Grid>
       </Box>
     </Box>
   )
