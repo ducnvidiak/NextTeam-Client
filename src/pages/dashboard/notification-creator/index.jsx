@@ -1,14 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
-
-import { $getRoot, $getSelection } from 'lexical'
-
-import { LexicalComposer } from '@lexical/react/LexicalComposer'
-import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin'
-import { ContentEditable } from '@lexical/react/LexicalContentEditable'
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { CKEditor } from '@ckeditor/ckeditor5-react'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
@@ -19,6 +12,10 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import InputLabel from '@mui/material/InputLabel'
+import FormControl from '@mui/material/FormControl'
 
 const DemoGrid = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
@@ -48,7 +45,15 @@ function NotificationCreator() {
                   value={title}
                 />
               </Grid>
-              <Grid item xs={12} sm={12}></Grid>
+              <Grid item xs={12} sm={12}>
+                <CKEditor
+                  editor={ClassicEditor}
+                  onChange={(event, editor) => {
+                    const data = editor.getData()
+                    setContent(data)
+                  }}
+                />
+              </Grid>
             </Grid>
             <Button variant='contained' sx={{ marginBottom: 7, marginTop: 6 }} onClick={e => handleSubmit(e)}>
               Gửi thông báo
