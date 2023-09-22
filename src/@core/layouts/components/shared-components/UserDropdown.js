@@ -130,7 +130,7 @@ const UserDropdown = () => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <AccountOutline sx={{ marginRight: 2 }} />
-            <Link href='/profile/1' underline='none' passHref>
+            <Link href='/user/1' underline='none' passHref>
               <Button>Hồ sơ cá nhân</Button>
             </Link>
           </Box>
@@ -139,7 +139,7 @@ const UserDropdown = () => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <LockIcon sx={{ marginRight: 2 }} />
-            <Link href='/user/password' underline='none' passHref>
+            <Link href='/user/password/1' underline='none' passHref>
               <Button>Đổi mật khẩu</Button>
             </Link>
           </Box>
@@ -147,9 +147,14 @@ const UserDropdown = () => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles} onClick={() => handleLogout()}>
             <LogoutVariant sx={{ marginRight: 2 }} />
-            <Link href='/user/logout' underline='none' passHref>
+            <a
+              onClick={() => {
+                router.push('/')
+              }}
+              underline='none'
+            >
               <Button>Đăng xuất</Button>
-            </Link>
+            </a>
           </Box>
         </MenuItem>
         {/* <Divider />

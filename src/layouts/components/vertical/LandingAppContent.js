@@ -52,17 +52,17 @@ const LandingAppContent = props => {
           <Link href='/clubs' underline='hover' passHref>
             <Button className={styles.navlink__btn}>Câu lạc bộ</Button>
           </Link>
-          {/* <Link href='/dashboard' underline='hover' passHref>
-          <Button className={styles.navlink__btn}>(TEST) Dashboard</Button>
-        </Link> */}
+          <Link href='/dashboard' underline='hover' passHref>
+            <Button className={styles.navlink__btn}>(TEST) Dashboard</Button>
+          </Link>
         </Stack>
       )}
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <ModeToggler settings={settings} saveSettings={saveSettings} />
+        <ModeToggler settings={settings} saveSettings={saveSettings} />
         <NotificationDropdown />
-        <UserDropdown /> */}
+        <UserDropdown />
 
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <Link passHref href='/auth/login'>
             <Button className={styles.nav__btn} variant='contained' sx={{ marginRight: 3.5 }}>
               Đăng nhập
@@ -73,7 +73,7 @@ const LandingAppContent = props => {
               Đăng ký
             </Button>
           </Link>
-        </Grid>
+        </Grid> */}
       </Box>
     </Box>
   )

@@ -90,4 +90,21 @@ const changeUserPass = async (authInfo, id) => {
   return json
 }
 
-module.exports = { updateUserAvatar, updateUserInfo, getUserInfo, changeUserPass }
+const getAllMajors = async () => {
+  const json = await axios
+    .get('http://localhost:8080/api/allMajors')
+    .then(response => {
+      console.log(response.data)
+
+      return response.data
+    })
+    .catch(error => {
+      console.log('Error: ', error)
+
+      return null
+    })
+
+  return json
+}
+
+module.exports = { updateUserAvatar, updateUserInfo, getUserInfo, changeUserPass, getAllMajors }

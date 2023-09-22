@@ -26,7 +26,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'nprogress'
 
 import { ToastContainer, toast } from 'react-toastify'
-import { getUserInfo } from './apiUtils'
+import { getUserInfo, getAllMajors } from './apiUtils'
 
 // import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 const axios = require('axios')
@@ -53,11 +53,18 @@ const AccountSettings = () => {
   // ** State
   const [value, setValue] = useState('account')
   const [userInfo, setUserInfo] = useState(null)
+  const [majors, setMajors] = useState(null)
+
   const router = useRouter()
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
+  useEffect(() => {
+    getAllMajors().then(response => {
+      setMajors(response)
+    })
+  }, [])
 
   useEffect(() => {
     if (router.query.id)
@@ -67,8 +74,7 @@ const AccountSettings = () => {
   }, [router.query.id])
 
   return (
-    <Card>
-      <ToastContainer></ToastContainer>
+    <Card sx={{ marginTop: 10 }}>
       <TabContext value={value}>
         <TabList
           onChange={handleChange}
@@ -111,7 +117,7 @@ const AccountSettings = () => {
           <TabSecurity userInfo={userInfo} setUserInfo={setUserInfo} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='info'>
-          <TabInfo userInfo={userInfo} setUserInfo={setUserInfo} />
+          <TabInfo userInfo={userInfo} setUserInfo={setUserInfo} majors={majors} />
         </TabPanel>
       </TabContext>
     </Card>

@@ -24,14 +24,14 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import axios from 'axios'
 import { Autocomplete, Box } from '@mui/material'
 import { Country, State, City } from 'country-state-city'
-import { updateUserInfo } from '../../pages/profile/apiUtils'
+import { updateUserInfo } from '../../pages/user/apiUtils'
 import { Cookie } from 'mdi-material-ui'
 
 const CustomInput = forwardRef((props, ref) => {
   return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
 })
 
-const TabInfo = ({ userInfo, setUserInfo }) => {
+const TabInfo = ({ userInfo, setUserInfo, majors }) => {
   // ** State
 
   const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
@@ -88,7 +88,9 @@ const TabInfo = ({ userInfo, setUserInfo }) => {
               label='Bio'
               minRows={2}
               placeholder='Bio'
-              defaultValue='The name’s John Deo. I am a tireless seeker of knowledge, occasional purveyor of wisdom and also, coincidentally, a graphic designer. Algolia helps businesses across industries quickly create relevant 😎, scalable 😀, and lightning 😍 fast search and discovery experiences.'
+              value={`The name’s ${
+                currentUserInfo.lastname || 'John'
+              }. I am a tireless seeker of knowledge, occasional purveyor of wisdom and also, coincidentally, a graphic designer. Algolia helps businesses across industries quickly create relevant 😎, scalable 😀, and lightning 😍 fast search and discovery experiences.`}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -105,7 +107,7 @@ const TabInfo = ({ userInfo, setUserInfo }) => {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               type='text'
@@ -118,6 +120,30 @@ const TabInfo = ({ userInfo, setUserInfo }) => {
                 })
               }}
             />
+          </Grid> */}
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel id='major-label'>Major</InputLabel>
+              <Select
+                labelId='major-label'
+                id='major'
+                value={currentUserInfo?.major || ''}
+                label='Major'
+                onChange={event => {
+                  setCurrentUserInfo(current => {
+                    return { ...current, major: event?.target.value }
+                  })
+                }}
+              >
+                {majors != ''
+                  ? majors.map(major => (
+                      <MenuItem key={major.id} value={major.id}>
+                        {major.name}
+                      </MenuItem>
+                    ))
+                  : ''}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -228,7 +254,6 @@ const TabInfo = ({ userInfo, setUserInfo }) => {
               fullWidth
               label='Facebook Url'
               placeholder='https://www.facebook.com/profile.php?id=[user_id]'
-              defaultValue='https://www.facebook.com/profile.php?id=100054151497842'
               value={currentUserInfo?.facebookUrl || ''}
               onChange={event => {
                 setCurrentUserInfo(current => {
@@ -243,7 +268,6 @@ const TabInfo = ({ userInfo, setUserInfo }) => {
               fullWidth
               label='LinkedIn Url'
               placeholder='https://www.linkedin.com/in/[user_id]/'
-              defaultValue='https://www.linkedin.com/in/'
               value={currentUserInfo.linkedInUrl || ''}
               onChange={event => {
                 setCurrentUserInfo(current => {
@@ -266,8 +290,7 @@ const TabInfo = ({ userInfo, setUserInfo }) => {
                   })
                 }}
                 row
-                defaultValue='Male'
-                value={currentUserInfo.gender}
+                value={currentUserInfo.gender || 'Male'}
                 aria-label='gender'
                 name='account-settings-info-radio'
               >

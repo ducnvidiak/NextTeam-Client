@@ -23,7 +23,7 @@ const axios = require('axios')
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
 
-import { updateUserAvatar, updateUserInfo } from '../../pages/profile/apiUtils'
+import { updateUserAvatar, updateUserInfo } from '../../pages/user/apiUtils'
 import { ConsoleLine } from 'mdi-material-ui'
 
 const ImgStyled = styled('img')(({ theme }) => ({
@@ -136,8 +136,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
               fullWidth
               label='Username'
               placeholder='johnDoe'
-              defaultValue='johnDoe'
-              value={currentUserInfo?.username}
+              value={currentUserInfo?.username || ''}
               onChange={event => {
                 setCurrentUserInfo(current => {
                   return { ...current, username: event.target.value }
@@ -151,8 +150,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
               type='email'
               label='Email'
               placeholder='johnDoe@example.com'
-              defaultValue='johnDoe@example.com'
-              value={currentUserInfo?.email}
+              value={currentUserInfo?.email || ''}
               onChange={event => {
                 setCurrentUserInfo(current => {
                   return { ...current, email: event.target.value }
@@ -165,8 +163,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
               fullWidth
               label='First name'
               placeholder='John Doe'
-              defaultValue='John Doe'
-              value={currentUserInfo?.firstname}
+              value={currentUserInfo?.firstname || ''}
               onChange={event => {
                 setCurrentUserInfo(current => {
                   return { ...current, firstname: event.target.value }
@@ -179,8 +176,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
               fullWidth
               label='Last name'
               placeholder='John Doe'
-              defaultValue='John Doe'
-              value={currentUserInfo?.lastname}
+              value={currentUserInfo?.lastname || ''}
               onChange={event => {
                 setCurrentUserInfo(current => {
                   return { ...current, lastname: event.target.value }

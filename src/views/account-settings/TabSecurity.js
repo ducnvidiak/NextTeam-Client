@@ -23,7 +23,7 @@ import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 
 const axios = require('axios')
 
-import { changeUserPass } from '../../pages/profile/apiUtils'
+import { changeUserPass } from '../../pages/user/apiUtils'
 
 const TabSecurity = ({ userInfo, setUserInfo }) => {
   // ** States
@@ -98,6 +98,7 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
                 <FormControl fullWidth>
                   <InputLabel htmlFor='account-settings-current-password'>Current Password</InputLabel>
                   <OutlinedInput
+                    autoComplete='true'
                     label='Current Password'
                     value={values.currentPassword}
                     id='account-settings-current-password'
@@ -123,6 +124,7 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
                 <FormControl fullWidth>
                   <InputLabel htmlFor='account-settings-new-password'>New Password</InputLabel>
                   <OutlinedInput
+                    autoComplete='true'
                     label='New Password'
                     value={values.newPassword}
                     id='account-settings-new-password'
@@ -148,6 +150,7 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
                 <FormControl fullWidth>
                   <InputLabel htmlFor='account-settings-confirm-new-password'>Confirm New Password</InputLabel>
                   <OutlinedInput
+                    autoComplete='true'
                     label='Confirm New Password'
                     value={values.confirmNewPassword}
                     id='account-settings-confirm-new-password'
