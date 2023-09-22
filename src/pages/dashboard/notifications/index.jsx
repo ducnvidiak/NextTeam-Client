@@ -1,6 +1,7 @@
 // ** React Imports
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useCookies } from 'react-cookie'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
@@ -22,6 +23,9 @@ import Link from '@mui/material/Link'
 const Notifications = () => {
   const router = useRouter()
   const [notificationsData, setNotificationsData] = useState([])
+  const [cookies, setCookie] = useCookies(['clubData'])
+
+  // const [clubData, setClubData] = useState()
 
   const cardStyle = {
     margin: '10px' // Thiết lập margin 10px
@@ -31,7 +35,7 @@ const Notifications = () => {
     router.push('/dashboard/notifications/view-all')
   }
   useEffect(() => {
-    fetch('http://localhost:8080/public-notification-list-10', {
+    fetch(`http://localhost:8080/public-notification-list-10?clubId=${cookies['clubData']?.clubId}`, {
       method: 'GET',
       headers: {
         'Content-type': 'application/json; charset=UTF-8'

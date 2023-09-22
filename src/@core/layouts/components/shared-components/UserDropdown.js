@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState, Fragment, useRef, useEffect } from 'react'
+import { useCookies } from 'react-cookie'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -66,6 +67,7 @@ const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
   const [open, setOpen] = useState(false)
+  const [cookies, setCookie] = useCookies(['userData'])
 
   // ** Hooks
   const router = useRouter()
@@ -124,18 +126,6 @@ const UserDropdown = () => {
 
     setOpen(false)
   }
-
-  const [userData, setUserData] = useState(null)
-
-  useEffect(() => {
-    // Lấy dữ liệu từ localStorage khi component được tạo
-    const userDataFromLocalStorage = localStorage.getItem('userData')
-
-    if (userDataFromLocalStorage) {
-      // Nếu userData tồn tại trong localStorage, cập nhật state
-      setUserData(JSON.parse(userDataFromLocalStorage))
-    }
-  }, [])
 
   return (
     <Fragment>
@@ -210,10 +200,10 @@ const UserDropdown = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Avatar
-          alt={userData?.lastname}
+          alt={cookies['userData']?.lastname}
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
-          src={userData?.avatarURL}
+          src={cookies['userData']?.avatarURL}
         />
       </Badge>
       <Menu
@@ -231,7 +221,11 @@ const UserDropdown = () => {
               badgeContent={<BadgeContentSpan />}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-              <Avatar alt={userData?.lastname} src={userData?.avatarURL} sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar
+                alt={cookies['userData']?.lastname}
+                src={cookies['userData']?.avatarURL}
+                sx={{ width: '2.5rem', height: '2.5rem' }}
+              />
             </Badge>
             <Box
               sx={{
@@ -241,7 +235,7 @@ const UserDropdown = () => {
                 flexDirection: 'column'
               }}
             >
-              <Typography sx={{ fontWeight: 600 }}>{userData?.lastname}</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{cookies['userData']?.lastname}</Typography>
               <Typography
                 variant='body2'
                 sx={{
@@ -249,7 +243,7 @@ const UserDropdown = () => {
                   color: 'text.disabled'
                 }}
               >
-                {userData?.studentCode}
+                {cookies['userData']?.studentCode}
               </Typography>
             </Box>
           </Box>
@@ -258,7 +252,7 @@ const UserDropdown = () => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <AccountOutline sx={{ marginRight: 2 }} />
-            <Link href={`/profile/${userData?.id}`} underline='none'>
+            <Link href={`/profile/${cookies['userData']?.id}`} underline='none'>
               Hồ sơ cá nhân
             </Link>
           </Box>

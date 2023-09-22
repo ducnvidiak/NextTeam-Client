@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState } from 'react'
+import { useCookies } from 'react-cookie'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -57,6 +58,7 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 
 const LoginPage = () => {
   // ** State
+  const [cookies, setCookie] = useCookies(['userData'])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [save, setSave] = useState('')
@@ -100,7 +102,7 @@ const LoginPage = () => {
             }
             if (!save) {
             }
-            window.localStorage.setItem('userData', JSON.stringify(data))
+            setCookie('userData', JSON.stringify(data), { path: '/' })
             console.log('Đăng nhập thành công')
             toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
             setTimeout(() => {

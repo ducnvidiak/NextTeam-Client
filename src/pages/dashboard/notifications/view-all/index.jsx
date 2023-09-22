@@ -1,6 +1,7 @@
 // ** React Imports
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { useCookies } from 'react-cookie'
 
 // ** MUI Imports
 import Paper from '@mui/material/Paper'
@@ -39,6 +40,7 @@ const TableStickyHeader = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [notificationsData, setNotificationsData] = useState([])
   const [search, setSearch] = useState()
+  const [cookies, setCookie] = useCookies(['clubData'])
 
   // const rows = [
   //   createData('India', 'IN', 1324171354, 3287263),
@@ -66,12 +68,15 @@ const TableStickyHeader = () => {
 
   const handleSearch = () => {
     // Thực hiện tìm kiếm hoặc gọi hàm bạn muốn khi người dùng nhấn Enter
-    fetch('http://localhost:8080/public-notification-list-search?search=' + search, {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8'
+    fetch(
+      `http://localhost:8080/public-notification-list-search?search=${search}&clubId=${cookies['clubData'].clubId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8'
+        }
       }
-    })
+    )
       .then(function (response) {
         return response.json()
       })
@@ -83,7 +88,7 @@ const TableStickyHeader = () => {
   }
 
   useEffect(() => {
-    fetch('http://localhost:8080/all-public-notification-list', {
+    fetch('http://localhost:8080/all-public-notification-list?clubId=' + cookies['clubData'].clubId, {
       method: 'GET',
       headers: {
         'Content-type': 'application/json; charset=UTF-8'
