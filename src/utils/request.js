@@ -1,4 +1,10 @@
+const root = 'http://localhost:8080/'
+
 async function post(link, json, contentType = 'application/x-www-form-urlencoded; charset=UTF-8') {
+	if (!(link.startsWith`https://` || link.startsWith`http://`)) {
+		if (link.startsWith`/`) link = link.substr(1)
+		link = root + link
+	}
 	const formData = new URLSearchParams()
 	for (const key in json) {
 		formData.append(key, json[key])
@@ -10,10 +16,14 @@ async function post(link, json, contentType = 'application/x-www-form-urlencoded
 		},
 		body: formData
 	})
-	return response.text()
+	return response.json()
 }
 
 async function get(link, json, contentType = 'application/html; charset=UTF-8') {
+	if (!(link.startsWith`https://` || link.startsWith`http://`)) {
+		if (link.startsWith`/`) link = link.substr(1)
+		link = root + link
+	}
 	function jsonToQueryString(json) {
 		if (!json) return ''
 		const params = new URLSearchParams()

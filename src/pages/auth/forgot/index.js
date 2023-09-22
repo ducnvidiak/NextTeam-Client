@@ -38,11 +38,16 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
-import { post } from 'src/@core/utils/request'
+import { post } from 'src/utils/request'
+import { useRef } from 'react'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
 	[theme.breakpoints.up('sm')]: { width: '28rem' }
+}))
+
+const OtpInput = styled('input')(({ theme }) => ({
+	outlineColor: theme.palette.primary.main
 }))
 
 const LinkStyled = styled('a')(({ theme }) => ({
@@ -51,44 +56,145 @@ const LinkStyled = styled('a')(({ theme }) => ({
 	color: theme.palette.primary.main
 }))
 
-const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
-	'& .MuiFormControlLabel-label': {
-		fontSize: '0.875rem',
-		color: theme.palette.text.secondary
-	}
+const ErrorParagraph = styled('p')(() => ({
+	textAlign: 'center',
+	color: 'red'
 }))
 
 const RecoverPassword = () => {
+	const myRef = useRef()
 	// ** State
 	const [values, setValues] = useState({
-		email: ''
+		email: '',
+		password: '',
+		type: ''
 	})
+	const [step, setStep] = useState(1)
+	const [error, setError] = useState(null)
 
 	// ** Hook
 	const theme = useTheme()
-	const router = useRouter()
 
 	const handleChange = prop => event => {
+		setError(null)
 		setValues({ ...values, [prop]: event.target.value })
-		console.log(values)
 	}
-
-	const callAPI = async () => {
-		try {
-			const res = await fetch('http://localhost:8080/forgot-password', {
-				method: 'POST',
-				body: { command: 1, email: values.email }
-			})	
-		} catch (err) {
-			console.log(err)
-		}
-	}
-
-	callAPI()
 	const handleSubmitForm = async event => {
 		event.preventDefault()
-		var res = await post('http://localhost:8080/forgot-password', { command: 1, email: values.email })
-		console.log(res)
+
+		var res = await post('forgot-password', { command: 1, email: values.email })
+		if (res.code == 0) {
+			setValues({ ...values, type: res.result.type })
+			setStep(2)
+			// myRef.current.focus()
+			setTimeout(() => {
+				myRef.current.focus()
+			}, 420)
+		} else {
+			setError(res.msg)
+		}
+	}
+	const handleInputOtp = async ({ target }) => {
+		// console.log(target.value)
+		const numberCodeForm = document.querySelector('[data-number-code-form]')
+		const numberCodeInputs = [...numberCodeForm.querySelectorAll('[data-number-code-input]')]
+		if (!target.value.length) {
+			return (target.value = null)
+		}
+
+		const inputLength = target.value.length
+		let currentIndex = Number(target.dataset.numberCodeInput)
+
+		if (inputLength > 1) {
+			const inputValues = target.value.split('')
+
+			inputValues.forEach((value, valueIndex) => {
+				const nextValueIndex = currentIndex + valueIndex
+
+				if (nextValueIndex >= numberCodeInputs.length) {
+					return
+				}
+
+				numberCodeInputs[nextValueIndex].value = value
+			})
+
+			currentIndex += inputValues.length - 2
+		}
+
+		const nextIndex = currentIndex + 1
+
+		if (nextIndex < numberCodeInputs.length) {
+			numberCodeInputs[nextIndex].focus()
+		}
+
+		var data = ''
+		numberCodeInputs.forEach(input => {
+			data += input.value
+		})
+		if (data.length == 6) {
+			const res = await post('forgot-password', { command: 2, code: data, type: values.type })
+			console.log(res)
+			if (res.code == 0) {
+				setStep(3)
+				setError(null)
+			} else {
+				if (res.res == 0) {
+					setError('Mã xác minh đã bị khóa!')
+				} else setError(res.msg.replace('__res', res.res))
+			}
+		}
+	}
+	const handleKeyDown = e => {
+		const numberCodeForm = document.querySelector('[data-number-code-form]')
+		const numberCodeInputs = [...numberCodeForm.querySelectorAll('[data-number-code-input]')]
+		const { code, target } = e
+
+		const currentIndex = Number(target.dataset.numberCodeInput)
+		const previousIndex = currentIndex - 1
+		const nextIndex = currentIndex + 1
+
+		const hasPreviousIndex = previousIndex >= 0
+		const hasNextIndex = nextIndex <= numberCodeInputs.length - 1
+
+		switch (code) {
+			case 'ArrowLeft':
+			case 'ArrowUp':
+				if (hasPreviousIndex) {
+					numberCodeInputs[previousIndex].focus()
+				}
+				e.preventDefault()
+				break
+
+			case 'ArrowRight':
+			case 'ArrowDown':
+				if (hasNextIndex) {
+					numberCodeInputs[nextIndex].focus()
+				}
+				e.preventDefault()
+				break
+			case 'Backspace':
+				if (!e.target.value.length && hasPreviousIndex) {
+					numberCodeInputs[previousIndex].value = null
+					numberCodeInputs[previousIndex].focus()
+				}
+				break
+			default:
+				break
+		}
+	}
+	const handleClickShowPassword = () => {
+		setValues({ ...values, showPassword: !values.showPassword })
+	}
+	const handleMouseDownPassword = event => {
+		event.preventDefault()
+	}
+
+	const handleSubmit2 = async event => {
+		var res = await post('forgot-password', { command: 3, password: values.password, email: values.email })
+		if (res.code == 0) {
+		} else {
+			setError(res.msg)
+		}
 	}
 
 	return (
@@ -170,38 +276,190 @@ const RecoverPassword = () => {
 							</Typography>
 						</Box>
 					</a>
-					<Box sx={{ mb: 6 }}>
-						<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-							Lead you back to the journey! 👈🏼
+					{error && <ErrorParagraph>{error}</ErrorParagraph>}
+					<div className='slider-container'>
+						<div className={`slider step${step}`}>
+							<div className='step'>
+								<Box sx={{ mb: 6 }}>
+									<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
+										Lead you back to the journey! 👈🏼
+									</Typography>
+									<Typography variant='body2'>
+										Please enter your email so that we can send you a code to reset your password!
+									</Typography>
+								</Box>
+
+								<form noValidate autoComplete='off' onSubmit={handleSubmitForm}>
+									<TextField
+										autoFocus
+										fullWidth
+										id='email'
+										label='Email'
+										sx={{ marginBottom: 4 }}
+										onChange={handleChange('email')}
+									/>
+
+									<Button
+										fullWidth
+										size='large'
+										variant='contained'
+										type='submit'
+										sx={{ marginBottom: 7 }}
+									>
+										Next
+									</Button>
+								</form>
+							</div>
+
+							<div className='step'>
+								<Box sx={{ mb: 6 }}>
+									<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
+										We sent you a verification code
+									</Typography>
+									<Typography variant='body2'>
+										Please check your email for the verification code
+									</Typography>
+								</Box>
+								<form
+									noValidate
+									autoComplete='off'
+									onSubmit={e => {
+										e.preventDefault()
+									}}
+								>
+									<fieldset
+										name='number-code'
+										data-number-code-form
+										style={{ border: 'none' }}
+										onInput={handleInputOtp}
+										onKeyDown={handleKeyDown}
+									>
+										<legend style={{ fontSize: 0 }}>Number Code</legend>
+										{/* <TextField className={classes.input} /> */}
+										<OtpInput
+											className='otp-code'
+											type='number'
+											min='0'
+											max='9'
+											name='number-code-0'
+											data-number-code-input='0'
+											required
+											ref={myRef}
+										/>
+										<OtpInput
+											className='otp-code'
+											type='number'
+											min='0'
+											max='9'
+											name='number-code-1'
+											data-number-code-input='1'
+											required
+										/>
+										<OtpInput
+											className='otp-code'
+											type='number'
+											min='0'
+											max='9'
+											name='number-code-2'
+											data-number-code-input='2'
+											required
+										/>
+										<OtpInput
+											className='otp-code'
+											type='number'
+											min='0'
+											max='9'
+											name='number-code-3'
+											data-number-code-input='3'
+											required
+										/>
+										<OtpInput
+											className='otp-code'
+											type='number'
+											min='0'
+											max='9'
+											name='number-code-4'
+											data-number-code-input='4'
+											required
+										/>
+										<OtpInput
+											className='otp-code'
+											type='number'
+											min='0'
+											max='9'
+											name='number-code-5'
+											data-number-code-input='5'
+											required
+										/>
+									</fieldset>
+									{/* <Button fullWidth size='large' variant='contained' type='submit' sx={{ marginBottom: 7 }}>
+												Next
+											</Button> */}
+								</form>
+							</div>
+							<div className='step'>
+								<Box sx={{ mb: 6 }}>
+									<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
+										Successfully Verification
+									</Typography>
+									<Typography variant='body2'>Enter your new password!</Typography>
+								</Box>
+								<form noValidate autoComplete='off' onSubmit={handleSubmit2}>
+									<FormControl fullWidth>
+										<InputLabel htmlFor='auth-login-password'>Password</InputLabel>
+										<OutlinedInput
+											label='Password'
+											value={values.password}
+											id='auth-login-password'
+											onChange={handleChange('password')}
+											type={values.showPassword ? 'text' : 'password'}
+											sx={{ marginBottom: 4 }}
+											endAdornment={
+												<InputAdornment position='end'>
+													<IconButton
+														edge='end'
+														onClick={handleClickShowPassword}
+														onMouseDown={handleMouseDownPassword}
+														aria-label='toggle password visibility'
+													>
+														{values.showPassword ? <EyeOutline /> : <EyeOffOutline />}
+													</IconButton>
+												</InputAdornment>
+											}
+										/>
+									</FormControl>
+
+									<Button
+										fullWidth
+										size='large'
+										variant='contained'
+										type='submit'
+										sx={{ marginBottom: 7 }}
+									>
+										Confirm
+									</Button>
+								</form>
+							</div>
+						</div>
+					</div>
+
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							flexWrap: 'wrap',
+							justifyContent: 'center'
+						}}
+					>
+						<Typography variant='body2' sx={{ marginRight: 2 }}>
+							Remember your password?
 						</Typography>
 						<Typography variant='body2'>
-							Please enter your email so that we can send you a code to reset your password!
+							<Link passHref href='/auth/login/'>
+								<LinkStyled>Go back to login</LinkStyled>
+							</Link>
 						</Typography>
 					</Box>
-					<form noValidate autoComplete='off' onSubmit={handleSubmitForm}>
-						<TextField
-							autoFocus
-							fullWidth
-							id='email'
-							label='Email'
-							sx={{ marginBottom: 4 }}
-							onChange={handleChange('email')}
-						/>
-
-						<Button fullWidth size='large' variant='contained' type='submit' sx={{ marginBottom: 7 }}>
-							Next
-						</Button>
-						<Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-							<Typography variant='body2' sx={{ marginRight: 2 }}>
-								Remember your password?
-							</Typography>
-							<Typography variant='body2'>
-								<Link passHref href='/auth/login/'>
-									<LinkStyled>Go back to login</LinkStyled>
-								</Link>
-							</Typography>
-						</Box>
-					</form>
 				</CardContent>
 			</Card>
 			<FooterIllustrationsV1 />
