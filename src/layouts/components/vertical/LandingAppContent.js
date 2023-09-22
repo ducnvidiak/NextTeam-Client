@@ -1,3 +1,6 @@
+// ** React Imports
+import { useState, useEffect } from 'react'
+
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
@@ -27,6 +30,17 @@ const LandingAppContent = props => {
 
   // ** Hook
   const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
+  const [userData, setUserData] = useState(null)
+
+  useEffect(() => {
+    // Lấy dữ liệu từ localStorage khi component được tạo
+    const userDataFromLocalStorage = localStorage.getItem('userData')
+
+    if (userDataFromLocalStorage) {
+      // Nếu userData tồn tại trong localStorage, cập nhật state
+      setUserData(userDataFromLocalStorage)
+    }
+  }, [])
 
   return (
     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -57,21 +71,24 @@ const LandingAppContent = props => {
         </Link>
       </Stack>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <ModeToggler settings={settings} saveSettings={saveSettings} /> */}
-        {/* <NotificationDropdown />
-        <UserDropdown /> */}
-        <Grid item xs={12}>
-          <Link passHref href='/auth/login'>
-            <Button variant='contained' sx={{ marginRight: 3.5 }}>
-              Đăng nhập
-            </Button>
-          </Link>
-          <Link passHref href='/auth/register'>
-            <Button  variant='outlined' >
-              Đăng ký
-            </Button>
-          </Link>
-        </Grid>
+        {userData ? (
+          <div>
+            <ModeToggler settings={settings} saveSettings={saveSettings} />
+            <NotificationDropdown />
+            <UserDropdown />
+          </div>
+        ) : (
+          <Grid item xs={12}>
+            <Link passHref href='/auth/login'>
+              <Button variant='contained' sx={{ marginRight: 3.5 }}>
+                Đăng nhập
+              </Button>
+            </Link>
+            <Link passHref href='/auth/register'>
+              <Button variant='outlined'>Đăng ký</Button>
+            </Link>
+          </Grid>
+        )}
       </Box>
     </Box>
   )

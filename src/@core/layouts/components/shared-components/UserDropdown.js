@@ -55,6 +55,7 @@ const UserDropdown = () => {
   const handleLogout = event => {
     localStorage.removeItem('userData')
     router.push('/')
+    window.location.reload()
   }
 
   const styles = {

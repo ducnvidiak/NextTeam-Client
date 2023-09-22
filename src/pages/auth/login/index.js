@@ -104,7 +104,7 @@ const LoginPage = () => {
             console.log('Đăng nhập thành công')
             toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
             setTimeout(() => {
-              router.push('/dashboard')
+              router.push('/')
             }, 1000)
           }
         })

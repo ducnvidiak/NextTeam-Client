@@ -37,17 +37,17 @@ const AppBarContent = props => {
         ) : null}
       </Box>
       <TextField
-          placeholder='Tìm kiếm...'
-          size='small'
-          sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: "50%" }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <Magnify fontSize='small' />
-              </InputAdornment>
-            )
-          }}
-        />
+        placeholder='Tìm kiếm...'
+        size='small'
+        sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '50%' }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position='start'>
+              <Magnify fontSize='small' />
+            </InputAdornment>
+          )
+        }}
+      />
       {/* <Typography variant='h4' sx={{ color: '#F27123' }}>
         FU-DEVER
       </Typography> */}
