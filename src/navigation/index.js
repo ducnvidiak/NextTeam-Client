@@ -137,10 +137,18 @@ export const dashboardLayoutVavigation = () => {
       title: 'Báo cáo',
       path: '/dashboard/reports',
       icon: SummarizeIcon
-    },
+    }
   ]
 }
-
+export const adminLayoutVavigation = () => {
+  return [
+    {
+      title: 'Câu lạc bộ',
+      icon: 'Groups2Icon',
+      path: '/admin/club'
+    }
+  ]
+}
 export const landingLayoutVavigation = () => {
   return [
     {
@@ -169,7 +177,6 @@ export const landingLayoutVavigation = () => {
       icon: Login,
       path: '/auth/register',
       openInNewTab: true
-    },
+    }
   ]
 }
-
