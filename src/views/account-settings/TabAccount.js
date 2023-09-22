@@ -23,6 +23,9 @@ const axios = require('axios')
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
 
+import { updateUserAvatar, updateUserInfo } from '../../pages/profile/apiUtils'
+import { ConsoleLine } from 'mdi-material-ui'
+
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
   height: 120,
@@ -47,11 +50,15 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
   }
 }))
 
-const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
+const TabAccount = ({ userInfo, setUserInfo }) => {
   // ** State
-  const [openAlert, setOpenAlert] = useState(true)
+  const [openAlert, setOpenAlert] = useState(false)
 
   const [imgSrc, setImgSrc] = useState('')
+  const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
+  useEffect(() => {
+    setCurrentUserInfo({ ...userInfo })
+  }, [userInfo])
 
   const onChange = file => {
     const reader = new FileReader()
@@ -62,47 +69,29 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
     }
   }
 
-  const fetchData = async () => {
-    const formData = new FormData()
-
-    if (imgSrc !== '') {
-      formData.append('image', imgSrc.split(',')[1])
-    }
-
-    formData.append('data', JSON.stringify(userInfoCopy))
-
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Accept: 'application/json'
-      }
-    }
-    axios
-      .put('http://localhost:8080/NextTeam/api/user', formData, config)
-      .then(response => {
-        console.log(response.data)
-        setUserInfo({ ...response.data })
-      })
-      .catch(error => {
-        console.error(error)
-      })
-  }
-
   const handleSubmit = event => {
     event.preventDefault()
+    if (imgSrc != '')
+      updateUserAvatar(imgSrc, userInfo.id).then(response => {
+        if (response.message == 'success') setUserInfo({ ...currentUserInfo })
+        console.log('update avatar: ', response)
+      })
 
-    fetchData()
+    updateUserInfo(currentUserInfo).then(response => {
+      if (response.message == 'success') setUserInfo({ ...currentUserInfo })
+      console.log('update info: ', response)
+    })
   }
 
   const handleResetAvatar = event => {
     event.preventDefault()
     setImgSrc('')
-    setUserInfoCopy({ ...userInfoCopy, avatarURL: userInfo.avatarURL })
+    setUserInfo({ ...currentUserInfo, avatarURL: userInfo.avatarURL })
   }
 
   const handleResetAccountInfo = event => {
     event.preventDefault()
-    setUserInfoCopy({ ...userInfo, avatarURL: userInfoCopy.avatarURL })
+    setUserInfo({ ...userInfo, avatarURL: currentUserInfo.avatarURL })
   }
 
   return (
@@ -115,8 +104,8 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
                 src={
                   imgSrc !== ''
                     ? imgSrc
-                    : userInfoCopy !== null && userInfoCopy.avatarURL !== 'undefined'
-                    ? userInfoCopy.avatarURL
+                    : currentUserInfo?.avatarURL
+                    ? currentUserInfo.avatarURL
                     : '/images/avatars/1.png'
                 }
                 alt='Profile Pic'
@@ -148,9 +137,11 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
               label='Username'
               placeholder='johnDoe'
               defaultValue='johnDoe'
-              value={userInfoCopy !== null ? userInfoCopy.username : ''}
+              value={currentUserInfo?.username}
               onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, username: event.target.value })
+                setCurrentUserInfo(current => {
+                  return { ...current, username: event.target.value }
+                })
               }}
             />
           </Grid>
@@ -161,9 +152,11 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
               label='Email'
               placeholder='johnDoe@example.com'
               defaultValue='johnDoe@example.com'
-              value={userInfoCopy !== null ? userInfoCopy.email : ''}
+              value={currentUserInfo?.email}
               onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, email: event.target.value })
+                setCurrentUserInfo(current => {
+                  return { ...current, email: event.target.value }
+                })
               }}
             />
           </Grid>
@@ -173,9 +166,11 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
               label='First name'
               placeholder='John Doe'
               defaultValue='John Doe'
-              value={userInfoCopy !== null ? userInfoCopy.firstname : ''}
+              value={currentUserInfo?.firstname}
               onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, firstname: event.target.value })
+                setCurrentUserInfo(current => {
+                  return { ...current, firstname: event.target.value }
+                })
               }}
             />
           </Grid>
@@ -185,12 +180,15 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
               label='Last name'
               placeholder='John Doe'
               defaultValue='John Doe'
-              value={userInfoCopy !== null ? userInfoCopy.lastname : ''}
+              value={currentUserInfo?.lastname}
               onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, lastname: event.target.value })
+                setCurrentUserInfo(current => {
+                  return { ...current, lastname: event.target.value }
+                })
               }}
             />
           </Grid>
+
           {/* <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Role</InputLabel>

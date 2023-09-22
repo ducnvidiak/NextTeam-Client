@@ -71,12 +71,16 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [studentCode, setStudentCode] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [gender, setGender] = useState('')
   const [agree, setAgree] = useState('')
   const [firstnameError, setFirstnameError] = useState('')
   const [lastnameError, setLastnameError] = useState('')
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [studentCodeError, setStudentCodeError] = useState('')
+  const [phoneNumberError, setPhoneNumberError] = useState('')
+  const [genderError, setGenderError] = useState('')
 
   // ** Hook
   const theme = useTheme()
@@ -89,6 +93,8 @@ const RegisterPage = () => {
     setEmailError(false)
     setPasswordError(false)
     setStudentCodeError(false)
+    setPhoneNumberError(false)
+    setGenderError(false)
     if (firstname == '') {
       setFirstnameError(true)
       toast.error('Vui lòng điền họ và tên đệm')
@@ -109,19 +115,29 @@ const RegisterPage = () => {
       setStudentCodeError(true)
       toast.error('Vui lòng điền mã số sinh viên')
     }
+    if (phoneNumber == '') {
+      setPhoneNumberError(true)
+      toast.error('Vui lòng điền số điện thoại')
+    }
+    if (gender == '') {
+      setGenderError(true)
+      toast.error('Vui lòng chọn giới tính')
+    }
     if (agree == '') {
       toast.error('Vui lòng đồng ý với điều khoản của nền tảng')
     }
 
-    if (firstname && lastname && email && password && studentCode && agree) {
-      fetch('http://localhost:8080/NextTeam/user-register', {
+    if (firstname && lastname && email && password && studentCode && phoneNumber && gender && agree) {
+      fetch('http://localhost:8080/user-register', {
         method: 'POST',
         body: JSON.stringify({
           firstname: firstname,
           lastname: lastname,
           email: email,
           password: password,
-          studentCode: studentCode
+          studentCode: studentCode,
+          phoneNumber: phoneNumber,
+          gender: gender
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8'
@@ -155,7 +171,7 @@ const RegisterPage = () => {
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
-          <a href={'/'} style={{ textDecoration: 'none' }}>
+          <Link passHref href={'/'} style={{ textDecoration: 'none' }}>
             <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg
                 width={35}
@@ -230,7 +246,7 @@ const RegisterPage = () => {
                 {themeConfig.templateName}
               </Typography>
             </Box>
-          </a>
+          </Link>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
               Sẵn sàng để khám phá 🚀
@@ -298,6 +314,31 @@ const RegisterPage = () => {
               error={studentCodeError}
               sx={{ marginBottom: 4 }}
             />
+            <TextField
+              fullWidth
+              type='text'
+              label='Số điện thoại'
+              name='phoneNumber'
+              onChange={event => setPhoneNumber(event.target.value)}
+              value={phoneNumber}
+              error={phoneNumberError}
+              sx={{ marginBottom: 4 }}
+            />
+            <FormControl fullWidth>
+              <InputLabel htmlFor='gender-select'>Giới tính</InputLabel>
+              <Select
+                label='Giới tính'
+                id='gender-select'
+                name='gender'
+                onChange={event => setGender(event.target.value)}
+                value={gender}
+                error={genderError}
+              >
+                <MenuItem>Lựa chọn</MenuItem>
+                <MenuItem value={'0'}>Nam</MenuItem>
+                <MenuItem value={'1'}>Nữ</MenuItem>
+              </Select>
+            </FormControl>
 
             <FormControlLabel
               control={<Checkbox onChange={event => setAgree(event.target.value)} />}

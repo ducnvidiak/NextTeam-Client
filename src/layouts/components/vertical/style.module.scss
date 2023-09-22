@@ -1,0 +1,19 @@
+.navlink {
+  &__btn {
+    @media screen and (max-width: 1023px) {
+      font-size: 12px !important;
+    }
+  }
+}
+
+.nav__btn {
+  @media screen and (max-width: 1023px) {
+    font-size: 12px !important;
+  }
+  @media screen and (max-width: 992px) {
+    font-size: 10px !important;
+  }
+  @media screen and (max-width: 786px) {
+    font-size: 9px !important;
+  }
+}

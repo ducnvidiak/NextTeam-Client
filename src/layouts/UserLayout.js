@@ -10,7 +10,7 @@ import DashboardLayout from 'src/@core/layouts/DashboardLayout'
 import { landingLayoutVavigation, dashboardLayoutVavigation } from 'src/navigation'
 
 // ** Component Import
-import VerticalAppBarContent from './components/vertical/AppBarContent'
+import VerticalLandingBarContent from './components/vertical/LandingAppContent'
 import VerticalDashboardAppBarContent from './components/vertical/DashboardAppBarContent'
 
 // ** Hook Import
@@ -30,7 +30,7 @@ const UserLayout = ({ children }) => {
    *  to know more about what values can be passed to this hook.
    *  ! Do not change this value unless you know what you are doing. It can break the template.
    */
-  const hidden = useMediaQuery(theme => theme.breakpoints.down('lg'))
+  const hidden = useMediaQuery(theme => theme.breakpoints.down('md'))
 
   const UpgradeToProImg = () => {
     return (
@@ -83,7 +83,7 @@ const UserLayout = ({ children }) => {
           verticalAppBarContent={(
             props // AppBar Content
           ) => (
-            <VerticalAppBarContent
+            <VerticalLandingBarContent
               hidden={hidden}
               settings={settings}
               saveSettings={saveSettings}

@@ -1,5 +1,5 @@
 // ** React Imports
-import { forwardRef, useState } from 'react'
+import { forwardRef, useState, useEffect } from 'react'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
@@ -21,33 +21,60 @@ import DatePicker from 'react-datepicker'
 
 // ** Styled Components
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-
+import axios from 'axios'
 import { Autocomplete, Box } from '@mui/material'
 import { Country, State, City } from 'country-state-city'
+import { updateUserInfo } from '../../pages/profile/apiUtils'
+import { Cookie } from 'mdi-material-ui'
 
 const CustomInput = forwardRef((props, ref) => {
   return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
 })
 
-const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
+const TabInfo = ({ userInfo, setUserInfo }) => {
   // ** State
 
-  const [date, setDate] = useState(userInfoCopy != null ? new Date(userInfoCopy.dob) : null)
+  const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
 
-  const [countryCode, setCountryCode] = useState()
-  const [stateCode, setStateCode] = useState()
-  const [states, setStates] = useState([])
-  const countries = Country.getAllCountries()
+  const [date, setDate] = useState(
+    currentUserInfo != null && currentUserInfo.dob != null ? new Date(currentUserInfo.dob) : null
+  )
 
-  // console.log(State.getStatesOfCountry('VN'))
+  useEffect(() => {
+    setCurrentUserInfo({ ...userInfo })
+  }, [userInfo.id])
+
+  const [country, setCountry] = useState(
+    userInfo?.homeTown != '' && userInfo?.homeTown != null
+      ? Country.getCountryByCode(userInfo?.homeTown.split('-')[0])
+      : null
+  )
+
+  const [state, setState] = useState(
+    userInfo?.homeTown != '' && userInfo?.homeTown != null && userInfo.homeTown.includes('-')
+      ? State.getStateByCodeAndCountry(userInfo.homeTown.split('-')[1], userInfo.homeTown.split('-')[0])
+      : null
+  )
+
+  const [states, setStates] = useState(
+    userInfo?.homeTown != '' && userInfo?.homeTown != null
+      ? State.getStatesOfCountry(userInfo?.homeTown.split('-')[0])
+      : null
+  )
+
+  const [countries, setCountries] = useState(Country.getAllCountries())
 
   const handleSubmit = event => {
     event.preventDefault()
+    updateUserInfo(currentUserInfo).then(response => {
+      setUserInfo({ ...currentUserInfo })
+      console.log('update detail info: ', response)
+    })
   }
 
   const handleReset = event => {
     event.preventDefault()
-    setUserInfoCopy({ ...userInfo })
+    setCurrentUserInfo({ ...userInfo })
   }
 
   return (
@@ -70,9 +97,11 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
               type='text'
               label='Student code'
               placeholder='(123) 456-7890'
-              value={userInfoCopy !== null ? userInfoCopy.studentCode : ''}
+              value={currentUserInfo?.studentCode || ''}
               onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, studentCode: event.target.value })
+                setCurrentUserInfo(current => {
+                  return { ...current, studentCode: event.target.value }
+                })
               }}
             />
           </Grid>
@@ -82,9 +111,11 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
               type='text'
               label='Major'
               placeholder='(123) 456-7890'
-              value={userInfoCopy !== null ? userInfoCopy.major : ''}
+              value={currentUserInfo?.major || ''}
               onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, major: event.target.value })
+                setCurrentUserInfo(current => {
+                  return { ...current, major: event.target.value }
+                })
               }}
             />
           </Grid>
@@ -94,9 +125,11 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
               type='text'
               label='Phone'
               placeholder='(123) 456-7890'
-              value={userInfoCopy !== null ? userInfoCopy.phoneNumber : ''}
+              value={currentUserInfo?.phoneNumber || ''}
               onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, phoneNumber: event.target.value })
+                setCurrentUserInfo(current => {
+                  return { ...currentUserInfo, phoneNumber: event.target.value }
+                })
               }}
             />
           </Grid>
@@ -110,6 +143,9 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
                 placeholderText='MM-DD-YYYY'
                 customInput={<CustomInput />}
                 onChange={date => {
+                  setCurrentUserInfo(current => {
+                    return { ...current, dob: date.toISOString().split('T')[0] }
+                  })
                   setDate(date)
                 }}
               />
@@ -118,9 +154,14 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <Autocomplete
+                value={country}
                 onChange={(event, newValue) => {
                   if (newValue !== null) {
-                    setCountryCode(newValue.isoCode)
+                    setCurrentUserInfo(current => {
+                      return { ...current, homeTown: newValue.isoCode }
+                    })
+
+                    setCountry(newValue)
                     setStates(State.getStatesOfCountry(newValue.isoCode))
                   }
                 }}
@@ -153,10 +194,14 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <Autocomplete
+                value={state}
                 onChange={(event, newValue) => {
                   if (newValue !== null) {
-                    setStateCode(newValue.isoCode)
-                    console.log(newValue.isoCode)
+                    setCurrentUserInfo(current => {
+                      return { ...current, homeTown: country.isoCode + '-' + newValue.isoCode }
+                    })
+
+                    setState(newValue)
                   }
                 }}
                 sx={{ width: 300 }}
@@ -184,21 +229,26 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
               label='Facebook Url'
               placeholder='https://www.facebook.com/profile.php?id=[user_id]'
               defaultValue='https://www.facebook.com/profile.php?id=100054151497842'
-              value={userInfoCopy !== null ? userInfoCopy.facebookUrl : ''}
+              value={currentUserInfo?.facebookUrl || ''}
               onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, facebookUrl: event.target.value })
+                setCurrentUserInfo(current => {
+                  return { ...current, facebookUrl: event.target.value }
+                })
               }}
             />
           </Grid>
+
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               label='LinkedIn Url'
               placeholder='https://www.linkedin.com/in/[user_id]/'
-              defaultValue='https://www.linkedin.com/in/%C4%91%E1%BB%A9c-nguy%E1%BB%85n-s%E1%BB%B9-34a240292/'
-              value={userInfoCopy !== null ? userInfoCopy.linkedinUrl : ''}
+              defaultValue='https://www.linkedin.com/in/'
+              value={currentUserInfo.linkedInUrl || ''}
               onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, linkedinUrl: event.target.value })
+                setCurrentUserInfo(current => {
+                  return { ...current, linkedInUrl: event.target.value }
+                })
               }}
             />
           </Grid>
@@ -209,10 +259,21 @@ const TabInfo = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
           <Grid item xs={12} sm={6}>
             <FormControl>
               <FormLabel sx={{ fontSize: '0.875rem' }}>Gender</FormLabel>
-              <RadioGroup row defaultValue='male' aria-label='gender' name='account-settings-info-radio'>
-                <FormControlLabel value='male' label='Male' control={<Radio />} />
-                <FormControlLabel value='female' label='Female' control={<Radio />} />
-                <FormControlLabel value='other' label='Other' control={<Radio />} />
+              <RadioGroup
+                onChange={event => {
+                  setCurrentUserInfo(current => {
+                    return { ...currentUserInfo, gender: event.target.value }
+                  })
+                }}
+                row
+                defaultValue='Male'
+                value={currentUserInfo.gender}
+                aria-label='gender'
+                name='account-settings-info-radio'
+              >
+                <FormControlLabel value='Male' label='Male' control={<Radio />} />
+                <FormControlLabel value='Female' label='Female' control={<Radio />} />
+                <FormControlLabel value='Others' label='Other' control={<Radio />} />
               </RadioGroup>
             </FormControl>
           </Grid>

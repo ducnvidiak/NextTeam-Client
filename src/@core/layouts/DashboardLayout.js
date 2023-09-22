@@ -35,6 +35,7 @@ const MainContentWrapper = styled(Box)({
 })
 
 const ContentWrapper = styled('main')(({ theme }) => ({
+  marginTop: 64,
   flexGrow: 1,
   width: '100%',
   padding: theme.spacing(6),
@@ -57,7 +58,10 @@ const DashboardLayout = props => {
   const [navVisible, setNavVisible] = useState(false)
 
   // ** Toggle Functions
-  const toggleNavVisibility = () => setNavVisible(!navVisible)
+  const toggleNavVisibility = () => {
+    // setNavVisible(!navVisible)
+    console.log('toggle navbar!')
+  }
 
   return (
     <>

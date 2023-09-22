@@ -13,7 +13,7 @@ import ArrowUp from 'mdi-material-ui/ArrowUp'
 import themeConfig from 'src/configs/themeConfig'
 
 // ** Components
-import AppBar from './components/vertical/appBar'
+import AppBar from './components/vertical/dashboardAppBar'
 import Navigation from './components/vertical/navigation'
 import Footer from './components/shared-components/footer'
 import ScrollToTop from 'src/@core/components/scroll-to-top'
@@ -35,14 +35,16 @@ const MainContentWrapper = styled(Box)({
 })
 
 const ContentWrapper = styled('main')(({ theme }) => ({
+  marginTop: 64,
   flexGrow: 1,
   width: '100%',
+
+  // padding: theme.spacing(6),
   transition: 'padding .25s ease-in-out',
   [theme.breakpoints.down('sm')]: {
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(4)
-  },
-  marginTop: theme.spacing(16)
+  }
 }))
 
 const LandingLayout = props => {
@@ -57,25 +59,32 @@ const LandingLayout = props => {
   const [navVisible, setNavVisible] = useState(false)
 
   // ** Toggle Functions
-  const toggleNavVisibility = () => setNavVisible(!navVisible)
+  const toggleNavVisibility = () => {
+    setNavVisible(!navVisible)
+    console.log('togged!')
+  }
 
   return (
     <>
       <VerticalLayoutWrapper className='layout-wrapper'>
+        <Navigation
+          navWidth={navWidth}
+          navVisible={navVisible}
+          setNavVisible={setNavVisible}
+          toggleNavVisibility={toggleNavVisibility}
+          {...props}
+        />
         <MainContentWrapper className='layout-content-wrapper'>
           <AppBar toggleNavVisibility={toggleNavVisibility} {...props} />
 
           <ContentWrapper
             className='layout-page-content'
             sx={{
-              ...(contentWidth === 'boxed'
-
-              // && {
-              //   mx: 'auto',
-              //   '@media (min-width:1440px)': { maxWidth: 1440 },
-              //   '@media (min-width:1200px)': { maxWidth: '100%' }
-              // }
-              )
+              ...(contentWidth === 'boxed' && {
+                mx: 'auto',
+                '@media (min-width:1440px)': { maxWidth: 1440 },
+                '@media (min-width:1200px)': { maxWidth: '100%' }
+              })
             }}
           >
             {children}

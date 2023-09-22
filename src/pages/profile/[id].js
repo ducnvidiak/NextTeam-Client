@@ -25,6 +25,9 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'nprogress'
 
+import { ToastContainer, toast } from 'react-toastify'
+import { getUserInfo } from './apiUtils'
+
 // import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 const axios = require('axios')
 
@@ -49,10 +52,7 @@ const TabName = styled('span')(({ theme }) => ({
 const AccountSettings = () => {
   // ** State
   const [value, setValue] = useState('account')
-
   const [userInfo, setUserInfo] = useState(null)
-  const [userInfoCopy, setUserInfoCopy] = useState(null)
-
   const router = useRouter()
 
   const handleChange = (event, newValue) => {
@@ -60,24 +60,15 @@ const AccountSettings = () => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      axios
-        .get('http://localhost:8080/NextTeam/api/user?id=' + router.query.id)
-        .then(response => {
-          const jsonData = response.data
-          console.log(jsonData)
-          setUserInfo({ ...jsonData })
-          setUserInfoCopy({ ...jsonData })
-        })
-        .catch(error => {
-          console.log('Error: ', error)
-        })
-    }
-    fetchData()
+    if (router.query.id)
+      getUserInfo(router.query.id).then(response => {
+        setUserInfo(response)
+      })
   }, [router.query.id])
 
   return (
     <Card>
+      <ToastContainer></ToastContainer>
       <TabContext value={value}>
         <TabList
           onChange={handleChange}
@@ -114,23 +105,13 @@ const AccountSettings = () => {
         </TabList>
 
         <TabPanel sx={{ p: 0 }} value='account'>
-          <TabAccount
-            userInfo={userInfo}
-            setUserInfo={setUserInfo}
-            userInfoCopy={userInfoCopy}
-            setUserInfoCopy={setUserInfoCopy}
-          />
+          <TabAccount userInfo={userInfo} setUserInfo={setUserInfo} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='security'>
-          <TabSecurity userInfo={userInfo} userInfoCopy={userInfoCopy} setUserInfoCopy={setUserInfoCopy} />
+          <TabSecurity userInfo={userInfo} setUserInfo={setUserInfo} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='info'>
-          <TabInfo
-            userInfo={userInfo}
-            setUserInfo={setUserInfo}
-            userInfoCopy={userInfoCopy}
-            setUserInfoCopy={setUserInfoCopy}
-          />
+          <TabInfo userInfo={userInfo} setUserInfo={setUserInfo} />
         </TabPanel>
       </TabContext>
     </Card>

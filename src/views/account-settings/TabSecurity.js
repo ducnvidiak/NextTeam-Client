@@ -23,7 +23,9 @@ import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 
 const axios = require('axios')
 
-const TabSecurity = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
+import { changeUserPass } from '../../pages/profile/apiUtils'
+
+const TabSecurity = ({ userInfo, setUserInfo }) => {
   // ** States
   const [values, setValues] = useState({
     newPassword: '',
@@ -73,35 +75,17 @@ const TabSecurity = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =
     event.preventDefault()
   }
 
-  const fetchData = async () => {
-    const formData = new FormData()
-
-    if (imgSrc !== '') {
-      formData.append('image', imgSrc.split(',')[1])
-    }
-
-    formData.append('data', JSON.stringify(userInfoCopy))
-
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Accept: 'application/json'
-      }
-    }
-    axios
-      .put('http://localhost:8080/NextTeam/api/user', formData, config)
-      .then(response => {
-        console.log(response.data)
-        setUserInfo({ ...response.data })
-      })
-      .catch(error => {
-        console.error(error)
-      })
-  }
-
   const handleSubmit = event => {
     event.preventDefault()
-    fetchData()
+
+    const authInfo = {
+      oldPassword: values.currentPassword,
+      newPassword: values.newPassword,
+      email: userInfo.email
+    }
+    changeUserPass(authInfo, userInfo.id).then(response => {
+      console.log(response)
+    })
   }
 
   return (

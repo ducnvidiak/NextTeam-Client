@@ -78,7 +78,7 @@ const LoginPage = () => {
     }
 
     if (email && password) {
-      fetch('http://localhost:8080/NextTeam/login', {
+      fetch('http://localhost:8080/login', {
         method: 'POST',
         body: JSON.stringify({
           email: email,
@@ -132,7 +132,7 @@ const LoginPage = () => {
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
-          <a href={'/'} style={{ textDecoration: 'none' }}>
+          <Link passHref href={'/'} style={{ textDecoration: 'none' }}>
             <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg
                 width={35}
@@ -193,7 +193,7 @@ const LoginPage = () => {
                   </g>
                 </g>
               </svg>
-              <ToastContainer></ToastContainer>
+
               <Typography
                 variant='h6'
                 sx={{
@@ -207,7 +207,7 @@ const LoginPage = () => {
                 {themeConfig.templateName}
               </Typography>
             </Box>
-          </a>
+          </Link>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
               {themeConfig.templateName} chào bạn 👋🏻
@@ -266,7 +266,7 @@ const LoginPage = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Link
                 passHref
-                href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/NextTeam/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
+                href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
               >
                 <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7, backgroundColor: 'red' }}>
                   <Google sx={{ marginRight: '10px' }}></Google> ĐĂNG NHẬP BẰNG GOOGLE
