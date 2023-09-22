@@ -21,9 +21,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
 import CloseIcon from '@mui/icons-material/Close'
 import InfoIcon from '@mui/icons-material/Info'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getAPI } from 'src/ultis/requestAPI'
 
-function EventItem() {
+function EventItem({ information }) {
   const [state, setState] = useState({
     top: false,
     left: false,
@@ -40,10 +41,7 @@ function EventItem() {
   }
 
   const list = anchor => (
-    <Box
-      sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 500, padding: 4 }}
-      role='presentation'
-    >
+    <Box sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 500, padding: 4 }} role='presentation'>
       <Stack direction={'row'} marginBottom={2}>
         <Button variant='text'>
           <CloseIcon onClick={toggleDrawer(anchor, false)}></CloseIcon>
@@ -102,7 +100,7 @@ function EventItem() {
           </Typography>
         </Stack>
         <Divider sx={{ margin: 0 }}></Divider>
-        <CardContent sx={{padding: 6}}>
+        <CardContent sx={{ padding: 6 }}>
           <Typography sx={'body1'}>
             🎤 Host: Anh Lê Ngọc Tuấn - Giám đốc Trải nghiệm Công Nghệ, Ban Công tác học đường, Tổ chức giáo dục FPT ​🗣️
             Diễn giả: ​Anh Vũ Hồng Chiên - Giám đốc Trung tâm Nghiên cứu và Ứng dụng Trí tuệ nhân tạo Quy Nhơn (QAI -
@@ -148,7 +146,7 @@ function EventItem() {
               6:00 PM
             </Typography>
             <Typography variant='h6' fontWeight={700} sx={{ flex: 1 }}>
-              Zoom | FES-TECHSpeak #03 | CHANGE TO CHANCE - Công nghệ AI & Ứng dụng trong đồ họa sáng tạo
+              {information.name}
             </Typography>
             <Box sx={{ display: 'flex', gap: 4 }}>
               <Groups2Icon></Groups2Icon>
@@ -177,11 +175,30 @@ function EventItem() {
 }
 
 function EventList() {
+  const [eventList, setEventList] = useState()
+  const [loading, setLoading] = useState(false)
+
+  const callAPI = async () => {
+    try {
+      setLoading(true)
+      const res = await getAPI('/events')
+      setEventList(res)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+console.log(loading);
+  useEffect(() => {
+    callAPI()
+  }, [])
+
   return (
     <>
       <Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((event, index) => (
-          <EventItem key={index}></EventItem>
+        {eventList?.map((event, index) => (
+          <EventItem key={index} information={event}></EventItem>
         ))}
       </Container>
     </>

@@ -78,7 +78,7 @@ const LoginPage = () => {
     }
 
     if (email && password) {
-      fetch('http://localhost:8080/NextTeam/login', {
+      fetch('http://localhost:8080/login', {
         method: 'POST',
         body: JSON.stringify({
           email: email,
