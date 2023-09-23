@@ -29,7 +29,6 @@ function Club() {
     right: '69%'
   }
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-
   const [clubFormData, setClubFormData] = useState({
     id: '',
     name: '',
@@ -138,6 +137,7 @@ function Club() {
         if (!res.ok) {
           throw new Error('Network response was not ok')
         }
+
         return res.json()
       })
       .then(data => {
@@ -191,6 +191,7 @@ function Club() {
         if (!res.ok) {
           throw new Error('Network response was not ok')
         }
+
         return res.json()
       })
       .then(data => {
@@ -223,6 +224,7 @@ function Club() {
         openSnackbar('Xóa câu lạc bộ thành công!', 'success')
       })
   }
+
   const handleFileUpload = async e => {
     const file = e.target.files[0]
     if (file) {
@@ -676,7 +678,6 @@ function Club() {
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Câu Lạc Bộ' titleTypographyProps={{ variant: 'h6' }} />
-
           <TableStickyHeader
             openEditClubHandle={openEditDialog}
             openDeleteClubHandle={openDeleteDialog}
@@ -688,4 +689,5 @@ function Club() {
     </div>
   )
 }
+
 export default Club

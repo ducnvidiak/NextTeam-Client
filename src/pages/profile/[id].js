@@ -59,7 +59,7 @@ const AccountSettings = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/NextTeam/api/user?id=' + router.query.id, { method: 'GET' })
+        const response = await fetch('http://localhost:8080/api/user?id=' + router.query.id, { method: 'GET' })
 
         const jsonData = await response.json()
         setUserInfo({ ...jsonData })
@@ -85,7 +85,7 @@ const AccountSettings = () => {
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <AccountOutline />
-                <TabName>Account</TabName>
+                <TabName>Tài khoản</TabName>
               </Box>
             }
           />
@@ -94,7 +94,7 @@ const AccountSettings = () => {
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <LockOpenOutline />
-                <TabName>Security</TabName>
+                <TabName>Bảo mật</TabName>
               </Box>
             }
           />
@@ -103,7 +103,7 @@ const AccountSettings = () => {
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <InformationOutline />
-                <TabName>Info</TabName>
+                <TabName>Thông tin</TabName>
               </Box>
             }
           />

@@ -1,3 +1,7 @@
+// ** React Imports
+import { useState, useEffect } from 'react'
+import { useCookies } from 'react-cookie'
+
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
@@ -27,6 +31,7 @@ const LandingAppContent = props => {
 
   // ** Hook
   const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
+  const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 
   return (
     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -52,26 +57,26 @@ const LandingAppContent = props => {
         <Link href='/clubs' underline='hover' passHref>
           <Button>Câu lạc bộ</Button>
         </Link>
-        <Link href='/dashboard' underline='hover' passHref>
-          <Button>(TEST) Dashboard</Button>
-        </Link>
       </Stack>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <ModeToggler settings={settings} saveSettings={saveSettings} /> */}
-        {/* <NotificationDropdown />
-        <UserDropdown /> */}
-        <Grid item xs={12}>
-          <Link passHref href='/auth/login'>
-            <Button variant='contained' sx={{ marginRight: 3.5 }}>
-              Đăng nhập
-            </Button>
-          </Link>
-          <Link passHref href='/auth/register'>
-            <Button  variant='outlined' >
-              Đăng ký
-            </Button>
-          </Link>
-        </Grid>
+        {cookies['userData'] ? (
+          <div>
+            <ModeToggler settings={settings} saveSettings={saveSettings} />
+            <NotificationDropdown />
+            <UserDropdown />
+          </div>
+        ) : (
+          <Grid item xs={12}>
+            <Link passHref href='/auth/login'>
+              <Button variant='contained' sx={{ marginRight: 3.5 }}>
+                Đăng nhập
+              </Button>
+            </Link>
+            <Link passHref href='/auth/register'>
+              <Button variant='outlined'>Đăng ký</Button>
+            </Link>
+          </Grid>
+        )}
       </Box>
     </Box>
   )

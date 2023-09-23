@@ -141,6 +141,7 @@ export const dashboardLayoutVavigation = () => {
     }
   ]
 }
+
 export const adminLayoutVavigation = () => {
   return [
     {
@@ -150,6 +151,7 @@ export const adminLayoutVavigation = () => {
     }
   ]
 }
+
 export const landingLayoutVavigation = () => {
   return [
     {

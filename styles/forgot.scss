@@ -1,0 +1,37 @@
+input.otp-code[type='number'] {
+	width: 2.5rem;
+	height: 2.5rem;
+	font-size: 1.75rem;
+	margin: 0.5rem;
+	text-align: center;
+	border: 1px solid gray;
+	caret-color: transparent;
+	border-radius: 0.5rem;
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	/* Firefox */
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+
+.slider-container {
+	width: 100%;
+	overflow: hidden;
+	.slider {
+		min-width: 300%;
+		display: flex;
+		transition: 0.4s all ease-in-out;
+		.step {
+			width: 100%;
+		}
+		&.step2 {
+			transform: translateX(calc(-100% / 3));
+		}
+		&.step3 {
+			transform: translateX(calc(-200% / 3));
+		}
+	}
+}
