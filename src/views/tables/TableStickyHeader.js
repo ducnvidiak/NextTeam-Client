@@ -19,13 +19,21 @@ import TextField from '@mui/material/TextField'
 import { Button, FormControl, FormLabel, Input, Card, CardMedia } from '@mui/material'
 import { CloudUpload } from '@mui/icons-material'
 
+// id name avatarUrl bannerUrl description movementPoint categoryid createAt updateAt
 const columns = [
   { id: 'id', label: 'ID', minWidth: 50, align: 'center' },
   { id: 'name', label: 'Tên', minWidth: 100, align: 'center' },
+  { id: 'subname', label: 'Tên Viết Tắt', minWidth: 100, align: 'center' },
   {
     id: 'avatarUrl',
-    label: 'Ảnh',
-    minWidth: 80,
+    label: 'Ảnh Đại Diện',
+    minWidth: 100,
+    align: 'center'
+  },
+  {
+    id: 'bannerUrl',
+    label: 'Ảnh Bìa',
+    minWidth: 100,
     align: 'center'
   },
   {
@@ -38,20 +46,32 @@ const columns = [
   {
     id: 'movementPoint',
     label: 'Điểm Hoạt Động',
-    minWidth: 150,
-    align: 'left'
+    minWidth: 100,
+    align: 'center'
+  },
+  {
+    id: 'balance',
+    label: 'Số Dư',
+    minWidth: 100,
+    align: 'center'
+  },
+  {
+    id: 'categoryId',
+    label: 'Hạng Mục Câu Lạc Bộ',
+    minWidth: 100,
+    align: 'center'
   },
   {
     id: 'createAt',
     label: 'Ngày lập',
     minWidth: 100,
-    align: 'left'
+    align: 'center'
   },
   {
     id: 'updateAt',
     label: 'Ngày cập nhật',
-    minWidth: 150,
-    align: 'left'
+    minWidth: 100,
+    align: 'center'
   },
   {
     id: 'action',
@@ -61,8 +81,36 @@ const columns = [
   }
 ]
 
-function createData(id, name, avatarUrl, description, movementPoint, createAt, updateAt, button) {
-  return { id, name, avatarUrl, description, movementPoint, createAt, updateAt, button }
+// // id name avatarUrl bannerUrl description movementPoint categoryid createAt updateAt
+
+function createData(
+  id,
+  name,
+  subname,
+  avatarUrl,
+  bannerUrl,
+  description,
+  movementPoint,
+  balance,
+  categoryId,
+  createAt,
+  updateAt,
+  button
+) {
+  return {
+    id,
+    name,
+    subname,
+    avatarUrl,
+    bannerUrl,
+    description,
+    movementPoint,
+    balance,
+    categoryId,
+    createAt,
+    updateAt,
+    button
+  }
 }
 
 const TableStickyHeader = props => {
@@ -71,22 +119,38 @@ const TableStickyHeader = props => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [rows, setRows] = useState([]) // Initialize rows with an empty array
+
   refreshClubData()
+
   useEffect(() => {
     // Assuming your 'clubs' state has the required data structure
     const newRows = clubs.map(club => {
+      const c1 = ''
+      if (club.categoryId === '1') {
+        c1 = 'Học Thuật'
+      } else if (club.categoryId === '2') {
+        c1 = 'Cộng đồng'
+      } else if (club.categoryId === '3') {
+        c1 = 'Thể thao'
+      } else {
+        c1 = 'Năng khiếu'
+      }
       return createData(
         club.id,
         club.name,
+        club.subname,
         club.avatarUrl,
+        club.bannerUrl,
         club.description,
         club.movementPoint,
+        club.balance,
+        c1,
         club.createdAt,
         club.updatedAt,
         ''
       )
     })
-
+    //  id, name, avatarUrl, bannerUrl,description, movementPoint, categoryId, createAt, updateAt, button
     // Update 'rows' only when 'clubs' change
     setRows(newRows)
   }, [clubs])
@@ -99,6 +163,8 @@ const TableStickyHeader = props => {
     setRowsPerPage(+event.target.value)
     setPage(0)
   }
+
+
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -123,24 +189,25 @@ const TableStickyHeader = props => {
                     if (index !== length - 1) {
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          {column.id === 'avatarUrl' ? (
+                          {column.id === 'avatarUrl' || column.id === 'bannerUrl' ? (
                             <img src={value} alt={value} style={{ maxWidth: '50%', maxHeight: '50%' }} />
                           ) : (
                             value
                           )}
+
                         </TableCell>
                       )
                     } else {
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          <Stack direction='row' spacing={2} sx={{ width: '300px' }}>
+                          <Stack direction='row' spacing={2} sx={{ width: '200px' }}>
                             <Button
                               variant='contained'
                               color='warning'
                               endIcon={<ModeEditIcon />}
                               onClick={() => props.openEditClubHandle(row)}
                             >
-                              Cập Nhật
+                              Sửa
                             </Button>
                             <Button
                               variant='contained'
