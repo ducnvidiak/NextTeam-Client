@@ -40,6 +40,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 import { post } from 'src/utils/request'
 import { useRef } from 'react'
+import { ToastContainer, toast } from 'react-toastify'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -63,6 +64,7 @@ const ErrorParagraph = styled('p')(() => ({
 
 const RecoverPassword = () => {
 	const myRef = useRef()
+	const router = useRouter()
 	// ** State
 	const [values, setValues] = useState({
 		email: '',
@@ -81,6 +83,15 @@ const RecoverPassword = () => {
 	}
 	const handleSubmitForm = async event => {
 		event.preventDefault()
+		if (!values.email) {
+			toast.error('Không được để trống email!')
+			return
+		}
+		event.target.disabled = true
+		const timeout = setTimeout(() => {
+			event.target.disabled = false
+			clearTimeout(timeout)
+		}, 2000)
 
 		var res = await post('forgot-password', { command: 1, email: values.email })
 		if (res.code == 0) {
@@ -91,7 +102,7 @@ const RecoverPassword = () => {
 				myRef.current.focus()
 			}, 420)
 		} else {
-			setError(res.msg)
+			toast.error(res.msg)
 		}
 	}
 	const handleInputOtp = async ({ target }) => {
@@ -139,8 +150,8 @@ const RecoverPassword = () => {
 				setError(null)
 			} else {
 				if (res.res == 0) {
-					setError('Mã xác minh đã bị khóa!')
-				} else setError(res.msg.replace('__res', res.res))
+					toast.error('Mã xác minh đã bị khóa!')
+				} else toast.error(res.msg.replace('__res', res.res))
 			}
 		}
 	}
@@ -190,10 +201,20 @@ const RecoverPassword = () => {
 	}
 
 	const handleSubmit2 = async event => {
+		event.preventDefault()
+		event.target.disabled = true
+		const timeout = setTimeout(() => {
+			event.target.disabled = false
+			clearTimeout(timeout)
+		}, 2000)
 		var res = await post('forgot-password', { command: 3, password: values.password, email: values.email })
 		if (res.code == 0) {
+			toast.success('Khôi phục mật khẩu thành công!')
+			setTimeout(() => {
+				router.push('/auth/login')
+			}, 1000)
 		} else {
-			setError(res.msg)
+			toast.error(res.msg)
 		}
 	}
 
@@ -262,6 +283,7 @@ const RecoverPassword = () => {
 									</g>
 								</g>
 							</svg>
+							<ToastContainer></ToastContainer>
 							<Typography
 								variant='h6'
 								sx={{
