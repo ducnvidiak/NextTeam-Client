@@ -22,6 +22,7 @@ function Club() {
   }
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+
   const [clubFormData, setClubFormData] = useState({
     id: '',
     name: '',
@@ -42,10 +43,12 @@ function Club() {
   const closeCreateDialog = () => {
     setIsCreateDialogOpen(false)
   }
+
   // Snackbar close handler
   const handleSnackbarClose = () => {
     setDeleteSuccess(false)
   }
+
   const refreshClubData = () => {
     fetch('http://localhost:8080/NextTeam/club?command=list')
       .then(res => res.json())
@@ -53,6 +56,7 @@ function Club() {
         setClubs(result);
       });
   };
+
   const handleCreateClub = () => {
     fetch(
       'http://localhost:8080/NextTeam/club?command=add&name=' +
@@ -68,21 +72,20 @@ function Club() {
         if (!res.ok) {
           throw new Error('Network response was not ok')
         }
+
         return res.json()
       })
       .then(data => {
         console.log(data)
         closeCreateDialog()
         refreshClubData()
-        // Show the success message
-
-        // Add any additional logic here after a successful response
+       
       })
       .catch(error => {
         console.error('Error during fetch:', error)
-        // Handle the error here (e.g., show an error message to the user)
       })
   }
+
   const openEditDialog = rowData => {
     setClubFormData({
       id: rowData.id,
@@ -97,6 +100,7 @@ function Club() {
   const closeEditDialog = () => {
     setIsEditDialogOpen(false)
   }
+
   const handleInputChange = e => {
     const { name, value } = e.target
     setClubFormData({
@@ -104,6 +108,7 @@ function Club() {
       [name]: value
     })
   }
+
   const handleEditClub = () => {
     fetch(
       'http://localhost:8080/NextTeam/club?command=update&name=' +
@@ -121,17 +126,16 @@ function Club() {
         if (!res.ok) {
           throw new Error('Network response was not ok')
         }
+
         return res.json()
       })
       .then(data => {
         console.log(data)
         closeEditDialog()
         refreshClubData()
-        // Add any additional logic here after a successful response
       })
       .catch(error => {
         console.error('Error during fetch:', error)
-        // Handle the error here (e.g., show an error message to the user)
       })
   }
 
@@ -141,6 +145,7 @@ function Club() {
         if (!res.ok) {
           throw new Error('Network response was not ok')
         }
+
         return res.json()
       })
       .then(data => {
@@ -152,9 +157,9 @@ function Club() {
       })
       .catch(error => {
         console.error('Error during fetch:', error)
-        // Handle the error here (e.g., show an error message to the user)
       })
   }
+
   const handleFileUpload = async e => {
     const file = e.target.files[0]
     if (file) {
@@ -185,6 +190,7 @@ function Club() {
       }
     }
   }
+
   const openDeleteDialog = rowData => {
     setClubFormData({
       ...clubFormData,
@@ -392,4 +398,5 @@ function Club() {
     </div>
   )
 }
+
 export default Club
