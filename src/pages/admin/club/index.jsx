@@ -23,12 +23,14 @@ function Club() {
     { label: 'Năng Khiếu', id: '3' },
     { label: 'Cộng Đồng', id: '4' }
   ]
+  
   const snackbarStyle = {
     position: 'fixed',
     top: '-55%',
     right: '69%'
   }
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+
   const [clubFormData, setClubFormData] = useState({
     id: '',
     name: '',
@@ -68,6 +70,7 @@ function Club() {
       [name]: value
     })
   }
+
   const openCreateDialog = () => {
     setIsCreateDialogOpen(true)
   }
@@ -87,6 +90,7 @@ function Club() {
   const closeEditDialog = () => {
     setIsEditDialogOpen(false)
   }
+
   const openEditDialog = rowData => {
     setClubFormData({
       id: rowData.id,
@@ -101,6 +105,7 @@ function Club() {
     })
     setIsEditDialogOpen(true)
   }
+  
   const openDeleteDialog = rowData => {
     setClubFormData({
       ...clubFormData,
@@ -109,9 +114,11 @@ function Club() {
 
     setIsDeleteDialogOpen(true)
   }
+
   const closeDeleteDialog = () => {
     setIsDeleteDialogOpen(false)
   }
+
   const handleCreateClub = () => {
     const url_fetch =
       'http://localhost:8080/club_cmd?cmd=add&name=' +
@@ -130,6 +137,7 @@ function Club() {
       clubFormData.movementPoint +
       '&balance=' +
       clubFormData.balance
+
     //  Club c = new Club(1, name, subname, categoryId, description, avatarUrl, bannerUrl, movementPoint, balance);
     console.log(url_fetch)
     fetch(url_fetch)
@@ -143,8 +151,10 @@ function Club() {
       .then(data => {
         setIsCreateDialogOpen(false)
         refreshClubData()
+
         // Show the success message
         openSnackbar('Thêm câu lạc bộ thành công!', 'success')
+
         // Add any additional logic here after a successful response
         // Reset clubFormData to its initial empty state
         setClubFormData({
@@ -161,6 +171,7 @@ function Club() {
       })
       .catch(error => {
         openSnackbar('Thêm câu lạc bộ thất bại!', 'error')
+
         // Handle the error here (e.g., show an error message to the user)
       })
   }
@@ -199,6 +210,7 @@ function Club() {
         setIsEditDialogOpen(false)
        
         refreshClubData()
+
         // Add any additional logic here after a successful response
       })
       .catch(error => {
@@ -212,6 +224,7 @@ function Club() {
         if (!res.ok) {
           throw new Error('Network response was not ok')
         }
+
         return res.json()
       })
       .then(data => {
@@ -255,6 +268,7 @@ function Club() {
       }
     }
   }
+
   const handleBannerImageUpload = async e => {
     const file = e.target.files[0]
     if (file) {
@@ -284,6 +298,7 @@ function Club() {
       }
     }
   }
+
   const handleOpenDialog = () => {
     setOpen(true)
   }
