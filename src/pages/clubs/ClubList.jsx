@@ -115,10 +115,7 @@ function ClubItem({ information, index }) {
 				</Stack>
 				<Card sx={{ width: '95%', display: 'flex' }} marginBottom={10}>
 					<img
-						src={
-							// information.avatarUrl ??
-							'http://res.cloudinary.com/de41uvd76/image/upload/v1694451011/z6jcsotpsznwdwavuklm.png'
-						}
+						src={'http://res.cloudinary.com/de41uvd76/image/upload/v1694451011/z6jcsotpsznwdwavuklm.png'}
 						alt=''
 						style={{
 							width: '300px',

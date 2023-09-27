@@ -9,6 +9,7 @@ async function post(link, json, contentType = 'application/x-www-form-urlencoded
 	for (const key in json) {
 		formData.append(key, json[key])
 	}
+
 	const response = await fetch(link, {
 		method: 'POST',
 		headers: {
@@ -16,6 +17,7 @@ async function post(link, json, contentType = 'application/x-www-form-urlencoded
 		},
 		body: formData
 	})
+
 	return response.json()
 }
 
@@ -32,14 +34,17 @@ async function get(link, json, contentType = 'application/html; charset=UTF-8') 
 				params.append(key, json[key])
 			}
 		}
+
 		return '?' + params.toString()
 	}
+
 	const response = await fetch(link + jsonToQueryString(json), {
 		method: 'GET',
 		headers: {
 			'Content-Type': contentType
 		}
 	})
+
 	return response.text()
 }
 
