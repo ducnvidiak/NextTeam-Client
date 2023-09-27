@@ -48,7 +48,7 @@ const Notifications = () => {
 				setNotificationsData(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [])
+	}, [cookies])
 
 	return (
 		<Grid item xs={12} style={{ height: '100%' }}>

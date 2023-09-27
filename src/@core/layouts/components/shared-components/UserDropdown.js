@@ -90,7 +90,7 @@ const UserDropdown = () => {
 				setClubOfMeData(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [])
+	}, [cookies])
 
 	// ** Hooks
 	const router = useRouter()
