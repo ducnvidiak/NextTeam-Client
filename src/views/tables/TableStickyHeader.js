@@ -21,224 +21,230 @@ import { CloudUpload } from '@mui/icons-material'
 
 // id name avatarUrl bannerUrl description movementPoint categoryid createAt updateAt
 const columns = [
-  { id: 'id', label: 'ID', minWidth: 50, align: 'center' },
-  { id: 'name', label: 'Tên', minWidth: 100, align: 'center' },
-  { id: 'subname', label: 'Tên Viết Tắt', minWidth: 100, align: 'center' },
-  {
-    id: 'avatarUrl',
-    label: 'Ảnh Đại Diện',
-    minWidth: 100,
-    align: 'center'
-  },
-  {
-    id: 'bannerUrl',
-    label: 'Ảnh Bìa',
-    minWidth: 100,
-    align: 'center'
-  },
-  {
-    id: 'description',
-    label: 'Mô tả',
-    minWidth: 100,
-    align: 'left',
-    format: value => value.toLocaleString('en-VN')
-  },
-  {
-    id: 'movementPoint',
-    label: 'Điểm Hoạt Động',
-    minWidth: 100,
-    align: 'center'
-  },
-  {
-    id: 'balance',
-    label: 'Số Dư',
-    minWidth: 100,
-    align: 'center'
-  },
-  {
-    id: 'categoryId',
-    label: 'Hạng Mục Câu Lạc Bộ',
-    minWidth: 100,
-    align: 'center'
-  },
-  {
-    id: 'createAt',
-    label: 'Ngày lập',
-    minWidth: 100,
-    align: 'center'
-  },
-  {
-    id: 'updateAt',
-    label: 'Ngày cập nhật',
-    minWidth: 100,
-    align: 'center'
-  },
-  {
-    id: 'action',
-    label: 'Hành động',
-    minWidth: 100,
-    align: 'left'
-  }
+	{ id: 'id', label: 'ID', minWidth: 50, align: 'center' },
+	{ id: 'name', label: 'Tên', minWidth: 100, align: 'center' },
+	{ id: 'subname', label: 'Tên Viết Tắt', minWidth: 100, align: 'center' },
+	{
+		id: 'avatarUrl',
+		label: 'Ảnh Đại Diện',
+		minWidth: 100,
+		align: 'center'
+	},
+	{
+		id: 'bannerUrl',
+		label: 'Ảnh Bìa',
+		minWidth: 100,
+		align: 'center'
+	},
+	{
+		id: 'description',
+		label: 'Mô tả',
+		minWidth: 100,
+		align: 'left',
+		format: value => value.toLocaleString('en-VN')
+	},
+	{
+		id: 'movementPoint',
+		label: 'Điểm Hoạt Động',
+		minWidth: 100,
+		align: 'center'
+	},
+	{
+		id: 'balance',
+		label: 'Số Dư',
+		minWidth: 100,
+		align: 'center'
+	},
+	{
+		id: 'categoryId',
+		label: 'Hạng Mục Câu Lạc Bộ',
+		minWidth: 100,
+		align: 'center'
+	},
+	{
+		id: 'createAt',
+		label: 'Ngày lập',
+		minWidth: 100,
+		align: 'center'
+	},
+	{
+		id: 'updateAt',
+		label: 'Ngày cập nhật',
+		minWidth: 100,
+		align: 'center'
+	},
+	{
+		id: 'action',
+		label: 'Hành động',
+		minWidth: 100,
+		align: 'left'
+	}
 ]
 
 // // id name avatarUrl bannerUrl description movementPoint categoryid createAt updateAt
 
 function createData(
-  id,
-  name,
-  subname,
-  avatarUrl,
-  bannerUrl,
-  description,
-  movementPoint,
-  balance,
-  categoryId,
-  createAt,
-  updateAt,
-  button
+	id,
+	name,
+	subname,
+	avatarUrl,
+	bannerUrl,
+	description,
+	movementPoint,
+	balance,
+	categoryId,
+	createAt,
+	updateAt,
+	button
 ) {
-  return {
-    id,
-    name,
-    subname,
-    avatarUrl,
-    bannerUrl,
-    description,
-    movementPoint,
-    balance,
-    categoryId,
-    createAt,
-    updateAt,
-    button
-  }
+	return {
+		id,
+		name,
+		subname,
+		avatarUrl,
+		bannerUrl,
+		description,
+		movementPoint,
+		balance,
+		categoryId,
+		createAt,
+		updateAt,
+		button
+	}
 }
 
 const TableStickyHeader = props => {
-  const { refreshClubData, clubs } = props
-  // ** States
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [rows, setRows] = useState([]) // Initialize rows with an empty array
+	const { refreshClubData, clubs } = props
 
-  refreshClubData()
+	// ** States
+	const [page, setPage] = useState(0)
+	const [rowsPerPage, setRowsPerPage] = useState(10)
+	const [rows, setRows] = useState([]) // Initialize rows with an empty array
 
-  useEffect(() => {
-    // Assuming your 'clubs' state has the required data structure
-    const newRows = clubs.map(club => {
-      const c1 = ''
-      if (club.categoryId === '1') {
-        c1 = 'Học Thuật'
-      } else if (club.categoryId === '2') {
-        c1 = 'Cộng đồng'
-      } else if (club.categoryId === '3') {
-        c1 = 'Thể thao'
-      } else {
-        c1 = 'Năng khiếu'
-      }
-      return createData(
-        club.id,
-        club.name,
-        club.subname,
-        club.avatarUrl,
-        club.bannerUrl,
-        club.description,
-        club.movementPoint,
-        club.balance,
-        c1,
-        club.createdAt,
-        club.updatedAt,
-        ''
-      )
-    })
-    //  id, name, avatarUrl, bannerUrl,description, movementPoint, categoryId, createAt, updateAt, button
-    // Update 'rows' only when 'clubs' change
-    setRows(newRows)
-  }, [clubs])
+	refreshClubData()
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
+	useEffect(() => {
+		// Assuming your 'clubs' state has the required data structure
+		const newRows = clubs.map(club => {
+			const c1 = ''
+			if (club.categoryId === '1') {
+				c1 = 'Học Thuật'
+			} else if (club.categoryId === '2') {
+				c1 = 'Cộng đồng'
+			} else if (club.categoryId === '3') {
+				c1 = 'Thể thao'
+			} else {
+				c1 = 'Năng khiếu'
+			}
 
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(+event.target.value)
-    setPage(0)
-  }
+			return createData(
+				club.id,
+				club.name,
+				club.subname,
+				club.avatarUrl,
+				club.bannerUrl,
+				club.description,
+				club.movementPoint,
+				club.balance,
+				c1,
+				club.createdAt,
+				club.updatedAt,
+				''
+			)
+		})
 
+		//  id, name, avatarUrl, bannerUrl,description, movementPoint, categoryId, createAt, updateAt, button
+		// Update 'rows' only when 'clubs' change
+		setRows(newRows)
+	}, [clubs])
 
+	const handleChangePage = (event, newPage) => {
+		setPage(newPage)
+	}
 
-  return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label='sticky table'>
-          <TableHead>
-            <TableRow>
-              {columns.map(column => (
-                <TableCell key={column.id} align={column.align} sx={{ width: column.minWidth }}>
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
-              return (
-                <TableRow hover role='checkbox' tabIndex={-1} key={row.code}>
-                  {columns.map((column, index) => {
-                    const value = row[column.id]
-                    const length = columns.length
-                    if (index !== length - 1) {
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.id === 'avatarUrl' || column.id === 'bannerUrl' ? (
-                            <img src={value} alt={value} style={{ maxWidth: '50%', maxHeight: '50%' }} />
-                          ) : (
-                            value
-                          )}
+	const handleChangeRowsPerPage = event => {
+		setRowsPerPage(+event.target.value)
+		setPage(0)
+	}
 
-                        </TableCell>
-                      )
-                    } else {
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          <Stack direction='row' spacing={2} sx={{ width: '200px' }}>
-                            <Button
-                              variant='contained'
-                              color='warning'
-                              endIcon={<ModeEditIcon />}
-                              onClick={() => props.openEditClubHandle(row)}
-                            >
-                              Sửa
-                            </Button>
-                            <Button
-                              variant='contained'
-                              color='error'
-                              startIcon={<DeleteIcon />}
-                              onClick={() => props.openDeleteClubHandle(row)}
-                            >
-                              Xóa
-                            </Button>
-                          </Stack>
-                        </TableCell>
-                      )
-                    }
-                  })}
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component='div'
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
-  )
+	return (
+		<Paper sx={{ width: '100%', overflow: 'hidden' }}>
+			<TableContainer sx={{ maxHeight: 440 }}>
+				<Table stickyHeader aria-label='sticky table'>
+					<TableHead>
+						<TableRow>
+							{columns.map(column => (
+								<TableCell key={column.id} align={column.align} sx={{ width: column.minWidth }}>
+									{column.label}
+								</TableCell>
+							))}
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
+							return (
+								<TableRow hover role='checkbox' tabIndex={-1} key={row.code}>
+									{columns.map((column, index) => {
+										const value = row[column.id]
+										const length = columns.length
+										if (index !== length - 1) {
+											return (
+												<TableCell key={column.id} align={column.align}>
+													{column.id === 'avatarUrl' || column.id === 'bannerUrl' ? (
+														<img
+															src={value}
+															alt={value}
+															style={{ maxWidth: '50%', maxHeight: '50%' }}
+														/>
+													) : column.id === 'description' ? (
+														<></>
+													) : (
+														value
+													)}
+												</TableCell>
+											)
+										} else {
+											return (
+												<TableCell key={column.id} align={column.align}>
+													<Stack direction='row' spacing={2} sx={{ width: '200px' }}>
+														<Button
+															variant='contained'
+															color='warning'
+															endIcon={<ModeEditIcon />}
+															onClick={() => props.openEditClubHandle(row)}
+														>
+															Sửa
+														</Button>
+														<Button
+															variant='contained'
+															color='error'
+															startIcon={<DeleteIcon />}
+															onClick={() => props.openDeleteClubHandle(row)}
+														>
+															Xóa
+														</Button>
+													</Stack>
+												</TableCell>
+											)
+										}
+									})}
+								</TableRow>
+							)
+						})}
+					</TableBody>
+				</Table>
+			</TableContainer>
+			<TablePagination
+				rowsPerPageOptions={[10, 25, 100]}
+				component='div'
+				count={rows.length}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				onPageChange={handleChangePage}
+				onRowsPerPageChange={handleChangeRowsPerPage}
+			/>
+		</Paper>
+	)
 }
 
 export default TableStickyHeader

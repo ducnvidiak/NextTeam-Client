@@ -65,6 +65,7 @@ const ErrorParagraph = styled('p')(() => ({
 const RecoverPassword = () => {
 	const myRef = useRef()
 	const router = useRouter()
+
 	// ** State
 	const [values, setValues] = useState({
 		email: '',
@@ -81,13 +82,14 @@ const RecoverPassword = () => {
 		setError(null)
 		setValues({ ...values, [prop]: event.target.value })
 	}
+
 	const handleSubmitForm = async event => {
 		event.preventDefault()
 		if (!values.email) {
 			toast.error('Không được để trống email!')
-			return
 		}
 		event.target.disabled = true
+
 		const timeout = setTimeout(() => {
 			event.target.disabled = false
 			clearTimeout(timeout)
@@ -97,6 +99,7 @@ const RecoverPassword = () => {
 		if (res.code == 0) {
 			setValues({ ...values, type: res.result.type })
 			setStep(2)
+
 			// myRef.current.focus()
 			setTimeout(() => {
 				myRef.current.focus()
@@ -105,6 +108,7 @@ const RecoverPassword = () => {
 			toast.error(res.msg)
 		}
 	}
+
 	const handleInputOtp = async ({ target }) => {
 		// console.log(target.value)
 		const numberCodeForm = document.querySelector('[data-number-code-form]')
@@ -155,6 +159,7 @@ const RecoverPassword = () => {
 			}
 		}
 	}
+
 	const handleKeyDown = e => {
 		const numberCodeForm = document.querySelector('[data-number-code-form]')
 		const numberCodeInputs = [...numberCodeForm.querySelectorAll('[data-number-code-input]')]
@@ -193,9 +198,11 @@ const RecoverPassword = () => {
 				break
 		}
 	}
+
 	const handleClickShowPassword = () => {
 		setValues({ ...values, showPassword: !values.showPassword })
 	}
+
 	const handleMouseDownPassword = event => {
 		event.preventDefault()
 	}
@@ -203,6 +210,7 @@ const RecoverPassword = () => {
 	const handleSubmit2 = async event => {
 		event.preventDefault()
 		event.target.disabled = true
+
 		const timeout = setTimeout(() => {
 			event.target.disabled = false
 			clearTimeout(timeout)
