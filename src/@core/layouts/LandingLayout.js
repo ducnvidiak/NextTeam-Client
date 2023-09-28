@@ -67,13 +67,13 @@ const LandingLayout = props => {
   return (
     <>
       <VerticalLayoutWrapper className='layout-wrapper'>
-        <Navigation
+        {/* <Navigation
           navWidth={navWidth}
           navVisible={navVisible}
           setNavVisible={setNavVisible}
           toggleNavVisibility={toggleNavVisibility}
           {...props}
-        />
+        /> */}
         <MainContentWrapper className='layout-content-wrapper'>
           <AppBar toggleNavVisibility={toggleNavVisibility} {...props} />
 

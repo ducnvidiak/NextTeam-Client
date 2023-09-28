@@ -27,6 +27,7 @@ const updateUserAvatar = async (imgSrc, id) => {
 }
 
 const updateUserInfo = async objectData => {
+  console.log('data sending: ', objectData)
   const data = JSON.stringify(objectData)
 
   const config = {

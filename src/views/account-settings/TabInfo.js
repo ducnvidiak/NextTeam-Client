@@ -37,7 +37,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
   const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
 
   const [date, setDate] = useState(
-    currentUserInfo != null && currentUserInfo.dob != null ? new Date(currentUserInfo.dob) : null
+    currentUserInfo?.dob != null && currentUserInfo.dob != '1970-01-01' ? new Date(currentUserInfo.dob) : null
   )
 
   useEffect(() => {
@@ -168,11 +168,12 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
                 id='account-settings-date'
                 placeholderText='MM-DD-YYYY'
                 customInput={<CustomInput />}
-                onChange={date => {
+                onChange={newValue => {
+                  setDate(newValue)
+
                   setCurrentUserInfo(current => {
-                    return { ...current, dob: date.toISOString().split('T')[0] }
+                    return { ...current, dob: newValue?.toISOString().split('T')[0] || null }
                   })
-                  setDate(date)
                 }}
               />
             </DatePickerWrapper>

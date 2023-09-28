@@ -62,7 +62,7 @@ const LandingAppContent = props => {
         <NotificationDropdown />
         <UserDropdown />
 
-        {/* <Grid item xs={12}>
+        {/* <Grid item xs={12} sx={{ marginLeft: 2 }}>
           <Link passHref href='/auth/login'>
             <Button className={styles.nav__btn} variant='contained' sx={{ marginRight: 3.5 }}>
               Đăng nhập
