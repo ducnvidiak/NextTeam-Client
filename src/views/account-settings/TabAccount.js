@@ -94,8 +94,6 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 		setUserInfo({ ...userInfo, avatarURL: currentUserInfo.avatarURL })
 	}
 
-	console.log(userInfoCopy)
-
 	return (
 		<CardContent>
 			<form>

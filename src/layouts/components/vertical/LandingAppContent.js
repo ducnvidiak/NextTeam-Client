@@ -21,8 +21,6 @@ import { Button, Grid, Stack, Typography, styled } from '@mui/material'
 import Link from 'next/link'
 import VerticalNavHeader from 'src/@core/layouts/components/vertical/navigation/VerticalNavHeader'
 
-import styles from './style.module.scss'
-
 const LinkStyled = styled('Typography')(({ theme }) => ({
 	color: '#27123'
 }))
@@ -80,40 +78,6 @@ const LandingAppContent = props => {
 						</Link>
 					</Grid>
 				)}
-			</Box>
-			{hidden ? null : (
-				<Stack direction='row' gap={12}>
-					<Link href='/' underline='hover' passHref>
-						<Button className={styles.navlink__btn}>Giới thiệu</Button>
-					</Link>
-					<Link href='/events' underline='hover' passHref>
-						<Button className={styles.navlink__btn}>Sự kiện</Button>
-					</Link>
-					<Link href='/clubs' underline='hover' passHref>
-						<Button className={styles.navlink__btn}>Câu lạc bộ</Button>
-					</Link>
-					<Link href='/dashboard' underline='hover' passHref>
-						<Button className={styles.navlink__btn}>(TEST) Dashboard</Button>
-					</Link>
-				</Stack>
-			)}
-			<Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-				<ModeToggler settings={settings} saveSettings={saveSettings} />
-				<NotificationDropdown />
-				<UserDropdown />
-
-				{/* <Grid item xs={12} sx={{ marginLeft: 2 }}>
-          <Link passHref href='/auth/login'>
-            <Button className={styles.nav__btn} variant='contained' sx={{ marginRight: 3.5 }}>
-              Đăng nhập
-            </Button>
-          </Link>
-          <Link passHref href='/auth/register'>
-            <Button className={styles.nav__btn} variant='outlined'>
-              Đăng ký
-            </Button>
-          </Link>
-        </Grid> */}
 			</Box>
 		</Box>
 	)

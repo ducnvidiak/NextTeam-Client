@@ -259,8 +259,8 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<AccountOutline sx={{ marginRight: 2 }} />
-						<Link href={`/profile/${cookies['userData']?.id}`} underline='none'>
-							Hồ sơ cá nhân
+						<Link href={`/user/${cookies['userData']?.id}`}>
+							<Button>Hồ sơ cá nhân</Button>
 						</Link>
 					</Box>
 				</MenuItem>
@@ -273,24 +273,25 @@ const UserDropdown = () => {
 				>
 					<Box sx={styles}>
 						<Groups3Icon sx={{ marginRight: 2 }} />
-						<Typography color={'#F27123'}>CLB của bạn</Typography>
-						{/* <Link href={`/profile/1`} underline='none'>
-              CLB của bạn
-            </Link> */}
+						<Link href={`/clubs`}>
+							<Button>CLB của bạn</Button>
+						</Link>
 					</Box>
 				</MenuItem>
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<LockIcon sx={{ marginRight: 2 }} />
-						<Link href='/user/password' underline='none'>
-							Đổi mật khẩu
+						<Link href={`/user/password/${cookies['userData']?.id}`} underline='none'>
+							<Button>Đổi mật khẩu</Button>
 						</Link>
 					</Box>
 				</MenuItem>
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles} onClick={handleLogout}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
-						<Link underline='none'>Đăng xuất</Link>
+						<Link href={'/user/logout'} underline='none'>
+							<Button>Đăng xuất</Button>
+						</Link>
 					</Box>
 				</MenuItem>
 				{/* <Divider />
