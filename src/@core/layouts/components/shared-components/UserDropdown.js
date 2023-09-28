@@ -10,13 +10,14 @@ import {
 	ClickAwayListener,
 	Grid,
 	Grow,
-	Link,
 	MenuList,
 	Modal,
 	Paper,
 	Popper,
 	Stack
 } from '@mui/material'
+
+import Link from 'next/link'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
