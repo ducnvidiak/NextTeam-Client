@@ -1,87 +1,63 @@
-import ImageGallery from "react-image-gallery";
-import "react-image-gallery/styles/css/image-gallery.css";
+import ImageGallery from 'react-image-gallery'
+import 'react-image-gallery/styles/css/image-gallery.css'
 
 const extraActivities = [
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451011/z6jcsotpsznwdwavuklm.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451011/z6jcsotpsznwdwavuklm.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451197/ynwn19fbfellx5un72vu.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451197/ynwn19fbfellx5un72vu.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451288/xqbljaqlnlfxrljtjcdf.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451288/xqbljaqlnlfxrljtjcdf.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451336/pigmetrzwskayo1tl5dq.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451336/pigmetrzwskayo1tl5dq.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451405/i7tuwytgngctkgrtjfuz.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451405/i7tuwytgngctkgrtjfuz.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451437/w0dx9yvrnm8qi94tvd0p.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451437/w0dx9yvrnm8qi94tvd0p.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451471/a0vff4kfmnu4hytw3hul.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451471/a0vff4kfmnu4hytw3hul.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451498/kfzgi08s3lhfws1gknga.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451498/kfzgi08s3lhfws1gknga.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451537/kt4xjel2bupgozwyoxnq.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451537/kt4xjel2bupgozwyoxnq.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451575/s3xq08k1wopx3fcpv4d7.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451575/s3xq08k1wopx3fcpv4d7.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451604/hfvkefyklrh7woxufqc5.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694451604/hfvkefyklrh7woxufqc5.png",
-  },
-  {
-    original:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694490524/ldegnymgffx6v6nxngbx.png",
-    thumbnail:
-      "http://res.cloudinary.com/de41uvd76/image/upload/v1694490524/ldegnymgffx6v6nxngbx.png",
-  },
-];
+	{
+		original: '/assets/images/gallery/original/gallery1.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery1.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery2.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery2.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery3.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery3.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery4.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery4.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery5.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery5.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery6.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery6.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery7.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery7.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery8.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery8.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery9.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery9.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery10.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery10.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery11.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery11.webp'
+	},
+	{
+		original: '/assets/images/gallery/original/gallery12.webp',
+		thumbnail: '/assets/images/gallery/thumbnail/gallery12.webp'
+	}
+]
 
 function Hero() {
-  return (
-    <>
-      <ImageGallery lazyLoad={true} items={extraActivities}></ImageGallery>
-    </>
-  );
+	return (
+		<>
+			<ImageGallery lazyLoad={true} items={extraActivities}></ImageGallery>
+		</>
+	)
 }
 
-export default Hero;
+export default Hero

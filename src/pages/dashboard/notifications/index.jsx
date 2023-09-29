@@ -21,69 +21,78 @@ import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
 
 const Notifications = () => {
-  const router = useRouter()
-  const [notificationsData, setNotificationsData] = useState([])
-  const [cookies, setCookie] = useCookies(['clubData'])
+	const router = useRouter()
+	const [notificationsData, setNotificationsData] = useState([])
+	const [cookies, setCookie] = useCookies(['clubData'])
 
-  // const [clubData, setClubData] = useState()
+	// const [clubData, setClubData] = useState()
 
-  const cardStyle = {
-    margin: '10px' // Thiết lập margin 10px
-  }
+	const cardStyle = {
+		margin: '10px' // Thiết lập margin 10px
+	}
 
-  const handleSubmit = event => {
-    router.push('/dashboard/notifications/view-all')
-  }
-  useEffect(() => {
-    fetch(`http://localhost:8080/notification?action=list-10-noti&clubId=${cookies['clubData']?.clubId}`, {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8'
-      }
-    })
-      .then(function (response) {
-        return response.json()
-      })
-      .then(function (data) {
-        setNotificationsData(data)
-      })
-      .catch(error => console.error('Error:', error))
-  }, [])
+	const handleSubmit = event => {
+		router.push('/dashboard/notifications/view-all')
+	}
+	useEffect(() => {
+		fetch(`http://localhost:8080/notification?action=list-10-noti&clubId=${cookies['clubData']?.clubId}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				setNotificationsData(data)
+			})
+			.catch(error => console.error('Error:', error))
+	}, [cookies])
 
-  return (
-    <Grid item xs={12} style={{ height: '100%' }}>
-      <Card style={{ height: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '10px' }}>
-          <CardHeader title='Thông báo' titleTypographyProps={{ variant: 'h6' }} />
-          <Button variant='contained' onClick={e => handleSubmit(e)}>
-            Xem tất cả
-          </Button>
-        </div>
+	return (
+		<Grid item xs={12} style={{ height: '100%' }}>
+			<Card style={{ height: '100%' }}>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						paddingRight: '10px'
+					}}
+				>
+					<CardHeader title='Thông báo' titleTypographyProps={{ variant: 'h5' }} />
+					<Button variant='contained' onClick={e => handleSubmit(e)}>
+						Xem tất cả
+					</Button>
+				</div>
 
-        {notificationsData.map(notification => {
-          return (
-            <Card style={cardStyle} key={notification.id}>
-              <CardContent onClick={() => router.push(`/dashboard/notifications/detail/${notification.id}`)}>
-                <Grid container spacing={0}>
-                  <Grid item xs={4} md={2}>
-                    {notification.updatedAt}
-                  </Grid>
-                  <Grid item xs={8} md={10}>
-                    <Typography variant='body1' style={{ fontWeight: 'bold' }}>
-                      {notification.title}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-              {/* <Link passHref href={`/dashboard/notifications/detail/${notification.id}`}>
+				{notificationsData.map(notification => {
+					return (
+						<Card key={notification.id} sx={{ ...cardStyle, borderLeft: 4, borderColor: 'primary.main' }}>
+							<CardContent
+								onClick={() => router.push(`/dashboard/notifications/detail/${notification.id}`)}
+							>
+								<Grid container spacing={0}>
+									<Grid item xs={4} md={2}>
+										{notification.updatedAt}
+									</Grid>
+									<Grid item xs={8} md={10}>
+										<Typography variant='body1' style={{ fontWeight: 'bold' }}>
+											{notification.title}
+										</Typography>
+									</Grid>
+								</Grid>
+							</CardContent>
+							{/* <Link passHref href={`/dashboard/notifications/detail/${notification.id}`}>
                 
               </Link> */}
-            </Card>
-          )
-        })}
-      </Card>
-    </Grid>
-  )
+						</Card>
+					)
+				})}
+			</Card>
+		</Grid>
+	)
 }
 
 export default Notifications
