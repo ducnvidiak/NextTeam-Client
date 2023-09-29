@@ -7,28 +7,10 @@ import { useRouter } from 'next/router'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Checkbox from '@mui/material/Checkbox'
-import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
 import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
-import InputAdornment from '@mui/material/InputAdornment'
-import MuiFormControlLabel from '@mui/material/FormControlLabel'
-
-// ** Icons Imports
-import Google from 'mdi-material-ui/Google'
-import Github from 'mdi-material-ui/Github'
-import Twitter from 'mdi-material-ui/Twitter'
-import Facebook from 'mdi-material-ui/Facebook'
-import EyeOutline from 'mdi-material-ui/EyeOutline'
-import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
@@ -38,17 +20,16 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
-import { post } from 'src/utils/request'
-import { useRef } from 'react'
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
+import EmailVerification from 'src/views/pages/auth/forgot/EmailVerification'
+import VerificationCode from 'src/views/pages/auth/forgot/VerificationCode'
+import SetPassword from 'src/views/pages/auth/forgot/SetPassword'
+import Error404 from 'src/pages/404'
+import { useCookies } from 'react-cookie'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
 	[theme.breakpoints.up('sm')]: { width: '28rem' }
-}))
-
-const OtpInput = styled('input')(({ theme }) => ({
-	outlineColor: theme.palette.primary.main
 }))
 
 const LinkStyled = styled('a')(({ theme }) => ({
@@ -63,8 +44,9 @@ const ErrorParagraph = styled('p')(() => ({
 }))
 
 const RecoverPassword = () => {
-	const myRef = useRef()
+	const [pinRef, setPinRef] = useState()
 	const router = useRouter()
+
 	// ** State
 	const [values, setValues] = useState({
 		email: '',
@@ -77,148 +59,21 @@ const RecoverPassword = () => {
 	// ** Hook
 	const theme = useTheme()
 
+	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+
 	const handleChange = prop => event => {
 		setError(null)
 		setValues({ ...values, [prop]: event.target.value })
 	}
-	const handleSubmitForm = async event => {
-		event.preventDefault()
-		if (!values.email) {
-			toast.error('Không được để trống email!')
-			return
-		}
-		event.target.disabled = true
+
+	const setFocusForStepTwo = () => {
 		const timeout = setTimeout(() => {
-			event.target.disabled = false
+			pinRef.focus()
 			clearTimeout(timeout)
-		}, 2000)
-
-		var res = await post('forgot-password', { command: 1, email: values.email })
-		if (res.code == 0) {
-			setValues({ ...values, type: res.result.type })
-			setStep(2)
-			// myRef.current.focus()
-			setTimeout(() => {
-				myRef.current.focus()
-			}, 420)
-		} else {
-			toast.error(res.msg)
-		}
-	}
-	const handleInputOtp = async ({ target }) => {
-		// console.log(target.value)
-		const numberCodeForm = document.querySelector('[data-number-code-form]')
-		const numberCodeInputs = [...numberCodeForm.querySelectorAll('[data-number-code-input]')]
-		if (!target.value.length) {
-			return (target.value = null)
-		}
-
-		const inputLength = target.value.length
-		let currentIndex = Number(target.dataset.numberCodeInput)
-
-		if (inputLength > 1) {
-			const inputValues = target.value.split('')
-
-			inputValues.forEach((value, valueIndex) => {
-				const nextValueIndex = currentIndex + valueIndex
-
-				if (nextValueIndex >= numberCodeInputs.length) {
-					return
-				}
-
-				numberCodeInputs[nextValueIndex].value = value
-			})
-
-			currentIndex += inputValues.length - 2
-		}
-
-		const nextIndex = currentIndex + 1
-
-		if (nextIndex < numberCodeInputs.length) {
-			numberCodeInputs[nextIndex].focus()
-		}
-
-		var data = ''
-		numberCodeInputs.forEach(input => {
-			data += input.value
-		})
-		if (data.length == 6) {
-			const res = await post('forgot-password', { command: 2, code: data, type: values.type })
-			console.log(res)
-			if (res.code == 0) {
-				setStep(3)
-				setError(null)
-			} else {
-				if (res.res == 0) {
-					toast.error('Mã xác minh đã bị khóa!')
-				} else toast.error(res.msg.replace('__res', res.res))
-			}
-		}
-	}
-	const handleKeyDown = e => {
-		const numberCodeForm = document.querySelector('[data-number-code-form]')
-		const numberCodeInputs = [...numberCodeForm.querySelectorAll('[data-number-code-input]')]
-		const { code, target } = e
-
-		const currentIndex = Number(target.dataset.numberCodeInput)
-		const previousIndex = currentIndex - 1
-		const nextIndex = currentIndex + 1
-
-		const hasPreviousIndex = previousIndex >= 0
-		const hasNextIndex = nextIndex <= numberCodeInputs.length - 1
-
-		switch (code) {
-			case 'ArrowLeft':
-			case 'ArrowUp':
-				if (hasPreviousIndex) {
-					numberCodeInputs[previousIndex].focus()
-				}
-				e.preventDefault()
-				break
-
-			case 'ArrowRight':
-			case 'ArrowDown':
-				if (hasNextIndex) {
-					numberCodeInputs[nextIndex].focus()
-				}
-				e.preventDefault()
-				break
-			case 'Backspace':
-				if (!e.target.value.length && hasPreviousIndex) {
-					numberCodeInputs[previousIndex].value = null
-					numberCodeInputs[previousIndex].focus()
-				}
-				break
-			default:
-				break
-		}
-	}
-	const handleClickShowPassword = () => {
-		setValues({ ...values, showPassword: !values.showPassword })
-	}
-	const handleMouseDownPassword = event => {
-		event.preventDefault()
+		}, 420)
 	}
 
-	const handleSubmit2 = async event => {
-		event.preventDefault()
-		event.target.disabled = true
-		const timeout = setTimeout(() => {
-			event.target.disabled = false
-			clearTimeout(timeout)
-		}, 2000)
-		var res = await post('forgot-password', { command: 3, password: values.password, email: values.email })
-		if (res.code == 0) {
-			toast.success('Khôi phục mật khẩu thành công!')
-			setTimeout(() => {
-				router.push('/auth/login')
-			}, 1000)
-		} else {
-			toast.error(res.msg)
-		}
-	}
-
-	return (
+	return !cookies.userData ? (
 		<Box className='content-center'>
 			<Card sx={{ zIndex: 1 }}>
 				<CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
@@ -301,167 +156,20 @@ const RecoverPassword = () => {
 					{error && <ErrorParagraph>{error}</ErrorParagraph>}
 					<div className='slider-container'>
 						<div className={`slider step${step}`}>
-							<div className='step'>
-								<Box sx={{ mb: 6 }}>
-									<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-										Lead you back to the journey! 👈🏼
-									</Typography>
-									<Typography variant='body2'>
-										Please enter your email so that we can send you a code to reset your password!
-									</Typography>
-								</Box>
-
-								<form noValidate autoComplete='off' onSubmit={handleSubmitForm}>
-									<TextField
-										autoFocus
-										fullWidth
-										id='email'
-										label='Email'
-										sx={{ marginBottom: 4 }}
-										onChange={handleChange('email')}
-									/>
-
-									<Button
-										fullWidth
-										size='large'
-										variant='contained'
-										type='submit'
-										sx={{ marginBottom: 7 }}
-									>
-										Next
-									</Button>
-								</form>
-							</div>
-
-							<div className='step'>
-								<Box sx={{ mb: 6 }}>
-									<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-										We sent you a verification code
-									</Typography>
-									<Typography variant='body2'>
-										Please check your email for the verification code
-									</Typography>
-								</Box>
-								<form
-									noValidate
-									autoComplete='off'
-									onSubmit={e => {
-										e.preventDefault()
-									}}
-								>
-									<fieldset
-										name='number-code'
-										data-number-code-form
-										style={{ border: 'none' }}
-										onInput={handleInputOtp}
-										onKeyDown={handleKeyDown}
-									>
-										<legend style={{ fontSize: 0 }}>Number Code</legend>
-										{/* <TextField className={classes.input} /> */}
-										<OtpInput
-											className='otp-code'
-											type='number'
-											min='0'
-											max='9'
-											name='number-code-0'
-											data-number-code-input='0'
-											required
-											ref={myRef}
-										/>
-										<OtpInput
-											className='otp-code'
-											type='number'
-											min='0'
-											max='9'
-											name='number-code-1'
-											data-number-code-input='1'
-											required
-										/>
-										<OtpInput
-											className='otp-code'
-											type='number'
-											min='0'
-											max='9'
-											name='number-code-2'
-											data-number-code-input='2'
-											required
-										/>
-										<OtpInput
-											className='otp-code'
-											type='number'
-											min='0'
-											max='9'
-											name='number-code-3'
-											data-number-code-input='3'
-											required
-										/>
-										<OtpInput
-											className='otp-code'
-											type='number'
-											min='0'
-											max='9'
-											name='number-code-4'
-											data-number-code-input='4'
-											required
-										/>
-										<OtpInput
-											className='otp-code'
-											type='number'
-											min='0'
-											max='9'
-											name='number-code-5'
-											data-number-code-input='5'
-											required
-										/>
-									</fieldset>
-									{/* <Button fullWidth size='large' variant='contained' type='submit' sx={{ marginBottom: 7 }}>
-												Next
-											</Button> */}
-								</form>
-							</div>
-							<div className='step'>
-								<Box sx={{ mb: 6 }}>
-									<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-										Successfully Verification
-									</Typography>
-									<Typography variant='body2'>Enter your new password!</Typography>
-								</Box>
-								<form noValidate autoComplete='off' onSubmit={handleSubmit2}>
-									<FormControl fullWidth>
-										<InputLabel htmlFor='auth-login-password'>Password</InputLabel>
-										<OutlinedInput
-											label='Password'
-											value={values.password}
-											id='auth-login-password'
-											onChange={handleChange('password')}
-											type={values.showPassword ? 'text' : 'password'}
-											sx={{ marginBottom: 4 }}
-											endAdornment={
-												<InputAdornment position='end'>
-													<IconButton
-														edge='end'
-														onClick={handleClickShowPassword}
-														onMouseDown={handleMouseDownPassword}
-														aria-label='toggle password visibility'
-													>
-														{values.showPassword ? <EyeOutline /> : <EyeOffOutline />}
-													</IconButton>
-												</InputAdornment>
-											}
-										/>
-									</FormControl>
-
-									<Button
-										fullWidth
-										size='large'
-										variant='contained'
-										type='submit'
-										sx={{ marginBottom: 7 }}
-									>
-										Confirm
-									</Button>
-								</form>
-							</div>
+							<EmailVerification
+								changeProc={handleChange}
+								values={values}
+								setValues={setValues}
+								setStep={setStep}
+								refFnc={setFocusForStepTwo}
+							/>
+							<VerificationCode setRef={setPinRef} values={values} setStep={setStep} />
+							<SetPassword
+								router={router}
+								changeProc={handleChange}
+								values={values}
+								setValues={setValues}
+							/>
 						</div>
 					</div>
 
@@ -486,6 +194,8 @@ const RecoverPassword = () => {
 			</Card>
 			<FooterIllustrationsV1 />
 		</Box>
+	) : (
+		<Error404 />
 	)
 }
 RecoverPassword.getLayout = page => <BlankLayout>{page}</BlankLayout>
