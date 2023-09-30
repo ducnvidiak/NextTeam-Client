@@ -24,7 +24,9 @@ const axios = require('axios')
 import Close from 'mdi-material-ui/Close'
 
 import { updateUserAvatar, updateUserInfo } from '../../pages/user/apiUtils'
+import { validateEmail, validateName } from '../../pages/input-validation/index'
 import { ConsoleLine } from 'mdi-material-ui'
+import { ToastContainer, toast } from 'react-toastify'
 
 const ImgStyled = styled('img')(({ theme }) => ({
 	width: 120,
@@ -56,6 +58,11 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 
 	const [imgSrc, setImgSrc] = useState('')
 	const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
+
+	const [firstnameError, setFirstnameError] = useState(false)
+	const [lastnameError, setLastnameError] = useState(false)
+	const [emailError, setEmailError] = useState(false)
+
 	useEffect(() => {
 		setCurrentUserInfo({ ...userInfo })
 	}, [userInfo])
@@ -73,12 +80,26 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 		event.preventDefault()
 		if (imgSrc != '')
 			updateUserAvatar(imgSrc, userInfo.id).then(response => {
-				if (response.message == 'success') setUserInfo({ ...currentUserInfo })
+				if (response.message == 'success') {
+					setUserInfo({ ...currentUserInfo })
+					toast.success('Success upload avatar!', {
+						position: toast.POSITION.TOP_RIGHT
+					})
+				} else {
+					toast.error('Fail to upload avatar!')
+				}
 				console.log('update avatar: ', response)
 			})
 
 		updateUserInfo(currentUserInfo).then(response => {
-			if (response.message == 'success') setUserInfo({ ...currentUserInfo })
+			if (response.message == 'success') {
+				setUserInfo({ ...currentUserInfo })
+				toast.success('Success change info!', {
+					position: toast.POSITION.TOP_RIGHT
+				})
+			} else {
+				toast.error('Fail to change info!')
+			}
 			console.log('update info: ', response)
 		})
 	}
@@ -86,11 +107,14 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 	const handleResetAvatar = event => {
 		event.preventDefault()
 		setImgSrc('')
-		setUserInfo({ ...currentUserInfo, avatarURL: userInfo.avatarURL })
+		setUserInfo({ ...userInfo, avatarURL: userInfo.avatarURL })
 	}
 
 	const handleResetAccountInfo = event => {
 		event.preventDefault()
+		setEmailError(false)
+		setFirstnameError(false)
+		setLastnameError(false)
 		setUserInfo({ ...userInfo, avatarURL: currentUserInfo.avatarURL })
 	}
 
@@ -135,7 +159,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 						</Box>
 					</Grid>
 
-					<Grid item xs={12} sm={6}>
+					{/* <Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
 							label='Username'
@@ -147,7 +171,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 								})
 							}}
 						/>
-					</Grid>
+					</Grid> */}
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
@@ -155,11 +179,20 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 							label='Email'
 							placeholder='johnDoe@example.com'
 							value={currentUserInfo?.email || ''}
+							error={emailError}
 							onChange={event => {
+								if (!validateEmail(event.target.value)) {
+									setEmailError(true)
+								} else {
+									setEmailError(false)
+								}
 								setCurrentUserInfo(current => {
 									return { ...current, email: event.target.value }
 								})
 							}}
+							helperText={
+								emailError && 'Email phải chứ ký tự @, tên miền và ít nhất 1 chữ cái phía trước @.'
+							}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
@@ -168,11 +201,20 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 							label='First name'
 							placeholder='John Doe'
 							value={currentUserInfo?.firstname || ''}
+							error={firstnameError}
 							onChange={event => {
+								if (!validateName(event.target.value)) {
+									setFirstnameError(true)
+								} else {
+									setFirstnameError(false)
+								}
 								setCurrentUserInfo(current => {
 									return { ...current, firstname: event.target.value }
 								})
 							}}
+							helperText={
+								firstnameError && 'Họ và tên đệm phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'
+							}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
@@ -181,11 +223,18 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 							label='Last name'
 							placeholder='John Doe'
 							value={currentUserInfo?.lastname || ''}
+							error={lastnameError}
 							onChange={event => {
+								if (!validateName(event.target.value)) {
+									setLastnameError(true)
+								} else {
+									setLastnameError(false)
+								}
 								setCurrentUserInfo(current => {
 									return { ...current, lastname: event.target.value }
 								})
 							}}
+							helperText={lastnameError && 'Tên phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'}
 						/>
 					</Grid>
 

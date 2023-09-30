@@ -25,73 +25,102 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'nprogress'
 
-import { ToastContainer, toast } from 'react-toastify'
-import { getUserInfo } from '../apiUtils'
+import { getUserInfo, getAllMajors } from '../apiUtils'
 
 // import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 const axios = require('axios')
 
 const Tab = styled(MuiTab)(({ theme }) => ({
-  [theme.breakpoints.down('md')]: {
-    minWidth: 100
-  },
-  [theme.breakpoints.down('sm')]: {
-    minWidth: 67
-  }
+	[theme.breakpoints.down('md')]: {
+		minWidth: 100
+	},
+	[theme.breakpoints.down('sm')]: {
+		minWidth: 67
+	}
 }))
 
 const TabName = styled('span')(({ theme }) => ({
-  lineHeight: 1.71,
-  fontSize: '0.875rem',
-  marginLeft: theme.spacing(2.4),
-  [theme.breakpoints.down('md')]: {
-    display: 'none'
-  }
+	lineHeight: 1.71,
+	fontSize: '0.875rem',
+	marginLeft: theme.spacing(2.4),
+	[theme.breakpoints.down('md')]: {
+		display: 'none'
+	}
 }))
 
 const AccountSettings = () => {
-  // ** State
-  const [value, setValue] = useState('security')
-  const [userInfo, setUserInfo] = useState(null)
+	// ** State
+	const [value, setValue] = useState('security')
+	const [userInfo, setUserInfo] = useState(null)
+	const [majors, setMajors] = useState(null)
 
-  const router = useRouter()
+	const router = useRouter()
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue)
-  }
+	const handleChange = (event, newValue) => {
+		setValue(newValue)
+	}
+	useEffect(() => {
+		getAllMajors().then(response => {
+			setMajors(response)
+		})
+	}, [])
 
-  useEffect(() => {
-    if (router.query.id)
-      getUserInfo(router.query.id).then(response => {
-        setUserInfo(response)
-      })
-  }, [router.query.id])
+	useEffect(() => {
+		if (router.query.id)
+			getUserInfo(router.query.id).then(response => {
+				setUserInfo(response)
+			})
+	}, [router.query.id])
 
-  return (
-    <Card sx={{ marginTop: 10 }}>
-      <TabContext value={value}>
-        <TabList
-          onChange={handleChange}
-          aria-label='account-settings tabs'
-          sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
-        >
-          <Tab
-            value='security'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOpenOutline />
-                <TabName>Security</TabName>
-              </Box>
-            }
-          />
-        </TabList>
+	return (
+		<Card sx={{ marginTop: 10 }}>
+			<TabContext value={value}>
+				<TabList
+					onChange={handleChange}
+					aria-label='account-settings tabs'
+					sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
+				>
+					{/* <Tab
+						value='account'
+						label={
+							<Box sx={{ display: 'flex', alignItems: 'center' }}>
+								<AccountOutline />
+								<TabName>Tài khoản</TabName>
+							</Box>
+						}
+					/> */}
+					<Tab
+						value='security'
+						label={
+							<Box sx={{ display: 'flex', alignItems: 'center' }}>
+								<LockOpenOutline />
+								<TabName>Thay đổi mật khẩu</TabName>
+							</Box>
+						}
+					/>
+					{/* <Tab
+						value='info'
+						label={
+							<Box sx={{ display: 'flex', alignItems: 'center' }}>
+								<InformationOutline />
+								<TabName>Thông tin</TabName>
+							</Box>
+						}
+					/> */}
+				</TabList>
 
-        <TabPanel sx={{ p: 0 }} value='security'>
-          <TabSecurity userInfo={userInfo} setUserInfo={setUserInfo} />
-        </TabPanel>
-      </TabContext>
-    </Card>
-  )
+				<TabPanel sx={{ p: 0 }} value='account'>
+					<TabAccount userInfo={userInfo} setUserInfo={setUserInfo} />
+				</TabPanel>
+				<TabPanel sx={{ p: 0 }} value='security'>
+					<TabSecurity userInfo={userInfo} setUserInfo={setUserInfo} />
+				</TabPanel>
+				<TabPanel sx={{ p: 0 }} value='info'>
+					<TabInfo userInfo={userInfo} setUserInfo={setUserInfo} majors={majors} />
+				</TabPanel>
+			</TabContext>
+		</Card>
+	)
 }
 
 export default AccountSettings

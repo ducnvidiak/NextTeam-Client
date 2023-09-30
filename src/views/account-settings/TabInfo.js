@@ -26,6 +26,8 @@ import { Autocomplete, Box } from '@mui/material'
 import { Country, State, City } from 'country-state-city'
 import { updateUserInfo } from '../../pages/user/apiUtils'
 import { Cookie } from 'mdi-material-ui'
+import { ToastContainer, toast } from 'react-toastify'
+import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../pages/input-validation/index'
 
 const CustomInput = forwardRef((props, ref) => {
 	return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
@@ -35,6 +37,9 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	// ** State
 
 	const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
+	const [studentCodeError, setStudentCodeError] = useState(false)
+	const [phoneNumberError, setPhoneNumberError] = useState(false)
+	const [dobError, setDobError] = useState(true)
 
 	const [date, setDate] = useState(
 		currentUserInfo?.dob != null && currentUserInfo.dob != '1970-01-01' ? new Date(currentUserInfo.dob) : null
@@ -67,7 +72,14 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	const handleSubmit = event => {
 		event.preventDefault()
 		updateUserInfo(currentUserInfo).then(response => {
-			setUserInfo({ ...currentUserInfo })
+			if (response.message == 'success') {
+				setUserInfo({ ...currentUserInfo })
+				toast.success('Success change detail info!', {
+					position: toast.POSITION.TOP_RIGHT
+				})
+			} else {
+				toast.error('Fail to change detail info!')
+			}
 			console.log('update detail info: ', response)
 		})
 	}
@@ -98,13 +110,22 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							fullWidth
 							type='text'
 							label='Student code'
-							placeholder='(123) 456-7890'
+							placeholder='DE160488'
 							value={currentUserInfo?.studentCode || ''}
+							error={studentCodeError}
 							onChange={event => {
+								if (!validateStudentCode(event.target.value)) {
+									setStudentCodeError(true)
+								} else {
+									setStudentCodeError(false)
+								}
 								setCurrentUserInfo(current => {
 									return { ...current, studentCode: event.target.value }
 								})
 							}}
+							helperText={
+								studentCodeError && 'Mã sinh viên phải chứa ít nhất 1 ký tự (bao gồm số và chữ cái).'
+							}
 						/>
 					</Grid>
 					{/* <Grid item xs={12} sm={6}>
@@ -150,13 +171,20 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							fullWidth
 							type='text'
 							label='Phone'
-							placeholder='(123) 456-7890'
+							placeholder='0123456789'
 							value={currentUserInfo?.phoneNumber || ''}
+							error={phoneNumberError}
 							onChange={event => {
+								if (!validatePhone(event.target.value)) {
+									setPhoneNumberError(true)
+								} else {
+									setPhoneNumberError(false)
+								}
 								setCurrentUserInfo(current => {
 									return { ...currentUserInfo, phoneNumber: event.target.value }
 								})
 							}}
+							helperText={phoneNumberError && 'Số điện thoại phải chứa (+84|0) 9|10 chữ số tiếp theo.'}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
@@ -165,16 +193,21 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								selected={date}
 								showYearDropdown
 								showMonthDropdown
+								disableFuture='true'
 								id='account-settings-date'
 								placeholderText='MM-DD-YYYY'
 								customInput={<CustomInput />}
+								error={dobError}
 								onChange={newValue => {
 									setDate(newValue)
-
+									if (!validateBirthOfDate(newValue?.toISOString))
+										console.log('filter date: ', newValue?.toISOString().split('T')[0])
+									console.log('original date: ', newValue?.toISOString())
 									setCurrentUserInfo(current => {
 										return { ...current, dob: newValue?.toISOString().split('T')[0] || null }
 									})
 								}}
+								helperText={dobError && 'Ngày sinh không được phép ở thời điểm tương lai.'}
 							/>
 						</DatePickerWrapper>
 					</Grid>

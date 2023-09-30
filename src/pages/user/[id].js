@@ -25,7 +25,6 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'nprogress'
 
-import { ToastContainer, toast } from 'react-toastify'
 import { getUserInfo, getAllMajors } from './apiUtils'
 
 // import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
@@ -90,7 +89,7 @@ const AccountSettings = () => {
 							</Box>
 						}
 					/>
-					<Tab
+					{/* <Tab
 						value='security'
 						label={
 							<Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -98,13 +97,13 @@ const AccountSettings = () => {
 								<TabName>Bảo mật</TabName>
 							</Box>
 						}
-					/>
+					/> */}
 					<Tab
 						value='info'
 						label={
 							<Box sx={{ display: 'flex', alignItems: 'center' }}>
 								<InformationOutline />
-								<TabName>Thông tin</TabName>
+								<TabName>Thông tin chi tiết</TabName>
 							</Box>
 						}
 					/>
@@ -113,9 +112,9 @@ const AccountSettings = () => {
 				<TabPanel sx={{ p: 0 }} value='account'>
 					<TabAccount userInfo={userInfo} setUserInfo={setUserInfo} />
 				</TabPanel>
-				<TabPanel sx={{ p: 0 }} value='security'>
+				{/* <TabPanel sx={{ p: 0 }} value='security'>
 					<TabSecurity userInfo={userInfo} setUserInfo={setUserInfo} />
-				</TabPanel>
+				</TabPanel> */}
 				<TabPanel sx={{ p: 0 }} value='info'>
 					<TabInfo userInfo={userInfo} setUserInfo={setUserInfo} majors={majors} />
 				</TabPanel>
