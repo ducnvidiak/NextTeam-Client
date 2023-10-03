@@ -213,9 +213,14 @@ export const landingLayoutVavigation = () => {
 			openInNewTab: true
 		},
 		{
-			title: 'Thông tin người dùng',
+			title: 'Thông tin cá nhân của người dùng',
 			icon: Account,
 			path: '/user'
+		},
+		{
+			title: 'Thông tin người dùng',
+			icon: Account,
+			path: '/user/info'
 		},
 		{
 			title: 'Mật khẩu',

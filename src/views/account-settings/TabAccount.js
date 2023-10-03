@@ -79,7 +79,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 	const handleSubmit = event => {
 		event.preventDefault()
 		if (imgSrc != '')
-			updateUserAvatar(imgSrc, userInfo.id).then(response => {
+			updateUserAvatar(imgSrc, userInfo?.id).then(response => {
 				if (response.message == 'success') {
 					setUserInfo({ ...currentUserInfo })
 					toast.success('Success upload avatar!', {

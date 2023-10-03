@@ -55,6 +55,9 @@ import {
 	validatePhone,
 	validateStudentCode
 } from '../../input-validation/index'
+import { post } from 'src/utils/request'
+import Error404 from 'src/pages/404'
+import { useCookies } from 'react-cookie'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
