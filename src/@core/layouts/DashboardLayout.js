@@ -22,89 +22,92 @@ import ScrollToTop from 'src/@core/components/scroll-to-top'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 const VerticalLayoutWrapper = styled('div')({
-  height: '100%',
-  display: 'flex'
+	height: '100%',
+	display: 'flex'
 })
 
 const MainContentWrapper = styled(Box)({
-  flexGrow: 1,
-  minWidth: 0,
-  display: 'flex',
-  minHeight: '100vh',
-  flexDirection: 'column'
+	flexGrow: 1,
+	minWidth: 0,
+	display: 'flex',
+	minHeight: '100vh',
+	flexDirection: 'column'
 })
 
 const ContentWrapper = styled('main')(({ theme }) => ({
-  marginTop: 64,
-  flexGrow: 1,
-  width: '100%',
-  padding: theme.spacing(6),
-  transition: 'padding .25s ease-in-out',
-  [theme.breakpoints.down('sm')]: {
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(4)
-  }
+	marginTop: 64,
+	flexGrow: 1,
+	width: '100%',
+	padding: theme.spacing(6),
+	transition: 'padding .25s ease-in-out',
+	[theme.breakpoints.down('sm')]: {
+		paddingLeft: theme.spacing(4),
+		paddingRight: theme.spacing(4)
+	}
 }))
 
 const DashboardLayout = props => {
-  // ** Props
-  const { settings, children, scrollToTop } = props
+	// ** Props
+	const { settings, children, scrollToTop } = props
 
-  // ** Vars
-  const { contentWidth } = settings
-  const navWidth = themeConfig.navigationSize
+	// ** Vars
+	const { contentWidth } = settings
+	const navWidth = themeConfig.navigationSize
 
-  // ** States
-  const [navVisible, setNavVisible] = useState(false)
+	// ** States
+	const [navVisible, setNavVisible] = useState(false)
 
-  // ** Toggle Functions
-  const toggleNavVisibility = () => setNavVisible(!navVisible)
+	// ** Toggle Functions
+	const toggleNavVisibility = () => {
+		// setNavVisible(!navVisible)
+		console.log('toggle navbar!')
+	}
 
-  return (
-    <>
-      <VerticalLayoutWrapper className='layout-wrapper'>
-        <Navigation
-          navWidth={navWidth}
-          navVisible={navVisible}
-          setNavVisible={setNavVisible}
-          toggleNavVisibility={toggleNavVisibility}
-          {...props}
-        />
-        <MainContentWrapper className='layout-content-wrapper'>
-          <AppBar toggleNavVisibility={toggleNavVisibility} {...props} />
+	return (
+		<>
+			<VerticalLayoutWrapper className='layout-wrapper'>
+				<Navigation
+					navWidth={navWidth}
+					navVisible={navVisible}
+					setNavVisible={setNavVisible}
+					toggleNavVisibility={toggleNavVisibility}
+					{...props}
+				/>
+				<MainContentWrapper className='layout-content-wrapper'>
+					<AppBar toggleNavVisibility={toggleNavVisibility} {...props} />
 
-          <ContentWrapper
-            className='layout-page-content'
-            sx={{
-              ...(contentWidth === 'boxed' && {
-                mx: 'auto',
-                '@media (min-width:1440px)': { maxWidth: 1440 },
-                '@media (min-width:1200px)': { maxWidth: '100%' }
-              })
-            }}
-          >
-            {children}
-          </ContentWrapper>
+					<ContentWrapper
+						className='layout-page-content'
+						sx={{
+							...(contentWidth === 'boxed' && {
+								mx: 'auto',
+								'@media (min-width:1440px)': { maxWidth: 1440 },
+								'@media (min-width:1200px)': { maxWidth: '100%' }
+							})
+						}}
+					>
+						{children}
+					</ContentWrapper>
 
-          <Footer {...props} />
+					<Footer {...props} />
 
-          <DatePickerWrapper sx={{ zIndex: 11 }}>
-            <Box id='react-datepicker-portal'></Box>
-          </DatePickerWrapper>
-        </MainContentWrapper>
-      </VerticalLayoutWrapper>
+					<DatePickerWrapper sx={{ zIndex: 11 }}>
+						<Box id='react-datepicker-portal'></Box>
+					</DatePickerWrapper>
+				</MainContentWrapper>
+			</VerticalLayoutWrapper>
 
-      {scrollToTop ? (
-        scrollToTop(props)
-      ) : (
-        <ScrollToTop className='mui-fixed'>
-          <Fab color='primary' size='small' aria-label='scroll back to top'>
-            <ArrowUp />
-          </Fab>
-        </ScrollToTop>
-      )}
-    </>
-  )
+			{scrollToTop ? (
+				scrollToTop(props)
+			) : (
+				<ScrollToTop className='mui-fixed'>
+					<Fab color='primary' size='small' aria-label='scroll back to top'>
+						<ArrowUp />
+					</Fab>
+				</ScrollToTop>
+			)}
+		</>
+	)
 }
 
 export default DashboardLayout
