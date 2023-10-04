@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useReducer } from 'react'
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 
@@ -19,13 +19,47 @@ import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
+import Tab from '@mui/material/Tab'
+import TabList from '@mui/lab/TabList'
+import TabPanel from '@mui/lab/TabPanel'
+import TabContext from '@mui/lab/TabContext'
+import { Chip } from '@mui/material'
+import NotificationDetail from './NotificationDetail'
 
 const Notifications = () => {
+	const [state, dispatch] = useReducer((state, action) => action, 0)
 	const router = useRouter()
 	const [notificationsData, setNotificationsData] = useState([])
 	const [cookies, setCookie] = useCookies(['clubData'])
+	const [userData, setUserData] = useCookies(['userData'])
+	const [notificationDetail, setNotificationDetail] = useState()
+	const [countUnview, setCountUnview] = useState(0)
 
-	// const [clubData, setClubData] = useState()
+	for (let i = 0; i < notificationsData.length; i++) {
+		if (!notificationsData[i].hasSeen) {
+			countUnview++
+		}
+	}
+
+	//modal
+	const [open, setOpen] = useState(false)
+	const [scroll, setScroll] = useState('paper')
+
+	function handleClickOpen(id, title, content, type, createdAt) {
+		setNotificationDetail({
+			id: id,
+			title: title,
+			content: content,
+			type: type,
+			createdAt: createdAt
+		})
+		setOpen(true)
+		updateView(id, type)
+	}
+
+	const handleClose = () => {
+		setOpen(false)
+	}
 
 	const cardStyle = {
 		margin: '10px' // Thiết lập margin 10px
@@ -34,24 +68,86 @@ const Notifications = () => {
 	const handleSubmit = event => {
 		router.push('/dashboard/notifications/view-all')
 	}
+
+	const statusObj = {
+		private: { color: 'primary' },
+		public: { color: 'success' }
+	}
+
+	const updateView = (id, type) => {
+		if (type == 'private') {
+			fetch('http://localhost:8080/notification?action=update-view-private-email&id=' + id, {
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					console.log(data)
+					dispatch({ type: 'trigger' })
+				})
+				.catch(error => console.error('Error:', error))
+		}
+		if (type == 'public') {
+			fetch(
+				'http://localhost:8080/notification?action=update-view-public-email&id=' +
+					id +
+					'&userId=' +
+					userData['userData'].id,
+				{
+					method: 'GET',
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				}
+			)
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					console.log(data)
+					dispatch({ type: 'trigger' })
+				})
+				.catch(error => console.error('Error:', error))
+		}
+	}
+
 	useEffect(() => {
-		fetch(`http://localhost:8080/notification?action=list-10-noti&clubId=${cookies['clubData']?.clubId}`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			'http://localhost:8080/notification?action=list-10-noti&clubId=' +
+				cookies['clubData'].clubId +
+				'&userId=' +
+				userData['userData'].id,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})
 			.then(function (data) {
 				setNotificationsData(data)
+				console.log(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [cookies])
+	}, [cookies, userData, state])
 
 	return (
 		<Grid item xs={12} style={{ height: '100%' }}>
+			<NotificationDetail
+				notificationDetail={notificationDetail}
+				handleClickOpen={handleClickOpen}
+				open={open}
+				setOpen={setOpen}
+				handleClose={handleClose}
+				statusObj={statusObj}
+			></NotificationDetail>
 			<Card style={{ height: '100%' }}>
 				<div
 					style={{
@@ -61,35 +157,72 @@ const Notifications = () => {
 						paddingRight: '10px'
 					}}
 				>
-					<CardHeader title='Thông báo' titleTypographyProps={{ variant: 'h5' }} />
+					<CardHeader title='Thông báo' titleTypographyProps={{ variant: 'h6' }} />
+
 					<Button variant='contained' onClick={e => handleSubmit(e)}>
 						Xem tất cả
 					</Button>
 				</div>
-
-				{notificationsData.map(notification => {
-					return (
-						<Card key={notification.id} sx={{ ...cardStyle, borderLeft: 4, borderColor: 'primary.main' }}>
-							<CardContent
-								onClick={() => router.push(`/dashboard/notifications/detail/${notification.id}`)}
+				<CardContent>
+					{notificationsData.map(notification => {
+						return (
+							<Card
+								key={notification.id}
+								sx={{ ...cardStyle, borderLeft: 4, borderColor: 'primary.main' }}
 							>
-								<Grid container spacing={0}>
-									<Grid item xs={4} md={2}>
-										{notification.updatedAt}
+								<CardContent
+									onClick={() =>
+										handleClickOpen(
+											notification.id,
+											notification.title,
+											notification.content,
+											notification.type,
+											notification.createdAt
+										)
+									}
+								>
+									<Grid container spacing={0}>
+										<Grid item xs={4} md={2}>
+											{notification.createdAt}
+										</Grid>
+										<Grid item xs={8} md={10}>
+											<Typography variant='body1' style={{ fontWeight: 'bold' }}>
+												{notification.title}
+												{notification.hasSeen == 0 ? (
+													<span>
+														<Chip
+															label='Mới'
+															sx={{
+																height: 24,
+																fontSize: '0.75rem',
+																textTransform: 'capitalize',
+																'& .MuiChip-label': { fontWeight: 500 },
+																marginLeft: 2
+															}}
+															color='error'
+														/>
+													</span>
+												) : (
+													''
+												)}
+											</Typography>
+											<Chip
+												label={notification.type == 'private' ? 'TB Cá nhân' : 'TB Chung'}
+												color={statusObj[notification.type].color}
+												sx={{
+													height: 24,
+													fontSize: '0.75rem',
+													textTransform: 'capitalize',
+													'& .MuiChip-label': { fontWeight: 500 }
+												}}
+											/>
+										</Grid>
 									</Grid>
-									<Grid item xs={8} md={10}>
-										<Typography variant='body1' style={{ fontWeight: 'bold' }}>
-											{notification.title}
-										</Typography>
-									</Grid>
-								</Grid>
-							</CardContent>
-							{/* <Link passHref href={`/dashboard/notifications/detail/${notification.id}`}>
-                
-              </Link> */}
-						</Card>
-					)
-				})}
+								</CardContent>
+							</Card>
+						)
+					})}
+				</CardContent>
 			</Card>
 		</Grid>
 	)
