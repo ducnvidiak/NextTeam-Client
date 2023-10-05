@@ -45,6 +45,8 @@ import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 import { post } from 'src/utils/request'
 import Error404 from 'src/pages/404'
 import { useCookies } from 'react-cookie'
+import { EyeOffOutline, EyeOutline } from 'mdi-material-ui'
+import Decentralization from 'src/layouts/Decentralization'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -84,6 +86,7 @@ const RegisterPage = () => {
 	const [studentCodeError, setStudentCodeError] = useState('')
 	const [phoneNumberError, setPhoneNumberError] = useState('')
 	const [genderError, setGenderError] = useState('')
+	const [showPassword, setShowPassword] = useState(false)
 
 	// ** Hook
 	const theme = useTheme()
@@ -178,6 +181,10 @@ const RegisterPage = () => {
 
 		// 👇️ clear all input values in the form
 		// setFirstName('')
+	}
+
+	const handleClickShowPassword = () => {
+		setShowPassword(!showPassword)
 	}
 
 	const handleMouseDownPassword = event => {
@@ -309,6 +316,30 @@ const RegisterPage = () => {
 							sx={{ marginBottom: 4 }}
 						/>
 						<FormControl fullWidth>
+							<InputLabel htmlFor='auth-register-password'>Password</InputLabel>
+							<OutlinedInput
+								label='Password'
+								id='auth-register-password'
+								onChange={e => setPassword(e.target.value)}
+								type={showPassword ? 'text' : 'password'}
+								sx={{ marginBottom: 4 }}
+								name='password'
+								error={passwordError}
+								endAdornment={
+									<InputAdornment position='end'>
+										<IconButton
+											edge='end'
+											onClick={handleClickShowPassword}
+											onMouseDown={handleMouseDownPassword}
+											aria-label='toggle password visibility'
+										>
+											{showPassword ? <EyeOutline /> : <EyeOffOutline />}
+										</IconButton>
+									</InputAdornment>
+								}
+							/>
+						</FormControl>
+						{/* <FormControl fullWidth>
 							<InputLabel htmlFor='auth-register-password'>Mật khẩu</InputLabel>
 							<OutlinedInput
 								sx={{ marginBottom: 4 }}
@@ -319,7 +350,7 @@ const RegisterPage = () => {
 								error={passwordError}
 								type={password.showPassword ? 'text' : 'password'}
 							/>
-						</FormControl>
+						</FormControl> */}
 
 						<TextField
 							fullWidth
@@ -424,6 +455,10 @@ const RegisterPage = () => {
 		<Error404 />
 	)
 }
-RegisterPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
+RegisterPage.getLayout = page => (
+	<Decentralization forGuest>
+		<BlankLayout>{page}</BlankLayout>
+	</Decentralization>
+)
 
 export default RegisterPage

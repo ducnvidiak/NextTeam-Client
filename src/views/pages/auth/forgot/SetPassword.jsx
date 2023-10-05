@@ -10,8 +10,8 @@ import Typography from '@mui/material/Typography'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
-import { post } from 'src/utils/request'
 import { toast } from 'react-toastify'
+import { postAPI } from 'src/utils/request'
 
 function SetPassword(props) {
 	const handleChange = props.changeProc
@@ -35,7 +35,7 @@ function SetPassword(props) {
 			event.target.disabled = false
 			clearTimeout(timeout)
 		}, 2000)
-		var res = await post('forgot-password', { command: 3, password: values.password, email: values.email })
+		var res = await postAPI('forgot-password', { command: 3, password: values.password, email: values.email })
 		if (res.code == 0) {
 			toast.success('Khôi phục mật khẩu thành công!')
 			setTimeout(() => {
