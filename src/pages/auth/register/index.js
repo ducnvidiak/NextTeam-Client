@@ -10,29 +10,34 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 // ** MUI Components
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Checkbox from '@mui/material/Checkbox'
-import TextField from '@mui/material/TextField'
-import MenuItem from '@mui/material/MenuItem'
-import Grid from '@mui/material/Grid'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
-import IconButton from '@mui/material/IconButton'
-import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
+
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
-import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
+
+import {
+	Box,
+	Button,
+	Checkbox,
+	TextField,
+	MenuItem,
+	Grid,
+	Divider,
+	Typography,
+	InputLabel,
+	IconButton,
+	CardContent,
+	FormControl,
+	OutlinedInput,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	InputAdornment,
+	FormHelperText
+} from '@mui/material'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
@@ -42,6 +47,14 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+import { EyeOffOutline, EyeOutline } from 'mdi-material-ui'
+import {
+	validateName,
+	validateEmail,
+	validatePassword,
+	validatePhone,
+	validateStudentCode
+} from '../../input-validation/index'
 import { post } from 'src/utils/request'
 import Error404 from 'src/pages/404'
 import { useCookies } from 'react-cookie'
@@ -75,6 +88,7 @@ const RegisterPage = () => {
 	const [lastname, setLastname] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [showPassword, setShowPassword] = useState(false)
 	const [studentCode, setStudentCode] = useState('')
 	const [phoneNumber, setPhoneNumber] = useState('')
 	const [gender, setGender] = useState('')
@@ -92,10 +106,7 @@ const RegisterPage = () => {
 	const theme = useTheme()
 	const router = useRouter()
 
-	// ** Cookie
-	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
-
-	const handleSubmit = async event => {
+	const handleSubmit = event => {
 		event.preventDefault() // 👈️ prevent page refresh
 		setFirstnameError(false)
 		setLastnameError(false)
@@ -104,50 +115,45 @@ const RegisterPage = () => {
 		setStudentCodeError(false)
 		setPhoneNumberError(false)
 		setGenderError(false)
-		if (firstname == '') {
+		if (!validateName(firstname)) {
 			setFirstnameError(true)
-			toast.error('Vui lòng điền họ và tên đệm')
-		} else if (lastname == '') {
+		}
+		if (!validateName(lastname)) {
 			setLastnameError(true)
-			toast.error('Vui lòng điền tên')
-		} else if (email == '') {
+		}
+		if (!validateEmail(email)) {
 			setEmailError(true)
-			toast.error('Vui lòng điền email')
-		} else if (password == '') {
+		}
+		if (!validatePassword(password)) {
 			setPasswordError(true)
-			toast.error('Vui lòng điền mật khẩu')
-		} else if (studentCode == '') {
+		}
+		if (studentCode == '') {
 			setStudentCodeError(true)
-			toast.error('Vui lòng điền mã số sinh viên')
-		} else if (phoneNumber == '') {
+		}
+		if (!validatePhone(phoneNumber)) {
 			setPhoneNumberError(true)
-			toast.error('Vui lòng điền số điện thoại')
-		} else if (gender == '') {
+		}
+		if (!validateStudentCode(studentCode)) {
+			setStudentCodeError(true)
+		}
+		if (gender == '' || gender == undefined) {
 			setGenderError(true)
-			toast.error('Vui lòng chọn giới tính')
-		} else if (agree == '') {
+		}
+		if (agree == '') {
 			toast.error('Vui lòng đồng ý với điều khoản của nền tảng')
-		} else if (firstname && lastname && email && password && studentCode && phoneNumber && gender && agree) {
-			const res = await post('http://localhost:8080/user-register', {
-				firstname: firstname,
-				lastname: lastname,
-				email: email,
-				password: password,
-				studentCode: studentCode,
-				phoneNumber: phoneNumber,
-				gender: gender
-			})
-			console.log(res)
-			if (res.code == 0) {
-				toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
-				setTimeout(() => {
-					router.push('/auth/login')
-				}, 3000)
-			} else {
-				toast.error(res.msg + ` (${res.code})`)
-			}
+		}
 
-			/*fetch('http://localhost:8080/user-register', {
+		if (
+			validateName(firstname) &&
+			validateName(lastname) &&
+			validateEmail(email) &&
+			validatePassword(password) &&
+			validateStudentCode(studentCode) &&
+			validatePhone(phoneNumber) &&
+			!genderError &&
+			agree
+		) {
+			fetch('http://localhost:8080/user-register', {
 				method: 'POST',
 				body: JSON.stringify({
 					firstname: firstname,
@@ -176,7 +182,8 @@ const RegisterPage = () => {
 					}
 				})
 				.catch(error => console.error('Error:', error))
-      */
+		} else {
+			toast.error('Thông tin không hợp lệ!')
 		}
 
 		// 👇️ clear all input values in the form
@@ -191,7 +198,7 @@ const RegisterPage = () => {
 		event.preventDefault()
 	}
 
-	return !cookies.userData ? (
+	return (
 		<Box className='content-center'>
 			<Card sx={{ zIndex: 1 }}>
 				<CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
@@ -280,7 +287,7 @@ const RegisterPage = () => {
 
 					<form noValidate autoComplete='off' method='POST'>
 						<Grid container spacing={2}>
-							<Grid item xs={8}>
+							<Grid item xs={7}>
 								<TextField
 									fullWidth
 									type='text'
@@ -290,9 +297,13 @@ const RegisterPage = () => {
 									value={firstname}
 									error={firstnameError}
 									sx={{ marginBottom: 4 }}
+									helperText={
+										firstnameError &&
+										'Họ và tên đệm phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'
+									}
 								/>
 							</Grid>
-							<Grid item xs={4}>
+							<Grid item xs={5}>
 								<TextField
 									fullWidth
 									type='text'
@@ -302,6 +313,7 @@ const RegisterPage = () => {
 									value={lastname}
 									error={lastnameError}
 									sx={{ marginBottom: 4 }}
+									helperText={lastnameError && 'Tên phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'}
 								/>
 							</Grid>
 						</Grid>
@@ -314,6 +326,9 @@ const RegisterPage = () => {
 							value={email}
 							error={emailError}
 							sx={{ marginBottom: 4 }}
+							helperText={
+								emailError && 'Email phải chứ ký tự @, tên miền và ít nhất 1 chữ cái phía trước @.'
+							}
 						/>
 						<FormControl fullWidth>
 							<InputLabel htmlFor='auth-register-password'>Password</InputLabel>
@@ -343,12 +358,30 @@ const RegisterPage = () => {
 							<InputLabel htmlFor='auth-register-password'>Mật khẩu</InputLabel>
 							<OutlinedInput
 								sx={{ marginBottom: 4 }}
-								label='Password'
+								label='Mật khẩu'
 								name='password'
-								id='auth-register-password'
 								onChange={e => setPassword(e.target.value)}
 								error={passwordError}
-								type={password.showPassword ? 'text' : 'password'}
+								type={showPassword ? 'text' : 'password'}
+								InputProps={{
+									endAdornment: (
+										<InputAdornment position='end'>
+											<IconButton
+												edge='end'
+												aria-label='toggle password visibility'
+												onClick={() => {
+													setShowPassword(current => !current)
+												}}
+											>
+												{showPassword ? <EyeOutline /> : <EyeOffOutline />}
+											</IconButton>
+										</InputAdornment>
+									)
+								}}
+								helperText={
+									passwordError &&
+									'Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ in hoa, 1 số, 1 ký tự đặc biệt và độ dài ít nhất là 8 kí tự.'
+								}
 							/>
 						</FormControl> */}
 
@@ -361,7 +394,11 @@ const RegisterPage = () => {
 							value={studentCode}
 							error={studentCodeError}
 							sx={{ marginBottom: 4 }}
+							helperText={
+								studentCodeError && 'Mã sinh viên phải chứa ít nhất 1 ký tự (bao gồm số và chữ cái).'
+							}
 						/>
+
 						<TextField
 							fullWidth
 							type='text'
@@ -371,6 +408,7 @@ const RegisterPage = () => {
 							value={phoneNumber}
 							error={phoneNumberError}
 							sx={{ marginBottom: 4 }}
+							helperText={phoneNumberError && 'Số điện thoại phải chứa (+84|0) 9|10 chữ số tiếp theo.'}
 						/>
 						<FormControl fullWidth>
 							<InputLabel htmlFor='gender-select'>Giới tính</InputLabel>
@@ -378,7 +416,10 @@ const RegisterPage = () => {
 								label='Giới tính'
 								id='gender-select'
 								name='gender'
-								onChange={event => setGender(event.target.value)}
+								onChange={event => {
+									setGender(event.target.value)
+									console.log('gender select: ', event.target.value)
+								}}
 								value={gender}
 								error={genderError}
 							>
@@ -386,10 +427,17 @@ const RegisterPage = () => {
 								<MenuItem value={'0'}>Nam</MenuItem>
 								<MenuItem value={'1'}>Nữ</MenuItem>
 							</Select>
+							{genderError && <FormHelperText error='true'>Vui lòng chọn giới tính.</FormHelperText>}
 						</FormControl>
 
 						<FormControlLabel
-							control={<Checkbox onChange={event => setAgree(event.target.value)} />}
+							control={
+								<Checkbox
+									onChange={event => {
+										setAgree(event.target.checked)
+									}}
+								/>
+							}
 							label={
 								<Fragment>
 									<span>Tôi đồng ý với </span>
@@ -451,8 +499,6 @@ const RegisterPage = () => {
 			</Card>
 			<FooterIllustrationsV1 />
 		</Box>
-	) : (
-		<Error404 />
 	)
 }
 RegisterPage.getLayout = page => (

@@ -25,10 +25,10 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'nprogress'
 
-import { getUserInfo, getAllMajors } from './apiUtils'
+import { getUserInfo, getAllMajors } from '../apiUtils'
 
 // import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
-// const axios = require('axios')
+const axios = require('axios')
 
 const Tab = styled(MuiTab)(({ theme }) => ({
 	[theme.breakpoints.down('md')]: {
@@ -50,7 +50,7 @@ const TabName = styled('span')(({ theme }) => ({
 
 const AccountSettings = () => {
 	// ** State
-	const [value, setValue] = useState('account')
+	const [value, setValue] = useState('security')
 	const [userInfo, setUserInfo] = useState(null)
 	const [majors, setMajors] = useState(null)
 
@@ -80,7 +80,7 @@ const AccountSettings = () => {
 					aria-label='account-settings tabs'
 					sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
 				>
-					<Tab
+					{/* <Tab
 						value='account'
 						label={
 							<Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -88,33 +88,33 @@ const AccountSettings = () => {
 								<TabName>Tài khoản</TabName>
 							</Box>
 						}
-					/>
-					{/* <Tab
+					/> */}
+					<Tab
 						value='security'
 						label={
 							<Box sx={{ display: 'flex', alignItems: 'center' }}>
 								<LockOpenOutline />
-								<TabName>Bảo mật</TabName>
+								<TabName>Thay đổi mật khẩu</TabName>
 							</Box>
 						}
-					/> */}
-					<Tab
+					/>
+					{/* <Tab
 						value='info'
 						label={
 							<Box sx={{ display: 'flex', alignItems: 'center' }}>
 								<InformationOutline />
-								<TabName>Thông tin chi tiết</TabName>
+								<TabName>Thông tin</TabName>
 							</Box>
 						}
-					/>
+					/> */}
 				</TabList>
 
 				<TabPanel sx={{ p: 0 }} value='account'>
 					<TabAccount userInfo={userInfo} setUserInfo={setUserInfo} />
 				</TabPanel>
-				{/* <TabPanel sx={{ p: 0 }} value='security'>
+				<TabPanel sx={{ p: 0 }} value='security'>
 					<TabSecurity userInfo={userInfo} setUserInfo={setUserInfo} />
-				</TabPanel> */}
+				</TabPanel>
 				<TabPanel sx={{ p: 0 }} value='info'>
 					<TabInfo userInfo={userInfo} setUserInfo={setUserInfo} majors={majors} />
 				</TabPanel>

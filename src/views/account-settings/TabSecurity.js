@@ -24,6 +24,7 @@ import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 const axios = require('axios')
 
 import { changeUserPass } from '../../pages/user/apiUtils'
+import { ToastContainer, toast } from 'react-toastify'
 
 const TabSecurity = ({ userInfo, setUserInfo }) => {
 	// ** States
@@ -35,6 +36,8 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 		showCurrentPassword: false,
 		showConfirmNewPassword: false
 	})
+
+	const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
 
 	// Handle Current Password
 	const handleCurrentPasswordChange = prop => event => {
@@ -83,9 +86,21 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 			newPassword: values.newPassword,
 			email: userInfo.email
 		}
-		changeUserPass(authInfo, userInfo.id).then(response => {
-			console.log(response)
-		})
+		if (values.confirmNewPassword !== values.newPassword) {
+			toast.error("New Password and Confirm password aren't the same!")
+		} else {
+			changeUserPass(authInfo, userInfo.id).then(response => {
+				if (response.message == 'success') {
+					setUserInfo({ ...currentUserInfo })
+					toast.success('Success change password!', {
+						position: toast.POSITION.TOP_RIGHT
+					})
+				} else {
+					toast.error('Fail to change password!')
+				}
+				console.log(response)
+			})
+		}
 	}
 
 	return (
