@@ -1,7 +1,8 @@
 // ** React Imports
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useReducer } from 'react'
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
+import axios from 'axios'
 
 // ** MUI Imports
 import Paper from '@mui/material/Paper'
@@ -23,32 +24,46 @@ import InputAdornment from '@mui/material/InputAdornment'
 // ** Icons Imports
 import Menu from 'mdi-material-ui/Menu'
 import Magnify from 'mdi-material-ui/Magnify'
-
-const columns = [
-	{ id: 'updateAt', label: 'Thời gian', width: 200 },
-	{ id: 'title', label: 'Nội dung' }
-]
-function createData(id, updateAt, title) {
-	return { id, updateAt, title }
-}
+import { Chip } from '@mui/material'
+import NotificationDetail from '../NotificationDetail'
 
 const TableStickyHeader = () => {
 	const router = useRouter()
+	const [state, dispatch] = useReducer((state, action) => action, 0)
 
 	// ** States
 	const [page, setPage] = useState(0)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [notificationsData, setNotificationsData] = useState([])
-	const [search, setSearch] = useState()
+	const [search, setSearch] = useState('')
 	const [cookies, setCookie] = useCookies(['clubData'])
+	const [userData, setUserData] = useCookies(['userData'])
+	const [notificationDetail, setNotificationDetail] = useState()
+	console.log(search)
 
-	// const rows = [
-	//   createData('India', 'IN', 1324171354, 3287263),
-	// ]
+	//modal
+	const [open, setOpen] = useState(false)
+	const [scroll, setScroll] = useState('paper')
 
-	const rows = notificationsData.map(item => {
-		return createData(item.id, item.updatedAt, item.title)
-	})
+	function handleClickOpen(id, title, content, type, createdAt) {
+		setNotificationDetail({
+			id: id,
+			title: title,
+			content: content,
+			type: type,
+			createdAt: createdAt
+		})
+		setOpen(true)
+	}
+
+	const handleClose = () => {
+		setOpen(false)
+	}
+
+	const statusObj = {
+		private: { color: 'primary' },
+		public: { color: 'success' }
+	}
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage)
@@ -68,8 +83,34 @@ const TableStickyHeader = () => {
 
 	const handleSearch = () => {
 		// Thực hiện tìm kiếm hoặc gọi hàm bạn muốn khi người dùng nhấn Enter
+		if (search == ' ') {
+			dispatch({ type: 'trigger' })
+		} else {
+			fetch(
+				`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData['userData'].id}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				}
+			)
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					setNotificationsData(data)
+				})
+				.catch(error => console.error('Error:', error))
+		}
+	}
+
+	useEffect(() => {
 		fetch(
-			`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}`,
+			'http://localhost:8080/notification?action=list-noti&clubId=' +
+				cookies['clubData'].clubId +
+				'&userId=' +
+				userData['userData'].id,
 			{
 				method: 'GET',
 				headers: {
@@ -82,30 +123,20 @@ const TableStickyHeader = () => {
 			})
 			.then(function (data) {
 				setNotificationsData(data)
-				console.log(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}
-
-	useEffect(() => {
-		fetch('http://localhost:8080/notification?action=list-noti&clubId=' + cookies['clubData'].clubId, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				setNotificationsData(data)
-				console.log(data)
-			})
-			.catch(error => console.error('Error:', error))
-	}, [cookies])
+	}, [cookies, userData, state])
 
 	return (
 		<Grid item xs={12}>
+			<NotificationDetail
+				notificationDetail={notificationDetail}
+				handleClickOpen={handleClickOpen}
+				open={open}
+				setOpen={setOpen}
+				handleClose={handleClose}
+				statusObj={statusObj}
+			></NotificationDetail>
 			<Card style={{ height: '100%' }}>
 				<div
 					style={{
@@ -127,54 +158,60 @@ const TableStickyHeader = () => {
 								</InputAdornment>
 							)
 						}}
-						onChange={event => setSearch(event.target.value)}
-						onKeyPress={handleEnterKeyPress} // Gọi handleEnterKeyPress khi có sự kiện keypress
+						onChange={event => {
+							setSearch(event.target.value)
+							handleSearch()
+						}}
 					/>
 				</div>
 
 				<Paper sx={{ width: '100%', overflow: 'hidden' }}>
-					<TableContainer sx={{ height: '100%' }}>
-						<Table stickyHeader aria-label='sticky table'>
+					<TableContainer>
+						<Table aria-label='table in dashboard'>
 							<TableHead>
 								<TableRow>
-									{columns.map(column => (
-										<TableCell key={column.id} align={column.align} sx={{ width: column.width }}>
-											{column.label}
-										</TableCell>
-									))}
+									<TableCell>Thời gian</TableCell>
+									<TableCell>Loại thông báo</TableCell>
+									<TableCell>Nội dung</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
-									return (
-										<TableRow hover role='checkbox' tabIndex={-1} key={row.code}>
-											{columns.map(column => {
-												const value = row[column.id]
+								{notificationsData.map(row => (
+									<TableRow
+										hover
+										key={row.id}
+										sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}
+									>
+										<TableCell>{row.createdAt}</TableCell>
+										<TableCell>
+											<Chip
+												label={row.type == 'private' ? 'TB Cá nhân' : 'TB Chung'}
+												color={statusObj[row.type]?.color}
+												sx={{
+													height: 24,
+													fontSize: '0.75rem',
+													textTransform: 'capitalize',
+													'& .MuiChip-label': { fontWeight: 500 }
+												}}
+											/>
+										</TableCell>
 
-												return (
-													<TableCell
-														key={column.id}
-														align={column.align}
-														onClick={() =>
-															router.push(`/dashboard/notifications/detail/${row.id}`)
-														}
-													>
-														{column.format && typeof value === 'number'
-															? column.format(value)
-															: value}
-													</TableCell>
-												)
-											})}
-										</TableRow>
-									)
-								})}
+										<TableCell
+											onClick={() =>
+												handleClickOpen(row.id, row.title, row.content, row.type, row.createdAt)
+											}
+										>
+											{row.title}
+										</TableCell>
+									</TableRow>
+								))}
 							</TableBody>
 						</Table>
 					</TableContainer>
 					<TablePagination
 						rowsPerPageOptions={[10, 25, 100]}
 						component='div'
-						count={rows.length}
+						count={notificationsData.length}
 						rowsPerPage={rowsPerPage}
 						page={page}
 						onPageChange={handleChangePage}

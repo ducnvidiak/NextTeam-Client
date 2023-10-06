@@ -47,6 +47,7 @@ import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 import LockIcon from '@mui/icons-material/Lock'
 import Groups3Icon from '@mui/icons-material/Groups3'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import HowToRegIcon from '@mui/icons-material/HowToReg'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -71,6 +72,7 @@ const ClubModal = styled('Modal')(({ theme }) => ({
 
 const UserDropdown = () => {
 	// ** States
+
 	const [anchorEl, setAnchorEl] = useState(null)
 	const [open, setOpen] = useState(false)
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
@@ -264,6 +266,15 @@ const UserDropdown = () => {
 						</Link>
 					</Box>
 				</MenuItem>
+				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+					<Box sx={styles}>
+						<HowToRegIcon sx={{ marginRight: 2 }} />
+						<Link href={'/application'}>
+							<Button>Đơn đã gửi</Button>
+						</Link>
+					</Box>
+				</MenuItem>
+
 				<MenuItem
 					sx={{ p: 0 }}
 					onClick={() => {
@@ -273,9 +284,7 @@ const UserDropdown = () => {
 				>
 					<Box sx={styles}>
 						<Groups3Icon sx={{ marginRight: 2 }} />
-						<Link href={`/clubs`}>
-							<Button>CLB của bạn</Button>
-						</Link>
+						<Button>CLB của bạn</Button>
 					</Box>
 				</MenuItem>
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
