@@ -31,6 +31,7 @@ import { getAPI } from 'src/ultis/requestAPI'
 import ClubCategory from 'src/components/ClubCategory'
 import moment from 'moment'
 import { useCookies } from 'react-cookie'
+import { getUserInfo } from 'src/utils/info'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -262,12 +263,17 @@ function ClubList() {
 	const [clubs, setClubs] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 	
 
 	const callAPI = async () => {
+		if(userData)
 		try {
 			setLoading(true)
-			const res = await getAPI(`http://localhost:8080/clubs?cmd=list-res&userId=${cookies['userData']?.id}`)
+			const res = await getAPI(`http://localhost:8080/clubs?cmd=list-res&userId=${userData?.id}`)
 			setClubs(res)
 		} catch (error) {
 			console.log(error)
@@ -279,7 +285,7 @@ function ClubList() {
 	console.log(clubs)
 	useEffect(() => {
 		callAPI()
-	}, [])
+	}, [userData])
 
 	return (
 		<>

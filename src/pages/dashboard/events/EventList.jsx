@@ -37,6 +37,7 @@ import moment from 'moment'
 import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
+import { getUserInfo } from 'src/utils/info'
 
 function EventItem({ event }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
@@ -145,9 +146,13 @@ function EventItem({ event }) {
 function EventList() {
 	const [eventList, setEventList] = useState()
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/events?userId=${cookies['userData']?.id}`, {
+		fetch(`http://localhost:8080/events?userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -161,7 +166,7 @@ function EventList() {
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [cookies])
+	}, [userData])
 
 	return (
 		<>

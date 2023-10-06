@@ -43,6 +43,7 @@ import dayjs from 'dayjs'
 import { getAPI, postAPI } from 'src/ultis/requestAPI'
 import { ToastContainer, toast } from 'react-toastify'
 import { useCookies } from 'react-cookie'
+import { getUserInfo } from 'src/utils/info'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -76,6 +77,10 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	const [locationList, setLocationList] = useState([])
 	const [fileName, setFileName] = useState('')
 	const [open, setOpen] = useState(false)
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	const [newEvent, setNewEvent] = useState({
 		name: '',
@@ -93,7 +98,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 			...newEvent,
 			startTime: new Date(convertToTimestamp(newEvent.startTime)),
 			endTime: new Date(convertToTimestamp(newEvent.startTime)),
-			registeredBy: cookies['userData']?.id,
+			registeredBy: userData?.id,
 			clubId: cookiesClub['clubData']?.clubId
 		});
 		fetch('http://localhost:8080/events?cmd=create', {
@@ -102,7 +107,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 				...newEvent,
 				startTime: new Date(convertToTimestamp(newEvent.startTime)),
 				endTime: new Date(convertToTimestamp(newEvent.startTime)),
-				registeredBy: cookies['userData']?.id,
+				registeredBy: userData?.id,
 				clubId: cookiesClub['clubData']?.clubId
 			}),
 			headers: {

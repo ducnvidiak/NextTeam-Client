@@ -178,11 +178,15 @@ function EventItem() {
 function ClubPage() {
 	const [club, setClub] = useState({})
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	const router = useRouter()
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/club-detail?subname=${router.query.clubId}&userId=${cookies['userData']?.id}`, {
+		fetch(`http://localhost:8080/club-detail?subname=${router.query.clubId}&userId=${userData.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -196,7 +200,7 @@ function ClubPage() {
 				setClub(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [cookies])
+	}, [userData])
 
 	console.log(club)
 

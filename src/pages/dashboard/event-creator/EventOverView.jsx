@@ -28,6 +28,7 @@ import { convertToTimestamp } from './EventCreator'
 import { useCookies } from 'react-cookie'
 import { ToastContainer, toast } from 'react-toastify'
 import { convertFormat } from '.'
+import { getUserInfo } from 'src/utils/info'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -46,6 +47,10 @@ function EventOverView({ event, setEventList }) {
 	const [cookiesClub, setCookieClub, removeCookieClub] = useCookies(['clubData'])
 	const [locationList, setLocationList] = useState([])
 	const [open, setOpen] = useState(false)
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	const [newEvent, setNewEvent] = useState({
 		...event,
@@ -135,18 +140,18 @@ function EventOverView({ event, setEventList }) {
 			...newEvent,
 			startTime: new Date(convertToTimestamp(newEvent.startTime)),
 			endTime: new Date(convertToTimestamp(newEvent.endTime)),
-			registeredBy: cookies['userData']?.id,
+			registeredBy: userData?.id,
 			clubId: cookiesClub['clubData']?.clubId
 		})
 		setOpen(true)
-		fetch(`http://localhost:8080/events?cmd=update&eventId=${event.id}&userId=${cookies['userData']?.id}`, {
+		fetch(`http://localhost:8080/events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
 			method: 'POST',
 			body: JSON.stringify({
 				...newEvent,
 				startTime: new Date(convertToTimestamp(newEvent.startTime)),
 				endTime: new Date(convertToTimestamp(newEvent.endTime)),
-				registeredBy: cookies['userData']?.id,
-				clubId: cookiesClub['clubData']?.clubId
+				registeredBy: userData?.id,
+				clubId: userData?.clubId
 			}),
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

@@ -16,6 +16,7 @@ import EventList from './EventList'
 import { useEffect, useState } from 'react'
 import EventCreator from './EventCreator'
 import { useCookies } from 'react-cookie'
+import { getUserInfo } from 'src/utils/info'
 
 export function convertFormat(inputString) {
 	const [datePart, timePart] = inputString.split(' ')
@@ -34,9 +35,13 @@ function EventCreatorPage() {
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [openEventCreatorModal, setOpenEventCreatorModal] = useState(false)
 	const [eventList, setEventList] = useState()
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/events?cmd=list&?userId=${cookies['userData']?.id}`, {
+		fetch(`http://localhost:8080/events?cmd=list&?userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -51,7 +56,7 @@ function EventCreatorPage() {
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [cookies])
+	}, [userData])
 
 	return (
 		<Container maxWidth='lg' style={{ padding: 0 }}>

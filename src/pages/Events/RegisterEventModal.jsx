@@ -1,19 +1,24 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { toast } from 'react-toastify'
 import { registerToEvent } from 'src/apis/eventRegistration'
 import { postAPI } from 'src/ultis/requestAPI'
+import { getUserInfo } from 'src/utils/info'
 
 function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, anchor, toggleDrawer, setEventList }) {
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	const handleSubmit = async () => {
 		fetch('http://localhost:8080/event-registration', {
 			method: 'POST',
 			body: JSON.stringify({
 				eventId: event.id,
-				registeredBy: cookies['userData']?.id
+				registeredBy: userData?.id
 			}),
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

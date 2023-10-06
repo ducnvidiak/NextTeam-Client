@@ -26,6 +26,7 @@ import VerificationCode from 'src/views/pages/auth/forgot/VerificationCode'
 import SetPassword from 'src/views/pages/auth/forgot/SetPassword'
 import Error404 from 'src/pages/404'
 import { useCookies } from 'react-cookie'
+import Decentralization from 'src/layouts/Decentralization'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -198,6 +199,10 @@ const RecoverPassword = () => {
 		<Error404 />
 	)
 }
-RecoverPassword.getLayout = page => <BlankLayout>{page}</BlankLayout>
+RecoverPassword.getLayout = page => (
+	<Decentralization forGuest>
+		<BlankLayout>{page}</BlankLayout>
+	</Decentralization>
+)
 
 export default RecoverPassword

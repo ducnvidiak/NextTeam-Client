@@ -55,9 +55,8 @@ import {
 	validatePhone,
 	validateStudentCode
 } from '../../input-validation/index'
-import { post } from 'src/utils/request'
-import Error404 from 'src/pages/404'
-import { useCookies } from 'react-cookie'
+import { postAPI } from 'src/utils/request'
+import Decentralization from 'src/layouts/Decentralization'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -86,7 +85,6 @@ const RegisterPage = () => {
 	const [lastname, setLastname] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
-	const [showPassword, setShowPassword] = useState(false)
 	const [studentCode, setStudentCode] = useState('')
 	const [phoneNumber, setPhoneNumber] = useState('')
 	const [gender, setGender] = useState('')
@@ -98,12 +96,13 @@ const RegisterPage = () => {
 	const [studentCodeError, setStudentCodeError] = useState('')
 	const [phoneNumberError, setPhoneNumberError] = useState('')
 	const [genderError, setGenderError] = useState('')
+	const [showPassword, setShowPassword] = useState(false)
 
 	// ** Hook
 	const theme = useTheme()
 	const router = useRouter()
 
-	const handleSubmit = event => {
+	const handleSubmit = async event => {
 		event.preventDefault() // 👈️ prevent page refresh
 		setFirstnameError(false)
 		setLastnameError(false)
@@ -150,41 +149,56 @@ const RegisterPage = () => {
 			!genderError &&
 			agree
 		) {
-			fetch('http://localhost:8080/user-register', {
-				method: 'POST',
-				body: JSON.stringify({
-					firstname: firstname,
-					lastname: lastname,
-					email: email,
-					password: password,
-					studentCode: studentCode,
-					phoneNumber: phoneNumber,
-					gender: gender
-				}),
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
-				}
+			const data = await postAPI('user-register', {
+				firstname: firstname,
+				lastname: lastname,
+				email: email,
+				password: password,
+				studentCode: studentCode,
+				phoneNumber: phoneNumber,
+				gender: gender
 			})
-				.then(function (response) {
-					return response.json()
-				})
-				.then(function (data) {
-					if (data.id == null) {
-						toast.error(data)
-					} else {
-						toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
-						setTimeout(() => {
-							router.push('/auth/login')
-						}, 3000)
-					}
-				})
-				.catch(error => console.error('Error:', error))
+
+			// fetch('http://localhost:8080/user-register', {
+			// 	method: 'POST',
+			// 	body: JSON.stringify({
+			// 		firstname: firstname,
+			// 		lastname: lastname,
+			// 		email: email,
+			// 		password: password,
+			// 		studentCode: studentCode,
+			// 		phoneNumber: phoneNumber,
+			// 		gender: gender
+			// 	}),
+			// 	headers: {
+			// 		'Content-type': 'application/json; charset=UTF-8'
+			// 	}
+			// })
+			// 	.then(function (response) {
+			// 		return response.json()
+			// 	})
+			// 	.then(function (data) {
+			if (data.code == 0) {
+				toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
+				setTimeout(() => {
+					router.push('/auth/login')
+				}, 3000)
+			} else {
+				toast.error(data.msg)
+			}
+
+			// })
+			// .catch(error => console.error('Error:', error))
 		} else {
 			toast.error('Thông tin không hợp lệ!')
 		}
 
 		// 👇️ clear all input values in the form
 		// setFirstName('')
+	}
+
+	const handleClickShowPassword = () => {
+		setShowPassword(!showPassword)
 	}
 
 	const handleMouseDownPassword = event => {
@@ -324,7 +338,32 @@ const RegisterPage = () => {
 							}
 						/>
 						<FormControl fullWidth>
-							<TextField
+							<InputLabel htmlFor='auth-register-password'>Password</InputLabel>
+							<OutlinedInput
+								label='Password'
+								id='auth-register-password'
+								onChange={e => setPassword(e.target.value)}
+								type={showPassword ? 'text' : 'password'}
+								sx={{ marginBottom: 4 }}
+								name='password'
+								error={passwordError}
+								endAdornment={
+									<InputAdornment position='end'>
+										<IconButton
+											edge='end'
+											onClick={handleClickShowPassword}
+											onMouseDown={handleMouseDownPassword}
+											aria-label='toggle password visibility'
+										>
+											{showPassword ? <EyeOutline /> : <EyeOffOutline />}
+										</IconButton>
+									</InputAdornment>
+								}
+							/>
+						</FormControl>
+						{/* <FormControl fullWidth>
+							<InputLabel htmlFor='auth-register-password'>Mật khẩu</InputLabel>
+							<OutlinedInput
 								sx={{ marginBottom: 4 }}
 								label='Mật khẩu'
 								name='password'
@@ -351,7 +390,7 @@ const RegisterPage = () => {
 									'Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ in hoa, 1 số, 1 ký tự đặc biệt và độ dài ít nhất là 8 kí tự.'
 								}
 							/>
-						</FormControl>
+						</FormControl> */}
 
 						<TextField
 							fullWidth
@@ -469,6 +508,10 @@ const RegisterPage = () => {
 		</Box>
 	)
 }
-RegisterPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
+RegisterPage.getLayout = page => (
+	<Decentralization forGuest>
+		<BlankLayout>{page}</BlankLayout>
+	</Decentralization>
+)
 
 export default RegisterPage

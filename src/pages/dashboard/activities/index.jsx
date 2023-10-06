@@ -20,5 +20,3 @@ function Activities() {
 		</Container>
   )
 }
-
-export default Activities
