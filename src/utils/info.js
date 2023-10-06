@@ -9,7 +9,6 @@ async function getUserInfo(data) {
 }
 
 async function getUserSubrole(data, clubId) {
-	console.log(clubId)
 	if (!clubId) return
 
 	const res = await postAPI('/info-utils', { cmd: 'user.role', data, clubId })

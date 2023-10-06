@@ -92,9 +92,7 @@ const NotificationDropdown = () => {
 	const router = useRouter()
 	const [notificationsData, setNotificationsData] = useState([])
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
-
 	const [countUnview, setCountUnview] = useState(0)
-
 	const [userData, setUserData] = useState()
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
@@ -204,7 +202,7 @@ const NotificationDropdown = () => {
 											<span>
 												<Chip
 													label={notification.type == 'private' ? 'TB Cá nhân' : 'TB Chung'}
-													color={statusObj[notification.type].color}
+													color={statusObj[notification.type]?.color}
 													sx={{
 														height: 20,
 														fontSize: '0.5rem',

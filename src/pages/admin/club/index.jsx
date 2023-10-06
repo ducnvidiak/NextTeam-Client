@@ -14,12 +14,12 @@ import DialogContentText from '@mui/material/DialogContentText'
 import TextareaAutosize from '@mui/material/TextareaAutosize'
 import FormHelperText from '@mui/material/FormHelperText'
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
-// **Toasify Imports
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 function Club() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+
   const initialClubFormData = {
     id: '',
     name: '',
@@ -40,6 +40,7 @@ function Club() {
   const [clubs, setClubs] = useState([])
   const [open, setOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('')
+
   const [validationErrors, setValidationErrors] = useState({
     name: false,
     subname: false,
@@ -148,6 +149,7 @@ function Club() {
     if (Object.keys(errors).length > 0) {
       return
     }
+
     const url_fetch =
       'http://localhost:8080/api/club?cmd=add&name=' +
       clubFormData.name +
@@ -173,6 +175,7 @@ function Club() {
         if (!res.ok) {
           throw new Error('Network response was not ok')
         }
+        
         return res.json()
       })
       .then(data => {

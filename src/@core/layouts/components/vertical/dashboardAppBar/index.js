@@ -50,7 +50,6 @@ const LayoutAppBar = props => {
     if (y > 5) setScrollHeader(true)
     else setScrollHeader(false)
   }
-  console.log(isScrollHeader)
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true })

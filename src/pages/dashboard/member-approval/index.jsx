@@ -1,59 +1,147 @@
-import {
-	Box,
-	Button,
-	ButtonGroup,
-	Card,
-	CardContent,
-	CardHeader,
-	Chip,
-	Container,
-	Grid,
-	InputAdornment,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TablePagination,
-	TableRow,
-	TextField,
-	Typography
-} from '@mui/material'
-import React from 'react'
-import ViewInfo from './ViewInfo'
+// ** React Imports
+import * as React from 'react'
+import { useState, useEffect, useReducer } from 'react'
+import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
-import { useEffect, useState } from 'react'
-import { TabContext, TabList } from '@mui/lab'
-import { Magnify, Tab } from 'mdi-material-ui'
+
+// ** MUI Imports
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TablePagination from '@mui/material/TablePagination'
+import Grid from '@mui/material/Grid'
+import Card from '@mui/material/Card'
+import CardHeader from '@mui/material/CardHeader'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
+import Button from '@mui/material/Button'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
 
 // ** Icons Imports
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
-import DeleteIcon from '@mui/icons-material/Delete'
+import Magnify from 'mdi-material-ui/Magnify'
+import { Chip } from '@mui/material'
 import { getUserInfo } from 'src/utils/info'
 
-const statusObj = {
-	0: { color: 'primary' },
-	1: { color: 'success' }
-}
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import ViewInfo from './ViewInfo'
 
-function MemberApproval() {
+const TableStickyHeader = () => {
+	const router = useRouter()
+	const [state, dispatch] = useReducer((state, action) => action, 0)
+
+	// ** States
+	const [page, setPage] = useState(0)
+	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [application, setApplication] = useState([])
-	const [cookies, setCookies] = useCookies(['userData'])
-	const [info, setInfo] = useState()
-	const [viewInfoModal, setViewInfoModal] = useState(false)
+	const [applicationDetail, setApplicationDetail] = useState()
+	const [search, setSearch] = useState('')
+	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
+
+	//modal
+	const [open, setOpen] = useState(false)
+	const [scroll, setScroll] = useState('paper')
 
 	const [userData, setUserData] = useState()
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
-	function handleClick(info) {
-		setInfo(info)
-		setViewInfoModal(true)
+	function handleClickOpen(application) {
+		setApplicationDetail(application)
+		setOpen(true)
+	}
+
+	function handleApproveApplication(id) {
+		fetch('http://localhost:8080/engagement?action=approve-application&id=' + id, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				toast.success(data)
+				dispatch({ type: 'trigger' })
+			})
+			.catch(error => console.error('Error:', error))
+	}
+
+	function handleRejectApplication(id) {
+		fetch('http://localhost:8080/engagement?action=reject-application&id=' + id, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				toast.success(data)
+				dispatch({ type: 'trigger' })
+			})
+			.catch(error => console.error('Error:', error))
 	}
 
 	const handleClose = () => {
-		setViewInfoModal(false)
+		setOpen(false)
+	}
+
+	const statusObj = {
+		0: { color: 'primary', label: 'Đăng ký mới' },
+		1: { color: 'success', label: 'Đã duyệt đơn' },
+		2: { color: 'warning', label: 'Đang phỏng vấn' },
+		3: { color: 'error', label: 'Đã từ chối' }
+	}
+
+	const handleChangePage = (event, newPage) => {
+		setPage(newPage)
+	}
+
+	const handleChangeRowsPerPage = event => {
+		setRowsPerPage(+event.target.value)
+		setPage(0)
+	}
+
+	const handleEnterKeyPress = event => {
+		if (event.key === 'Enter') {
+			// Gọi hàm của bạn ở đây khi người dùng nhấn phím Enter
+			handleSearch()
+		}
+	}
+
+	const handleSearch = () => {
+		// Thực hiện tìm kiếm hoặc gọi hàm bạn muốn khi người dùng nhấn Enter
+		if (search == ' ') {
+			dispatch({ type: 'trigger' })
+		} else {
+			fetch(
+				`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData.id}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				}
+			)
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					setApplication(data)
+				})
+				.catch(error => console.error('Error:', error))
+		}
 	}
 
 	useEffect(() => {
@@ -70,115 +158,58 @@ function MemberApproval() {
 				setApplication(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [userData])
+	}, [userData, state])
 
 	return (
-		<Container>
-			<Grid item xs={12} style={{ height: '100%' }}>
-				<ViewInfo
-					info={info}
-					viewInfoModal={viewInfoModal}
-					setViewInfoModal={setViewInfoModal}
-					handleClose={handleClose}
-				></ViewInfo>
-				<Card style={{ height: '100%' }}>
-					<CardContent>
-						<div
-							style={{
-								display: 'flex',
-								justifyContent: 'space-between',
-								alignItems: 'center',
-								paddingRight: '10px'
-							}}
-						>
-							<CardHeader title='Tất cả thông báo' titleTypographyProps={{ variant: 'h6' }} />
-							<TextField
-								placeholder='Tìm kiếm...'
-								size='small'
-								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
-								InputProps={{
-									startAdornment: (
-										<InputAdornment position='start'>
-											<Magnify fontSize='small' />
-										</InputAdornment>
-									)
-								}}
-								onChange={event => {
-									setSearch(event.target.value)
-									handleSearch()
-								}}
-								onKeyPress={handleEnterKeyPress} // Gọi handleEnterKeyPress khi có sự kiện keypress
-							/>
-						</div>
+		<Grid item xs={12}>
+			<ToastContainer></ToastContainer>
+			<ViewInfo
+				applicationDetail={applicationDetail}
+				handleClickOpen={handleClickOpen}
+				open={open}
+				setOpen={setOpen}
+				handleClose={handleClose}
+				statusObj={statusObj}
+			></ViewInfo>
+			<Card style={{ height: '100%' }}>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						paddingRight: '10px'
+					}}
+				>
+					<CardHeader title='Tất cả đơn đăng ký' titleTypographyProps={{ variant: 'h6' }} />
+					<TextField
+						placeholder='Tìm kiếm...'
+						size='small'
+						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position='start'>
+									<Magnify fontSize='small' />
+								</InputAdornment>
+							)
+						}}
+						onChange={event => {
+							setSearch(event.target.value)
+							handleSearch()
+						}}
+					/>
+				</div>
 
-						<Table>
-							<TableHead>
-								<TableRow>
-									<TableCell>Thời gian</TableCell>
-									<TableCell>Nội dung</TableCell>
-									<TableCell>Hành động</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{notificationsData
-									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-									.map(row => (
-										<TableRow key={row.id}>
-											<TableCell>{row.updatedAt}</TableCell>
-											<TableCell
-												onClick={() => router.push(`/dashboard/notifications/detail/${row.id}`)}
-											>
-												{row.title}
-											</TableCell>
-
-											<TableCell>
-												<ButtonGroup
-													variant='contained'
-													aria-label='outlined primary button group'
-												>
-													<Button
-														onClick={() =>
-															handleUpdateClick(row.id, row.title, row.content)
-														}
-													>
-														<ModeEditOutlineOutlinedIcon
-															sx={{ color: 'white' }}
-														></ModeEditOutlineOutlinedIcon>
-													</Button>
-													<Button onClick={() => handleDeleteClick(row.id, row.title)}>
-														<DeleteIcon sx={{ color: 'white' }}></DeleteIcon>
-													</Button>
-												</ButtonGroup>
-											</TableCell>
-										</TableRow>
-									))}
-							</TableBody>
-						</Table>
-						<TablePagination
-							rowsPerPageOptions={[10, 25, 100]}
-							component='div'
-							count={rows.length}
-							rowsPerPage={rowsPerPage}
-							page={page}
-							onPageChange={handleChangePage}
-							onRowsPerPageChange={handleChangeRowsPerPage}
-						/>
-					</CardContent>
-				</Card>
-			</Grid>
-
-			<Box marginTop={2}>
-				<Card>
+				<Paper sx={{ width: '100%', overflow: 'hidden' }}>
 					<TableContainer>
 						<Table aria-label='table in dashboard'>
 							<TableHead>
 								<TableRow>
-									<TableCell>Câu lạc bộ</TableCell>
-									<TableCell>Ban tham gia</TableCell>
-									<TableCell>CV</TableCell>
-									<TableCell>Ngày nộp đơn</TableCell>
-									<TableCell>Tình trạng đơn</TableCell>
-									<TableCell>Ngày cập nhật</TableCell>
+									<TableCell>Họ và tên</TableCell>
+									<TableCell>MSSV</TableCell>
+									<TableCell>Ban đăng ký</TableCell>
+									<TableCell>Ngày đăng ký</TableCell>
+									<TableCell>Tình trạng</TableCell>
+									<TableCell>Hành động</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -188,31 +219,20 @@ function MemberApproval() {
 										key={row.id}
 										sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}
 									>
-										<TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
-											<Box sx={{ display: 'flex', flexDirection: 'column' }}>
-												<Typography sx={{ fontWeight: 500, fontSize: '0.875rem !important' }}>
-													{row.club.name}
-												</Typography>
-												<Typography variant='caption'>{row.club.subname}</Typography>
-											</Box>
+										<TableCell
+											onClick={() => {
+												handleClickOpen(row)
+											}}
+										>
+											{row?.user.firstname} {row?.user.lastname}
 										</TableCell>
-										<TableCell>{row.dept.name}</TableCell>
-										<TableCell>
-											<Button
-												size='small'
-												variant='contained'
-												color='primary'
-												value={`http://localhost:8080${row?.engagement.cvUrl}`}
-												onClick={() => handleClick(row)}
-											>
-												Xem CV
-											</Button>
-										</TableCell>
-										<TableCell>{row.engagement.createdAt}</TableCell>
+										<TableCell>{row?.user.username}</TableCell>
+										<TableCell>{row?.dept.name}</TableCell>
+										<TableCell>{row?.engagement.createdAt}</TableCell>
 										<TableCell>
 											<Chip
-												label={row.engagement.roleId == 0 ? 'Đăng ký Mới' : 'Đã duyệt đơn'}
-												color={statusObj[row.engagement.roleId].color}
+												color={statusObj[row?.engagement.status]?.color}
+												label={statusObj[row?.engagement.status]?.label}
 												sx={{
 													height: 24,
 													fontSize: '0.75rem',
@@ -221,16 +241,62 @@ function MemberApproval() {
 												}}
 											/>
 										</TableCell>
-										<TableCell>{row.engagement.updatedAt}</TableCell>
+
+										<TableCell>
+											<PopupState variant='popover' popupId='demo-popup-menu'>
+												{popupState => (
+													<React.Fragment>
+														<Button
+															variant='contained'
+															size='small'
+															{...bindTrigger(popupState)}
+														>
+															Tác vụ
+														</Button>
+														<Menu {...bindMenu(popupState)}>
+															<MenuItem onClick={popupState.close}>
+																Tạo phỏng vấn
+															</MenuItem>
+															<MenuItem onClick={popupState.close}>Phỏng vấn</MenuItem>
+															<MenuItem
+																onClick={() => {
+																	handleApproveApplication(row?.engagement.id)
+																	popupState.close
+																}}
+															>
+																Phê duyệt
+															</MenuItem>
+															<MenuItem
+																onClick={() => {
+																	handleRejectApplication(row?.engagement.id)
+																	popupState.close
+																}}
+															>
+																Từ chối
+															</MenuItem>
+														</Menu>
+													</React.Fragment>
+												)}
+											</PopupState>
+										</TableCell>
 									</TableRow>
 								))}
 							</TableBody>
 						</Table>
 					</TableContainer>
-				</Card>
-			</Box>
-		</Container>
+					<TablePagination
+						rowsPerPageOptions={[10, 25, 100]}
+						component='div'
+						count={application.length}
+						rowsPerPage={rowsPerPage}
+						page={page}
+						onPageChange={handleChangePage}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
+				</Paper>
+			</Card>
+		</Grid>
 	)
 }
 
-export default MemberApproval
+export default TableStickyHeader

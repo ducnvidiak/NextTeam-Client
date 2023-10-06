@@ -39,16 +39,13 @@ const TableStickyHeader = () => {
 	const [search, setSearch] = useState('')
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [notificationDetail, setNotificationDetail] = useState()
-	console.log(search)
-
-	//modal
-	const [open, setOpen] = useState(false)
-	const [scroll, setScroll] = useState('paper')
-
 	const [userData, setUserData] = useState()
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
+
+	//modal
+	const [open, setOpen] = useState(false)
 
 	function handleClickOpen(id, title, content, type, createdAt) {
 		setNotificationDetail({

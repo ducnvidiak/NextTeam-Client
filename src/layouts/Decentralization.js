@@ -34,14 +34,13 @@ function Decentralization(props) {
 	if (userData) {
 		if (
 			(props.forGuest && userData.isAdmin == undefined) ||
-			(props.forUser && userData.isAdmin == false && props.forUser == userSubrole.roleId) ||
+			(props.forUser && userData.isAdmin == false && props.forUser == userSubrole?.roleId) ||
 			(props.forAdmin && userData.isAdmin == true) ||
 			props.forAll
 		)
 			return <React.Fragment>{props.children}</React.Fragment>
 	} else if (userData == undefined) return <></>
 
-	console.log('Èeeee!')
 	return404Error(router)
 
 	return <Error404 />

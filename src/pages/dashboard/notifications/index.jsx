@@ -25,6 +25,7 @@ import TabPanel from '@mui/lab/TabPanel'
 import TabContext from '@mui/lab/TabContext'
 import { Chip } from '@mui/material'
 import NotificationDetail from './NotificationDetail'
+import { getUserInfo } from 'src/utils/info'
 
 const Notifications = () => {
 	const [state, dispatch] = useReducer((state, action) => action, 0)
@@ -33,7 +34,6 @@ const Notifications = () => {
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [notificationDetail, setNotificationDetail] = useState()
 	const [countUnview, setCountUnview] = useState(0)
-
 	const [userData, setUserData] = useState()
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
@@ -124,7 +124,7 @@ const Notifications = () => {
 			'http://localhost:8080/notification?action=list-10-noti&clubId=' +
 				cookies['clubData'].clubId +
 				'&userId=' +
-				userData.id,
+				userData?.id,
 			{
 				method: 'GET',
 				headers: {

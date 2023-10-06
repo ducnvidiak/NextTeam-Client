@@ -340,7 +340,7 @@ const LoginPage = () => {
 	)
 }
 LoginPage.getLayout = page => (
-	<Decentralization forGuest forUser='2'>
+	<Decentralization forGuest>
 		<BlankLayout>{page}</BlankLayout>
 	</Decentralization>
 )

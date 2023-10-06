@@ -90,8 +90,6 @@ const columns = [
   }
 ]
 
-// // id name avatarUrl bannerUrl description movementPoint categoryid createAt updateAt
-
 function createData(
   id,
   name,
@@ -128,6 +126,7 @@ function createData(
 
 const TableStickyHeader = props => {
   const { refreshClubData, clubs, handleViewDescription } = props
+  
   // ** States
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -138,7 +137,6 @@ const TableStickyHeader = props => {
   }, [clubs])
 
   useEffect(() => {
-    // Assuming your 'clubs' state has the required data structure
     const newRows = clubs.map(club => {
       return createData(
         club.id,
@@ -160,35 +158,14 @@ const TableStickyHeader = props => {
     setRows(newRows)
   }, [clubs])
 
-	useEffect(() => {
-		// Assuming your 'clubs' state has the required data structure
-		const newRows = clubs.map(club => {
-			const c1 = ''
-			if (club.categoryId === '1') {
-				c1 = 'Học Thuật'
-			} else if (club.categoryId === '2') {
-				c1 = 'Cộng đồng'
-			} else if (club.categoryId === '3') {
-				c1 = 'Thể thao'
-			} else {
-				c1 = 'Năng khiếu'
-			}
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage)
+  }
 
-			return createData(
-				club.id,
-				club.name,
-				club.subname,
-				club.avatarUrl,
-				club.bannerUrl,
-				club.description,
-				club.movementPoint,
-				club.balance,
-				c1,
-				club.createdAt,
-				club.updatedAt,
-				''
-			)
-		})
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(+event.target.value)
+    setPage(0)
+  }
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>

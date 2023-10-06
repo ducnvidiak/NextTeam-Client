@@ -95,12 +95,11 @@ const UserDropdown = () => {
 				return response.json()
 			})
 			.then(function (data) {
+				console.log(data)
 				setClubOfMeData(data)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData])
-
-	console.log(userData)
 
 	// ** Hooks
 	const router = useRouter()
@@ -302,7 +301,13 @@ const UserDropdown = () => {
 						</Link>
 					</Box>
 				</MenuItem>
-				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+				<MenuItem
+					sx={{ p: 0 }}
+					onClick={() => {
+						handleDropdownClose()
+						handleLogout()
+					}}
+				>
 					<Box sx={styles}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
 						<Link passHref underline='none' href=''>
