@@ -55,6 +55,7 @@ function Club() {
       [name]: value
     })
   }
+
   const openCreateDialog = () => {
     setIsCreateDialogOpen(true)
   }
@@ -91,6 +92,7 @@ function Club() {
     setIsEditDialogOpen(false)
     setClubFormData(initialClubFormData)
   }
+
   const openEditDialog = rowData => {
     setClubFormData({
       id: rowData.id,
@@ -107,6 +109,7 @@ function Club() {
     })
     setIsEditDialogOpen(true)
   }
+  
   const openDeleteDialog = rowData => {
     setClubFormData({
       ...clubFormData,
@@ -115,10 +118,12 @@ function Club() {
 
     setIsDeleteDialogOpen(true)
   }
+
   const closeDeleteDialog = () => {
     setIsDeleteDialogOpen(false)
     setClubFormData(initialClubFormData)
   }
+
   const handleCreateClub = () => {
     // Kiểm tra các trường dữ liệu và hiển thị thông báo lỗi nếu cần
     const errors = {}
@@ -246,6 +251,7 @@ function Club() {
         if (!res.ok) {
           throw new Error('Network response was not ok')
         }
+
         return res.json()
       })
       .then(data => {
@@ -286,6 +292,7 @@ function Club() {
           })
           throw new Error('Network response was not ok')
         }
+
         return res.json()
       })
       .then(data => {
@@ -303,6 +310,7 @@ function Club() {
       })
       .catch(error => {})
   }
+
   const handleFileUpload = async e => {
     const file = e.target.files[0]
     if (file) {
@@ -329,6 +337,7 @@ function Club() {
       } catch (error) {}
     }
   }
+
   const handleBannerImageUpload = async e => {
     const file = e.target.files[0]
     if (file) {
@@ -355,6 +364,7 @@ function Club() {
       } catch (error) {}
     }
   }
+
   const handleOpenDialog = () => {
     setOpen(true)
   }
@@ -818,7 +828,6 @@ function Club() {
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Câu Lạc Bộ' titleTypographyProps={{ variant: 'h6' }} />
-
           <TableStickyHeader
             openEditClubHandle={openEditDialog}
             openDeleteClubHandle={openDeleteDialog}
@@ -833,4 +842,5 @@ function Club() {
     </div>
   )
 }
+
 export default Club

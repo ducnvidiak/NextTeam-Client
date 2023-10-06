@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -18,176 +18,227 @@ import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
 
+const axios = require('axios')
+
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
 
+import { updateUserAvatar, updateUserInfo } from '../../pages/user/apiUtils'
+import { validateEmail, validateName } from '../../pages/input-validation/index'
+import { ConsoleLine } from 'mdi-material-ui'
+import { ToastContainer, toast } from 'react-toastify'
+
 const ImgStyled = styled('img')(({ theme }) => ({
-  width: 120,
-  height: 120,
-  marginRight: theme.spacing(6.25),
-  borderRadius: theme.shape.borderRadius
+	width: 120,
+	height: 120,
+	marginRight: theme.spacing(6.25),
+	borderRadius: theme.shape.borderRadius
 }))
 
 const ButtonStyled = styled(Button)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    width: '100%',
-    textAlign: 'center'
-  }
+	[theme.breakpoints.down('sm')]: {
+		width: '100%',
+		textAlign: 'center'
+	}
 }))
 
 const ResetButtonStyled = styled(Button)(({ theme }) => ({
-  marginLeft: theme.spacing(4.5),
-  [theme.breakpoints.down('sm')]: {
-    width: '100%',
-    marginLeft: 0,
-    textAlign: 'center',
-    marginTop: theme.spacing(4)
-  }
+	marginLeft: theme.spacing(4.5),
+	[theme.breakpoints.down('sm')]: {
+		width: '100%',
+		marginLeft: 0,
+		textAlign: 'center',
+		marginTop: theme.spacing(4)
+	}
 }))
 
-const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) => {
-  // ** State
-  const [openAlert, setOpenAlert] = useState(true)
+const TabAccount = ({ userInfo, setUserInfo }) => {
+	// ** State
+	const [openAlert, setOpenAlert] = useState(false)
 
-  const onChange = file => {
-    const reader = new FileReader()
-    const { files } = file.target
-    if (files && files.length !== 0) {
-      // reader.onload = () => setImgSrc(reader.result)
-      reader.readAsDataURL(files[0])
-    }
-  }
+	const [imgSrc, setImgSrc] = useState('')
+	const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
 
-  const another = {
-    id: 3,
-    email: 'jane.smith@example.com',
-    username: 'janesmith(edited)',
-    password: 'password456',
-    avatarURL: 'https://example.com/avatar2.jpg',
-    firstname: 'Jane',
-    lastname: 'Smith',
-    studentCode: '987654321',
-    phoneNumber: '0987654321',
-    major: '2',
-    academicYear: '2022',
-    gender: 'Female',
-    dob: '1995-08-20',
-    homeTown: '2',
-    facebookUrl: 'https://www.facebook.com/janesmith',
-    linkedInUrl: 'https://www.linkedin.com/in/janesmith',
-    createdAt: '2023-09-18',
-    updatedAt: '2023-09-18'
-  }
+	const [firstnameError, setFirstnameError] = useState(false)
+	const [lastnameError, setLastnameError] = useState(false)
+	const [emailError, setEmailError] = useState(false)
 
-  const fetchData = async () => {
-    console.log(userInfo)
+	useEffect(() => {
+		setCurrentUserInfo({ ...userInfo })
+	}, [userInfo])
 
-    const requestConfig = {
-      method: 'POST',
+	const onChange = file => {
+		const reader = new FileReader()
+		const { files } = file.target
+		if (files && files.length !== 0) {
+			reader.onload = () => setImgSrc(reader.result)
+			reader.readAsDataURL(files[0])
+		}
+	}
 
-      headers: {},
-      body: JSON.stringify(userInfoCopy)
-    }
+	const handleSubmit = event => {
+		event.preventDefault()
+		if (imgSrc != '')
+			updateUserAvatar(imgSrc, userInfo?.id).then(response => {
+				if (response.message == 'success') {
+					setUserInfo({ ...currentUserInfo })
+					toast.success('Success upload avatar!', {
+						position: toast.POSITION.TOP_RIGHT
+					})
+				} else {
+					toast.error('Fail to upload avatar!')
+				}
+				console.log('update avatar: ', response)
+			})
 
-    try {
-      const response = await fetch('http://localhost:8080/NextTeam/api/user', requestConfig)
-      const jsonData = await response.json()
-      console.log(jsonData)
-      setUserInfo({ ...jsonData })
-    } catch (error) {
-      console.log('Error fetching data:', error)
-    }
-  }
+		updateUserInfo(currentUserInfo).then(response => {
+			if (response.message == 'success') {
+				setUserInfo({ ...currentUserInfo })
+				toast.success('Success change info!', {
+					position: toast.POSITION.TOP_RIGHT
+				})
+			} else {
+				toast.error('Fail to change info!')
+			}
+			console.log('update info: ', response)
+		})
+	}
 
-  const handleSubmit = event => {
-    event.preventDefault()
+	const handleResetAvatar = event => {
+		event.preventDefault()
+		setImgSrc('')
+		setUserInfo({ ...userInfo, avatarURL: userInfo.avatarURL })
+	}
 
-    fetchData()
-  }
+	const handleResetAccountInfo = event => {
+		event.preventDefault()
+		setEmailError(false)
+		setFirstnameError(false)
+		setLastnameError(false)
+		setUserInfo({ ...userInfo, avatarURL: currentUserInfo.avatarURL })
+	}
 
-  const handleReset = event => {
-    event.preventDefault()
-    setUserInfoCopy({ ...userInfo })
-  }
+	return (
+		<CardContent>
+			<form>
+				<Grid container spacing={7}>
+					<Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
+						<Box sx={{ display: 'flex', alignItems: 'center' }}>
+							<ImgStyled
+								src={
+									imgSrc !== ''
+										? imgSrc
+										: currentUserInfo?.avatarURL
+										? currentUserInfo.avatarURL
+										: '/images/avatars/1.png'
+								}
+								alt='Profile Pic'
+							/>
+							<Box>
+								<ButtonStyled
+									component='label'
+									variant='contained'
+									htmlFor='account-settings-upload-image'
+								>
+									Upload New Photo
+									<input
+										hidden
+										type='file'
+										onChange={onChange}
+										accept='image/png, image/jpeg'
+										id='account-settings-upload-image'
+									/>
+								</ButtonStyled>
+								<ResetButtonStyled color='error' variant='outlined' onClick={handleResetAvatar}>
+									Reset
+								</ResetButtonStyled>
+								<Typography variant='body2' sx={{ marginTop: 5 }}>
+									Allowed PNG or JPEG. Max size of 800K.
+								</Typography>
+							</Box>
+						</Box>
+					</Grid>
 
-  return (
-    <CardContent>
-      <form>
-        <Grid container spacing={7}>
-          <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <ImgStyled src={userInfoCopy !== null ? userInfoCopy.avatarUrl : ''} alt='Profile Pic' />
-              <Box>
-                <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
-                  Upload New Photo
-                  <input
-                    hidden
-                    type='file'
-                    onChange={onChange}
-                    accept='image/png, image/jpeg'
-                    id='account-settings-upload-image'
-                  />
-                </ButtonStyled>
-                <ResetButtonStyled color='error' variant='outlined' onClick={() => setImgSrc('/images/avatars/1.png')}>
-                  Reset
-                </ResetButtonStyled>
-                <Typography variant='body2' sx={{ marginTop: 5 }}>
-                  Allowed PNG or JPEG. Max size of 800K.
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
+					{/* <Grid item xs={12} sm={6}>
+						<TextField
+							fullWidth
+							label='Username'
+							placeholder='johnDoe'
+							value={currentUserInfo?.username || ''}
+							onChange={event => {
+								setCurrentUserInfo(current => {
+									return { ...current, username: event.target.value }
+								})
+							}}
+						/>
+					</Grid> */}
+					<Grid item xs={12} sm={6}>
+						<TextField
+							fullWidth
+							type='email'
+							label='Email'
+							placeholder='johnDoe@example.com'
+							value={currentUserInfo?.email || ''}
+							error={emailError}
+							onChange={event => {
+								if (!validateEmail(event.target.value)) {
+									setEmailError(true)
+								} else {
+									setEmailError(false)
+								}
+								setCurrentUserInfo(current => {
+									return { ...current, email: event.target.value }
+								})
+							}}
+							helperText={
+								emailError && 'Email phải chứ ký tự @, tên miền và ít nhất 1 chữ cái phía trước @.'
+							}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							fullWidth
+							label='First name'
+							placeholder='John Doe'
+							value={currentUserInfo?.firstname || ''}
+							error={firstnameError}
+							onChange={event => {
+								if (!validateName(event.target.value)) {
+									setFirstnameError(true)
+								} else {
+									setFirstnameError(false)
+								}
+								setCurrentUserInfo(current => {
+									return { ...current, firstname: event.target.value }
+								})
+							}}
+							helperText={
+								firstnameError && 'Họ và tên đệm phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'
+							}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							fullWidth
+							label='Last name'
+							placeholder='John Doe'
+							value={currentUserInfo?.lastname || ''}
+							error={lastnameError}
+							onChange={event => {
+								if (!validateName(event.target.value)) {
+									setLastnameError(true)
+								} else {
+									setLastnameError(false)
+								}
+								setCurrentUserInfo(current => {
+									return { ...current, lastname: event.target.value }
+								})
+							}}
+							helperText={lastnameError && 'Tên phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'}
+						/>
+					</Grid>
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Username'
-              placeholder='johnDoe'
-              defaultValue='johnDoe'
-              value={userInfoCopy !== null ? userInfoCopy.username : ''}
-              onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, username: event.target.value })
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              type='email'
-              label='Email'
-              placeholder='johnDoe@example.com'
-              defaultValue='johnDoe@example.com'
-              value={userInfoCopy !== null ? userInfoCopy.email : ''}
-              onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, email: event.target.value })
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='First name'
-              placeholder='John Doe'
-              defaultValue='John Doe'
-              value={userInfoCopy !== null ? userInfoCopy.firstname : ''}
-              onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, firstname: event.target.value })
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Last name'
-              placeholder='John Doe'
-              defaultValue='John Doe'
-              value={userInfoCopy !== null ? userInfoCopy.lastname : ''}
-              onChange={event => {
-                setUserInfoCopy({ ...userInfoCopy, lastname: event.target.value })
-              }}
-            />
-          </Grid>
-          {/* <Grid item xs={12} sm={6}>
+					{/* <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Role</InputLabel>
               <Select label='Role' defaultValue='admin'>
@@ -229,37 +280,42 @@ const TabAccount = ({ userInfo, setUserInfo, userInfoCopy, setUserInfoCopy }) =>
             <TextField fullWidth label='Company' placeholder='ABC Pvt. Ltd.' defaultValue='ABC Pvt. Ltd.' />
           </Grid> */}
 
-          {openAlert ? (
-            <Grid item xs={12} sx={{ mb: 3 }}>
-              <Alert
-                severity='warning'
-                sx={{ '& a': { fontWeight: 400 } }}
-                action={
-                  <IconButton size='small' color='inherit' aria-label='close' onClick={() => setOpenAlert(false)}>
-                    <Close fontSize='inherit' />
-                  </IconButton>
-                }
-              >
-                <AlertTitle>Your email is not confirmed. Please check your inbox.</AlertTitle>
-                <Link href='/' onClick={e => e.preventDefault()}>
-                  Resend Confirmation
-                </Link>
-              </Alert>
-            </Grid>
-          ) : null}
+					{openAlert ? (
+						<Grid item xs={12} sx={{ mb: 3 }}>
+							<Alert
+								severity='warning'
+								sx={{ '& a': { fontWeight: 400 } }}
+								action={
+									<IconButton
+										size='small'
+										color='inherit'
+										aria-label='close'
+										onClick={() => setOpenAlert(false)}
+									>
+										<Close fontSize='inherit' />
+									</IconButton>
+								}
+							>
+								<AlertTitle>Your email is not confirmed. Please check your inbox.</AlertTitle>
+								<Link href='/' onClick={e => e.preventDefault()}>
+									Resend Confirmation
+								</Link>
+							</Alert>
+						</Grid>
+					) : null}
 
-          <Grid item xs={12}>
-            <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
-              Save Changes
-            </Button>
-            <Button type='reset' variant='outlined' color='secondary' onClick={handleReset}>
-              Reset
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
-    </CardContent>
-  )
+					<Grid item xs={12}>
+						<Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
+							Save Changes
+						</Button>
+						<Button type='reset' variant='outlined' color='secondary' onClick={handleResetAccountInfo}>
+							Reset
+						</Button>
+					</Grid>
+				</Grid>
+			</form>
+		</CardContent>
+	)
 }
 
 export default TabAccount

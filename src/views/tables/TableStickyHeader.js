@@ -160,14 +160,35 @@ const TableStickyHeader = props => {
     setRows(newRows)
   }, [clubs])
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
+	useEffect(() => {
+		// Assuming your 'clubs' state has the required data structure
+		const newRows = clubs.map(club => {
+			const c1 = ''
+			if (club.categoryId === '1') {
+				c1 = 'Học Thuật'
+			} else if (club.categoryId === '2') {
+				c1 = 'Cộng đồng'
+			} else if (club.categoryId === '3') {
+				c1 = 'Thể thao'
+			} else {
+				c1 = 'Năng khiếu'
+			}
 
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(+event.target.value)
-    setPage(0)
-  }
+			return createData(
+				club.id,
+				club.name,
+				club.subname,
+				club.avatarUrl,
+				club.bannerUrl,
+				club.description,
+				club.movementPoint,
+				club.balance,
+				c1,
+				club.createdAt,
+				club.updatedAt,
+				''
+			)
+		})
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
