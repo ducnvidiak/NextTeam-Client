@@ -14,12 +14,18 @@ import { Button, Container } from '@mui/material'
 import { useCookies } from 'react-cookie'
 import { useEffect, useState } from 'react'
 import ViewPDF from './ViewPDF'
+import { getUserInfo } from 'src/utils/info'
 
 const Application = () => {
 	const [application, setApplication] = useState([])
-	const [userData, setUserData] = useCookies(['userData'])
+	const [cookies, setCookies] = useCookies(['userData'])
 	const [cv, setCv] = useState()
 	const [viewCvModal, setViewCvModal] = useState(false)
+
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	function handleClick(link) {
 		setCv({
@@ -33,7 +39,7 @@ const Application = () => {
 	}
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/engagement?action=application-list-of-user&userId=${userData['userData']?.id}`, {
+		fetch(`http://localhost:8080/engagement?action=application-list-of-user&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

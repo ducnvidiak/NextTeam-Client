@@ -30,10 +30,14 @@ const Notifications = () => {
 	const [state, dispatch] = useReducer((state, action) => action, 0)
 	const router = useRouter()
 	const [notificationsData, setNotificationsData] = useState([])
-	const [cookies, setCookie] = useCookies(['clubData'])
-	const [userData, setUserData] = useCookies(['userData'])
+	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [notificationDetail, setNotificationDetail] = useState()
 	const [countUnview, setCountUnview] = useState(0)
+
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	for (let i = 0; i < notificationsData.length; i++) {
 		if (!notificationsData[i].hasSeen) {
@@ -96,7 +100,7 @@ const Notifications = () => {
 				'http://localhost:8080/notification?action=update-view-public-email&id=' +
 					id +
 					'&userId=' +
-					userData['userData'].id,
+					userData.id,
 				{
 					method: 'GET',
 					headers: {
@@ -120,7 +124,7 @@ const Notifications = () => {
 			'http://localhost:8080/notification?action=list-10-noti&clubId=' +
 				cookies['clubData'].clubId +
 				'&userId=' +
-				userData['userData'].id,
+				userData.id,
 			{
 				method: 'GET',
 				headers: {

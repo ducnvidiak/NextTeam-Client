@@ -32,6 +32,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { useEffect, useState } from 'react'
 import { getAPI } from 'src/ultis/requestAPI'
 import { useCookies } from 'react-cookie'
+import { getUserInfo } from 'src/utils/info'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -49,13 +50,19 @@ function ClubItem({ information, index }) {
 	const [open, setOpen] = useState(false)
 	const [department, setDepartment] = useState([])
 	const [loading, setLoading] = useState(false)
-	const [userData, setUserData] = useCookies(['userData'])
+	const [cookies, setCookies] = useCookies(['userData'])
 
 	//formData
 	const [departmentId, setDepartmentId] = useState('')
 	const [clubId, setClubId] = useState()
 	const [cv, setCv] = useState()
-	const userId = userData['userData']?.id
+
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
+
+	const userId = userData?.id
 
 	const handleUpload = () => {
 		const formData = new FormData()

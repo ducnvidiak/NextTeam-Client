@@ -118,7 +118,6 @@ const UserDropdown = () => {
 		if (url) {
 			router.push(url)
 		}
-		handleLogout()
 		setAnchorEl(null)
 	}
 

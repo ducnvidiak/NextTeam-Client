@@ -29,6 +29,7 @@ import { Magnify, Tab } from 'mdi-material-ui'
 // ** Icons Imports
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { getUserInfo } from 'src/utils/info'
 
 const statusObj = {
 	0: { color: 'primary' },
@@ -37,9 +38,14 @@ const statusObj = {
 
 function MemberApproval() {
 	const [application, setApplication] = useState([])
-	const [userData, setUserData] = useCookies(['userData'])
+	const [cookies, setCookies] = useCookies(['userData'])
 	const [info, setInfo] = useState()
 	const [viewInfoModal, setViewInfoModal] = useState(false)
+
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	function handleClick(info) {
 		setInfo(info)
@@ -51,7 +57,7 @@ function MemberApproval() {
 	}
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/engagement?action=application-list-of-user&userId=${userData['userData']?.id}`, {
+		fetch(`http://localhost:8080/engagement?action=application-list-of-user&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

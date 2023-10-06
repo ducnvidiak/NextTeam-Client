@@ -8,4 +8,14 @@ async function getUserInfo(data) {
 	return res
 }
 
-export { getUserInfo }
+async function getUserSubrole(data, clubId) {
+	console.log(clubId)
+	if (!clubId) return
+
+	const res = await postAPI('/info-utils', { cmd: 'user.role', data, clubId })
+	if (!res || res.roleId < 0) return {}
+
+	return res
+}
+
+export { getUserInfo, getUserSubrole }
