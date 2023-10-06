@@ -5,6 +5,7 @@ import {
 	CardContent,
 	CardHeader,
 	CardMedia,
+	Chip,
 	Container,
 	Dialog,
 	DialogActions,
@@ -37,11 +38,9 @@ import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
 
-function EventItem({ event, setEventList }) {
+function EventItem({ event }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
-	console.log('event')
-	console.log(event)
 
 	const [state, setState] = useState({
 		top: false,
@@ -60,22 +59,17 @@ function EventItem({ event, setEventList }) {
 
 	return (
 		<>
+			<RegisterEventModal
+				event={event}
+				openRegisterModal={openRegisterModal}
+				setOpenRegisterModal={setOpenRegisterModal}
+			></RegisterEventModal>
 			<FeedbackModal
 				openFeedbackModal={openFeedbackModal}
 				setOpenFeedbackModal={setOpenFeedbackModal}
 			></FeedbackModal>
 			{['left', 'right', 'top', 'bottom'].map(anchor => (
 				<>
-					<RegisterEventModal
-						event={event}
-						openRegisterModal={openRegisterModal}
-						setOpenRegisterModal={setOpenRegisterModal}
-						anchor={anchor}
-						toggleDrawer={() => toggleDrawer(anchor, false)}
-						setState={setState}
-						state={state}
-						setEventList={setEventList}
-					></RegisterEventModal>
 					<SwipeableDrawer
 						anchor={anchor}
 						open={state[anchor]}
@@ -86,14 +80,15 @@ function EventItem({ event, setEventList }) {
 							anchor={anchor}
 							event={event}
 							setOpenRegisterModal={setOpenRegisterModal}
-							setOpenFeedbackModal={setOpenFeedbackModal}
 							toggleDrawer={toggleDrawer}
+							setOpenFeedbackModal={setOpenFeedbackModal}
 						></SwipeableDrawerList>
 					</SwipeableDrawer>
 				</>
 			))}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
+					{/* <Chip label="Nội bộ" sx={{mb:4, fontSize: 16}} color="success" /> */}
 					<Typography variant='h5'>{moment(event?.startTime).format('MMM Do YY')}</Typography>
 					<Typography variant='h7'>{moment(event?.startTime).format('dddd')}</Typography>
 				</Stack>
@@ -118,7 +113,7 @@ function EventItem({ event, setEventList }) {
 							<LocationOnIcon></LocationOnIcon>
 							<Typography variant='body1'>{event?.locationName}</Typography>
 						</Box>
-						{event?.isRegistered == 'true' ||event?.isRegistered == true ? (
+						{/* {event?.isRegistered ? (
 							<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
 								Đã đăng ký
 							</Button>
@@ -131,7 +126,7 @@ function EventItem({ event, setEventList }) {
 							>
 								Đăng ký
 							</Button>
-						)}
+						)} */}
 					</CardContent>
 					<img
 						src={event.bannerUrl}
@@ -152,8 +147,7 @@ function EventList() {
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 
 	useEffect(() => {
-		console.log("fetched");
-		fetch(`http://localhost:8080/events?cmd=list&userId=${cookies['userData']?.id}`, {
+		fetch(`http://localhost:8080/events?userId=${cookies['userData']?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -163,7 +157,6 @@ function EventList() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('datad23r32r32r')
 				console.log(data)
 				setEventList(data)
 			})
@@ -174,7 +167,7 @@ function EventList() {
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
 				{eventList?.map((event, index) => (
-					<EventItem key={event.id} event={event} setEventList={setEventList}></EventItem>
+					<EventItem key={event.id} event={event}></EventItem>
 				))}
 			</Container>
 		</>

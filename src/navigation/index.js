@@ -48,11 +48,11 @@ export const dashboardLayoutVavigation = () => {
 		{
 			title: 'Hoạt động',
 			icon: AssignmentIcon,
-			path: '/dashboard/activities'
+			path: '/dashboard/events'
 		},
 		{
 			title: 'Sự kiện',
-			path: '/dashboard/events',
+			path: '/dashboard/activities',
 			icon: CelebrationIcon
 		},
 		{
@@ -121,7 +121,12 @@ export const dashboardLayoutVavigation = () => {
 		},
 		{
 			icon: NoteAddIcon,
-			title: 'Tạo hoạt động',
+			title: 'Quản lý sự kiện',
+			path: '/dashboard/event-creator'
+		},
+		{
+			icon: NoteAddIcon,
+			title: 'Quản lý hoạt động',
 			path: '/dashboard/activity-creator'
 		},
 		{
@@ -175,10 +180,10 @@ export const adminLayoutVavigation = () => {
 			icon: SummarizeIcon
 		},
 		{
-			title: 'Sự kiện',
-			path: '/admin/events',
-			icon: CelebrationIcon
-		}
+			icon: CelebrationIcon,
+			title: 'Quản lý sự kiện',
+			path: '/admin/events'
+		},
 	]
 }
 

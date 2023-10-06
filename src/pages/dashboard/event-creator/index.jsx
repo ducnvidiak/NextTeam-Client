@@ -13,20 +13,55 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import EventList from './EventList'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import EventCreator from './EventCreator'
+import { useCookies } from 'react-cookie'
+
+export function convertFormat(inputString) {
+	const [datePart, timePart] = inputString.split(' ')
+	const [year, month, day] = datePart.split('-')
+	const newDay = new Date(year, month - 1, day - 1)
+	const newTime = timePart.slice(0, 5)
+
+	const result = `${newDay.getFullYear()}-${String(newDay.getMonth() + 1).padStart(2, '0')}-${String(
+		newDay.getDate()
+	).padStart(2, '0')}TT${newTime}`
+
+	return result
+}
 
 function EventCreatorPage() {
+	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [openEventCreatorModal, setOpenEventCreatorModal] = useState(false)
+	const [eventList, setEventList] = useState()
+
+	useEffect(() => {
+		fetch(`http://localhost:8080/events?cmd=list&?userId=${cookies['userData']?.id}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				console.log('fetch');
+				console.log(data);
+				setEventList(data)
+			})
+			.catch(error => console.error('Error:', error))
+	}, [cookies])
 
 	return (
 		<Container maxWidth='lg' style={{ padding: 0 }}>
 			<EventCreator
 				openEventCreatorModal={openEventCreatorModal}
 				setOpenEventCreatorModal={setOpenEventCreatorModal}
+				setEventList={setEventList}
 			></EventCreator>
 			<Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-end'} marginBottom={10}>
-				<Button variant='contained' onClick={()=> setOpenEventCreatorModal(true)}>
+				<Button variant='contained' onClick={() => setOpenEventCreatorModal(true)}>
 					<AddIcon fontSize='small'></AddIcon>
 					Thêm mới
 				</Button>
@@ -44,7 +79,7 @@ function EventCreatorPage() {
 					</Select>
 				</FormControl>
 			</Stack>
-			<EventList></EventList>
+			<EventList eventList={eventList} setEventList={setEventList}></EventList>
 		</Container>
 	)
 }
