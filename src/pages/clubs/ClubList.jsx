@@ -1,4 +1,5 @@
 import {
+	Autocomplete,
 	Box,
 	Button,
 	Card,
@@ -14,9 +15,11 @@ import {
 	MenuItem,
 	Select,
 	Stack,
+	TextField,
 	Typography,
 	styled
 } from '@mui/material'
+import axios from 'axios'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
@@ -43,8 +46,57 @@ const VisuallyHiddenInput = styled('input')({
 
 function ClubItem({ club, index }) {
 	const [open, setOpen] = useState(false)
+	const [department, setDepartment] = useState([])
+	const [loading, setLoading] = useState(false)
+	const [userData, setUserData] = useCookies(['userData'])
 
-	const handleClickOpen = () => {
+	//formData
+	const [departmentId, setDepartmentId] = useState('')
+	const [clubId, setClubId] = useState()
+	const [cv, setCv] = useState()
+	const userId = userData['userData']?.id
+
+	const handleUpload = () => {
+		const formData = new FormData()
+
+		formData.append('cvUrl', cv)
+
+		console.log(formData)
+
+		// Gửi yêu cầu POST để tải lên file PDF lên server
+		axios
+			.post(
+				`http://localhost:8080/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}`,
+				formData,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data'
+					}
+				}
+			)
+			.then(response => {
+				console.log(response.data) // Xử lý phản hồi từ server (nếu cần)
+			})
+			.catch(error => {
+				console.error(error)
+			})
+	}
+
+	const callAPIDepartment = async clubId => {
+		try {
+			setLoading(true)
+			const res = await getAPI('/department?action=list-dept&clubId=' + clubId)
+			setDepartment(res)
+		} catch (error) {
+			console.log(error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleClickOpen = clubId => {
+		setClubId(clubId)
+		callAPIDepartment(clubId)
 		setOpen(true)
 	}
 
@@ -72,21 +124,34 @@ function ClubItem({ club, index }) {
 						Vui lòng điền những thông tin bên dưới để đăng ký tham gia vào câu lạc bộ này
 					</DialogContentText>
 					<Box sx={{ maxWidth: '50%', marginBottom: 2 }}>
-						<FormControl fullWidth>
-							<InputLabel id='demo-simple-select-label'>Ban tham gia</InputLabel>
-							<Select
-								labelId='demo-simple-select-label'
-								id='demo-simple-select'
-								value={age}
-								label='Age'
-								onChange={handleChange}
-								size='medium'
-							>
-								<MenuItem value={10}>Ban học thuật</MenuItem>
-								<MenuItem value={20}>Ban sự kiện</MenuItem>
-								<MenuItem value={30}>Ban truyền thông</MenuItem>
-							</Select>
-						</FormControl>
+						<Autocomplete
+							id='sendTo'
+							fullWidth
+							options={department}
+							autoHighlight
+							getOptionLabel={option => option.name}
+							onChange={event => setDepartmentId(event.target.value)}
+							renderOption={(props, option) => (
+								<Box
+									component='li'
+									sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+									{...props}
+									value={option.id}
+								>
+									{option.name}
+								</Box>
+							)}
+							renderInput={params => (
+								<TextField
+									{...params}
+									label='Ban đăng ký'
+									inputProps={{
+										...params.inputProps,
+										autoComplete: 'new-password' // disable autocomplete and autofill
+									}}
+								/>
+							)}
+						/>
 					</Box>
 					<Typography marginBottom={1}>Chọn CV: </Typography>
 					<Button
@@ -96,12 +161,12 @@ function ClubItem({ club, index }) {
 						sx={{ marginBottom: 2 }}
 					>
 						Upload file
-						<VisuallyHiddenInput type='file' onChange={e => console.log(e.target.files[0])} />
+						<VisuallyHiddenInput type='file' onChange={e => setCv(e.target.files[0])} />
 					</Button>
 					{/* <Typography marginBottom={1}>Chọn Ban tham gia:</Typography> */}
 				</DialogContent>
 				<DialogActions>
-					<Button variant='contained' onClick={handleClose}>
+					<Button variant='contained' onClick={handleUpload}>
 						Xác nhận
 					</Button>
 					<Button variant='outlined' onClick={handleClose}>
@@ -210,6 +275,7 @@ function ClubList() {
 			setLoading(false)
 		}
 	}
+
 	console.log(clubs)
 	useEffect(() => {
 		callAPI()

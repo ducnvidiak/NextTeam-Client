@@ -28,7 +28,8 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom'
 import FilePresentIcon from '@mui/icons-material/FilePresent'
 import SummarizeIcon from '@mui/icons-material/Summarize'
-import { Account } from 'mdi-material-ui'
+import { Account, Logout } from 'mdi-material-ui'
+import { Password } from '@mui/icons-material'
 
 export const dashboardLayoutVavigation = () => {
 	return [
@@ -115,7 +116,7 @@ export const dashboardLayoutVavigation = () => {
 			path: '/dashboard/member-approval'
 		},
 		{
-			title: 'Tạo thông báo',
+			title: 'Thông báo',
 			icon: NotificationAddIcon,
 			path: '/dashboard/notification-creator'
 		},
@@ -217,9 +218,19 @@ export const landingLayoutVavigation = () => {
 			openInNewTab: true
 		},
 		{
+			title: 'Thông tin cá nhân của người dùng',
+			icon: Account,
+			path: '/user'
+		},
+		{
 			title: 'Thông tin người dùng',
 			icon: Account,
-			path: '/profile/[id]'
+			path: '/user/info'
+		},
+		{
+			title: 'Mật khẩu',
+			icon: Password,
+			path: '/user/password'
 		}
 	]
 }

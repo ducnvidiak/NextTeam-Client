@@ -37,6 +37,8 @@ import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 // **Toasify Imports
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { post } from 'src/utils/request'
+import Error404 from 'src/pages/404'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -59,13 +61,18 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 const LoginPage = () => {
 	// ** State
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [save, setSave] = useState('')
 	const [emailError, setEmailError] = useState(false)
 	const [passwordError, setPasswordError] = useState(false)
 
-	const handleSubmit = event => {
+	// ** Hook
+	const theme = useTheme()
+	const router = useRouter()
+
+	const handleSubmit = async event => {
 		event.preventDefault() // 👈️ prevent page refresh
 		setEmailError(false)
 		setPasswordError(false)
@@ -73,50 +80,63 @@ const LoginPage = () => {
 		if (email == '') {
 			setEmailError(true)
 			toast.error('Không được để trống email')
-		}
-		if (password == '') {
+		} else if (password == '') {
 			setPasswordError(true)
 			toast.error('Không được để trống mật khẩu')
-		}
-
-		if (email && password) {
-			fetch('http://localhost:8080/login', {
-				method: 'POST',
-				body: JSON.stringify({
-					email: email,
-					password: password
-				}),
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
-				}
+		} else if (email && password) {
+			const res = await post('http://localhost:8080/login', {
+				email: email,
+				password: password
 			})
-				.then(function (response) {
-					return response.json()
-				})
-				.then(function (data) {
-					if (data.id == null) {
-						console.log(data)
-						toast.error(data)
-					} else {
-						if (save) {
-						}
-						if (!save) {
-						}
-						setCookie('userData', JSON.stringify(data), { path: '/' })
-						console.log('Đăng nhập thành công')
-						toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
-						setTimeout(() => {
-							router.push('/')
-						}, 1000)
-					}
-				})
-				.catch(error => console.error('Error:', error))
+			if (res.id == null) {
+				console.log(res)
+				toast.error(res)
+			} else {
+				if (save) {
+				}
+				if (!save) {
+				}
+				setCookie('userData', JSON.stringify(res), { path: '/' })
+				console.log('Đăng nhập thành công')
+				toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
+				setTimeout(() => {
+					router.push('/')
+				}, 1000)
+			}
+
+			// fetch('http://localhost:8080/login', {
+			// 	method: 'POST',
+			// 	body: JSON.stringify({
+			// 		email: email,
+			// 		password: password
+			// 	}),
+			// 	headers: {
+			// 		'Content-type': 'application/json; charset=UTF-8'
+			// 	}
+			// })
+			// 	.then(function (response) {
+			// 		return response.json()
+			// 	})
+			// 	.then(function (data) {
+			// 		if (data.id == null) {
+			// 			console.log(data)
+			// 			toast.error(data)
+			// 		} else {
+			// 			if (save) {
+			// 			}
+			// 			if (!save) {
+			// 			}
+			// 			setCookie('userData', JSON.stringify(data), { path: '/' })
+			// 			console.log('Đăng nhập thành công')
+			// 			toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
+			// 			setTimeout(() => {
+			// 				router.push('/')
+			// 			}, 1000)
+			// 		}
+			// 	})
+			// 	.catch(error => console.error('Error:', error))
 		}
 	}
-
-	// ** Hook
-	const theme = useTheme()
-	const router = useRouter()
 
 	const handleChange = prop => event => {
 		setValues({ ...values, [prop]: event.target.value })
@@ -216,7 +236,7 @@ const LoginPage = () => {
 						</Typography>
 						<Typography variant='body2'>Chúc bạn một ngày tốt lành!</Typography>
 					</Box>
-					<form noValidate autoComplete='off' method='POST'>
+					<form noValidate autoComplete='off' onSubmit={handleSubmit}>
 						<TextField
 							autoFocus
 							fullWidth
@@ -249,50 +269,41 @@ const LoginPage = () => {
 								justifyContent: 'space-between'
 							}}
 						>
-							<FormControlLabel
-								control={<Checkbox onChange={event => setSave(event.target.value)} />}
-								label='Lưu mật khẩu'
-							/>
+							<FormControlLabel control={<></>} label='' />
 							<Link passHref href='/auth/forgot'>
 								<LinkStyled>Quên mật khẩu?</LinkStyled>
 							</Link>
 						</Box>
-						<Button
-							fullWidth
-							size='large'
-							variant='contained'
-							sx={{ marginBottom: 7 }}
-							onClick={e => handleSubmit(e)}
-						>
+						<Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} type='submit'>
 							ĐĂNG NHẬP
 						</Button>
-						<Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-							<Typography variant='body2' sx={{ marginRight: 2 }}>
-								Bạn chưa có tài khoản?
-							</Typography>
-							<Typography variant='body2'>
-								<Link passHref href='/auth/register'>
-									<LinkStyled>Tạo tài khoản</LinkStyled>
-								</Link>
-							</Typography>
-						</Box>
-						<Divider sx={{ my: 5 }}>hoặc đăng nhập bằng</Divider>
-						<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-							<Link
-								passHref
-								href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
-							>
-								<Button
-									fullWidth
-									size='large'
-									variant='contained'
-									sx={{ marginBottom: 7, backgroundColor: 'red' }}
-								>
-									<Google sx={{ marginRight: '10px' }}></Google> ĐĂNG NHẬP BẰNG GOOGLE
-								</Button>
-							</Link>
-						</Box>
 					</form>
+					<Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+						<Typography variant='body2' sx={{ marginRight: 2 }}>
+							Bạn chưa có tài khoản?
+						</Typography>
+						<Typography variant='body2'>
+							<Link passHref href='/auth/register'>
+								<LinkStyled>Tạo tài khoản</LinkStyled>
+							</Link>
+						</Typography>
+					</Box>
+					<Divider sx={{ my: 5 }}>hoặc đăng nhập bằng</Divider>
+					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+						<Link
+							passHref
+							href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
+						>
+							<Button
+								fullWidth
+								size='large'
+								variant='contained'
+								sx={{ marginBottom: 7, backgroundColor: 'red' }}
+							>
+								<Google sx={{ marginRight: '10px' }}></Google> ĐĂNG NHẬP BẰNG GOOGLE
+							</Button>
+						</Link>
+					</Box>
 				</CardContent>
 			</Card>
 

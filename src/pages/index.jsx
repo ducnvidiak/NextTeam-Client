@@ -7,14 +7,14 @@ import Categories from 'src/components/pages/home/Categories'
 function Home() {
  
 
-  return (
-    <>
-      <section className={styles['hero']}>
-        <Hero></Hero>
-        <Categories></Categories>
-      </section>
-    </>
-  )
+	return (
+		<>
+			<section className={styles['hero']}>
+				<Hero></Hero>
+				<Categories></Categories>
+			</section>
+		</>
+	)
 }
 
 export default Home

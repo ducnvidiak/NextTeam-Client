@@ -10,13 +10,14 @@ import {
 	ClickAwayListener,
 	Grid,
 	Grow,
-	Link,
 	MenuList,
 	Modal,
 	Paper,
 	Popper,
 	Stack
 } from '@mui/material'
+
+import Link from 'next/link'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -46,6 +47,7 @@ import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 import LockIcon from '@mui/icons-material/Lock'
 import Groups3Icon from '@mui/icons-material/Groups3'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import HowToRegIcon from '@mui/icons-material/HowToReg'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -70,6 +72,7 @@ const ClubModal = styled('Modal')(({ theme }) => ({
 
 const UserDropdown = () => {
 	// ** States
+
 	const [anchorEl, setAnchorEl] = useState(null)
 	const [open, setOpen] = useState(false)
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
@@ -258,11 +261,20 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<AccountOutline sx={{ marginRight: 2 }} />
-						<Link href={`/profile/${cookies['userData']?.id}`} underline='none'>
-							Hồ sơ cá nhân
+						<Link href={`/user/${cookies['userData']?.id}`}>
+							<Button>Hồ sơ cá nhân</Button>
 						</Link>
 					</Box>
 				</MenuItem>
+				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+					<Box sx={styles}>
+						<HowToRegIcon sx={{ marginRight: 2 }} />
+						<Link href={'/application'}>
+							<Button>Đơn đã gửi</Button>
+						</Link>
+					</Box>
+				</MenuItem>
+
 				<MenuItem
 					sx={{ p: 0 }}
 					onClick={() => {
@@ -272,24 +284,23 @@ const UserDropdown = () => {
 				>
 					<Box sx={styles}>
 						<Groups3Icon sx={{ marginRight: 2 }} />
-						<Typography color={'#F27123'}>CLB của bạn</Typography>
-						{/* <Link href={`/profile/1`} underline='none'>
-              CLB của bạn
-            </Link> */}
+						<Button>CLB của bạn</Button>
 					</Box>
 				</MenuItem>
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<LockIcon sx={{ marginRight: 2 }} />
-						<Link href='/user/password' underline='none'>
-							Đổi mật khẩu
+						<Link href={`/user/password/${cookies['userData']?.id}`} underline='none'>
+							<Button>Đổi mật khẩu</Button>
 						</Link>
 					</Box>
 				</MenuItem>
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles} onClick={handleLogout}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
-						<Link underline='none'>Đăng xuất</Link>
+						<Link href={'/user/logout'} underline='none'>
+							<Button>Đăng xuất</Button>
+						</Link>
 					</Box>
 				</MenuItem>
 				{/* <Divider />
