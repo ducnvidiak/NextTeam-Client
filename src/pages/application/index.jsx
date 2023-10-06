@@ -44,9 +44,17 @@ const Application = () => {
 			})
 			.then(function (data) {
 				setApplication(data)
+				console.log(data)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData])
+
+	const statusObj = {
+		0: { color: 'primary', label: 'Đăng ký mới' },
+		1: { color: 'success', label: 'Đã duyệt đơn' },
+		2: { color: 'warning', label: 'Đang phỏng vấn' },
+		3: { color: 'error', label: 'Đã từ chối' }
+	}
 
 	return (
 		<Container>
@@ -100,8 +108,8 @@ const Application = () => {
 										<TableCell>{row.engagement.createdAt}</TableCell>
 										<TableCell>
 											<Chip
-												label={row.engagement.roleId == 0 ? 'Đăng ký Mới' : 'Đã duyệt đơn'}
-												color={row.engagement.roleId == 0 ? 'primary' : 'success'}
+												color={statusObj[row?.engagement.status]?.color}
+												label={statusObj[row?.engagement.status]?.label}
 												sx={{
 													height: 24,
 													fontSize: '0.75rem',

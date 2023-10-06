@@ -77,6 +77,7 @@ function ClubItem({ information, index }) {
 			)
 			.then(response => {
 				console.log(response.data) // Xử lý phản hồi từ server (nếu cần)
+				handleClose()
 			})
 			.catch(error => {
 				console.error(error)
