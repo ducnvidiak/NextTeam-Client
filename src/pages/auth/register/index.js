@@ -150,6 +150,8 @@ const RegisterPage = () => {
 			!genderError &&
 			agree
 		) {
+			console.log('Student code: ', studentCode)
+
 			fetch('http://localhost:8080/user-register', {
 				method: 'POST',
 				body: JSON.stringify({
@@ -157,7 +159,7 @@ const RegisterPage = () => {
 					lastname: lastname,
 					email: email,
 					password: password,
-					studentCode: studentCode,
+					username: studentCode,
 					phoneNumber: phoneNumber,
 					gender: gender
 				}),
@@ -169,7 +171,9 @@ const RegisterPage = () => {
 					return response.json()
 				})
 				.then(function (data) {
-					if (data.id == null) {
+					console.log(data)
+
+					if (!data.code) {
 						toast.error(data)
 					} else {
 						toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')

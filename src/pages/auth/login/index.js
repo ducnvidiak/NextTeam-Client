@@ -88,6 +88,9 @@ const LoginPage = () => {
 				email: email,
 				password: password
 			})
+
+			console.log(res)
+
 			if (res.id == null) {
 				console.log(res)
 				toast.error(res)
