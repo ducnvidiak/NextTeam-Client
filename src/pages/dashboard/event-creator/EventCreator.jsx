@@ -89,6 +89,13 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 
 	const handleSubmit = async () => {
 		setOpen(true)
+		console.log({
+			...newEvent,
+			startTime: new Date(convertToTimestamp(newEvent.startTime)),
+			endTime: new Date(convertToTimestamp(newEvent.startTime)),
+			registeredBy: cookies['userData']?.id,
+			clubId: cookiesClub['clubData']?.clubId
+		});
 		fetch('http://localhost:8080/events?cmd=create', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -193,6 +200,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 
 				if (response.ok) {
 					const data = await response.json()
+					console.log(response);
 					const imageBannerUrl = data.data.url
 					setNewEvent({ ...newEvent, bannerUrl: imageBannerUrl })
 					console.log(imageBannerUrl)

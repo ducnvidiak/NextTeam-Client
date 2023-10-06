@@ -118,7 +118,7 @@ function EventItem({ event, setEventList }) {
 							<LocationOnIcon></LocationOnIcon>
 							<Typography variant='body1'>{event?.locationName}</Typography>
 						</Box>
-						{event?.isRegistered == 'true' ||event?.isRegistered == true ? (
+						{event?.isRegistered == 'true' || event?.isRegistered == true ? (
 							<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
 								Đã đăng ký
 							</Button>
@@ -152,7 +152,7 @@ function EventList() {
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 
 	useEffect(() => {
-		console.log("fetched");
+		
 		fetch(`http://localhost:8080/events?cmd=list&userId=${cookies['userData']?.id}`, {
 			method: 'GET',
 			headers: {

@@ -262,12 +262,12 @@ function ClubList() {
 	const [clubs, setClubs] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
-	console.log(cookies['userData']);
+	
 
 	const callAPI = async () => {
 		try {
 			setLoading(true)
-			const res = await getAPI(`http://localhost:8080/club_cmd?cmd=list&userId=${cookies['userData']?.id}`)
+			const res = await getAPI(`http://localhost:8080/clubs?cmd=list-res&userId=${cookies['userData']?.id}`)
 			setClubs(res)
 		} catch (error) {
 			console.log(error)

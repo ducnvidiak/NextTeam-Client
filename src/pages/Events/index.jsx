@@ -27,6 +27,7 @@ import Select from '@mui/material/Select'
 const options = ['Create a merge commit', 'Squash and merge', 'Rebase and merge']
 
 function Events() {
+	
 	const [open, setOpen] = useState(false)
 	const [selectedIndex, setSelectedIndex] = useState(1)
 	const anchorRef = useRef(null)
