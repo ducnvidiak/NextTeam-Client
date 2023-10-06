@@ -269,11 +269,12 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<HowToRegIcon sx={{ marginRight: 2 }} />
-						<Link href='/application' underline='none'>
-							Đơn đã gửi
+						<Link href={'/application'}>
+							<Button>Đơn đã gửi</Button>
 						</Link>
 					</Box>
 				</MenuItem>
+
 				<MenuItem
 					sx={{ p: 0 }}
 					onClick={() => {
@@ -283,7 +284,7 @@ const UserDropdown = () => {
 				>
 					<Box sx={styles}>
 						<Groups3Icon sx={{ marginRight: 2 }} />
-						<Typography color={'#F27123'}>CLB của bạn</Typography>
+						<Button>CLB của bạn</Button>
 					</Box>
 				</MenuItem>
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
