@@ -1,142 +1,229 @@
-import * as React from 'react'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import Avatar from '@mui/material/Avatar'
-import Checkbox from '@mui/material/Checkbox'
-import ListItemButton from '@mui/material/ListItemButton'
-import classes from './styles.module.scss'
-import Typography from '@mui/material/Typography'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
+import {
+	Box,
+	Button,
+	ButtonGroup,
+	Card,
+	CardContent,
+	CardHeader,
+	Chip,
+	Container,
+	Grid,
+	InputAdornment,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TablePagination,
+	TableRow,
+	TextField,
+	Typography
+} from '@mui/material'
+import React from 'react'
+import ViewInfo from './ViewInfo'
+import { useCookies } from 'react-cookie'
+import { useEffect, useState } from 'react'
+import { TabContext, TabList } from '@mui/lab'
+import { Magnify, Tab } from 'mdi-material-ui'
 
-import Box from '@mui/material/Box'
-import InputLabel from '@mui/material/InputLabel'
-import FormControl from '@mui/material/FormControl'
-import NativeSelect from '@mui/material/NativeSelect'
-import Button from '@mui/material/Button'
+// ** Icons Imports
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
+import DeleteIcon from '@mui/icons-material/Delete'
 
-import CircularProgress from '@mui/material/CircularProgress'
-
-import { getListOfAllUser } from '../../user/apiUtils'
-import { useState } from 'react'
-import { useEffect } from 'react'
-
-import Badge from '@mui/material/Badge'
-
-import { useRouter } from 'next/router'
+const statusObj = {
+	0: { color: 'primary' },
+	1: { color: 'success' }
+}
 
 function MemberApproval() {
-	const [userList, setUserList] = useState(null)
-	console.log('list of users: ', userList)
-	const router = useRouter()
+	const [application, setApplication] = useState([])
+	const [userData, setUserData] = useCookies(['userData'])
+	const [info, setInfo] = useState()
+	const [viewInfoModal, setViewInfoModal] = useState(false)
+
+	function handleClick(info) {
+		setInfo(info)
+		setViewInfoModal(true)
+	}
+
+	const handleClose = () => {
+		setViewInfoModal(false)
+	}
 
 	useEffect(() => {
-		getListOfAllUser().then(data => {
-			setUserList(data)
+		fetch(`http://localhost:8080/engagement?action=application-list-of-user&userId=${userData['userData']?.id}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
 		})
-	}, [])
-
-	function handleClick(id) {
-		console.log('log: ', id)
-
-		// router.push('http://localhost:3000/user/info/' + id)
-	}
-
-	const [status, setStatus] = React.useState(10)
-
-	const handleChange = event => {
-		setAge(event.target.value)
-	}
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				setApplication(data)
+			})
+			.catch(error => console.error('Error:', error))
+	}, [userData])
 
 	return (
-		<div className={classes.userList}>
-			<div>
-				<h3>Danh sách chờ xét duyệt</h3>
-				<Box sx={{ minWidth: 120 }}>
-					<FormControl fullWidth>
-						<NativeSelect
-							defaultValue={10}
-							inputProps={{
-								name: 'age',
-								id: 'uncontrolled-native'
+		<Container>
+			<Grid item xs={12} style={{ height: '100%' }}>
+				<ViewInfo
+					info={info}
+					viewInfoModal={viewInfoModal}
+					setViewInfoModal={setViewInfoModal}
+					handleClose={handleClose}
+				></ViewInfo>
+				<Card style={{ height: '100%' }}>
+					<CardContent>
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+								paddingRight: '10px'
 							}}
 						>
-							<option value={10}>All</option>
-							<option value={20}>GDSC</option>
-							<option value={30}>DEVER</option>
-							<option value={40}>SRC</option>
-						</NativeSelect>
-					</FormControl>
-				</Box>
-			</div>
-			<hr />
-			<List dense sx={{ width: '80%', bgcolor: 'background.paper', padding: '20px' }}>
-				{userList !== null ? (
-					userList.map(member => {
-						const labelId = `checkbox-list-secondary-label-${member.id}`
+							<CardHeader title='Tất cả thông báo' titleTypographyProps={{ variant: 'h6' }} />
+							<TextField
+								placeholder='Tìm kiếm...'
+								size='small'
+								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position='start'>
+											<Magnify fontSize='small' />
+										</InputAdornment>
+									)
+								}}
+								onChange={event => {
+									setSearch(event.target.value)
+									handleSearch()
+								}}
+								onKeyPress={handleEnterKeyPress} // Gọi handleEnterKeyPress khi có sự kiện keypress
+							/>
+						</div>
 
-						return (
-							<ListItem key={member.id} disablePadding>
-								<ListItemButton
-									sx={{
-										height: '65px',
-										backgroundColor: 'rgb(249 250 251)',
-										marginBottom: '10px',
-										borderRadius: '8px'
-									}}
-									onClick={() => {
-										handleClick(member.id)
-									}}
-								>
-									<div className={classes.carditem}>
-										<div className={classes.carditem__left}>
-											<ListItemAvatar>
-												<Avatar alt={`Avatar ${member.fullname}`} src={member.avatarURL} />
-											</ListItemAvatar>
-											{/* <ListItemText
-										id={labelId}
-										primary={`${member.fullname}`}
-										secondary={'text secondary'}
-									/> */}
-											<div className={classes.info}>
-												<p>{member.fullname}</p>
-												<span>{member.studentCode}</span>
-											</div>
-										</div>
-
-										<div className={classes.actionslist}>
-											<Select
-												labelId='demo-select-small-label'
-												id='demo-select-small'
-												value={status}
-												label='Age'
-												onChange={handleChange}
-												sx={{ height: '30px' }}
+						<Table>
+							<TableHead>
+								<TableRow>
+									<TableCell>Thời gian</TableCell>
+									<TableCell>Nội dung</TableCell>
+									<TableCell>Hành động</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{notificationsData
+									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+									.map(row => (
+										<TableRow key={row.id}>
+											<TableCell>{row.updatedAt}</TableCell>
+											<TableCell
+												onClick={() => router.push(`/dashboard/notifications/detail/${row.id}`)}
 											>
-												<MenuItem value=''>
-													<em>None</em>
-												</MenuItem>
-												<MenuItem value={10}>Chọn ban tham gia</MenuItem>
-												<MenuItem value={20}>Twenty</MenuItem>
-												<MenuItem value={30}>Thirty</MenuItem>
-											</Select>
-											<Button variant='contained'>Accept</Button>
-											<Button variant='outlined'>Reject</Button>
-										</div>
-									</div>
-								</ListItemButton>
-							</ListItem>
-						)
-					})
-				) : (
-					<div className={classes.content}>
-						<CircularProgress />
-					</div>
-				)}
-			</List>
-		</div>
+												{row.title}
+											</TableCell>
+
+											<TableCell>
+												<ButtonGroup
+													variant='contained'
+													aria-label='outlined primary button group'
+												>
+													<Button
+														onClick={() =>
+															handleUpdateClick(row.id, row.title, row.content)
+														}
+													>
+														<ModeEditOutlineOutlinedIcon
+															sx={{ color: 'white' }}
+														></ModeEditOutlineOutlinedIcon>
+													</Button>
+													<Button onClick={() => handleDeleteClick(row.id, row.title)}>
+														<DeleteIcon sx={{ color: 'white' }}></DeleteIcon>
+													</Button>
+												</ButtonGroup>
+											</TableCell>
+										</TableRow>
+									))}
+							</TableBody>
+						</Table>
+						<TablePagination
+							rowsPerPageOptions={[10, 25, 100]}
+							component='div'
+							count={rows.length}
+							rowsPerPage={rowsPerPage}
+							page={page}
+							onPageChange={handleChangePage}
+							onRowsPerPageChange={handleChangeRowsPerPage}
+						/>
+					</CardContent>
+				</Card>
+			</Grid>
+
+			<Box marginTop={2}>
+				<Card>
+					<TableContainer>
+						<Table aria-label='table in dashboard'>
+							<TableHead>
+								<TableRow>
+									<TableCell>Câu lạc bộ</TableCell>
+									<TableCell>Ban tham gia</TableCell>
+									<TableCell>CV</TableCell>
+									<TableCell>Ngày nộp đơn</TableCell>
+									<TableCell>Tình trạng đơn</TableCell>
+									<TableCell>Ngày cập nhật</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{application.map(row => (
+									<TableRow
+										hover
+										key={row.id}
+										sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}
+									>
+										<TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
+											<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+												<Typography sx={{ fontWeight: 500, fontSize: '0.875rem !important' }}>
+													{row.club.name}
+												</Typography>
+												<Typography variant='caption'>{row.club.subname}</Typography>
+											</Box>
+										</TableCell>
+										<TableCell>{row.dept.name}</TableCell>
+										<TableCell>
+											<Button
+												size='small'
+												variant='contained'
+												color='primary'
+												value={`http://localhost:8080${row?.engagement.cvUrl}`}
+												onClick={() => handleClick(row)}
+											>
+												Xem CV
+											</Button>
+										</TableCell>
+										<TableCell>{row.engagement.createdAt}</TableCell>
+										<TableCell>
+											<Chip
+												label={row.engagement.roleId == 0 ? 'Đăng ký Mới' : 'Đã duyệt đơn'}
+												color={statusObj[row.engagement.roleId].color}
+												sx={{
+													height: 24,
+													fontSize: '0.75rem',
+													textTransform: 'capitalize',
+													'& .MuiChip-label': { fontWeight: 500 }
+												}}
+											/>
+										</TableCell>
+										<TableCell>{row.engagement.updatedAt}</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</Card>
+			</Box>
+		</Container>
 	)
 }
 

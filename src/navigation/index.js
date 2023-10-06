@@ -116,7 +116,7 @@ export const dashboardLayoutVavigation = () => {
 			path: '/dashboard/member-approval'
 		},
 		{
-			title: 'Tạo thông báo',
+			title: 'Thông báo',
 			icon: NotificationAddIcon,
 			path: '/dashboard/notification-creator'
 		},
