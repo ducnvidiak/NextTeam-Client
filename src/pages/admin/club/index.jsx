@@ -2,7 +2,7 @@
 import Grid from '@mui/material/Grid'
 import CardHeader from '@mui/material/CardHeader'
 import TableStickyHeader from 'src/views/tables/TableStickyHeader'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -11,27 +11,16 @@ import TextField from '@mui/material/TextField'
 import { Button, FormControl, FormLabel, Input, Card, CardMedia, InputLabel, Select, MenuItem } from '@mui/material'
 import { CloudUpload } from '@mui/icons-material'
 import DialogContentText from '@mui/material/DialogContentText'
-import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
 import TextareaAutosize from '@mui/material/TextareaAutosize'
-import Typography from '@mui/material/Typography'
+import FormHelperText from '@mui/material/FormHelperText'
+import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function Club() {
-  const categories = [
-    { label: 'Học Thuật', id: '1' },
-    { label: 'Thể Thao', id: '2' },
-    { label: 'Năng Khiếu', id: '3' },
-    { label: 'Cộng Đồng', id: '4' }
-  ]
-  
-  const snackbarStyle = {
-    position: 'fixed',
-    top: '-55%',
-    right: '69%'
-  }
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-
-  const [clubFormData, setClubFormData] = useState({
+  const initialClubFormData = {
     id: '',
     name: '',
     subname: '',
@@ -40,28 +29,24 @@ function Club() {
     movementPoint: '',
     balance: '',
     bannerUrl: '',
-    categoryId: ''
-  })
-  const [imageBannerUrl, setImageBannerUrl] = useState('')
+    categoryId: '',
+    categoryName: '',
+    isActive: 'false'
+  }
+  const [clubFormData, setClubFormData] = useState(initialClubFormData)
+  const [resultClubCate, setResultClubCate] = useState([])
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [successMessage, setSuccessMessage] = useState('')
   const [clubs, setClubs] = useState([])
   const [open, setOpen] = useState(false)
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState('')
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success') // 'success' or 'error'
   const [selectedCategory, setSelectedCategory] = useState('')
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-  }
-
-  const openSnackbar = (message, severity) => {
-    setSnackbarMessage(message)
-    setSnackbarSeverity(severity)
-    setSnackbarOpen(true)
-  }
+  const [validationErrors, setValidationErrors] = useState({
+    name: false,
+    subname: false,
+    categoryId: false,
+    movementPoint: false,
+    balance: false
+  })
 
   const handleInputChange = e => {
     const { name, value } = e.target
@@ -79,8 +64,24 @@ function Club() {
     setIsCreateDialogOpen(false)
   }
 
+  const refreshClubCategories = () => {
+    fetch('http://localhost:8080/api/club-categories?cmd=list')
+      .then(res => res.json())
+      .then(result => {
+        setResultClubCate(result)
+      })
+  }
+  useEffect(() => {
+    refreshClubCategories()
+  }, []) // Gọi refreshClubCategories một lần khi component được tạo
+
+  useEffect(() => {
+    // Chỉ gọi lại refreshClubCategories khi result thay đổi
+    refreshClubCategories()
+  }, [resultClubCate])
+
   const refreshClubData = () => {
-    fetch('http://localhost:8080/club_cmd?cmd=list')
+    fetch('http://localhost:8080/api/club?cmd=list')
       .then(res => res.json())
       .then(result => {
         setClubs(result)
@@ -89,6 +90,7 @@ function Club() {
 
   const closeEditDialog = () => {
     setIsEditDialogOpen(false)
+    setClubFormData(initialClubFormData)
   }
 
   const openEditDialog = rowData => {
@@ -100,8 +102,10 @@ function Club() {
       avatarUrl: rowData.avatarUrl,
       bannerUrl: rowData.bannerUrl,
       movementPoint: rowData.movementPoint,
-      categoryId: rowData.categoryId,
-      balance: rowData.balance
+      categoryName: rowData.categoryName,
+      balance: rowData.balance,
+      isActive: rowData.isActive,
+      categoryId: rowData.categoryId
     })
     setIsEditDialogOpen(true)
   }
@@ -117,68 +121,35 @@ function Club() {
 
   const closeDeleteDialog = () => {
     setIsDeleteDialogOpen(false)
+    setClubFormData(initialClubFormData)
   }
 
   const handleCreateClub = () => {
+    // Kiểm tra các trường dữ liệu và hiển thị thông báo lỗi nếu cần
+    const errors = {}
+    if (!clubFormData.name) {
+      errors.name = true
+    }
+    if (!clubFormData.subname) {
+      errors.subname = true
+    }
+    if (!clubFormData.categoryId) {
+      errors.categoryId = true
+    }
+    if (clubFormData.movementPoint < 0) {
+      errors.movementPoint = true
+    }
+    if (clubFormData.balance < 0) {
+      errors.balance = true
+    }
+    setValidationErrors(errors)
+
+    // Nếu có lỗi, không thực hiện gửi yêu cầu
+    if (Object.keys(errors).length > 0) {
+      return
+    }
     const url_fetch =
-      'http://localhost:8080/club_cmd?cmd=add&name=' +
-      clubFormData.name +
-      '&subname=' +
-      clubFormData.subname +
-      '&categoryId=' +
-      clubFormData.categoryId +
-      '&description=' +
-      clubFormData.description +
-      '&avatarUrl=' +
-      clubFormData.avatarUrl +
-      '&bannerUrl=' +
-      clubFormData.bannerUrl +
-      '&movementPoint=' +
-      clubFormData.movementPoint +
-      '&balance=' +
-      clubFormData.balance
-
-    //  Club c = new Club(1, name, subname, categoryId, description, avatarUrl, bannerUrl, movementPoint, balance);
-    console.log(url_fetch)
-    fetch(url_fetch)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error('Network response was not ok')
-        }
-
-        return res.json()
-      })
-      .then(data => {
-        setIsCreateDialogOpen(false)
-        refreshClubData()
-
-        // Show the success message
-        openSnackbar('Thêm câu lạc bộ thành công!', 'success')
-
-        // Add any additional logic here after a successful response
-        // Reset clubFormData to its initial empty state
-        setClubFormData({
-          id: '',
-          name: '',
-          subname: '',
-          description: '',
-          avatarUrl: '',
-          movementPoint: '',
-          balance: '',
-          bannerUrl: '',
-          categoryId: ''
-        })
-      })
-      .catch(error => {
-        openSnackbar('Thêm câu lạc bộ thất bại!', 'error')
-
-        // Handle the error here (e.g., show an error message to the user)
-      })
-  }
-
-  const handleEditClub = () => {
-    const url_fetch =
-      'http://localhost:8080/club_cmd?cmd=update&name=' +
+      'http://localhost:8080/api/club?cmd=add&name=' +
       clubFormData.name +
       '&subname=' +
       clubFormData.subname +
@@ -194,6 +165,84 @@ function Club() {
       clubFormData.movementPoint +
       '&balance=' +
       clubFormData.balance +
+      '&isActive=' +
+      clubFormData.isActive
+
+    fetch(url_fetch)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Network response was not ok')
+        }
+        return res.json()
+      })
+      .then(data => {
+        setIsCreateDialogOpen(false)
+        setClubFormData(initialClubFormData)
+        toast.success('Câu lạc bộ đã được thêm thành công', {
+          position: 'top-right',
+          autoClose: 3000, // Close the toast after 3 seconds
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
+      })
+      .catch(error => {
+        toast.success('Thêm câu lạc bộ thất bại', {
+          position: 'top-right',
+          autoClose: 3000, // Close the toast after 3 seconds
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
+      })
+  }
+
+  const handleEditClub = async () => {
+    const errors = {}
+    if (!clubFormData.name) {
+      errors.name = true
+    }
+    if (!clubFormData.subname) {
+      errors.subname = true
+    }
+    if (!clubFormData.categoryId) {
+      errors.categoryId = true
+    }
+    if (clubFormData.movementPoint < 0) {
+      errors.movementPoint = true
+    }
+    if (clubFormData.balance < 0) {
+      errors.balance = true
+    }
+
+    setValidationErrors(errors)
+
+    // Nếu có lỗi, không thực hiện gửi yêu cầu
+    if (Object.keys(errors).length > 0) {
+      return
+    }
+
+    const url_fetch =
+      'http://localhost:8080/api/club?cmd=update&name=' +
+      clubFormData.name +
+      '&subname=' +
+      clubFormData.subname +
+      '&categoryId=' +
+      clubFormData.categoryId +
+      '&description=' +
+      clubFormData.description +
+      '&avatarUrl=' +
+      clubFormData.avatarUrl +
+      '&bannerUrl=' +
+      clubFormData.bannerUrl +
+      '&movementPoint=' +
+      clubFormData.movementPoint +
+      '&balance=' +
+      clubFormData.balance +
+      '&isActive=' +
+      clubFormData.isActive +
       '&id=' +
       clubFormData.id
     console.log(url_fetch)
@@ -206,36 +255,60 @@ function Club() {
         return res.json()
       })
       .then(data => {
-        openSnackbar('Sửa câu lạc bộ thành công!', 'success')
+        setClubFormData(initialClubFormData)
+        toast.success('Câu lạc bộ đã cập nhật thành công', {
+          position: 'top-right',
+          autoClose: 3000, // Close the toast after 3 seconds
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
         setIsEditDialogOpen(false)
-       
-        refreshClubData()
-
-        // Add any additional logic here after a successful response
       })
       .catch(error => {
-        openSnackbar('Sửa câu lạc bộ thất bại!', 'error')
+        toast.success('Cập nhật câu lạc bộ thất bại', {
+          position: 'top-right',
+          autoClose: 3000, // Close the toast after 3 seconds
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
       })
   }
 
   const handleDeleteClub = () => {
-    fetch('http://localhost:8080/club_cmd?cmd=delete&id=' + clubFormData.id)
+    fetch('http://localhost:8080/api/club?cmd=delete&id=' + clubFormData.id)
       .then(res => {
         if (!res.ok) {
+          toast.success('Xóa câu lạc bộ thất bại', {
+            position: 'top-right',
+            autoClose: 3000, // Close the toast after 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true
+          })
           throw new Error('Network response was not ok')
         }
 
         return res.json()
       })
       .then(data => {
-        openSnackbar('Xóa câu lạc bộ thành công!', 'success')
+        toast.success('Câu lạc bộ đã xóa thành công', {
+          position: 'top-right',
+          autoClose: 3000, // Close the toast after 3 seconds
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
         setIsDeleteDialogOpen(false)
+
         setDeleteSuccess(true)
-        refreshClubData()
       })
-      .catch(error => {
-        openSnackbar('Xóa câu lạc bộ thành công!', 'success')
-      })
+      .catch(error => {})
   }
 
   const handleFileUpload = async e => {
@@ -259,13 +332,9 @@ function Club() {
             ...prevData,
             ['avatarUrl']: imageUrl
           }))
-          console.log(imageUrl)
         } else {
-          console.error('Tải lên hình ảnh thất bại')
         }
-      } catch (error) {
-        console.error('Lỗi khi tải lên hình ảnh:', error)
-      }
+      } catch (error) {}
     }
   }
 
@@ -291,11 +360,8 @@ function Club() {
             ['bannerUrl']: imageBannerUrl
           }))
         } else {
-          console.error('Tải lên hình ảnh thất bại')
         }
-      } catch (error) {
-        console.error('Lỗi khi tải lên hình ảnh:', error)
-      }
+      } catch (error) {}
     }
   }
 
@@ -309,17 +375,27 @@ function Club() {
 
   const handleCategoryChange = event => {
     const selectedCategoryLabel = event.target.value
-    console.log(selectedCategoryLabel)
-    const selectedCategory = categories.find(category => category.label === selectedCategoryLabel)
+    const selectedCategory = resultClubCate.find(category => category.name === selectedCategoryLabel)
 
     setSelectedCategory(selectedCategoryLabel)
-    console.log(selectedCategory)
-    setClubFormData({
-      ...clubFormData,
-      categoryId: selectedCategory.id
-    })
-    console.log(`hello ${clubFormData.categoryId}`)
-    handleCloseDialog() // Close the dialog when a category is selected
+
+    setClubFormData(prevData => ({
+      ...prevData,
+      categoryId: selectedCategory.id,
+      categoryName: selectedCategory.name
+    }))
+  }
+
+  const [isDescriptionDialogOpen, setDescriptionDialogOpen] = useState(false)
+  const [selectedDescription, setSelectedDescription] = useState('')
+
+  const handleViewDescription = description => {
+    setSelectedDescription(description)
+    setDescriptionDialogOpen(true)
+  }
+
+  const handleCloseDescriptionDialog = () => {
+    setDescriptionDialogOpen(false)
   }
 
   return (
@@ -335,8 +411,9 @@ function Club() {
         Tạo Câu Lạc Bộ
       </Button>
       {/* Create Club Dialog */}
+
       <Dialog open={isCreateDialogOpen} onClose={closeCreateDialog} aria-labelledby='form-dialog-title'>
-        <DialogTitle id='form-dialog-title'>Tạo Câu Lạc Bộ</DialogTitle>
+        <DialogTitle id='form-dialog-title'>Thêm Câu Lạc Bộ</DialogTitle>
 
         <DialogContent>
           <TextField
@@ -349,6 +426,8 @@ function Club() {
             fullWidth
             value={clubFormData.name}
             onChange={handleInputChange}
+            error={validationErrors.name} // Sử dụng error prop để hiển thị lỗi
+            helperText={validationErrors.name ? 'Tên không được bỏ trống' : ''}
           />
           <TextField
             autoFocus
@@ -360,6 +439,8 @@ function Club() {
             fullWidth
             value={clubFormData.subname}
             onChange={handleInputChange}
+            error={validationErrors.subname} // Sử dụng error prop để hiển thị lỗi
+            helperText={validationErrors.subname ? 'Tên viết tắt không được bỏ trống' : ''}
           />
           <>
             <DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
@@ -367,12 +448,15 @@ function Club() {
             </DialogContent>
             <FormControl fullWidth>
               <Select labelId='category-label' id='category' value={selectedCategory} onChange={handleCategoryChange}>
-                {categories.map(category => (
-                  <MenuItem key={category.id} value={category.label}>
-                    {category.label}
+                {resultClubCate.map(category => (
+                  <MenuItem key={category.id} value={category.name}>
+                    {category.name}
                   </MenuItem>
                 ))}
               </Select>
+              {validationErrors.categoryId && (
+                <FormHelperText sx={{ color: 'red' }}>Danh mục không được bỏ trống</FormHelperText>
+              )}
             </FormControl>
           </>
           <DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
@@ -462,7 +546,7 @@ function Club() {
             )}
           </FormControl>
 
-          {/*  điểm */}
+          {/*Điểm hoạt động  */}
           <TextField
             autoFocus
             margin='dense'
@@ -473,6 +557,10 @@ function Club() {
             fullWidth
             value={clubFormData.movementPoint}
             onChange={handleInputChange}
+            error={validationErrors.movementPoint} // Add error prop
+            helperText={
+              validationErrors.movementPoint && 'Điểm Hoạt Động Câu Lạc Bộ phải lớn hơn hoặc bằng 0 hoặc bỏ trống'
+            } // Display error message
           />
           {/*Số dư */}
           <TextField
@@ -485,7 +573,24 @@ function Club() {
             fullWidth
             value={clubFormData.balance}
             onChange={handleInputChange}
+            error={validationErrors.balance} // Add error prop
+            helperText={validationErrors.balance && 'Số Dư Câu Lạc Bộ phải lớn hơn hoặc bằng 0 hoặc bỏ trống'} // Display error message
           />
+          {/*Trạng thái  */}
+          <FormControl component='fieldset'>
+            <DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
+              Trạng thái câu lạc bộ
+            </DialogContent>
+            <RadioGroup
+              aria-label='isActive'
+              name='isActive'
+              value={clubFormData.isActive.toString()} // Chuyển đổi giá trị từ boolean sang chuỗi
+              onChange={handleInputChange}
+            >
+              <FormControlLabel value='true' control={<Radio />} label='Hoạt động' />
+              <FormControlLabel value='false' control={<Radio />} label='Không hoạt động' />
+            </RadioGroup>
+          </FormControl>
         </DialogContent>
         {/* Cancle dialog */}
         <DialogActions>
@@ -499,6 +604,7 @@ function Club() {
 
         {/* Edit dialog */}
       </Dialog>
+      {/* Edit Club Dialog */}
       <Dialog open={isEditDialogOpen} onClose={closeEditDialog} aria-labelledby='form-dialog-title'>
         <DialogTitle id='form-dialog-title'>Thay Đổi Thông Tin Câu Lạc Bộ</DialogTitle>
         <DialogContent>
@@ -544,9 +650,9 @@ function Club() {
             </DialogContent>
             <FormControl fullWidth>
               <Select labelId='category-label' id='category' value={selectedCategory} onChange={handleCategoryChange}>
-                {categories.map(category => (
-                  <MenuItem key={category.id} value={category.label}>
-                    {category.label}
+                {resultClubCate.map(category => (
+                  <MenuItem key={category.id} value={category.name}>
+                    {category.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -573,8 +679,14 @@ function Club() {
             }}
           />
 
+          {/* Tải ảnh avatar */}
           <FormControl>
-            <FormLabel htmlFor='file-upload'>Chọn ảnh câu lạc bộ</FormLabel>
+            <FormLabel htmlFor='file-upload'>
+              {' '}
+              <DialogContent id='form-dialog' sx={{ paddingLeft: '0' }}>
+                Tải ảnh đại điện câu lạc bộ
+              </DialogContent>
+            </FormLabel>
             <Input
               accept='image/*' // Chỉ cho phép tải lên các tệp hình ảnh
               id='file-upload'
@@ -584,21 +696,22 @@ function Club() {
             />
             <label htmlFor='file-upload'>
               <Button variant='contained' component='span' startIcon={<CloudUpload />} sx={{ margin: '10px 0' }}>
-                Upload
+                Tải lên
               </Button>
             </label>
+            {clubFormData.avatarUrl && (
+              <Card>
+                <CardMedia
+                  component='img'
+                  alt='Selected Image'
+                  height='100%'
+                  width='100%'
+                  image={clubFormData.avatarUrl}
+                />
+              </Card>
+            )}
           </FormControl>
-          {clubFormData.avatarUrl && (
-            <Card>
-              <CardMedia
-                component='img'
-                alt='Selected Image'
-                height='100%'
-                width='100%'
-                image={clubFormData.avatarUrl}
-              />
-            </Card>
-          )}
+
           {/* Tải ảnh banner */}
 
           <FormControl>
@@ -641,6 +754,10 @@ function Club() {
             fullWidth
             value={clubFormData.movementPoint}
             onChange={handleInputChange}
+            error={validationErrors.movementPoint} // Add error prop
+            helperText={
+              validationErrors.movementPoint && 'Điểm Hoạt Động Câu Lạc Bộ phải lớn hơn hoặc bằng 0 hoặc bỏ trống'
+            } // Display error message
           />
           {/*Số dư */}
           <TextField
@@ -653,7 +770,25 @@ function Club() {
             fullWidth
             value={clubFormData.balance}
             onChange={handleInputChange}
+            error={validationErrors.balance} // Add error prop
+            helperText={validationErrors.balance && 'Số dư Câu Lạc Bộ phải lớn hơn hoặc bằng 0 hoặc bỏ trống'} // Display error message
           />
+          <>
+            <FormControl component='fieldset'>
+              <DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
+                Trạng thái câu lạc bộ
+              </DialogContent>
+              <RadioGroup
+                aria-label='isActive'
+                name='isActive'
+                value={clubFormData.isActive.toString()} // Chuyển đổi giá trị từ boolean sang chuỗi
+                onChange={handleInputChange}
+              >
+                <FormControlLabel value='true' control={<Radio />} label='Hoạt động' />
+                <FormControlLabel value='false' control={<Radio />} label='Không hoạt động' />
+              </RadioGroup>
+            </FormControl>
+          </>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeEditDialog} color='primary'>
@@ -664,6 +799,7 @@ function Club() {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* Delete Club Dialog */}
       <Dialog open={isDeleteDialogOpen} onClose={closeDeleteDialog}>
         <DialogTitle>Xác nhận xóa</DialogTitle>
         <DialogContent>
@@ -678,18 +814,17 @@ function Club() {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar
-        open={snackbarOpen}
-        variant='contained'
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <Dialog open={isDescriptionDialogOpen} onClose={handleCloseDescriptionDialog} fullWidth maxWidth='md'>
+        <DialogTitle>Chi tiết mô tả</DialogTitle>
+        <DialogContent>
+          <p>{selectedDescription}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDescriptionDialog} color='primary'>
+            Đóng
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Câu Lạc Bộ' titleTypographyProps={{ variant: 'h6' }} />
@@ -697,10 +832,13 @@ function Club() {
             openEditClubHandle={openEditDialog}
             openDeleteClubHandle={openDeleteDialog}
             refreshClubData={refreshClubData}
+            resultClubCate={resultClubCate}
+            handleViewDescription={handleViewDescription}
             clubs={clubs} // Pass the callback function
           />
         </Card>
       </Grid>
+      <ToastContainer />
     </div>
   )
 }
