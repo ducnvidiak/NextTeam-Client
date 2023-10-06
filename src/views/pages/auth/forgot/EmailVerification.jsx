@@ -2,8 +2,8 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
-import { post } from 'src/utils/request'
 import { toast } from 'react-toastify'
+import { postAPI } from 'src/utils/request'
 
 function EmailVerification(props) {
 	const handleChange = props.changeProc
@@ -25,7 +25,8 @@ function EmailVerification(props) {
 			clearTimeout(timeout)
 		}, 2000)
 
-		var res = await post('forgot-password', { command: 1, email: values.email })
+		var res = await postAPI('forgot-password', { command: 1, email: values.email })
+
 		if (res.code == 0) {
 			setValues({ ...values, type: res.result.type })
 			setStep(2)

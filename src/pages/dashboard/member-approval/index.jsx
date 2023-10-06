@@ -26,6 +26,12 @@ import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
 // ** Icons Imports
 import Magnify from 'mdi-material-ui/Magnify'
 import { Chip } from '@mui/material'
+import { getUserInfo } from 'src/utils/info'
+
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import ViewInfo from './ViewInfo'
 
 const TableStickyHeader = () => {
 	const router = useRouter()
@@ -35,23 +41,56 @@ const TableStickyHeader = () => {
 	const [page, setPage] = useState(0)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [application, setApplication] = useState([])
+	const [applicationDetail, setApplicationDetail] = useState()
 	const [search, setSearch] = useState('')
-	const [cookies, setCookie] = useCookies(['clubData'])
-	const [userData, setUserData] = useCookies(['userData'])
+	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 
 	//modal
 	const [open, setOpen] = useState(false)
 	const [scroll, setScroll] = useState('paper')
 
-	function handleClickOpen(id, title, content, type, createdAt) {
-		setNotificationDetail({
-			id: id,
-			title: title,
-			content: content,
-			type: type,
-			createdAt: createdAt
-		})
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
+
+	function handleClickOpen(application) {
+		setApplicationDetail(application)
 		setOpen(true)
+	}
+
+	function handleApproveApplication(id) {
+		fetch('http://localhost:8080/engagement?action=approve-application&id=' + id, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				toast.success(data)
+				dispatch({ type: 'trigger' })
+			})
+			.catch(error => console.error('Error:', error))
+	}
+
+	function handleRejectApplication(id) {
+		fetch('http://localhost:8080/engagement?action=reject-application&id=' + id, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				toast.success(data)
+				dispatch({ type: 'trigger' })
+			})
+			.catch(error => console.error('Error:', error))
 	}
 
 	const handleClose = () => {
@@ -87,7 +126,7 @@ const TableStickyHeader = () => {
 			dispatch({ type: 'trigger' })
 		} else {
 			fetch(
-				`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData['userData'].id}`,
+				`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData.id}`,
 				{
 					method: 'GET',
 					headers: {
@@ -106,7 +145,7 @@ const TableStickyHeader = () => {
 	}
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/engagement?action=application-list-of-user&userId=${userData['userData']?.id}`, {
+		fetch(`http://localhost:8080/engagement?action=application-list-of-user&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -117,13 +156,21 @@ const TableStickyHeader = () => {
 			})
 			.then(function (data) {
 				setApplication(data)
-				console.log(data)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData, state])
 
 	return (
 		<Grid item xs={12}>
+			<ToastContainer></ToastContainer>
+			<ViewInfo
+				applicationDetail={applicationDetail}
+				handleClickOpen={handleClickOpen}
+				open={open}
+				setOpen={setOpen}
+				handleClose={handleClose}
+				statusObj={statusObj}
+			></ViewInfo>
 			<Card style={{ height: '100%' }}>
 				<div
 					style={{
@@ -172,7 +219,11 @@ const TableStickyHeader = () => {
 										key={row.id}
 										sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}
 									>
-										<TableCell>
+										<TableCell
+											onClick={() => {
+												handleClickOpen(row)
+											}}
+										>
 											{row?.user.firstname} {row?.user.lastname}
 										</TableCell>
 										<TableCell>{row?.user.username}</TableCell>
@@ -207,8 +258,22 @@ const TableStickyHeader = () => {
 																Tạo phỏng vấn
 															</MenuItem>
 															<MenuItem onClick={popupState.close}>Phỏng vấn</MenuItem>
-															<MenuItem onClick={popupState.close}>Phê duyệt</MenuItem>
-															<MenuItem onClick={popupState.close}>Từ chối</MenuItem>
+															<MenuItem
+																onClick={() => {
+																	handleApproveApplication(row?.engagement.id)
+																	popupState.close
+																}}
+															>
+																Phê duyệt
+															</MenuItem>
+															<MenuItem
+																onClick={() => {
+																	handleRejectApplication(row?.engagement.id)
+																	popupState.close
+																}}
+															>
+																Từ chối
+															</MenuItem>
 														</Menu>
 													</React.Fragment>
 												)}

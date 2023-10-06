@@ -37,8 +37,10 @@ import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 // **Toasify Imports
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { post } from 'src/utils/request'
-import Error404 from 'src/pages/404'
+import { postAPI } from 'src/utils/request'
+import Decentralization from 'src/layouts/Decentralization'
+import { InputAdornment } from '@mui/material'
+import { EyeOffOutline, EyeOutline } from 'mdi-material-ui'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -67,6 +69,7 @@ const LoginPage = () => {
 	const [save, setSave] = useState('')
 	const [emailError, setEmailError] = useState(false)
 	const [passwordError, setPasswordError] = useState(false)
+	const [showPassword, setShowPassword] = useState(false)
 
 	// ** Hook
 	const theme = useTheme()
@@ -84,10 +87,11 @@ const LoginPage = () => {
 			setPasswordError(true)
 			toast.error('Không được để trống mật khẩu')
 		} else if (email && password) {
-			const res = await post('http://localhost:8080/login', {
+			const res = await postAPI('login', {
 				email: email,
 				password: password
 			})
+
 			if (res.id == null) {
 				console.log(res)
 				toast.error(res)
@@ -96,13 +100,21 @@ const LoginPage = () => {
 				}
 				if (!save) {
 				}
-				setCookie('userData', JSON.stringify(res), { path: '/' })
+
 				console.log('Đăng nhập thành công')
 				toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
 				setTimeout(() => {
 					router.push('/')
+					setTimeout(() => {
+						setCookie('userData', res.res, {
+							path: '/'
+						})
+					}, 1000)
 				}, 1000)
 			}
+
+			// const res2 = await post('user-info')
+			// console.log(res2)
 
 			// fetch('http://localhost:8080/login', {
 			// 	method: 'POST',
@@ -148,6 +160,10 @@ const LoginPage = () => {
 
 	const handleMouseDownPassword = event => {
 		event.preventDefault()
+	}
+
+	const handleClickShowPassword = () => {
+		setShowPassword(!showPassword)
 	}
 
 	return (
@@ -257,7 +273,19 @@ const LoginPage = () => {
 								id='auth-password'
 								onChange={e => setPassword(e.target.value)}
 								error={passwordError}
-								type={password.showPassword ? 'text' : 'password'}
+								type={showPassword ? 'text' : 'password'}
+								endAdornment={
+									<InputAdornment position='end'>
+										<IconButton
+											edge='end'
+											onClick={handleClickShowPassword}
+											onMouseDown={handleMouseDownPassword}
+											aria-label='toggle password visibility'
+										>
+											{showPassword ? <EyeOutline /> : <EyeOffOutline />}
+										</IconButton>
+									</InputAdornment>
+								}
 							/>
 						</FormControl>
 						<Box
@@ -311,6 +339,10 @@ const LoginPage = () => {
 		</Box>
 	)
 }
-LoginPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
+LoginPage.getLayout = page => (
+	<Decentralization forGuest>
+		<BlankLayout>{page}</BlankLayout>
+	</Decentralization>
+)
 
 export default LoginPage

@@ -26,6 +26,7 @@ import Menu from 'mdi-material-ui/Menu'
 import Magnify from 'mdi-material-ui/Magnify'
 import { Chip } from '@mui/material'
 import NotificationDetail from '../NotificationDetail'
+import { getUserInfo } from 'src/utils/info'
 
 const TableStickyHeader = () => {
 	const router = useRouter()
@@ -36,9 +37,12 @@ const TableStickyHeader = () => {
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [notificationsData, setNotificationsData] = useState([])
 	const [search, setSearch] = useState('')
-	const [cookies, setCookie] = useCookies(['clubData'])
-	const [userData, setUserData] = useCookies(['userData'])
+	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [notificationDetail, setNotificationDetail] = useState()
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 	console.log(search)
 
 	//modal
@@ -87,7 +91,7 @@ const TableStickyHeader = () => {
 			dispatch({ type: 'trigger' })
 		} else {
 			fetch(
-				`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData['userData'].id}`,
+				`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData.id}`,
 				{
 					method: 'GET',
 					headers: {

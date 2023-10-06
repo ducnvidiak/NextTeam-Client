@@ -45,8 +45,10 @@ import 'react-toastify/dist/ReactToastify.css'
 import EditPublicNotification from './EditPublicNotification'
 import EditPrivateNotification from './EditPrivateNotification'
 import CancelIcon from '@mui/icons-material/Cancel'
+import Decentralization from 'src/layouts/Decentralization'
+import BlankLayout from 'src/@core/layouts/BlankLayout'
 
-const TableStickyHeader = () => {
+const NotificationCreator = () => {
 	const router = useRouter()
 
 	// ** States
@@ -135,6 +137,7 @@ const TableStickyHeader = () => {
 				setOpenPrivateDelete(false)
 				dispatch({ type: 'trigger' })
 			})
+			.catch(error => console.error('Error:', error))
 	}
 
 	function handlePrivateDeleteClick(id, title) {
@@ -473,4 +476,4 @@ const TableStickyHeader = () => {
 	)
 }
 
-export default TableStickyHeader
+export default NotificationCreator

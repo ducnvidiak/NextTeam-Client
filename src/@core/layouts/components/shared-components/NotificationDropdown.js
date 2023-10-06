@@ -23,6 +23,7 @@ import BellOutline from 'mdi-material-ui/BellOutline'
 
 // ** Third Party Components
 import PerfectScrollbarComponent from 'react-perfect-scrollbar'
+import { getUserInfo } from 'src/utils/info'
 
 // ** Styled Menu component
 const Menu = styled(MuiMenu)(({ theme }) => ({
@@ -90,9 +91,12 @@ const NotificationDropdown = () => {
 	const [state, dispatch] = useReducer((state, action) => action, 0)
 	const router = useRouter()
 	const [notificationsData, setNotificationsData] = useState([])
-	const [cookies, setCookie] = useCookies(['clubData'])
-	const [userData, setUserData] = useCookies(['userData'])
+	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [countUnview, setCountUnview] = useState(0)
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	for (let i = 0; i < notificationsData.length; i++) {
 		if (!notificationsData[i].hasSeen) {
@@ -133,7 +137,7 @@ const NotificationDropdown = () => {
 			'http://localhost:8080/notification?action=list-10-noti&clubId=' +
 				cookies['clubData']?.clubId +
 				'&userId=' +
-				userData['userData']?.id,
+				userData?.id,
 			{
 				method: 'GET',
 				headers: {
@@ -198,7 +202,7 @@ const NotificationDropdown = () => {
 											<span>
 												<Chip
 													label={notification.type == 'private' ? 'TB Cá nhân' : 'TB Chung'}
-													color={statusObj[notification.type].color}
+													color={statusObj[notification.type]?.color}
 													sx={{
 														height: 20,
 														fontSize: '0.5rem',
