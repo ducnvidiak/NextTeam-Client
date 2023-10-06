@@ -1,0 +1,168 @@
+import {
+	Box,
+	Button,
+	Card,
+	CardContent,
+	CardHeader,
+	CardMedia,
+	Chip,
+	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	Divider,
+	Drawer,
+	FormControl,
+	InputLabel,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemIcon,
+	ListItemText,
+	MenuItem,
+	Stack,
+	SwipeableDrawer,
+	Typography
+} from '@mui/material'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
+import Groups2Icon from '@mui/icons-material/Groups2'
+
+import { useEffect, useState } from 'react'
+import { getAPI } from 'src/ultis/requestAPI'
+import { useCookies } from 'react-cookie'
+import moment from 'moment'
+
+import RegisterEventModal from './RegisterEventModal'
+import SwipeableDrawerList from './SwipeableDrawerList'
+import FeedbackModal from './FeedbackModal'
+import EventManagement from './EventManagement'
+
+function EventItem({ event, setEventList }) {
+	console.log("time: " + event.startTime );
+	const [openRegisterModal, setOpenRegisterModal] = useState(false)
+	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
+	const [openEventManagememntModal, setOpenEventManagememntModal] = useState(false)
+
+	const [state, setState] = useState({
+		top: false,
+		left: false,
+		bottom: false,
+		right: false
+	})
+
+	const toggleDrawer = (anchor, open) => event => {
+		if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+			return
+		}
+
+		setState({ ...state, [anchor]: open })
+	}
+
+	return (
+		<>
+			<RegisterEventModal
+				event={event}
+				openRegisterModal={openRegisterModal}
+				setOpenRegisterModal={setOpenRegisterModal}
+			></RegisterEventModal>
+			<FeedbackModal
+				openFeedbackModal={openFeedbackModal}
+				setOpenFeedbackModal={setOpenFeedbackModal}
+			></FeedbackModal>
+			<EventManagement
+				openEventManagememntModal={openEventManagememntModal}
+				setOpenEventManagememntModal={setOpenEventManagememntModal}
+				event={event}
+				setEventList={setEventList}
+			></EventManagement>
+			{['left', 'right', 'top', 'bottom'].map(anchor => (
+				<>
+					<SwipeableDrawer
+						anchor={anchor}
+						open={state[anchor]}
+						onClose={toggleDrawer(anchor, false)}
+						onOpen={toggleDrawer(anchor, true)}
+					>
+						<SwipeableDrawerList
+							anchor={anchor}
+							event={event}
+							setOpenRegisterModal={setOpenRegisterModal}
+							toggleDrawer={toggleDrawer}
+							setOpenFeedbackModal={setOpenFeedbackModal}
+						></SwipeableDrawerList>
+					</SwipeableDrawer>
+				</>
+			))}
+			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
+				<Stack direction={'column'} width={'15%'}>
+					{
+						event?.isApproved ? (
+							<Chip label='Đã duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
+						): (
+							<Chip label='Đang chờ' sx={{ mb: 4, fontSize: 16 }} color='warning' />
+						)
+					}
+					<Typography variant='h5'>{moment(event?.startTime).format('MMM Do YY')}</Typography>
+					<Typography variant='h7'>{moment(event?.startTime).format('dddd')}</Typography>
+				</Stack>
+				<Card
+					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
+					marginBottom={10}
+
+					// onClick={toggleDrawer('right', true)}
+				>
+					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
+						<Typography variant='h7' sx={{ opacity: 0.7 }}>
+							{moment(event?.startTime).format('LT')}
+						</Typography>
+						<Typography variant='h6' fontWeight={700} sx={{ flex: 1 }}>
+							{event?.name}
+						</Typography>
+
+						<Box sx={{ display: 'flex', gap: 4 }}>
+							<Groups2Icon></Groups2Icon>
+							<Typography variant='body1'>{event?.clubSubname}</Typography>
+						</Box>
+						<Box sx={{ display: 'flex', gap: 4 }}>
+							<LocationOnIcon></LocationOnIcon>
+							<Typography variant='body1'>{event?.locationName}</Typography>
+						</Box>
+
+						<Button
+							variant='contained'
+							fullWidth
+							sx={{ marginTop: 4 }}
+							onClick={() => setOpenEventManagememntModal(true)}
+						>
+							Chi tiết
+						</Button>
+					</CardContent>
+					<img
+						src={event.bannerUrl}
+						alt=''
+						style={{
+							width: '300px',
+							objectFit: 'cover'
+						}}
+					/>
+				</Card>
+			</Stack>
+		</>
+	)
+}
+
+function EventList({eventList, setEventList}) {
+	return (
+		<>
+			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
+				{eventList?.map((event, index) => (
+					<EventItem key={event.id} event={event} setEventList={setEventList}></EventItem>
+				))}
+			</Container>
+		</>
+	)
+}
+
+export default EventList

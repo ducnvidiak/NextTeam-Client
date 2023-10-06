@@ -28,7 +28,7 @@ import { set } from 'nprogress'
 import { getUserInfo, getAllMajors } from './apiUtils'
 
 // import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
-const axios = require('axios')
+// const axios = require('axios')
 
 const Tab = styled(MuiTab)(({ theme }) => ({
 	[theme.breakpoints.down('md')]: {

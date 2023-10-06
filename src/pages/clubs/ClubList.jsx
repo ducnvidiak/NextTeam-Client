@@ -1,4 +1,5 @@
 import {
+	Autocomplete,
 	Box,
 	Button,
 	Card,
@@ -14,20 +15,23 @@ import {
 	MenuItem,
 	Select,
 	Stack,
+	TextField,
 	Typography,
 	styled
 } from '@mui/material'
+import axios from 'axios'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
-import AutoStoriesIcon from '@mui/icons-material/AutoStories'
-import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts'
-import StadiumIcon from '@mui/icons-material/Stadium'
-import Diversity2Icon from '@mui/icons-material/Diversity2'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+
 import CakeIcon from '@mui/icons-material/Cake'
 import Link from 'next/link'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { useEffect, useState } from 'react'
 import { getAPI } from 'src/ultis/requestAPI'
+import ClubCategory from 'src/components/ClubCategory'
+import moment from 'moment'
+import { useCookies } from 'react-cookie'
+import { getUserInfo } from 'src/utils/info'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -41,10 +45,59 @@ const VisuallyHiddenInput = styled('input')({
 	width: 1
 })
 
-function ClubItem({ information, index }) {
+function ClubItem({ club, index }) {
 	const [open, setOpen] = useState(false)
+	const [department, setDepartment] = useState([])
+	const [loading, setLoading] = useState(false)
+	const [userData, setUserData] = useCookies(['userData'])
 
-	const handleClickOpen = () => {
+	//formData
+	const [departmentId, setDepartmentId] = useState('')
+	const [clubId, setClubId] = useState()
+	const [cv, setCv] = useState()
+	const userId = userData['userData']?.id
+
+	const handleUpload = () => {
+		const formData = new FormData()
+
+		formData.append('cvUrl', cv)
+
+		console.log(formData)
+
+		// Gửi yêu cầu POST để tải lên file PDF lên server
+		axios
+			.post(
+				`http://localhost:8080/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}`,
+				formData,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data'
+					}
+				}
+			)
+			.then(response => {
+				console.log(response.data) // Xử lý phản hồi từ server (nếu cần)
+			})
+			.catch(error => {
+				console.error(error)
+			})
+	}
+
+	const callAPIDepartment = async clubId => {
+		try {
+			setLoading(true)
+			const res = await getAPI('/department?action=list-dept&clubId=' + clubId)
+			setDepartment(res)
+		} catch (error) {
+			console.log(error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleClickOpen = clubId => {
+		setClubId(clubId)
+		callAPIDepartment(clubId)
 		setOpen(true)
 	}
 
@@ -72,21 +125,34 @@ function ClubItem({ information, index }) {
 						Vui lòng điền những thông tin bên dưới để đăng ký tham gia vào câu lạc bộ này
 					</DialogContentText>
 					<Box sx={{ maxWidth: '50%', marginBottom: 2 }}>
-						<FormControl fullWidth>
-							<InputLabel id='demo-simple-select-label'>Ban tham gia</InputLabel>
-							<Select
-								labelId='demo-simple-select-label'
-								id='demo-simple-select'
-								value={age}
-								label='Age'
-								onChange={handleChange}
-								size='medium'
-							>
-								<MenuItem value={10}>Ban học thuật</MenuItem>
-								<MenuItem value={20}>Ban sự kiện</MenuItem>
-								<MenuItem value={30}>Ban truyền thông</MenuItem>
-							</Select>
-						</FormControl>
+						<Autocomplete
+							id='sendTo'
+							fullWidth
+							options={department}
+							autoHighlight
+							getOptionLabel={option => option.name}
+							onChange={event => setDepartmentId(event.target.value)}
+							renderOption={(props, option) => (
+								<Box
+									component='li'
+									sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+									{...props}
+									value={option.id}
+								>
+									{option.name}
+								</Box>
+							)}
+							renderInput={params => (
+								<TextField
+									{...params}
+									label='Ban đăng ký'
+									inputProps={{
+										...params.inputProps,
+										autoComplete: 'new-password' // disable autocomplete and autofill
+									}}
+								/>
+							)}
+						/>
 					</Box>
 					<Typography marginBottom={1}>Chọn CV: </Typography>
 					<Button
@@ -96,12 +162,12 @@ function ClubItem({ information, index }) {
 						sx={{ marginBottom: 2 }}
 					>
 						Upload file
-						<VisuallyHiddenInput type='file' onChange={e => console.log(e.target.files[0])} />
+						<VisuallyHiddenInput type='file' onChange={e => setCv(e.target.files[0])} />
 					</Button>
 					{/* <Typography marginBottom={1}>Chọn Ban tham gia:</Typography> */}
 				</DialogContent>
 				<DialogActions>
-					<Button variant='contained' onClick={handleClose}>
+					<Button variant='contained' onClick={handleUpload}>
 						Xác nhận
 					</Button>
 					<Button variant='outlined' onClick={handleClose}>
@@ -115,7 +181,7 @@ function ClubItem({ information, index }) {
 				</Stack>
 				<Card sx={{ width: '95%', display: 'flex' }} marginBottom={10}>
 					<img
-						src={'http://res.cloudinary.com/de41uvd76/image/upload/v1694451011/z6jcsotpsznwdwavuklm.png'}
+						src={club.avatarUrl}
 						alt=''
 						style={{
 							width: '300px',
@@ -125,33 +191,13 @@ function ClubItem({ information, index }) {
 					/>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
-							{information?.subname}
+							{club?.subname}
 						</Typography>
 						<Typography variant='h5' fontWeight={700} sx={{}} textTransform={'uppercase'}>
-							{information?.name}
+							{club?.name}
 						</Typography>
 						<Box sx={{ display: 'flex', gap: 4, marginBottom: 4 }}>
-							{information?.categoryId === '1' ? (
-								<>
-									<AutoStoriesIcon></AutoStoriesIcon>
-									<Typography variant='body1'>Học thuật</Typography>
-								</>
-							) : information?.categoryId === '2' ? (
-								<>
-									<StadiumIcon></StadiumIcon>
-									<Typography variant='body1'>Tài Nẵng</Typography>
-								</>
-							) : information?.categoryId === '3' ? (
-								<>
-									<StadiumIcon></StadiumIcon>
-									<Typography variant='body1'>Tài Nẵng</Typography>
-								</>
-							) : (
-								<>
-									<Diversity2Icon></Diversity2Icon>
-									<Typography variant='body1'>Cộng đồng</Typography>
-								</>
-							)}
+							<ClubCategory categoryId={club?.categoryId}></ClubCategory>
 						</Box>
 						<Box sx={{ height: '86px' }}>
 							<Typography
@@ -161,36 +207,50 @@ function ClubItem({ information, index }) {
 									overflow: 'hidden',
 									display: '-webkit-box',
 									WebkitBoxOrient: 'vertical',
-									WebkitLineClamp: 3, // start showing ellipsis when 3rd line is reached
+									WebkitLineClamp: 3,
 									whiteSpace: 'pre-wrap'
 								}}
 							>
-								{/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat architecto ducimus soluta veritatis
-              molestias praesentium aperiam non nihil, voluptas fugit iste quo quidem corrupti sunt eius. Quaerat nulla
-              maxime facilis? */}
-								{information.description}
+								{club.description}
 							</Typography>
 						</Box>
 						<Stack direction={'row'} gap={12}>
 							<Box sx={{ display: 'flex', gap: 4 }}>
 								<Groups2Icon></Groups2Icon>
-								<Typography variant='body1'>{Math.floor(Math.random() * 10) + 1} thành viên</Typography>
+								<Typography variant='body1'>{club.numberOfMembers} thành viên</Typography>
 							</Box>
 							<Box sx={{ display: 'flex', gap: 4 }}>
 								<CakeIcon></CakeIcon>
-								<Typography variant='body1'>23/10/2018</Typography>
+								<Typography variant='body1'>
+									{moment(club.createAt).subtract(10, 'days').calendar()}
+								</Typography>
 							</Box>
 						</Stack>
 
 						<Stack direction={'row'} gap={4}>
-							<Link href={`http://localhost:3000/clubs/${'fu-dever'}`} passHref>
+							<Link href={`http://localhost:3000/clubs/${club.subname}`} passHref>
 								<Button variant='contained' sx={{ marginTop: 4, width: '50%' }}>
 									Xem chi tiết
 								</Button>
 							</Link>
-							<Button variant='outlined' sx={{ marginTop: 4, width: '50%' }} onClick={handleClickOpen}>
-								Đăng ký tham gia
-							</Button>
+							{club?.isJoined ? (
+								<Button
+									variant='outlined'
+									color='secondary'
+									sx={{ marginTop: 4, width: '50%' }}
+									onClick={handleClickOpen}
+								>
+									Đã tham gia
+								</Button>
+							) : (
+								<Button
+									variant='outlined'
+									sx={{ marginTop: 4, width: '50%' }}
+									onClick={handleClickOpen}
+								>
+									Đăng ký tham gia
+								</Button>
+							)}
 						</Stack>
 					</CardContent>
 				</Card>
@@ -202,11 +262,18 @@ function ClubItem({ information, index }) {
 function ClubList() {
 	const [clubs, setClubs] = useState([])
 	const [loading, setLoading] = useState(false)
+	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
+	
 
 	const callAPI = async () => {
+		if(userData)
 		try {
 			setLoading(true)
-			const res = await getAPI('/club_cmd?cmd=list')
+			const res = await getAPI(`http://localhost:8080/clubs?cmd=list-res&userId=${userData?.id}`)
 			setClubs(res)
 		} catch (error) {
 			console.log(error)
@@ -214,16 +281,17 @@ function ClubList() {
 			setLoading(false)
 		}
 	}
+
 	console.log(clubs)
 	useEffect(() => {
 		callAPI()
-	}, [])
+	}, [userData])
 
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 60px !important' }}>
-				{clubs.map((event, index) => (
-					<ClubItem key={index} information={event} index={index}></ClubItem>
+				{clubs?.map((club, index) => (
+					<ClubItem key={index} club={club} index={index}></ClubItem>
 				))}
 			</Container>
 		</>

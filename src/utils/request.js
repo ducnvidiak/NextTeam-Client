@@ -1,6 +1,6 @@
 const root = 'http://localhost:8080/'
 
-async function post(link, json, contentType = 'application/x-www-form-urlencoded; charset=UTF-8') {
+async function postAPI(link, json, contentType = 'application/x-www-form-urlencoded; charset=UTF-8') {
 	if (!(link.startsWith`https://` || link.startsWith`http://`)) {
 		if (link.startsWith`/`) link = link.substr(1)
 		link = root + link
@@ -21,7 +21,7 @@ async function post(link, json, contentType = 'application/x-www-form-urlencoded
 	return response.json()
 }
 
-async function get(link, json, contentType = 'application/html; charset=UTF-8') {
+async function getAPI(link, json, contentType = 'application/html; charset=UTF-8') {
 	if (!(link.startsWith`https://` || link.startsWith`http://`)) {
 		if (link.startsWith`/`) link = link.substr(1)
 		link = root + link
@@ -48,4 +48,4 @@ async function get(link, json, contentType = 'application/html; charset=UTF-8') 
 	return response.text()
 }
 
-export { post, get }
+export { postAPI, getAPI }

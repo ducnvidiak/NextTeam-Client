@@ -6,25 +6,44 @@ import {
 	CardHeader,
 	CardMedia,
 	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	Divider,
 	Drawer,
+	FormControl,
+	InputLabel,
 	List,
 	ListItem,
 	ListItemButton,
 	ListItemIcon,
 	ListItemText,
+	MenuItem,
 	Stack,
 	SwipeableDrawer,
 	Typography
 } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
-import CloseIcon from '@mui/icons-material/Close'
-import InfoIcon from '@mui/icons-material/Info'
+
 import { useEffect, useState } from 'react'
 import { getAPI } from 'src/ultis/requestAPI'
+import { useCookies } from 'react-cookie'
+import moment from 'moment'
 
-function EventItem({ information, key }) {
+import RegisterEventModal from './RegisterEventModal'
+import SwipeableDrawerList from './SwipeableDrawerList'
+import FeedbackModal from './FeedbackModal'
+import { getUserInfo } from 'src/utils/info'
+
+function EventItem({ event, setEventList }) {
+	const [openRegisterModal, setOpenRegisterModal] = useState(false)
+	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
+	console.log('event')
+	console.log(event)
+
 	const [state, setState] = useState({
 		top: false,
 		left: false,
@@ -40,101 +59,44 @@ function EventItem({ information, key }) {
 		setState({ ...state, [anchor]: open })
 	}
 
-	const list = anchor => (
-		<Box sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 500, padding: 4 }} role='presentation'>
-			<Stack direction={'row'} marginBottom={2}>
-				<Button variant='text'>
-					<CloseIcon onClick={toggleDrawer(anchor, false)}></CloseIcon>
-				</Button>
-			</Stack>
-			{/* <Divider /> */}
-			<Card sx={{ padding: 2 }}>
-				<img
-					src='http://res.cloudinary.com/de41uvd76/image/upload/v1694451011/z6jcsotpsznwdwavuklm.png'
-					alt=''
-					style={{
-						height: '300px',
-						width: '100%',
-						objectFit: 'cover',
-						borderRadius: 8,
-						display: 'block'
-					}}
-				></img>
-				<CardContent sx={{ padding: 4 }}>
-					<Typography variant='h6' fontWeight={700} marginBottom={4}>
-						Zoom | FES-TECHSpeak #03 | CHANGE TO CHANCE - Công nghệ AI & Ứng dụng trong đồ họa sáng tạo
-					</Typography>
-					<Box sx={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
-						<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>
-							<Groups2Icon></Groups2Icon>
-						</Box>
-						<Box>
-							<Typography variant='body2' fontWeight={500}>
-								Tổ chức
-							</Typography>
-							<Typography variant='body1' fontWeight={600}>
-								FU-DEVER
-							</Typography>
-						</Box>
-					</Box>
-					<Box sx={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-						<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>
-							<LocationOnIcon></LocationOnIcon>
-						</Box>
-						<Box>
-							<Typography variant='body2' fontWeight={500}>
-								Tại
-							</Typography>
-							<Typography variant='body1' fontWeight={600}>
-								Phòng 210
-							</Typography>
-						</Box>
-					</Box>
-				</CardContent>
-			</Card>
-			<Card sx={{ marginTop: 4 }}>
-				<Stack direction={'row'} alignItems={'flex-end'} gap={2} padding={2}>
-					<InfoIcon sx={{ marginBottom: 1 }}></InfoIcon>
-					<Typography variant='h6' fontWeight={700}>
-						About Event
-					</Typography>
-				</Stack>
-				<Divider sx={{ margin: 0 }}></Divider>
-				<CardContent sx={{ padding: 6 }}>
-					<Typography sx={'body1'}>
-						🎤 Host: Anh Lê Ngọc Tuấn - Giám đốc Trải nghiệm Công Nghệ, Ban Công tác học đường, Tổ chức giáo
-						dục FPT ​🗣️ Diễn giả: ​Anh Vũ Hồng Chiên - Giám đốc Trung tâm Nghiên cứu và Ứng dụng Trí tuệ
-						nhân tạo Quy Nhơn (QAI - FPT Software) ​Anh Đặng Việt Hùng - Design Manager tại Gianty chi nhánh
-						Đà Nẵng ​Topic: ​• Giải mã công nghệ “Generative AI" và xu hướng ứng dụng trong các nghề nghiệp
-						tương lai • Nghề thiết kế đồ họa và ứng dụng công cụ AI trong thiết kế • Thảo luận chủ đề AI có
-						thay thế được chuyên gia đồ họa và thiết kế trong sáng tạo, xây dựng ứng dụng?
-					</Typography>
-				</CardContent>
-			</Card>
-			<Button variant='contained' fullWidth sx={{ marginTop: 4 }}>
-				Đăng ký
-			</Button>
-		</Box>
-	)
-
 	return (
 		<>
+			<FeedbackModal
+				openFeedbackModal={openFeedbackModal}
+				setOpenFeedbackModal={setOpenFeedbackModal}
+			></FeedbackModal>
 			{['left', 'right', 'top', 'bottom'].map(anchor => (
 				<>
+					<RegisterEventModal
+						event={event}
+						openRegisterModal={openRegisterModal}
+						setOpenRegisterModal={setOpenRegisterModal}
+						anchor={anchor}
+						toggleDrawer={() => toggleDrawer(anchor, false)}
+						setState={setState}
+						state={state}
+						setEventList={setEventList}
+					></RegisterEventModal>
 					<SwipeableDrawer
 						anchor={anchor}
 						open={state[anchor]}
 						onClose={toggleDrawer(anchor, false)}
 						onOpen={toggleDrawer(anchor, true)}
 					>
-						{list(anchor)}
+						<SwipeableDrawerList
+							anchor={anchor}
+							event={event}
+							setOpenRegisterModal={setOpenRegisterModal}
+							setOpenFeedbackModal={setOpenFeedbackModal}
+							toggleDrawer={toggleDrawer}
+						></SwipeableDrawerList>
 					</SwipeableDrawer>
 				</>
 			))}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
-					<Typography variant='h5'>Aug 24</Typography>
-					<Typography variant='h7'>Thursday</Typography>
+					<Typography variant='h5'>{moment(event?.startTime).format('MMM Do YY')}</Typography>
+					<Typography variant='h7'>{moment(event?.startTime).format('dddd')}</Typography>
 				</Stack>
 				<Card
 					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
@@ -143,25 +105,37 @@ function EventItem({ information, key }) {
 				>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
-							6:00 PM
+							{moment(event?.startTime).format('LT')}
 						</Typography>
 						<Typography variant='h6' fontWeight={700} sx={{ flex: 1 }}>
-							{information.name}
+							{event?.name}
 						</Typography>
+
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
-							<Typography variant='body1'>Phòng 210</Typography>
+							<Typography variant='body1'>{event?.clubSubname}</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<LocationOnIcon></LocationOnIcon>
-							<Typography variant='body1'>FU-DEVER</Typography>
+							<Typography variant='body1'>{event?.locationName}</Typography>
 						</Box>
-						{/* <Button variant='contained' sx={{ marginTop: 4, width: '50%' }}>
-              Đăng ký
-            </Button> */}
+						{event?.isRegistered == 'true' || event?.isRegistered == true ? (
+							<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
+								Đã đăng ký
+							</Button>
+						) : (
+							<Button
+								variant='contained'
+								fullWidth
+								sx={{ marginTop: 4 }}
+								onClick={() => setOpenRegisterModal(true)}
+							>
+								Đăng ký
+							</Button>
+						)}
 					</CardContent>
 					<img
-						src='http://res.cloudinary.com/de41uvd76/image/upload/v1694451011/z6jcsotpsznwdwavuklm.png'
+						src={event.bannerUrl}
 						alt=''
 						style={{
 							width: '300px',
@@ -176,29 +150,36 @@ function EventItem({ information, key }) {
 
 function EventList() {
 	const [eventList, setEventList] = useState()
-	const [loading, setLoading] = useState(false)
-
-	const callAPI = async () => {
-		try {
-			setLoading(true)
-			const res = await getAPI('/events')
-			setEventList(res)
-		} catch (error) {
-			console.log(error)
-		} finally {
-			setLoading(false)
-		}
-	}
-	console.log(loading)
+	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [userData, setUserData] = useState()
 	useEffect(() => {
-		callAPI()
-	}, [])
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
+
+	useEffect(() => {
+		
+		fetch(`http://localhost:8080/events?cmd=list&userId=${userData?.id}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				console.log('datad23r32r32r')
+				console.log(data)
+				setEventList(data)
+			})
+			.catch(error => console.error('Error:', error))
+	}, [userData])
 
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
 				{eventList?.map((event, index) => (
-					<EventItem key={index} information={event}></EventItem>
+					<EventItem key={event.id} event={event} setEventList={setEventList}></EventItem>
 				))}
 			</Container>
 		</>
