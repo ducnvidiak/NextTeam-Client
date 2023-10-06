@@ -118,7 +118,6 @@ const UserDropdown = () => {
 		if (url) {
 			router.push(url)
 		}
-		handleLogout()
 		setAnchorEl(null)
 	}
 
@@ -303,7 +302,7 @@ const UserDropdown = () => {
 						</Link>
 					</Box>
 				</MenuItem>
-				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+				<MenuItem sx={{ p: 0 }} onClick={() => {handleDropdownClose(); handleLogout()}}>
 					<Box sx={styles}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
 						<Link passHref underline='none' href=''>

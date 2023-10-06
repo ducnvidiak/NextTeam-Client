@@ -1,9 +1,9 @@
 import React from 'react'
 
-function ActivityCreator() {
+function index() {
   return (
-    <div>ActivityCreator</div>
+    <div>index</div>
   )
 }
 
-export default ActivityCreator
+export default index

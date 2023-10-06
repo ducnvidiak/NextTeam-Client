@@ -198,7 +198,7 @@ const NotificationDropdown = () => {
 											<span>
 												<Chip
 													label={notification.type == 'private' ? 'TB Cá nhân' : 'TB Chung'}
-													color={statusObj[notification.type].color}
+													color={statusObj[notification.type]?.color}
 													sx={{
 														height: 20,
 														fontSize: '0.5rem',

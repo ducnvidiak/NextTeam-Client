@@ -76,7 +76,7 @@ function Clubs() {
         <Typography fontSize={32} fontWeight={600}>
           CÂU LẠC BỘ
         </Typography>
-        <Stack direction={'row'} gap={2}>
+        {/* <Stack direction={'row'} gap={2}>
           <FormControl>
             <InputLabel id='controlled-select-label'>Kỳ</InputLabel>
             <Select
@@ -111,7 +111,7 @@ function Clubs() {
               <MenuItem value={30}>2021</MenuItem>
             </Select>
           </FormControl>
-        </Stack>
+        </Stack> */}
       </Stack>
       <TabContext value={tab}>
         <TabList variant='fullWidth' onChange={handleChangeTab} aria-label='full width tabs example'>
