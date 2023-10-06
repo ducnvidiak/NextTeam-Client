@@ -47,6 +47,7 @@ import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 import LockIcon from '@mui/icons-material/Lock'
 import Groups3Icon from '@mui/icons-material/Groups3'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import { getUserInfo } from 'src/utils/info'
 import HowToRegIcon from '@mui/icons-material/HowToReg'
 
 // ** Styled Components
@@ -78,9 +79,13 @@ const UserDropdown = () => {
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
 	const [clubOfMeData, setClubOfMeData] = useState([])
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/club-user?action=view-my-list&userId=${cookies['userData']?.id}`, {
+		fetch(`http://localhost:8080/club-user?action=view-my-list&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -93,7 +98,9 @@ const UserDropdown = () => {
 				setClubOfMeData(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [cookies])
+	}, [userData])
+
+	console.log(userData)
 
 	// ** Hooks
 	const router = useRouter()
@@ -102,16 +109,17 @@ const UserDropdown = () => {
 		setAnchorEl(event.currentTarget)
 	}
 
+	const handleLogout = () => {
+		removeCookie('userData')
+		router.push('/auth/login')
+	}
+
 	const handleDropdownClose = url => {
 		if (url) {
 			router.push(url)
 		}
+		handleLogout()
 		setAnchorEl(null)
-	}
-
-	const handleLogout = () => {
-		removeCookie('userData')
-		router.push('/auth/login')
 	}
 
 	const handleChange = event => {
@@ -208,10 +216,10 @@ const UserDropdown = () => {
 				anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
 			>
 				<Avatar
-					alt={cookies['userData']?.lastname}
+					alt={userData?.lastname}
 					onClick={handleDropdownOpen}
 					sx={{ width: 40, height: 40 }}
-					src={cookies['userData']?.avatarURL}
+					src={userData?.avatarURL}
 				/>
 			</Badge>
 			<ToastContainer></ToastContainer>
@@ -231,8 +239,8 @@ const UserDropdown = () => {
 							anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
 						>
 							<Avatar
-								alt={cookies['userData']?.lastname}
-								src={cookies['userData']?.avatarURL}
+								alt={userData?.lastname}
+								src={userData?.avatarURL}
 								sx={{ width: '2.5rem', height: '2.5rem' }}
 							/>
 						</Badge>
@@ -244,7 +252,7 @@ const UserDropdown = () => {
 								flexDirection: 'column'
 							}}
 						>
-							<Typography sx={{ fontWeight: 600 }}>{cookies['userData']?.lastname}</Typography>
+							<Typography sx={{ fontWeight: 600 }}>{userData?.lastname}</Typography>
 							<Typography
 								variant='body2'
 								sx={{
@@ -252,7 +260,7 @@ const UserDropdown = () => {
 									color: 'text.disabled'
 								}}
 							>
-								{cookies['userData']?.studentCode}
+								{userData?.studentCode}
 							</Typography>
 						</Box>
 					</Box>
@@ -261,7 +269,7 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<AccountOutline sx={{ marginRight: 2 }} />
-						<Link href={`/user/${cookies['userData']?.id}`}>
+						<Link href={`/user/${userData?.id}`}>
 							<Button>Hồ sơ cá nhân</Button>
 						</Link>
 					</Box>
@@ -290,15 +298,15 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<LockIcon sx={{ marginRight: 2 }} />
-						<Link href={`/user/password/${cookies['userData']?.id}`} underline='none'>
+						<Link href={`/user/password/${userData?.id}`} underline='none'>
 							<Button>Đổi mật khẩu</Button>
 						</Link>
 					</Box>
 				</MenuItem>
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-					<Box sx={styles} onClick={handleLogout}>
+					<Box sx={styles}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
-						<Link href={'/user/logout'} underline='none'>
+						<Link passHref underline='none' href=''>
 							<Button>Đăng xuất</Button>
 						</Link>
 					</Box>
