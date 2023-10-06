@@ -178,14 +178,13 @@ const RegisterPage = () => {
 			// 		return response.json()
 			// 	})
 			// 	.then(function (data) {
-			console.log(data)
-			if (data.code != 0) {
-				toast.error(data)
-			} else {
+			if (data.code == 0) {
 				toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
 				setTimeout(() => {
 					router.push('/auth/login')
 				}, 3000)
+			} else {
+				toast.error(data.msg)
 			}
 
 			// })
