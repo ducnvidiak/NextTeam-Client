@@ -16,8 +16,10 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import TextField from '@mui/material/TextField'
+import Avatar from '@mui/material/Avatar'
 import { Button, FormControl, FormLabel, Input, Card, CardMedia } from '@mui/material'
-import { CloudUpload } from '@mui/icons-material'
+import { CheckCircle, Cancel } from '@mui/icons-material'
+import { ToastContainer, toast } from 'react-toastify'
 
 // id name avatarUrl bannerUrl description movementPoint categoryid createAt updateAt
 const columns = [
@@ -27,19 +29,19 @@ const columns = [
   {
     id: 'avatarUrl',
     label: 'Ảnh Đại Diện',
-    minWidth: 100,
+    minWidth: 150,
     align: 'center'
   },
   {
     id: 'bannerUrl',
     label: 'Ảnh Bìa',
-    minWidth: 100,
+    minWidth: 150,
     align: 'center'
   },
   {
     id: 'description',
     label: 'Mô tả',
-    minWidth: 100,
+    minWidth: 200,
     align: 'left',
     format: value => value.toLocaleString('en-VN')
   },
@@ -56,8 +58,8 @@ const columns = [
     align: 'center'
   },
   {
-    id: 'categoryId',
-    label: 'Hạng Mục Câu Lạc Bộ',
+    id: 'categoryName',
+    label: 'Hạng Mục',
     minWidth: 100,
     align: 'center'
   },
@@ -70,6 +72,13 @@ const columns = [
   {
     id: 'updateAt',
     label: 'Ngày cập nhật',
+    minWidth: 100,
+    align: 'center'
+  },
+  ,
+  {
+    id: 'isActive',
+    label: 'Trạng thái',
     minWidth: 100,
     align: 'center'
   },
@@ -92,9 +101,11 @@ function createData(
   description,
   movementPoint,
   balance,
-  categoryId,
+  categoryName,
   createAt,
   updateAt,
+  isActive,
+  categoryId,
   button
 ) {
   return {
@@ -106,35 +117,29 @@ function createData(
     description,
     movementPoint,
     balance,
-    categoryId,
+    categoryName,
     createAt,
     updateAt,
+    isActive,
+    categoryId,
     button
   }
 }
 
 const TableStickyHeader = props => {
-  const { refreshClubData, clubs } = props
+  const { refreshClubData, clubs, handleViewDescription } = props
   // ** States
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [rows, setRows] = useState([]) // Initialize rows with an empty array
 
-  refreshClubData()
+  useEffect(() => {
+    refreshClubData()
+  }, [clubs])
 
   useEffect(() => {
     // Assuming your 'clubs' state has the required data structure
     const newRows = clubs.map(club => {
-      const c1 = ''
-      if (club.categoryId === '1') {
-        c1 = 'Học Thuật'
-      } else if (club.categoryId === '2') {
-        c1 = 'Cộng đồng'
-      } else if (club.categoryId === '3') {
-        c1 = 'Thể thao'
-      } else {
-        c1 = 'Năng khiếu'
-      }
       return createData(
         club.id,
         club.name,
@@ -144,14 +149,14 @@ const TableStickyHeader = props => {
         club.description,
         club.movementPoint,
         club.balance,
-        c1,
+        club.categoryName,
         club.createdAt,
         club.updatedAt,
+        club.isActive,
+        club.categoryId,
         ''
       )
     })
-    //  id, name, avatarUrl, bannerUrl,description, movementPoint, categoryId, createAt, updateAt, button
-    // Update 'rows' only when 'clubs' change
     setRows(newRows)
   }, [clubs])
 
@@ -164,10 +169,9 @@ const TableStickyHeader = props => {
     setPage(0)
   }
 
-
-
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <ToastContainer></ToastContainer>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label='sticky table'>
           <TableHead>
@@ -185,16 +189,30 @@ const TableStickyHeader = props => {
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.code}>
                   {columns.map((column, index) => {
                     const value = row[column.id]
+
                     const length = columns.length
                     if (index !== length - 1) {
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.id === 'avatarUrl' || column.id === 'bannerUrl' ? (
-                            <img src={value} alt={value} style={{ maxWidth: '50%', maxHeight: '50%' }} />
+                            <img src={value} alt={value} style={{ maxWidth: '150%' }} />
+                          ) : column.id === 'description' ? (
+                            <>
+                              <Button variant='contanied' onClick={() => handleViewDescription(value)}>
+                                Xem chi tiết
+                              </Button>
+                            </>
+                          ) : column.id === 'isActive' ? (
+                            <>
+                              {value === 'true' ? (
+                                <CheckCircle sx={{ color: 'green' }} />
+                              ) : (
+                                <Cancel sx={{ color: 'red' }} />
+                              )}
+                            </>
                           ) : (
                             value
                           )}
-
                         </TableCell>
                       )
                     } else {

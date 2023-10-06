@@ -138,6 +138,11 @@ export const dashboardLayoutVavigation = () => {
       title: 'Báo cáo',
       path: '/dashboard/reports',
       icon: SummarizeIcon
+    },
+    {
+      title: 'Thêm phòng ban',
+      path: '/dashboard/department',
+      icon: AddCommentIcon
     }
   ]
 }
@@ -147,6 +152,10 @@ export const adminLayoutVavigation = () => {
       title: 'Câu lạc bộ',
       icon: 'Groups2Icon',
       path: '/admin/club'
+    },{
+      title: 'Quản lí bộ phận trong câu lạc bộ',
+      icon: 'Groups2Icon',
+      path: '/admin/department'
     }
   ]
 }
