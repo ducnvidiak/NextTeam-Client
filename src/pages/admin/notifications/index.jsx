@@ -35,20 +35,19 @@ const Notifications = () => {
 		router.push('/dashboard/notifications/view-all')
 	}
 	useEffect(() => {
-		if (cookies['clubData'])
-			fetch(`http://localhost:8080/notification?action=list-10-noti&clubId=${cookies['clubData']?.clubId}`, {
-				method: 'GET',
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
-				}
+		fetch(`http://localhost:8080/notification?action=list-10-noti&clubId=${cookies['clubData']?.clubId}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
 			})
-				.then(function (response) {
-					return response.json()
-				})
-				.then(function (data) {
-					setNotificationsData(data)
-				})
-				.catch(error => console.error('Error:', error))
+			.then(function (data) {
+				setNotificationsData(data)
+			})
+			.catch(error => console.error('Error:', error))
 	}, [cookies])
 
 	return (
