@@ -63,6 +63,7 @@
 		"clsx": "^1.1.1",
 		"country-state-city": "^3.2.1",
 		"mdi-material-ui": "^7.1.0",
+		"moment": "^2.29.4",
 		"next": "^12.3.4",
 		"next-navigation": "^1.0.6",
 		"node-localstorage": "^3.0.5",

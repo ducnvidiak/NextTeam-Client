@@ -133,26 +133,27 @@ const NotificationDropdown = () => {
 	}
 
 	useEffect(() => {
-		fetch(
-			'http://localhost:8080/notification?action=list-10-noti&clubId=' +
-				cookies['clubData']?.clubId +
-				'&userId=' +
-				userData?.id,
-			{
-				method: 'GET',
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
+		if (userData)
+			fetch(
+				'http://localhost:8080/notification?action=list-10-noti&clubId=' +
+					cookies['clubData']?.clubId +
+					'&userId=' +
+					userData?.id,
+				{
+					method: 'GET',
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
 				}
-			}
-		)
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				setNotificationsData(data)
-				console.log(data)
-			})
-			.catch(error => console.error('Error:', error))
+			)
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					setNotificationsData(data)
+					console.log(data)
+				})
+				.catch(error => console.error('Error:', error))
 	}, [cookies, userData, state])
 
 	return (

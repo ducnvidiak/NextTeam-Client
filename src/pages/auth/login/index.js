@@ -75,6 +75,24 @@ const LoginPage = () => {
 	const theme = useTheme()
 	const router = useRouter()
 
+	const urlParams = new URLSearchParams(window.location.search)
+	if (urlParams.get('googleLogin')) {
+		toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
+		router.push('/')
+		console.log(urlParams.get('successData').replaceAll(' ', '+'))
+		setTimeout(() => {
+			setCookie('userData', urlParams.get('successData').replaceAll(' ', '+'), {
+				path: '/'
+			})
+		}, 1000)
+
+		return (
+			<>
+				<ToastContainer></ToastContainer>
+			</>
+		)
+	}
+
 	const handleSubmit = async event => {
 		event.preventDefault() // 👈️ prevent page refresh
 		setEmailError(false)
