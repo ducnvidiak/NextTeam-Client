@@ -154,19 +154,20 @@ function NotificationCreator() {
 	}))
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-				return response.json()
+		if (cookies['clubData'])
+			fetch(`http://localhost:8080/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			})
-			.then(function (data) {
-				setClubMember(data)
-			})
-			.catch(error => console.error('Error:', error))
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					setClubMember(data)
+				})
+				.catch(error => console.error('Error:', error))
 	}, [clubData])
 
 	return (
