@@ -100,7 +100,6 @@ const UserDropdown = () => {
 			.catch(error => console.error('Error:', error))
 	}, [userData])
 
-	console.log(userData)
 
 	// ** Hooks
 	const router = useRouter()

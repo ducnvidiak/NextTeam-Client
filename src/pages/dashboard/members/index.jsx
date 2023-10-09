@@ -26,7 +26,6 @@ import { useRouter } from 'next/router'
 
 const UserList = () => {
 	const [userList, setUserList] = useState(null)
-	console.log('list of users: ', userList)
 	const router = useRouter()
 
 	useEffect(() => {
@@ -36,7 +35,6 @@ const UserList = () => {
 	}, [])
 
 	function handleClick(id) {
-		console.log('log: ', id)
 		router.push('http://localhost:3000/user/info/' + id)
 	}
 

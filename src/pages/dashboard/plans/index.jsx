@@ -42,7 +42,6 @@ function PlanListPage() {
 
 	const handleDeletePlan = plan => {
 		// Xử lý logic xóa bản kế hoạch tại đây
-		console.log('Xóa bản kế hoạch:', plan)
 		setPlans(prevPlans => prevPlans.filter(p => p.id !== plan.id))
 	}
 

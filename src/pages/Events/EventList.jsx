@@ -37,6 +37,7 @@ import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
 import { getUserInfo } from 'src/utils/info'
+import { translateDayOfWeek } from 'src/ultis/dateTime'
 
 function EventItem({ event, setEventList }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
@@ -95,19 +96,23 @@ function EventItem({ event, setEventList }) {
 			))}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
-					<Typography variant='h5'>{moment(event?.startTime).format('MMM Do YY')}</Typography>
-					<Typography variant='h7'>{moment(event?.startTime).format('dddd')}</Typography>
+					<Typography variant='h5'>{moment(event?.startTime).subtract(10, 'days').calendar()}</Typography>
+					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
 				</Stack>
 				<Card
-					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
+					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }}
 					marginBottom={10}
-					onClick={toggleDrawer('right', true)}
 				>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
 							{moment(event?.startTime).format('LT')}
 						</Typography>
-						<Typography variant='h6' fontWeight={700} sx={{ flex: 1 }}>
+						<Typography
+							variant='h6'
+							fontWeight={700}
+							sx={{ flex: 1, cursor: 'pointer' }}
+							onClick={toggleDrawer('right', true)}
+						>
 							{event?.name}
 						</Typography>
 
@@ -139,8 +144,10 @@ function EventItem({ event, setEventList }) {
 						alt=''
 						style={{
 							width: '300px',
-							objectFit: 'cover'
+							objectFit: 'cover',
+							cursor: 'pointer'
 						}}
+						onClick={toggleDrawer('right', true)}
 					/>
 				</Card>
 			</Stack>
@@ -157,7 +164,6 @@ function EventList() {
 	}, [cookies])
 
 	useEffect(() => {
-		
 		fetch(`http://localhost:8080/events?cmd=list&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
@@ -178,9 +184,11 @@ function EventList() {
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-				{eventList?.map((event, index) => (
-					<EventItem key={event.id} event={event} setEventList={setEventList}></EventItem>
-				))}
+				{eventList
+					?.filter(event => event?.isApproved == 'true')
+					.map((event, index) => (
+						<EventItem key={event.id} event={event} setEventList={setEventList}></EventItem>
+					))}
 			</Container>
 		</>
 	)

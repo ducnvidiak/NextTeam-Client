@@ -38,6 +38,7 @@ import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
 import { getUserInfo } from 'src/utils/info'
+import { translateDayOfWeek } from 'src/ultis/dateTime'
 
 function EventItem({ event }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
@@ -89,20 +90,25 @@ function EventItem({ event }) {
 			))}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
-					{/* <Chip label="Nội bộ" sx={{mb:4, fontSize: 16}} color="success" /> */}
-					<Typography variant='h5'>{moment(event?.startTime).format('MMM Do YY')}</Typography>
-					<Typography variant='h7'>{moment(event?.startTime).format('dddd')}</Typography>
+					{event?.type === 'internal' ? (
+						<Chip label='Nội bộ' sx={{ mb: 4, fontSize: 16 }} color='success' variant='outlined' />
+					) : (
+						<Chip label='Toàn trường' sx={{ mb: 4, fontSize: 16 }} color='success' />
+					)}
+
+					<Typography variant='h5'>{moment(event?.startTime).subtract(10, 'days').calendar()}</Typography>
+					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
 				</Stack>
 				<Card
-					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
+					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }}
 					marginBottom={10}
-					onClick={toggleDrawer('right', true)}
+					
 				>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
 							{moment(event?.startTime).format('LT')}
 						</Typography>
-						<Typography variant='h6' fontWeight={700} sx={{ flex: 1 }}>
+						<Typography variant='h6' fontWeight={700} sx={{ flex: 1, cursor: 'pointer' }} onClick={toggleDrawer('right', true)}>
 							{event?.name}
 						</Typography>
 
@@ -114,7 +120,7 @@ function EventItem({ event }) {
 							<LocationOnIcon></LocationOnIcon>
 							<Typography variant='body1'>{event?.locationName}</Typography>
 						</Box>
-						{/* {event?.isRegistered ? (
+						{event?.isRegistered ? (
 							<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
 								Đã đăng ký
 							</Button>
@@ -127,15 +133,17 @@ function EventItem({ event }) {
 							>
 								Đăng ký
 							</Button>
-						)} */}
+						)}
 					</CardContent>
 					<img
 						src={event.bannerUrl}
 						alt=''
 						style={{
 							width: '300px',
-							objectFit: 'cover'
+							objectFit: 'cover',
+							cursor: 'pointer'
 						}}
+						onClick={toggleDrawer('right', true)}
 					/>
 				</Card>
 			</Stack>
@@ -146,13 +154,14 @@ function EventItem({ event }) {
 function EventList() {
 	const [eventList, setEventList] = useState()
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [cookiesClub, setCookieClub, removeCookieClub] = useCookies(['clubData'])
 	const [userData, setUserData] = useState()
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/events?userId=${userData?.id}`, {
+		fetch(`http://localhost:8080/member-events?clubId=${cookiesClub['clubData'].clubId}&userId=${userData?.id}&cmd=list`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -162,6 +171,7 @@ function EventList() {
 				return response.json()
 			})
 			.then(function (data) {
+				console.log('data')
 				console.log(data)
 				setEventList(data)
 			})

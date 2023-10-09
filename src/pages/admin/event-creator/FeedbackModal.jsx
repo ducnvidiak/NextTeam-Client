@@ -1,20 +1,9 @@
-import {
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	InputAdornment,
-	InputBase,
-	Stack,
-	TextField,
-	Typography
-} from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputBase, Stack, Typography } from '@mui/material'
 import StarIcon from '@mui/icons-material/Star'
 import StarOutlineIcon from '@mui/icons-material/StarOutline'
 import Paper from 'src/@core/theme/overrides/paper'
 import SendIcon from '@mui/icons-material/Send'
-import { TextareaAutosize } from '@mui/base'
+import { TextareaAutosize } from '@mui/base';
 
 function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal }) {
 	return (
@@ -57,24 +46,15 @@ function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal }) {
 							<Typography>Tuyệt vời</Typography>
 						</Stack>
 					</Stack>
-					<Typography mt={4} mb={1}>
-						Để lại góp ý
-					</Typography>
-					<TextField
-						fullWidth
-						multiline
-						minRows={3}
-						label=''
-						placeholder='Cảm nhận của bạn...'
-						sx={{ '& .MuiOutlinedInput-root': { alignItems: 'baseline' } }}
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position='start'>
-									<SendIcon></SendIcon>
-								</InputAdornment>
-							)
-						}}
-					/>
+					<Typography mt={4} mb={1}>Để lại góp ý</Typography>
+					<Stack direction={'row'} alignItems={'center'} gap={2} padding={2} border={'1px solid #ddd'} borderRadius={1}>
+						<SendIcon></SendIcon>
+						<InputBase
+							sx={{ ml: 1, flex: 1 }}
+							placeholder='Search Google Maps'
+							inputProps={{ 'aria-label': 'search google maps' }}
+						/>
+					</Stack>
 				</DialogContent>
 				<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>
 					<Button variant='contained' onClick={() => setOpenFeedbackModal(false)}>

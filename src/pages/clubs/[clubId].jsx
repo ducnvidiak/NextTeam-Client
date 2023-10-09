@@ -24,6 +24,9 @@ import { useCookies } from 'react-cookie'
 import ClubCategory from 'src/components/ClubCategory'
 import moment from 'moment'
 import { useRouter } from 'next/router'
+import { getUserInfo } from 'src/utils/info'
+import Decentralization from 'src/layouts/Decentralization'
+import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 function EventItem() {
 	const [state, setState] = useState({
@@ -97,7 +100,7 @@ function EventItem() {
 				<Stack direction={'row'} alignItems={'flex-end'} gap={2} padding={2}>
 					<InfoIcon sx={{ marginBottom: 1 }}></InfoIcon>
 					<Typography variant='h6' fontWeight={700}>
-						About Event
+						Mô tả sự kiện
 					</Typography>
 				</Stack>
 				<Divider sx={{ margin: 0 }}></Divider>
@@ -186,7 +189,7 @@ function ClubPage() {
 	const router = useRouter()
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/club-detail?subname=${router.query.clubId}&userId=${userData.id}`, {
+		fetch(`http://localhost:8080/club-detail?subname=${router.query.clubId}&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -196,19 +199,17 @@ function ClubPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data)
 				setClub(data)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData])
 
-	console.log(club)
 
 	return (
 		<Container maxWidth='lg' sx={{ marginTop: 20 }}>
 			<Card>
 				<img
-					src={club.bannerUrl}
+					src={club?.bannerUrl}
 					alt=''
 					style={{
 						width: '100%',
@@ -218,30 +219,30 @@ function ClubPage() {
 				/>
 				<CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
 					<Card sx={{ height: '140px', width: '140px' }}>
-						<img src={club.avatarUrl} alt='' width={'100%'} height={'100%'} objectFit={'cover'} />
+						<img src={club?.avatarUrl} alt='' width={'100%'} height={'100%'} objectFit={'cover'} />
 					</Card>
 					<Stack direction={'column'} flex={1}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
-							{club.subname}
+							{club?.subname}
 						</Typography>
 						<Typography variant='h5' fontWeight={700} sx={{}}>
-							{club.name}
+							{club?.name}
 						</Typography>
-						<ClubCategory categoryId={club.categoryId}></ClubCategory>
+						<ClubCategory categoryId={club?.categoryId}></ClubCategory>
 						<Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-end'}>
 							<Stack direction={'row'} gap={12}>
 								<Box sx={{ display: 'flex', gap: 4 }}>
 									<Groups2Icon></Groups2Icon>
-									<Typography variant='body1'>{club.numberOfMembers} thành viên</Typography>
+									<Typography variant='body1'>{club?.numberOfMembers} thành viên</Typography>
 								</Box>
 								<Box sx={{ display: 'flex', gap: 4 }}>
 									<CakeIcon></CakeIcon>
 									<Typography variant='body1'>
-										{moment(club.createAt).subtract(10, 'days').calendar()}
+										{moment(club?.createdAt).subtract(10, 'days').calendar()}
 									</Typography>
 								</Box>
 							</Stack>
-							{club.isJoined === true ? (
+							{club?.isJoined === true ? (
 								<Button variant='outlined'>Đã tham gia</Button>
 							) : (
 								<Button variant='contained'>Tham gia</Button>
@@ -265,7 +266,7 @@ function ClubPage() {
 					</FormControl>
 				</Stack>
 				<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-					{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((event, index) => (
+					{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]?.map((event, index) => (
 						<EventItem key={index}></EventItem>
 					))}
 				</Container>
@@ -273,5 +274,6 @@ function ClubPage() {
 		</Container>
 	)
 }
+
 
 export default ClubPage

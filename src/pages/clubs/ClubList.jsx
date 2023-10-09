@@ -62,9 +62,6 @@ function ClubItem({ club, index }) {
 
 		formData.append('cvUrl', cv)
 
-		console.log(formData)
-
-		// Gửi yêu cầu POST để tải lên file PDF lên server
 		axios
 			.post(
 				`http://localhost:8080/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}`,
@@ -273,7 +270,7 @@ function ClubList() {
 		if(userData)
 		try {
 			setLoading(true)
-			const res = await getAPI(`http://localhost:8080/clubs?cmd=list-res&userId=${userData?.id}`)
+			const res = await getAPI(`http://localhost:8080/api/club?cmd=list-res&userId=${userData?.id}`)
 			setClubs(res)
 		} catch (error) {
 			console.log(error)
@@ -282,7 +279,6 @@ function ClubList() {
 		}
 	}
 
-	console.log(clubs)
 	useEffect(() => {
 		callAPI()
 	}, [userData])

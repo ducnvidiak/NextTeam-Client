@@ -22,7 +22,7 @@ function Ranking() {
 	const callAPI = async () => {
 		try {
 			setLoading(true)
-			const res = await getAPI('/clubs?cmd=rank')
+			const res = await getAPI('/api/club?cmd=rank')
 			setRank(res)
 		} catch (error) {
 			console.log(error)
@@ -30,7 +30,7 @@ function Ranking() {
 			setLoading(false)
 		}
 	}
-	console.log(rank)
+	
 	useEffect(() => {
 		callAPI()
 	}, [])

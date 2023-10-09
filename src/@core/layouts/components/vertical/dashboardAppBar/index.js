@@ -72,7 +72,7 @@ const LayoutAppBar = props => {
         borderBottomLeftRadius: isScrollHeader ? 12 : 0,
         borderBottomRightRadius: isScrollHeader ? 12 : 0,
         backdropFilter: 'blur(8px)',
-        backgroundColor: isScrollHeader ? 'rgba(255, 255, 255, 0.85)' : 'transparent',
+        backgroundColor: 'transparent',
         boxShadow: isScrollHeader ? 4 : 'none',
       }}
     >

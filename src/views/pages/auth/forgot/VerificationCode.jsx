@@ -14,7 +14,6 @@ function VerificationCode(props) {
 	const values = props.values
 
 	const handleInputOtp = async ({ target }) => {
-		// console.log(target.value)
 		const numberCodeForm = document.querySelector('[data-number-code-form]')
 		const numberCodeInputs = [...numberCodeForm.querySelectorAll('[data-number-code-input]')]
 		if (!target.value.length) {
