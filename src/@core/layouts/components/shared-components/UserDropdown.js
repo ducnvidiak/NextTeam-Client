@@ -129,10 +129,12 @@ const UserDropdown = () => {
 		}
 		setSelectedValue(event.target.value)
 
-		setclubData('clubData', JSON.stringify(clubData), { path: '/' })
-		toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
+		{
+			clubData.clubId == 'none' ? '' : router.push('/dashboard')
+			setclubData('clubData', JSON.stringify(clubData), { path: '/' })
+			toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
+		}
 		setOpen(false)
-		router.push('/dashboard')
 	}
 
 	const styles = {
@@ -197,7 +199,7 @@ const UserDropdown = () => {
 								onChange={e => handleChange(e)}
 								value={selectedValue}
 							>
-								<MenuItem>Lựa chọn</MenuItem>
+								<MenuItem value='none'>Lựa chọn</MenuItem>
 
 								{clubOfMeData.map(option => (
 									<MenuItem key={option.id} value={option.id}>
@@ -270,7 +272,7 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<AccountOutline sx={{ marginRight: 2 }} />
-						<Link href={`/user/${userData?.id}`}>
+						<Link passHref href={`/user/${userData?.id}`}>
 							<Button>Hồ sơ cá nhân</Button>
 						</Link>
 					</Box>
@@ -278,7 +280,7 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<HowToRegIcon sx={{ marginRight: 2 }} />
-						<Link href={'/application'}>
+						<Link passHref href={'/application'}>
 							<Button>Đơn đã gửi</Button>
 						</Link>
 					</Box>
@@ -299,7 +301,7 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<LockIcon sx={{ marginRight: 2 }} />
-						<Link href={`/user/password/${userData?.id}`} underline='none'>
+						<Link passHref href={`/user/password/${userData?.id}`} underline='none'>
 							<Button>Đổi mật khẩu</Button>
 						</Link>
 					</Box>

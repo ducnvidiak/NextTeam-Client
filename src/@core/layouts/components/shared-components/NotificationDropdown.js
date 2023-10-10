@@ -145,15 +145,14 @@ const NotificationDropdown = () => {
 						'Content-type': 'application/json; charset=UTF-8'
 					}
 				}
-			)
-				.then(function (response) {
-					return response.json()
-				})
-				.then(function (data) {
-					setNotificationsData(data)
-					console.log(data)
-				})
-				.catch(error => console.error('Error:', error))
+		)
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				setNotificationsData(data)
+			})
+			.catch(error => console.error('Error:', error))
 	}, [cookies, userData, state])
 
 	return (

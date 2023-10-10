@@ -1,3 +1,5 @@
+const { TumbleDryer } = require('mdi-material-ui')
+
 const validateName = name => {
 	var nameRegex = /^[\p{L}\p{M}\s,'-]{2,}$/u
 
@@ -37,7 +39,17 @@ const validateStudentCode = stuCode => {
 }
 
 const validateBirthOfDate = bod => {
-	const yearGap = 1 // The minimum of years old to assign
+	const yearGap = 7 // The minimum of years old to assign
+	const currentDate = new Date()
+	const inputDate = new Date(bod)
+	inputDate.setFullYear(inputDate.getFullYear() + yearGap)
+
+	if (inputDate < currentDate) return true
+	console.log('validate date: ', bod)
+	console.log('validate current date: ', currentDate)
+	console.log('validate current date: ', inputDate)
+
+	return false
 }
 
 module.exports = {

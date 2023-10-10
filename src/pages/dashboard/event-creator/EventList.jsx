@@ -28,6 +28,7 @@ import {
 } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
+import StarIcon from '@mui/icons-material/Star'
 
 import { useEffect, useState } from 'react'
 import { getAPI } from 'src/ultis/requestAPI'
@@ -38,9 +39,9 @@ import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
 import EventManagement from './EventManagement'
+import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
 
 function EventItem({ event, setEventList }) {
-	console.log("time: " + event.startTime );
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
 	const [openEventManagememntModal, setOpenEventManagememntModal] = useState(false)
@@ -97,15 +98,14 @@ function EventItem({ event, setEventList }) {
 			))}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
-					{
-						event?.isApproved ? (
-							<Chip label='Đã duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
-						): (
-							<Chip label='Đang chờ' sx={{ mb: 4, fontSize: 16 }} color='warning' />
-						)
-					}
-					<Typography variant='h5'>{moment(event?.startTime).format('MMM Do YY')}</Typography>
-					<Typography variant='h7'>{moment(event?.startTime).format('dddd')}</Typography>
+					{event?.isApproved == 'true' || event?.isApproved == true ? (
+						<Chip label='Đã duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
+					) : (
+						<Chip label='Đang chờ' sx={{ mb: 4, fontSize: 16 }} color='warning' />
+					)}
+					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
+					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
+					
 				</Stack>
 				<Card
 					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
@@ -153,7 +153,7 @@ function EventItem({ event, setEventList }) {
 	)
 }
 
-function EventList({eventList, setEventList}) {
+function EventList({ eventList, setEventList }) {
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>

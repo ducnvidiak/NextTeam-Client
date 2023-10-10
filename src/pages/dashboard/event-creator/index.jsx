@@ -33,6 +33,7 @@ export function convertFormat(inputString) {
 
 function EventCreatorPage() {
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [clubCookies, setClubCookie] = useCookies(['clubData'])
 	const [openEventCreatorModal, setOpenEventCreatorModal] = useState(false)
 	const [eventList, setEventList] = useState()
 	const [userData, setUserData] = useState()
@@ -41,7 +42,7 @@ function EventCreatorPage() {
 	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/events?cmd=list&?userId=${userData?.id}`, {
+		fetch(`http://localhost:8080//manager-events?clubId=${clubCookies['clubData'].clubId}&cmd=list`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -51,11 +52,10 @@ function EventCreatorPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('fetch')
-				console.log(data)
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
 
 	return (

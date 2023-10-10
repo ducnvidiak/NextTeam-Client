@@ -32,6 +32,8 @@ import { getUserInfo } from 'src/utils/info'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ViewInfo from './ViewInfo'
+import CreateInterview from './CreateInterview'
+import Interview from './Interview'
 
 const TableStickyHeader = () => {
 	const router = useRouter()
@@ -48,6 +50,8 @@ const TableStickyHeader = () => {
 	//modal
 	const [open, setOpen] = useState(false)
 	const [scroll, setScroll] = useState('paper')
+	const [openCreateInterviewDialog, setOpenCreateInterviewDialog] = useState(false)
+	const [openInterviewDialog, setOpenInterviewDialog] = useState(false)
 
 	const [userData, setUserData] = useState()
 	useEffect(() => {
@@ -57,6 +61,16 @@ const TableStickyHeader = () => {
 	function handleClickOpen(application) {
 		setApplicationDetail(application)
 		setOpen(true)
+	}
+
+	function handleCreatInterview(application) {
+		setApplicationDetail(application)
+		setOpenCreateInterviewDialog(true)
+	}
+
+	function handleInterview(application) {
+		setApplicationDetail(application)
+		setOpenInterviewDialog(true)
 	}
 
 	function handleApproveApplication(id) {
@@ -95,6 +109,9 @@ const TableStickyHeader = () => {
 
 	const handleClose = () => {
 		setOpen(false)
+		setOpenCreateInterviewDialog(false)
+		setOpenInterviewDialog(false)
+		dispatch({ type: 'trigger' })
 	}
 
 	const statusObj = {
@@ -171,6 +188,25 @@ const TableStickyHeader = () => {
 				handleClose={handleClose}
 				statusObj={statusObj}
 			></ViewInfo>
+			<CreateInterview
+				applicationDetail={applicationDetail}
+				handleCreatInterview={handleCreatInterview}
+				openCreateInterviewDialog={openCreateInterviewDialog}
+				setOpenCreateInterviewDialog={setOpenCreateInterviewDialog}
+				handleClose={handleClose}
+				statusObj={statusObj}
+				dispatch={dispatch}
+			></CreateInterview>
+			<Interview
+				applicationDetail={applicationDetail}
+				handleInterview={handleInterview}
+				openInterviewDialog={openInterviewDialog}
+				setOpenInterviewDialog={setOpenInterviewDialog}
+				handleClose={handleClose}
+				statusObj={statusObj}
+				dispatch={dispatch}
+				userData={userData}
+			></Interview>
 			<Card style={{ height: '100%' }}>
 				<div
 					style={{
@@ -254,10 +290,25 @@ const TableStickyHeader = () => {
 															Tác vụ
 														</Button>
 														<Menu {...bindMenu(popupState)}>
-															<MenuItem onClick={popupState.close}>
-																Tạo phỏng vấn
+															{row.interview ? (
+																''
+															) : (
+																<MenuItem
+																	onClick={() => {
+																		handleCreatInterview(row)
+																	}}
+																>
+																	Tạo phỏng vấn
+																</MenuItem>
+															)}
+
+															<MenuItem
+																onClick={() => {
+																	handleInterview(row)
+																}}
+															>
+																Phỏng vấn
 															</MenuItem>
-															<MenuItem onClick={popupState.close}>Phỏng vấn</MenuItem>
 															<MenuItem
 																onClick={() => {
 																	handleApproveApplication(row?.engagement.id)

@@ -7,7 +7,7 @@ function EventDashboard() {
     <Container maxWidth='lg' style={{padding:0}}>
 			<Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-end'} marginBottom={10}>
 				<Typography fontSize={32} fontWeight={600}>
-					HOẠT ĐỘNG CÂU LẠC BỘ
+					SỰ KIỆN CỦA CÂU LẠC BỘ
 				</Typography>
 				<FormControl variant='outlined' size='small'>
 					<InputLabel>Bộ lọc</InputLabel>

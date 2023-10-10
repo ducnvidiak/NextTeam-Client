@@ -27,6 +27,7 @@ import {
 } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
+import StarIcon from '@mui/icons-material/Star'
 
 import { useEffect, useState } from 'react'
 import { getAPI } from 'src/ultis/requestAPI'
@@ -37,12 +38,12 @@ import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
 import { getUserInfo } from 'src/utils/info'
+import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
+import { toast } from 'react-toastify'
 
-function EventItem({ event, setEventList }) {
+function EventItem({ event, setEventList, eventList, userData }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
-	console.log('event')
-	console.log(event)
 
 	const [state, setState] = useState({
 		top: false,
@@ -64,6 +65,8 @@ function EventItem({ event, setEventList }) {
 			<FeedbackModal
 				openFeedbackModal={openFeedbackModal}
 				setOpenFeedbackModal={setOpenFeedbackModal}
+				event={event}
+				userData={userData}
 			></FeedbackModal>
 			{['left', 'right', 'top', 'bottom'].map(anchor => (
 				<>
@@ -95,19 +98,37 @@ function EventItem({ event, setEventList }) {
 			))}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
-					<Typography variant='h5'>{moment(event?.startTime).format('MMM Do YY')}</Typography>
-					<Typography variant='h7'>{moment(event?.startTime).format('dddd')}</Typography>
+					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
+					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
+
+					{new Date() > new Date(event?.endTime) ? (
+						<>
+							<Typography variant='h7' mt={4}>
+								Đánh giá: {event?.avgRating}
+							</Typography>
+							<Stack direction={'row'}>
+								{[1, 2, 3, 4, 5].map((value, index) =>
+									value <= event?.avgRating.toFixed() ? (
+										<StarIcon color='primary'></StarIcon>
+									) : (
+										<StarIcon></StarIcon>
+									)
+								)}
+							</Stack>
+						</>
+					) : null}
 				</Stack>
-				<Card
-					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
-					marginBottom={10}
-					onClick={toggleDrawer('right', true)}
-				>
+				<Card sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }} marginBottom={10}>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
-							{moment(event?.startTime).format('LT')}
+							{`${moment(event?.startTime).format('LT')} - ${moment(event?.endTime).format('LT')}`}
 						</Typography>
-						<Typography variant='h6' fontWeight={700} sx={{ flex: 1 }}>
+						<Typography
+							variant='h6'
+							fontWeight={700}
+							sx={{ flex: 1, cursor: 'pointer' }}
+							onClick={toggleDrawer('right', true)}
+						>
 							{event?.name}
 						</Typography>
 
@@ -119,7 +140,13 @@ function EventItem({ event, setEventList }) {
 							<LocationOnIcon></LocationOnIcon>
 							<Typography variant='body1'>{event?.locationName}</Typography>
 						</Box>
-						{event?.isRegistered == 'true' || event?.isRegistered == true ? (
+						{new Date() > new Date(event?.endTime) ? (
+							<>
+								<Button variant='outlined' color='secondary' disabled fullWidth sx={{ marginTop: 4 }}>
+									Sự kiện đã kết thúc
+								</Button>
+							</>
+						) : event?.isRegistered == 'true' || event?.isRegistered == true ? (
 							<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
 								Đã đăng ký
 							</Button>
@@ -139,8 +166,10 @@ function EventItem({ event, setEventList }) {
 						alt=''
 						style={{
 							width: '300px',
-							objectFit: 'cover'
+							objectFit: 'cover',
+							cursor: 'pointer'
 						}}
+						onClick={toggleDrawer('right', true)}
 					/>
 				</Card>
 			</Stack>
@@ -148,8 +177,10 @@ function EventItem({ event, setEventList }) {
 	)
 }
 
-function EventList() {
+function EventList({ filter }) {
 	const [eventList, setEventList] = useState()
+	const [eventListFiltered, setEventListFiltered] = useState()
+
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [userData, setUserData] = useState()
 	useEffect(() => {
@@ -157,7 +188,7 @@ function EventList() {
 	}, [cookies])
 
 	useEffect(() => {
-		
+		if (!userData) return
 		fetch(`http://localhost:8080/events?cmd=list&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
@@ -168,18 +199,56 @@ function EventList() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('datad23r32r32r')
 				console.log(data)
-				setEventList(data)
+				setEventList(data?.filter(event => event?.isApproved))
+				setEventListFiltered(data?.filter(event => event?.isApproved))
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData])
 
+	useEffect(() => {
+		switch (filter) {
+			case 'all':
+				setEventListFiltered(eventList)
+				toast.success('Lọc toàn bộ sự kiện')
+
+				return
+			case 'registered':
+				setEventListFiltered(eventList?.filter(event => event?.isRegistered))
+				toast.success('Lọc các sự kiện bạn đã đăng ký')
+
+				return
+			case 'upcoming':
+				setEventListFiltered(eventList?.filter(event => new Date() < new Date(event?.startTime)))
+				toast.success('Lọc các sự kiện sắp diễn ra')
+
+				return
+			case 'past':
+				setEventListFiltered(eventList?.filter(event => new Date() > new Date(event?.endTime)))
+				toast.success('Lọc các sự kiện đã diễn ra')
+
+				return
+			default:
+				return
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filter])
+
+	useEffect(() => {
+		setEventListFiltered(eventList)
+	}, [eventList])
+
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-				{eventList?.map((event, index) => (
-					<EventItem key={event.id} event={event} setEventList={setEventList}></EventItem>
+				{eventListFiltered?.map((event, index) => (
+					<EventItem
+						key={event.id}
+						event={event}
+						setEventList={setEventList}
+						eventList={eventList}
+						userData={userData}
+					></EventItem>
 				))}
 			</Container>
 		</>

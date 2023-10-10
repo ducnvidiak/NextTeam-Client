@@ -25,7 +25,7 @@ function Department() {
   const originUrl = 'http://localhost:8080/department'
   const [cookies, setCookie] = useCookies(['clubData'])
   const loadDataUrl = originUrl + '?action=list-dept&clubId=' + cookies['clubData']?.clubId
-  console.log(loadDataUrl)
+
   const handleLoadDataDepartments = () => {
     fetch(loadDataUrl)
       .then(res => {
@@ -37,10 +37,10 @@ function Department() {
       .then(result => {
         setDepartments(result)
       })
-    console.log(departments)
   }
   useEffect(() => {
     handleLoadDataDepartments()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [departments])
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)

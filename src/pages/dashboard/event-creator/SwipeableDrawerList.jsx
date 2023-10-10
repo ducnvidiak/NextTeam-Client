@@ -90,7 +90,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 					<Stack direction={'row'} alignItems={'flex-end'} gap={2} padding={2}>
 						<InfoIcon sx={{ marginBottom: 1 }}></InfoIcon>
 						<Typography variant='h6' fontWeight={700}>
-							About Event
+							Mô tả sự kiện
 						</Typography>
 					</Stack>
 					<Divider sx={{ margin: 0 }}></Divider>

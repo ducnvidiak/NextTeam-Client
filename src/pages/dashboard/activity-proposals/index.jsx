@@ -22,7 +22,6 @@ function ActivityProposals() {
 
 	function handleSubmit(event) {
 		event.preventDefault()
-		console.log('Submitted!')
 	}
 
 	function handleDelete() {}

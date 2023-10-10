@@ -2,8 +2,8 @@ import { Container, FormControl, InputLabel, MenuItem, Select, Stack, Typography
 import React from 'react'
 
 function Activities() {
-  return (
-    <Container maxWidth='lg' style={{padding:0}}>
+	return (
+		<Container maxWidth='lg' style={{ padding: 0 }}>
 			<Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-end'} marginBottom={10}>
 				<Typography fontSize={32} fontWeight={600}>
 					HOẠT ĐỘNG CÂU LẠC BỘ
@@ -18,5 +18,7 @@ function Activities() {
 				</FormControl>
 			</Stack>
 		</Container>
-  )
+	)
 }
+
+export default Activities

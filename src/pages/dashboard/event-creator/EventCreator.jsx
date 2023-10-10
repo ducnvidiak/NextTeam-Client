@@ -44,6 +44,7 @@ import { getAPI, postAPI } from 'src/ultis/requestAPI'
 import { ToastContainer, toast } from 'react-toastify'
 import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
+import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -73,7 +74,7 @@ export function convertToTimestamp(inputString) {
 function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEventList }) {
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [cookiesClub, setCookieClub, removeCookieClub] = useCookies(['clubData'])
-
+	const [isValidate, setIsValidate] = useState(true)
 	const [locationList, setLocationList] = useState([])
 	const [fileName, setFileName] = useState('')
 	const [open, setOpen] = useState(false)
@@ -93,45 +94,53 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	})
 
 	const handleSubmit = async () => {
-		setOpen(true)
-		console.log({
-			...newEvent,
-			startTime: new Date(convertToTimestamp(newEvent.startTime)),
-			endTime: new Date(convertToTimestamp(newEvent.startTime)),
-			registeredBy: userData?.id,
-			clubId: cookiesClub['clubData']?.clubId
-		});
-		fetch('http://localhost:8080/events?cmd=create', {
-			method: 'POST',
-			body: JSON.stringify({
-				...newEvent,
-				startTime: new Date(convertToTimestamp(newEvent.startTime)),
-				endTime: new Date(convertToTimestamp(newEvent.startTime)),
-				registeredBy: userData?.id,
-				clubId: cookiesClub['clubData']?.clubId
-			}),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		try {
+			setOpen(true)
+			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
+			fetch(`http://localhost:8080/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`, {
+				method: 'POST',
+				body: JSON.stringify({
+					...newEvent,
+					startTime: new Date(convertToTimestamp(newEvent.startTime)),
+					endTime: new Date(convertToTimestamp(newEvent.startTime)),
+					registeredBy: userData?.id,
+					clubId: cookiesClub['clubData']?.clubId
+				}),
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					console.log('data')
+					setEventList(data)
+					toast.success('Tạo sự kiện thành công, đang chờ kiểm duyệt...')
+					setOpenEventCreatorModal(false)
+					setNewEvent({
+						name: '',
+						description: '',
+						startTime: '2023-10-05T00:35',
+						endTime: '2023-10-05T00:35',
+						type: 'public',
+						bannerUrl: '',
+						planUrl: ''
+					})
+					setOpen(false)
+				})
+				.catch(error => {
+					console.error('Error:', error)
+					toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
+				})
+				.finally(() => {})
+		} catch (error) {
+			setOpen(false)
+			if (error?.name === 'ValidationError') {
+				setIsValidate(false)
+				error.errors.forEach(err => toast.error(err))
 			}
-		})
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				console.log('data')
-				console.log(data)
-				setEventList(eventList => [data, ...eventList])
-				toast.success('Tạo sự kiện thành công, đang chờ kiểm duyệt...')
-				setOpenEventCreatorModal(false)
-			})
-			.catch(error => {
-				console.error('Error:', error)
-
-				toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
-			})
-			.finally(() => {
-				setOpen(false)
-			})
+		}
 	}
 
 	// Hàm xử lý khi thay đổi DatePicker
@@ -165,7 +174,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	}
 
 	const callAPI = async () => {
-		console.log('Calling API')
 		try {
 			const res = await getAPI(`http://localhost:8080/location`)
 			setLocationList(res)
@@ -179,7 +187,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	}, [])
 
 	const handleChangeFile = event => {
-		setFileName(event.target.files[0].name)
+		setFileName(event.target.files[0]?.name)
 		const reader = new FileReader()
 		const { files } = event.target
 		if (files && files.length !== 0) {
@@ -205,13 +213,10 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 
 				if (response.ok) {
 					const data = await response.json()
-					console.log(response);
 					const imageBannerUrl = data.data.url
 					setNewEvent({ ...newEvent, bannerUrl: imageBannerUrl })
-					console.log(imageBannerUrl)
 					toast.success('Tải lên hình ảnh thành công!!!')
 				} else {
-					console.log(response)
 					toast.error('Tải lên hình ảnh không thành công')
 				}
 			} catch (error) {
@@ -261,6 +266,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 						Thông tin cơ bản
 					</Typography>
 					<TextField
+						error={newEvent.name === '' && !isValidate}
 						id='outlined-basic'
 						label='Tên sự kiện'
 						variant='outlined'
@@ -268,6 +274,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 						sx={{ mb: 4 }}
 					/>
 					<TextField
+						error={newEvent.description === '' && !isValidate}
 						id='outlined-multiline-static'
 						label='Mô tả sự kiện'
 						multiline
@@ -284,6 +291,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 								component='span'
 								startIcon={<CloudUpload />}
 								sx={{ margin: '10px 0' }}
+								color={newEvent.bannerUrl === '' && !isValidate ? 'error' : 'primary'}
 							>
 								Tải lên hình ảnh
 							</Button>
@@ -314,6 +322,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<Stack direction={'row'} gap={4}>
 							<DatePicker
+
 								disablePast
 								label='Ngày'
 								slotProps={{
@@ -346,6 +355,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					<FormControl fullWidth>
 						<InputLabel id='demo-simple-select-label'>Chọn địa điểm</InputLabel>
 						<Select
+							error={!newEvent.locationId && !isValidate}
 							labelId='demo-simple-select-label'
 							id='demo-simple-select'
 							label='location'
@@ -389,6 +399,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 							variant='contained'
 							startIcon={<CloudUploadIcon />}
 							sx={{ width: 180 }}
+							color={newEvent.planUrl === '' && !isValidate ? 'error' : 'primary'}
 						>
 							Upload file
 							<VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} />
