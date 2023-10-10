@@ -27,6 +27,7 @@ function RegisteredTable({event}) {
 				setEventRegistrations(data)
 			})
 			.catch(error => console.error('Error:', error))
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [cookies])
 
 	const rows = eventRegistrations.map((item, index) =>

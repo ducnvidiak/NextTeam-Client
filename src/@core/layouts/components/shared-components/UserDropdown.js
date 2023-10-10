@@ -269,7 +269,7 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<AccountOutline sx={{ marginRight: 2 }} />
-						<Link href={`/user/${userData?.id}`}>
+						<Link passHref href={`/user/${userData?.id}`}>
 							<Button>Hồ sơ cá nhân</Button>
 						</Link>
 					</Box>
@@ -277,7 +277,7 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<HowToRegIcon sx={{ marginRight: 2 }} />
-						<Link href={'/application'}>
+						<Link passHref href={'/application'}>
 							<Button>Đơn đã gửi</Button>
 						</Link>
 					</Box>
@@ -298,7 +298,7 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<LockIcon sx={{ marginRight: 2 }} />
-						<Link href={`/user/password/${userData?.id}`} underline='none'>
+						<Link passHref href={`/user/password/${userData?.id}`} underline='none'>
 							<Button>Đổi mật khẩu</Button>
 						</Link>
 					</Box>

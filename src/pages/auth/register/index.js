@@ -54,7 +54,7 @@ import {
 	validatePassword,
 	validatePhone,
 	validateStudentCode
-} from '../../input-validation/index'
+} from '../../../input-validation/index'
 import { postAPI } from 'src/utils/request'
 import Decentralization from 'src/layouts/Decentralization'
 

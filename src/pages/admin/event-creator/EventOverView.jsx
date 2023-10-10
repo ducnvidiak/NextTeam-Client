@@ -241,6 +241,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				})[0]?.id
 			})
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [locationList])
 
 	return (
