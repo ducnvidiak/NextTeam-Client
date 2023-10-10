@@ -28,6 +28,7 @@ import {
 } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
+import StarIcon from '@mui/icons-material/Star'
 
 import { useEffect, useState } from 'react'
 import { getAPI } from 'src/ultis/requestAPI'
@@ -38,7 +39,7 @@ import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
 import EventManagement from './EventManagement'
-import { translateDayOfWeek } from 'src/ultis/dateTime'
+import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
 
 function EventItem({ event, setEventList }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
@@ -102,8 +103,9 @@ function EventItem({ event, setEventList }) {
 					) : (
 						<Chip label='Đang chờ' sx={{ mb: 4, fontSize: 16 }} color='warning' />
 					)}
-					<Typography variant='h5'>{moment(event?.startTime).subtract(10, 'days').calendar()}</Typography>
+					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
+					
 				</Stack>
 				<Card
 					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}

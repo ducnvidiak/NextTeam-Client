@@ -54,18 +54,22 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	const [open, setOpen] = useState(false)
 	const [userData, setUserData] = useState()
 	const [isShowModal, setIsShowModal] = useState(false)
+	const [fileName, setFileName] = useState("")
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	const [newEvent, setNewEvent] = useState({
 		...event,
-		startTime: convertFormat(event.startTime),
-		endTime: convertFormat(event.endTime),
+		startTime: event.startTime,
+		endTime: event.endTime,
 		locationId: locationList.filter((item, index) => {
 			return item.name == event?.locationName
 		})[0]?.id
 	})
+	console.log("newEvent");
+	console.log(newEvent);
 
 	const handleDateChange = date => {
 		const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm')
@@ -97,7 +101,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	}
 
 	const handleChangeFile = event => {
-		setFileName(event.target.files[0].name)
+		setFileName(event.target.files[0]?.name)
 		const reader = new FileReader()
 		const { files } = event.target
 		if (files && files.length !== 0) {
@@ -149,7 +153,8 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					startTime: new Date(convertToTimestamp(newEvent.startTime)),
 					endTime: new Date(convertToTimestamp(newEvent.endTime)),
 					registeredBy: userData?.id,
-					clubId: userData?.clubId
+
+					// clubId: userData?.clubId
 				}),
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8'
@@ -181,8 +186,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const handleDelete = () => {
 		setOpen(true)
-		console.log('delete~~~~')
-		fetch(`http://localhost:8080/events?cmd=delete&eventId=${event.id}&eventId=${event.id}`, {
+		fetch(`http://localhost:8080/events?cmd=delete&eventId=${event.id}`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

@@ -21,6 +21,7 @@ import ClubList from 'src/pages/clubs/ClubList'
 import Ranking from 'src/pages/clubs/Ranking'
 import EventOverView from './EventOverView'
 import RegisteredTable from './RegisteredTable'
+import FeedbackTable from './FeedbackTable'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction='up' ref={ref} {...props} />
@@ -59,12 +60,16 @@ function EventManagement({ openEventManagememntModal, setOpenEventManagememntMod
 				<TabList variant='fullWidth' onChange={handleChangeTab} aria-label='full width tabs example'>
 					<Tab value='1' label='Tổng quan' />
 					<Tab value='2' label='Danh sách đăng ký' />
+					<Tab value='3' label='Feedback sự kiện' />
 				</TabList>
 				<TabPanel value='1'>
 					<EventOverView event={event} setEventList={setEventList} setOpenEventManagememntModal={setOpenEventManagememntModal}></EventOverView>
 				</TabPanel>
 				<TabPanel value='2'>
 					<RegisteredTable event={event}></RegisteredTable>
+				</TabPanel>
+				<TabPanel value='3'>
+					<FeedbackTable event={event}></FeedbackTable>
 				</TabPanel>
 			</TabContext>
 		</Dialog>

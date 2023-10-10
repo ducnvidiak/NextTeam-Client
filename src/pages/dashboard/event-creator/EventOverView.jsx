@@ -54,6 +54,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	const [open, setOpen] = useState(false)
 	const [userData, setUserData] = useState()
 	const [isShowModal, setIsShowModal] = useState(false)
+	const [fileName, setFileName] = useState("")
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -97,7 +98,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	}
 
 	const handleChangeFile = event => {
-		setFileName(event.target.files[0].name)
+		setFileName(event.target.files[0]?.name)
 		const reader = new FileReader()
 		const { files } = event.target
 		if (files && files.length !== 0) {

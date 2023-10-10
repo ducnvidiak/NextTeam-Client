@@ -238,7 +238,7 @@ function ClubPage() {
 								<Box sx={{ display: 'flex', gap: 4 }}>
 									<CakeIcon></CakeIcon>
 									<Typography variant='body1'>
-										{moment(club?.createdAt).subtract(10, 'days').calendar()}
+										{moment(club?.createdAt).subtract(0, 'days').calendar()}
 									</Typography>
 								</Box>
 							</Stack>

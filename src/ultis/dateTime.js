@@ -10,3 +10,10 @@ export function translateDayOfWeek(dayOfWeek) {
         return 'Không xác định';
     }
 }
+
+export function mmddyyToDdmmyy(inputDate) {
+    const parts = inputDate.split('/');
+    const formattedDate = `${parts[1]}/${parts[0]}/${parts[2]}`;
+    
+    return formattedDate;
+  }

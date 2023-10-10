@@ -7,12 +7,20 @@ import CloseIcon from '@mui/icons-material/Close'
 import InfoIcon from '@mui/icons-material/Info'
 import Groups2Icon from '@mui/icons-material/Groups2'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
 
 import Link from 'next/link'
-import { ToastContainer } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
+import { translateDayOfWeek } from 'src/ultis/dateTime'
+import moment from 'moment'
 
 function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer, setOpenFeedbackModal }) {
 	const handleFeedbackClick = () => {
+		if (event?.isFeedback) {
+			toast.error("Bạn đã feedback cho sự kiện này rồi!!!");
+			
+			return
+		}
 		setOpenFeedbackModal(true)
 	}
 
@@ -25,12 +33,14 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 					<Button variant='text'>
 						<CloseIcon onClick={toggleDrawer(anchor, false)}></CloseIcon>
 					</Button>
-					<Button variant='text' onClick={handleFeedbackClick}>
-						<Typography mr={2} variant='button'>
-							Feedback
-						</Typography>
-						<FeedbackIcon></FeedbackIcon>
-					</Button>
+					{event?.isRegistered && new Date() > new Date(event?.endTime) ? (
+						<Button variant='text' onClick={handleFeedbackClick}>
+							<Typography mr={2} variant='button'>
+								Feedback
+							</Typography>
+							<FeedbackIcon></FeedbackIcon>
+						</Button>
+					) : null}
 				</Stack>
 				<Card sx={{ padding: 2 }}>
 					<img
@@ -65,14 +75,20 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 						</Typography>
 						<Box sx={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
 							<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>
-								<Groups2Icon></Groups2Icon>
+								<AccessTimeIcon></AccessTimeIcon>
 							</Box>
 							<Box>
 								<Typography variant='body2' fontWeight={500}>
-									Tổ chức
+									{`${translateDayOfWeek(moment(event?.startTime).format('dddd'))} ${moment(
+										event?.startTime
+									)
+										.subtract(0, 'days')
+										.calendar()}`}
 								</Typography>
 								<Typography variant='body1' fontWeight={600}>
-									FU-DEVER
+									{`${moment(event?.startTime).format('LT')} - ${moment(event?.endTime).format(
+										'LT'
+									)}`}
 								</Typography>
 							</Box>
 						</Box>
@@ -95,8 +111,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 					<Stack direction={'row'} alignItems={'flex-end'} gap={2} padding={2}>
 						<InfoIcon sx={{ marginBottom: 1 }}></InfoIcon>
 						<Typography variant='h6' fontWeight={700}>
-						Mô tả sự kiện
-
+							Mô tả sự kiện
 						</Typography>
 					</Stack>
 					<Divider sx={{ margin: 0 }}></Divider>
@@ -104,7 +119,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 						<Typography sx={'body1'}>{event?.description}</Typography>
 					</CardContent>
 				</Card>
-				{event?.isRegistered == 'true' ||event?.isRegistered == true? (
+				{event?.isRegistered == 'true' || event?.isRegistered == true ? (
 					<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
 						Đã đăng ký
 					</Button>
@@ -124,4 +139,3 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 }
 
 export default SwipeableDrawerList
-

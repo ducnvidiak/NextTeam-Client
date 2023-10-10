@@ -97,14 +97,13 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`, {
+			fetch(`http://localhost:8080/admin-events?cmd=create`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
 					startTime: new Date(convertToTimestamp(newEvent.startTime)),
 					endTime: new Date(convertToTimestamp(newEvent.startTime)),
 					registeredBy: userData?.id,
-					clubId: cookiesClub['clubData']?.clubId
 				}),
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8'
@@ -130,6 +129,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					setOpen(false)
 				})
 				.catch(error => {
+					setOpen(false)
 					console.error('Error:', error)
 					toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
 				})
@@ -187,7 +187,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	}, [])
 
 	const handleChangeFile = event => {
-		setFileName(event.target.files[0].name)
+		setFileName(event.target.files[0]?.name)
 		const reader = new FileReader()
 		const { files } = event.target
 		if (files && files.length !== 0) {

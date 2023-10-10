@@ -187,7 +187,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	}, [])
 
 	const handleChangeFile = event => {
-		setFileName(event.target.files[0].name)
+		setFileName(event.target.files[0]?.name)
 		const reader = new FileReader()
 		const { files } = event.target
 		if (files && files.length !== 0) {

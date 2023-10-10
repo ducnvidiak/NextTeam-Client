@@ -25,10 +25,6 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 			}
 		})
 			.then(function (response) {
-				console.log(response)
-				toast.success('Đăng ký sự kiện thành công!!!!')
-				setOpenRegisterModal(false)
-				toggleDrawer(anchor, false)
 
 				return response.json()
 			})
@@ -36,6 +32,9 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 				console.log('new data')
 				console.log(data)
 				setEventList(data)
+				toast.success('Đăng ký sự kiện thành công!!!!')
+				setOpenRegisterModal(false)
+				toggleDrawer(anchor, false)
 			})
 			.catch(error => {
 				console.error('Error:', error)

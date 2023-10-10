@@ -219,7 +219,7 @@ function ClubItem({ club, index }) {
 							<Box sx={{ display: 'flex', gap: 4 }}>
 								<CakeIcon></CakeIcon>
 								<Typography variant='body1'>
-									{moment(club.createAt).subtract(10, 'days').calendar()}
+									{moment(club.createAt).subtract(0, 'days').calendar()}
 								</Typography>
 							</Box>
 						</Stack>

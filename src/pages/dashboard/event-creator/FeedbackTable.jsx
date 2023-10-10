@@ -3,16 +3,16 @@ import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 
-const createData = (index, name, username, email, phone, time) => {
-	return { index, name, username, email, phone, time }
+const createData = (index, name, username, email, point, content, time) => {
+	return { index, name, username, email, point, content, time }
 }
 
-function RegisteredTable({event}) {
+function FeedbackTable({ event }) {
 	const [cookies, setCookie, removeCookie] = useCookies(['clubData'])
-	const [eventRegistrations, setEventRegistrations] = useState([])
+	const [feedbacks, setFeedbacks] = useState([])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/event-registration?eventId=${event?.id}`, {
+		fetch(`http://localhost:8080/feedbacks?cmd=list&eventId=${event?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -24,13 +24,21 @@ function RegisteredTable({event}) {
 			.then(function (data) {
 				console.log('data')
 				console.log(data)
-				setEventRegistrations(data)
+				setFeedbacks(data)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [cookies])
 
-	const rows = eventRegistrations.map((item, index) =>
-		createData(index+1, `${item.firstName} ${item.lastName}`, item.username, item.email, item.phoneNumber, moment(item.createdAt).format('L'))
+	const rows = feedbacks.map((item, index) =>
+		createData(
+			index + 1,
+			`${item.firstname} ${item.lastname}`,
+			item.username,
+			item.email,
+			item.point,
+			item.content,
+			moment(item.createdAt).format('L')
+		)
 	)
 
 	return (
@@ -47,7 +55,8 @@ function RegisteredTable({event}) {
 							<TableCell align='center' width={'150px'}>
 								Email
 							</TableCell>
-							<TableCell align='center'>Số điện thoại</TableCell>
+							<TableCell align='center'>Đánh giá</TableCell>
+							<TableCell align='center'>Nội dung</TableCell>
 							<TableCell align='center'>Thời gian (MM/DD/YY)</TableCell>
 						</TableRow>
 					</TableHead>
@@ -58,7 +67,8 @@ function RegisteredTable({event}) {
 								<TableCell align='left'>{row.name}</TableCell>
 								<TableCell align='center'>{row.username}</TableCell>
 								<TableCell align='left'>{row.email}</TableCell>
-								<TableCell align='center'>{row.phone}</TableCell>
+								<TableCell align='center'>{row.point}</TableCell>
+								<TableCell align='center'>{row.content}</TableCell>
 								<TableCell align='center'>{row.time}</TableCell>
 							</TableRow>
 						))}
@@ -69,4 +79,4 @@ function RegisteredTable({event}) {
 	)
 }
 
-export default RegisteredTable
+export default FeedbackTable
