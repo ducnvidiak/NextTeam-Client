@@ -1,49 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
-import { toast } from 'react-toastify'
-import { registerToEvent } from 'src/apis/eventRegistration'
-import { postAPI } from 'src/ultis/requestAPI'
-import { getUserInfo } from 'src/utils/info'
+import React from 'react'
 
-function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, anchor, toggleDrawer, setEventList }) {
-	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
-	const [userData, setUserData] = useState()
-	useEffect(() => {
-		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
-	}, [cookies])
-
-	const handleSubmit = async () => {
-		fetch('http://localhost:8080/event-registration', {
-			method: 'POST',
-			body: JSON.stringify({
-				eventId: event.id,
-				registeredBy: userData?.id
-			}),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-
-				return response.json()
-			})
-			.then(function (data) {
-				console.log('new data')
-				console.log(data)
-				setEventList(data)
-				toast.success('Đăng ký sự kiện thành công!!!!')
-				setOpenRegisterModal(false)
-				toggleDrawer(anchor, false)
-			})
-			.catch(error => {
-				console.error('Error:', error)
-				toggleDrawer(anchor, false)
-				setOpenRegisterModal(false)
-				toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
-			})
-	}
-
+function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal }) {
 	return (
 		<>
 			<Dialog
@@ -119,7 +77,7 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 					</Stack>
 				</DialogContent>
 				<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>
-					<Button variant='contained' onClick={handleSubmit}>
+					<Button variant='contained' onClick={() => setOpenRegisterModal(false)}>
 						Xác nhận
 					</Button>
 					<Button variant='outlined' onClick={() => setOpenRegisterModal(false)}>

@@ -39,7 +39,6 @@ const TableStickyHeader = () => {
 	const [cookies, setCookie] = useCookies(['clubData'])
 	const [userData, setUserData] = useCookies(['userData'])
 	const [notificationDetail, setNotificationDetail] = useState()
-	console.log(search)
 
 	//modal
 	const [open, setOpen] = useState(false)

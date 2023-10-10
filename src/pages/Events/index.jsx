@@ -27,43 +27,7 @@ import Select from '@mui/material/Select'
 const options = ['Create a merge commit', 'Squash and merge', 'Rebase and merge']
 
 function Events() {
-	
-	const [open, setOpen] = useState(false)
-	const [selectedIndex, setSelectedIndex] = useState(1)
-	const anchorRef = useRef(null)
-
-	const handleClick = () => {
-		console.info(`You clicked ${options[selectedIndex]}`)
-	}
-
-	const handleMenuItemClick = (event, index) => {
-		setSelectedIndex(index)
-		setOpen(false)
-	}
-
-	const handleToggle = () => {
-		setOpen(prevOpen => !prevOpen)
-	}
-
-	const handleClose = event => {
-		if (anchorRef.current && anchorRef.current.contains(event.target)) {
-			return
-		}
-
-		setOpen(false)
-	}
-
-	const [value, setValue] = useState('one')
-
-	//   const handleChange = (event, newValue) => {
-	//     setValue(newValue)
-	//   }
-
-	const [option, setOption] = useState(0)
-
-	const handleChange = event => {
-		setOption(event.target.value)
-	}
+	const [filter, setFilter] = useState("all")
 
 	return (
 		<Container maxWidth='lg' sx={{ marginTop: 20 }}>
@@ -71,16 +35,17 @@ function Events() {
 				<Typography fontSize={32} fontWeight={600}>
 					SỰ KIỆN
 				</Typography>
-				{/* <FormControl variant='outlined' size='small'>
+				<FormControl variant='outlined' size='small'>
 					<InputLabel>Bộ lọc</InputLabel>
-					<Select label='Status' defaultValue='active'>
-						<MenuItem value='active'>Sự kiện trong tháng</MenuItem>
-						<MenuItem value='inactive'>Đã Đăng ký</MenuItem>
-						<MenuItem value='pending'>Sự kiện đã qua</MenuItem>
+					<Select label='filter' defaultValue='all' onChange={(e)=> setFilter(e.target.value)}>
+						<MenuItem value='all'>Tất cả</MenuItem>
+						<MenuItem value='registered'>Đã Đăng ký</MenuItem>
+						<MenuItem value='upcoming'>Sắp diễn ra</MenuItem>
+						<MenuItem value='past'>Đã qua</MenuItem>
 					</Select>
-				</FormControl> */}
+				</FormControl>
 			</Stack>
-			<EventList></EventList>
+			<EventList filter={filter}></EventList>
 		</Container>
 	)
 }

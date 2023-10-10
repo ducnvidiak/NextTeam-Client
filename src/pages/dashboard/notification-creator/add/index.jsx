@@ -88,10 +88,8 @@ function NotificationCreator() {
 			})
 			.then(function (data) {
 				if (data.id == null) {
-					console.log(data)
 					toast.error(data)
 				} else {
-					console.log('Gửi thông báo thành công')
 					toast.success('Gửi thông báo thành công, đang chuyển hướng sang trang chủ!')
 					router.push('/dashboard/notification-creator')
 				}
@@ -135,10 +133,8 @@ function NotificationCreator() {
 			})
 			.then(function (data) {
 				if (data.id == null) {
-					console.log(data)
 					toast.error(data)
 				} else {
-					console.log('Gửi thông báo thành công')
 					toast.success('Gửi thông báo thành công, đang chuyển hướng sang trang chủ!')
 					router.push('/dashboard/notification-creator')
 				}

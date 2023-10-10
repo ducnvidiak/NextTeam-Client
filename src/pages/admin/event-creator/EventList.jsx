@@ -28,7 +28,6 @@ import {
 } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
-import StarIcon from '@mui/icons-material/Star'
 
 import { useEffect, useState } from 'react'
 import { getAPI } from 'src/ultis/requestAPI'
@@ -60,6 +59,7 @@ function EventItem({ event, setEventList }) {
 
 		setState({ ...state, [anchor]: open })
 	}
+	console.log(event);
 
 	return (
 		<>
@@ -105,7 +105,6 @@ function EventItem({ event, setEventList }) {
 					)}
 					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
-					
 				</Stack>
 				<Card
 					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
@@ -123,7 +122,9 @@ function EventItem({ event, setEventList }) {
 
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
-							<Typography variant='body1'>{event?.clubSubname}</Typography>
+							<Typography variant='body1'>
+								{event?.clubSubname == 'null' ? 'Phòng ICPDP' : event?.clubSubname}
+							</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<LocationOnIcon></LocationOnIcon>

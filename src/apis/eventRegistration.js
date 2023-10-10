@@ -10,7 +10,6 @@ export const registerToEvent = async data => {
 			return response.json()
 		})
 		.then(function (data) {
-			console.log(data)
 		})
 		.catch(error => {
 			console.error('Error:', error)

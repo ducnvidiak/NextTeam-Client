@@ -77,11 +77,9 @@ export default function EditPublicNotification({
 			})
 			.then(function (data) {
 				if (data.id == null) {
-					console.log(data)
 					toast.error(data)
 				} else {
 					setPublicUpdateModal(false)
-					console.log('Thay đổi thông báo thành công')
 					toast.success('Thay đổi thông báo thành công!')
 					router.push('/dashboard/notification-creator')
 					dispatch({ type: 'trigger' })
