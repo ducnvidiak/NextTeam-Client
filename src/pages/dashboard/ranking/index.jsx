@@ -1,6 +1,8 @@
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Avatar, Box, Card, CardContent, CardHeader, LinearProgress, Typography } from '@mui/material'
 import React from 'react'
 import { useCookies } from 'react-cookie'
+import { getUserInfo, getUserPoints, getUserPointsHistory } from 'src/utils/info'
 
 const data = [
 	{
@@ -32,8 +34,26 @@ const data = [
 	}
 ]
 
+const arrowStyle = {
+	borderRadius: '50%'
+}
+
 const ActivityPoint = () => {
 	const [cookies, setCookies] = useCookies(['userData', 'clubData'])
+	const [userData, setUserData] = React.useState()
+	const [userPoints, setUserPoints] = React.useState(0)
+	const [userPointsHistories, setUserPointsHistories] = React.useState([])
+	React.useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
+
+	React.useEffect(() => {
+		if (userData && cookies['clubData'])
+			(async () => {
+				setUserPoints(await getUserPoints(userData.id, cookies['clubData'].clubId))
+				setUserPointsHistories(await getUserPointsHistory(userData.id, cookies['clubData'].clubId))
+			})()
+	}, [userData, cookies])
 
 	return (
 		<Card>
@@ -44,15 +64,15 @@ const ActivityPoint = () => {
 			<CardContent sx={{ pt: theme => `${theme.spacing(2.25)} !important` }}>
 				<Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center' }}>
 					<Typography variant='h4' sx={{ fontWeight: 600, fontSize: '2.125rem !important' }}>
-						215 điểm
+						{userPoints.points} điểm
 					</Typography>
 				</Box>
 
 				<Typography component='p' variant='caption' sx={{ mb: 10 }}>
-					Xếp hạng thứ 7 trong CLB
+					Xếp hạng #{userPoints.rank} trong CLB
 				</Typography>
 
-				{data.map((item, index) => {
+				{userPointsHistories.map((item, index) => {
 					return (
 						<Box
 							key={item.title}
@@ -71,7 +91,11 @@ const ActivityPoint = () => {
 									backgroundColor: theme => `rgba(${theme.palette.customColors.main}, 0.04)`
 								}}
 							>
-								<img src={item.imgSrc} alt={item.title} height={item.imgHeight} />
+								{item.amount < 0 ? (
+									<ArrowDropDown sx={{ color: 'red', backgroundColor: '#f003', ...arrowStyle }} />
+								) : (
+									<ArrowDropUp sx={{ color: 'green', backgroundColor: '#0f03', ...arrowStyle }} />
+								)}
 							</Avatar>
 							<Box
 								sx={{
@@ -87,16 +111,23 @@ const ActivityPoint = () => {
 										variant='body2'
 										sx={{ mb: 0.5, fontWeight: 600, color: 'text.primary' }}
 									>
-										{item.title}
+										{item.reason}
 									</Typography>
-									<Typography variant='caption'>{item.subtitle}</Typography>
+									<Typography variant='caption'>{item.createdAt}</Typography>
 								</Box>
 
 								<Box sx={{ minWidth: 85, display: 'flex', flexDirection: 'column' }}>
-									<Typography variant='body2' sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>
-										{item.amount}
+									<Typography
+										variant='body2'
+										sx={{ mb: 2, fontWeight: 600, color: 'text.primary', textAlign: 'right' }}
+									>
+										{item.amount > 0 ? `+ ${item.amount}` : `- ${Math.abs(item.amount)}`} điểm
 									</Typography>
-									<LinearProgress color={item.color} value={item.progress} variant='determinate' />
+									<LinearProgress
+										color={item.amount > 0 ? 'success' : 'error'}
+										value={item.progress}
+										variant='determinate'
+									/>
 								</Box>
 							</Box>
 						</Box>
