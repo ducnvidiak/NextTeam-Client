@@ -41,6 +41,8 @@ import { postAPI } from 'src/utils/request'
 import Decentralization from 'src/layouts/Decentralization'
 import { InputAdornment } from '@mui/material'
 import { EyeOffOutline, EyeOutline } from 'mdi-material-ui'
+import { useEffect } from 'react'
+import ForRole from 'src/layouts/ForRole'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -74,9 +76,11 @@ const LoginPage = () => {
 	// ** Hook
 	const theme = useTheme()
 	const router = useRouter()
-
-	const urlParams = new URLSearchParams(window.location.search)
-	if (urlParams.get('googleLogin')) {
+	const [urlParams, setUrlParams] = useState()
+	useEffect(() => {
+		setUrlParams(new URLSearchParams(window.location.search))
+	}, [])
+	if (urlParams?.get('googleLogin')) {
 		toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
 		router.push('/')
 		console.log(urlParams.get('successData').replaceAll(' ', '+'))
@@ -358,8 +362,10 @@ const LoginPage = () => {
 	)
 }
 LoginPage.getLayout = page => (
-	<Decentralization forGuest>
-		<BlankLayout>{page}</BlankLayout>
+	<Decentralization>
+		<ForRole guest>
+			<BlankLayout>{page}</BlankLayout> {/* giao diện cho guest */}
+		</ForRole>
 	</Decentralization>
 )
 

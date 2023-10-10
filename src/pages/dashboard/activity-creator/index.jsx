@@ -31,6 +31,8 @@ import { getUserInfo } from 'src/utils/info'
 import { useContext } from 'react'
 import '@mui/icons-material/'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material/'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const data = [
 	{
@@ -140,7 +142,7 @@ const AddingForm = () => {
 				renderOption={(props, option) => <li {...props}>{`${option.username} - ${option.label}`}</li>}
 				renderInput={params => <TextField {...params} label='Tên' placeholder='nhập tên...' />}
 				disableClearable
-				// getOptionDisabled={option => option.isManager == 1}
+				getOptionDisabled={option => option.isManager == 1}
 				sx={{ marginBottom: 6 }}
 				onChange={(event, value) => handleChange('name')({ target: { value } })}
 				loading={loading}
@@ -172,29 +174,15 @@ const AddingForm = () => {
 }
 
 const EditForm = ({ data }) => {
-	console.log(data)
-	const [values, setValues] = React.useState({ point: data.amount, note: data.reason })
-	const [memberOption, setMemberOption] = React.useState([])
-	const loading = memberOption.length === 0
+	const [values, setValues] = React.useState({ point: data.amount, note: data.reason, id: data.id })
 	const passedValue = useContext(AddFunctionContext)
-	const cookies = passedValue.cookies
-
-	React.useEffect(() => {
-		;(async () => {
-			const data = await postAPI('/info-utils', {
-				cmd: 'club.users',
-				data: cookies.clubData.clubId
-			})
-			setMemberOption(data.filter(value => value.id == data.receivedBy))
-		})()
-	}, [cookies, data])
 
 	const handleChange = prop => event => {
 		setValues({ ...values, [prop]: event.target.value })
 	}
 
 	return (
-		<Box autoComplete='off' component='form' sx={{ mt: 5 }} onSubmit={passedValue.handleSubmitAdd(values)}>
+		<Box autoComplete='off' component='form' sx={{ mt: 5 }} onSubmit={passedValue.handleSubmitEdit(values)}>
 			<TextField id='id' name='id' type='hidden' value={data.id} />
 			<TextField
 				fullWidth
@@ -231,6 +219,24 @@ const EditForm = ({ data }) => {
 	)
 }
 
+const DeleteForm = ({ data }) => {
+	const passedValue = useContext(AddFunctionContext)
+
+	return (
+		<Box autoComplete='off' component='div' sx={{ mt: 5 }}>
+			<Typography variant='body1'>Bạn có chắc chắn muốn xóa không?</Typography>
+			<Box component='div' display='flex' justifyContent='center' gap={2} mt={5}>
+				<Button variant='outlined' onClick={passedValue.handleSubmitDel(data.id)}>
+					Có
+				</Button>
+				<Button variant='contained' onClick={() => passedValue.setOpen(false)}>
+					Không
+				</Button>
+			</Box>
+		</Box>
+	)
+}
+
 function ActivityCreator() {
 	const [open, setOpen] = React.useState(false)
 	const [pointsHistories, setPointsHistories] = React.useState([])
@@ -257,6 +263,16 @@ function ActivityCreator() {
 
 	const handleSubmitAdd = values => async event => {
 		event.preventDefault()
+		if (!values.name) {
+			toast.error('Không được để trống tên!')
+
+			return
+		}
+		if (values.point != 0 && !values.point) {
+			toast.error('Không được để trống điểm!')
+
+			return
+		}
 
 		const data = await postAPI('activity', {
 			...values,
@@ -268,25 +284,69 @@ function ActivityCreator() {
 		if (data.res == 0) {
 			setOpen(false)
 			renderTable(cookies['clubData'])
+			toast.success('Thêm thành công!')
 		}
+	}
+
+	const handleSubmitEdit = values => async event => {
+		event.preventDefault()
+		if (values.point != 0 && !values.point) {
+			toast.error('Không được để trống điểm!')
+
+			return
+		}
+
+		const data = await postAPI('activity', {
+			...values,
+			cmd: 'edit'
+		})
+		if (data.code == 0) {
+			setOpen(false)
+			renderTable(cookies['clubData'])
+			toast.success('Sửa thành công!')
+		}
+	}
+
+	const handleSubmitDel = id => async event => {
+		event.preventDefault()
+
+		const data = await postAPI('activity', {
+			id,
+			cmd: 'del'
+		})
+
+		if (data.code == 0) {
+			setOpen(false)
+			renderTable(cookies['clubData'])
+			toast.success('Xóa thành công!')
+		}
+	}
+
+	const openModal = (cmd, value) => event => {
+		event.preventDefault()
+		setOpen({ cmd, id: value })
 	}
 
 	const passValue = {
 		handleSubmitAdd,
+		handleSubmitEdit,
+		handleSubmitDel,
+		setOpen,
 		cookies
 	}
 
 	return (
-		<div>
+		<Box>
+			<ToastContainer></ToastContainer>
 			<Modal
 				aria-labelledby='transition-modal-title'
 				aria-describedby='transition-modal-description'
-				open={open}
+				open={open != false}
 				onClose={() => setOpen(false)}
 				closeAfterTransition
 				slots={{ backdrop: Backdrop }}
 			>
-				<Fade in={open}>
+				<Fade in={open != false}>
 					<Box sx={style}>
 						<Typography
 							id='transition-modal-title'
@@ -296,10 +356,12 @@ function ActivityCreator() {
 						>
 							{open.cmd == 'add' && 'Thêm điểm HĐ'}
 							{open.cmd == 'edit' && 'Sửa điểm HĐ'}
+							{open.cmd == 'del' && 'Xóa điểm HĐ'}
 						</Typography>
 						<AddFunctionContext.Provider value={passValue}>
 							{open.cmd == 'add' && <AddingForm />}
 							{open.cmd == 'edit' && <EditForm data={open.id} />}
+							{open.cmd == 'del' && <DeleteForm data={open.id} />}
 						</AddFunctionContext.Provider>
 					</Box>
 				</Fade>
@@ -309,7 +371,7 @@ function ActivityCreator() {
 					title='Điểm hoạt động'
 					titleTypographyProps={{ sx: { lineHeight: '1.6 !important', letterSpacing: '0.15px !important' } }}
 					action={
-						<Button variant='contained' onClick={() => setOpen({ cmd: 'add' })}>
+						<Button variant='contained' onClick={openModal('add')}>
 							Thêm
 						</Button>
 					}
@@ -323,7 +385,7 @@ function ActivityCreator() {
 										<TableHeaderCell></TableHeaderCell>
 										<TableHeaderCell>Người tạo</TableHeaderCell>
 										<TableHeaderCell>Người nhận</TableHeaderCell>
-										<TableHeaderCell>Điểm</TableHeaderCell>
+										<TableHeaderCell sx={{ textAlign: 'right' }}>Điểm</TableHeaderCell>
 										<TableHeaderCell>Ghi chú</TableHeaderCell>
 										<TableHeaderCell sx={{ textAlign: 'center' }}>Hành động</TableHeaderCell>
 									</TableRow>
@@ -351,13 +413,10 @@ function ActivityCreator() {
 											</TableBodyCell>
 											<TableBodyCell>{value.reason}</TableBodyCell>
 											<TableBodyCell sx={{ textAlign: 'center' }}>
-												<StyledLink
-													href='#'
-													onClick={() => setOpen({ cmd: 'edit', id: value })}
-												>
+												<StyledLink href='#' onClick={openModal('edit', value)}>
 													Sửa
 												</StyledLink>
-												<StyledLink href='#' onClick={() => setOpen({ cmd: 'del', id: value })}>
+												<StyledLink href='#' onClick={openModal('del', value)}>
 													Xóa
 												</StyledLink>
 											</TableBodyCell>
@@ -369,7 +428,7 @@ function ActivityCreator() {
 					</Box>
 				</CardContent>
 			</Card>
-		</div>
+		</Box>
 	)
 }
 
