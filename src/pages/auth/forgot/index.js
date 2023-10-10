@@ -27,6 +27,7 @@ import SetPassword from 'src/views/pages/auth/forgot/SetPassword'
 import Error404 from 'src/pages/404'
 import { useCookies } from 'react-cookie'
 import Decentralization from 'src/layouts/Decentralization'
+import ForRole from 'src/layouts/ForRole'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -200,8 +201,10 @@ const RecoverPassword = () => {
 	)
 }
 RecoverPassword.getLayout = page => (
-	<Decentralization forGuest>
-		<BlankLayout>{page}</BlankLayout>
+	<Decentralization>
+		<ForRole guest>
+			<BlankLayout>{page}</BlankLayout> {/* giao diện cho guest */}
+		</ForRole>
 	</Decentralization>
 )
 

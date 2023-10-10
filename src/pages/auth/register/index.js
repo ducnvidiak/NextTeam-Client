@@ -57,6 +57,7 @@ import {
 } from '../../../input-validation/index'
 import { postAPI } from 'src/utils/request'
 import Decentralization from 'src/layouts/Decentralization'
+import ForRole from 'src/layouts/ForRole'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -500,8 +501,10 @@ const RegisterPage = () => {
 	)
 }
 RegisterPage.getLayout = page => (
-	<Decentralization forGuest>
-		<BlankLayout>{page}</BlankLayout>
+	<Decentralization>
+		<ForRole guest>
+			<BlankLayout>{page}</BlankLayout> {/* giao diện cho guest */}
+		</ForRole>
 	</Decentralization>
 )
 

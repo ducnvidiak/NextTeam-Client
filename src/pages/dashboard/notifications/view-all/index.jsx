@@ -43,11 +43,9 @@ const TableStickyHeader = () => {
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
-	console.log(search)
 
 	//modal
 	const [open, setOpen] = useState(false)
-	const [scroll, setScroll] = useState('paper')
 
 	function handleClickOpen(id, title, content, type, createdAt) {
 		setNotificationDetail({
@@ -115,7 +113,7 @@ const TableStickyHeader = () => {
 			'http://localhost:8080/notification?action=list-noti&clubId=' +
 				cookies['clubData'].clubId +
 				'&userId=' +
-				userData['userData'].id,
+				userData.id,
 			{
 				method: 'GET',
 				headers: {
