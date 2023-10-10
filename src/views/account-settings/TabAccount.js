@@ -24,7 +24,7 @@ const axios = require('axios')
 import Close from 'mdi-material-ui/Close'
 
 import { updateUserAvatar, updateUserInfo } from '../../pages/user/apiUtils'
-import { validateEmail, validateName } from '../../pages/input-validation/index'
+import { validateEmail, validateName } from '../../input-validation/index'
 import { ConsoleLine } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
 
