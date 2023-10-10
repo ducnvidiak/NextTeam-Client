@@ -1,4 +1,4 @@
-// ** React Imports
+// ** React Imports Pasw0rd12!@ re
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
@@ -25,7 +25,7 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'nprogress'
 
-import { getUserInfo, getAllMajors } from './apiUtils'
+import { getUserInfo, getAllMajors } from '../../api-utils/apiUtils'
 
 const Tab = styled(MuiTab)(({ theme }) => ({
 	[theme.breakpoints.down('md')]: {

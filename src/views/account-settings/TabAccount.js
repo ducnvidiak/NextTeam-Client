@@ -23,7 +23,7 @@ const axios = require('axios')
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
 
-import { updateUserAvatar, updateUserInfo } from '../../pages/user/apiUtils'
+import { updateUserAvatar, updateUserInfo } from '../../api-utils/apiUtils'
 import { validateEmail, validateName } from '../../input-validation/index'
 import { ConsoleLine } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
@@ -154,7 +154,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 									variant='contained'
 									htmlFor='account-settings-upload-image'
 								>
-									Upload New Photo
+									Tải ảnh đại diện
 									<input
 										hidden
 										type='file'
@@ -164,10 +164,11 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 									/>
 								</ButtonStyled>
 								<ResetButtonStyled color='error' variant='outlined' onClick={handleResetAvatar}>
-									Reset
+									Hủy
 								</ResetButtonStyled>
 								<Typography variant='body2' sx={{ marginTop: 5 }}>
-									Allowed PNG or JPEG. Max size of 800K.
+									Cho phép PNG hoặc JPEG.{' '}
+									<span style={{ color: 'grey', fontSize: '12px' }}>(kích thước tối đa 800K)</span>
 								</Typography>
 							</Box>
 						</Box>
@@ -191,7 +192,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 							fullWidth
 							type='email'
 							label='Email'
-							placeholder='johnDoe@example.com'
+							placeholder='ducns@example.com'
 							value={currentUserInfo?.email || ''}
 							error={emailError.status}
 							onChange={event => {
@@ -211,8 +212,8 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
-							label='First name'
-							placeholder='Nguyễn Sỹ'
+							label='Họ và tên đệm'
+							placeholder='Bùi Thiên'
 							value={currentUserInfo?.firstname || ''}
 							error={firstnameError.status}
 							onChange={event => {
@@ -232,8 +233,8 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
-							label='Last name'
-							placeholder='John Doe'
+							label='Tên'
+							placeholder='Ân'
 							value={currentUserInfo?.lastname || ''}
 							error={lastnameError.status}
 							onChange={event => {

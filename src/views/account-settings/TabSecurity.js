@@ -23,7 +23,7 @@ import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 
 const axios = require('axios')
 
-import { changeUserPass } from '../../pages/user/apiUtils'
+import { changeUserPass } from '../../api-utils/apiUtils'
 import { ToastContainer, toast } from 'react-toastify'
 import { validatePassword } from '../../input-validation/index'
 import { FormHelperText } from '@mui/material'
@@ -89,15 +89,12 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 			newPassword: values.newPassword,
 			email: userInfo.email
 		}
-		const checkValidPassword = validatePassword(values.newPassword)
-		setValues({
-			...values,
-			newPasswordError: { status: !checkValidPassword.valid, message: checkValidPassword.message }
-		})
 
-		if (values.confirmNewPassword !== values.newPassword) {
-			toast.error("New Password and Confirm password aren't the same!")
-		} else if (checkValidPassword.valid) {
+		if (values.newPasswordError.status) {
+			toast.error('Vui lòng điền thông tin hợp lệ.')
+		} else if (values.confirmNewPassword !== values.newPassword) {
+			toast.error('Xác nhận mật khẩu mới chưa chính xác.')
+		} else {
 			changeUserPass(authInfo, userInfo.id).then(response => {
 				if (response.message == 'success') {
 					setUserInfo({ ...currentUserInfo })
@@ -121,11 +118,11 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 							<Grid item xs={12} sx={{ marginTop: 4.75 }}>
 								<FormControl fullWidth>
 									<InputLabel htmlFor='account-settings-current-password'>
-										Current Password
+										Mật khẩu hiện tại
 									</InputLabel>
 									<OutlinedInput
 										autoComplete='true'
-										label='Current Password'
+										label='Mật khẩu hiện tại'
 										value={values.currentPassword}
 										id='account-settings-current-password'
 										type={values.showCurrentPassword ? 'text' : 'password'}
@@ -148,13 +145,35 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 
 							<Grid item xs={12} sx={{ marginTop: 6 }}>
 								<FormControl fullWidth>
-									<InputLabel htmlFor='account-settings-new-password'>New Password</InputLabel>
+									<InputLabel htmlFor='account-settings-new-password'>Mật khẩu mới</InputLabel>
 									<OutlinedInput
 										autoComplete='true'
-										label='New Password'
+										label='Mật khẩu mới'
 										value={values.newPassword}
+										error={values.newPasswordError.status}
 										id='account-settings-new-password'
-										onChange={handleNewPasswordChange('newPassword')}
+										onChange={event => {
+											const validPassword = validatePassword(event.target.value)
+											if (!validPassword.valid) {
+												setValues({
+													...values,
+													newPasswordError: {
+														status: true,
+														message: validPassword.message
+													},
+													newPassword: event.target.value
+												})
+											} else {
+												setValues({
+													...values,
+													newPasswordError: {
+														status: false,
+														message: validPassword.message
+													},
+													newPassword: event.target.value
+												})
+											}
+										}}
 										type={values.showNewPassword ? 'text' : 'password'}
 										endAdornment={
 											<InputAdornment position='end'>
@@ -169,10 +188,12 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 											</InputAdornment>
 										}
 									/>
-									{values.newPasswordError.status && (
+									{values.newPasswordError.status == true ? (
 										<FormHelperText sx={{ color: 'red' }}>
 											{values.newPasswordError.message}
 										</FormHelperText>
+									) : (
+										''
 									)}
 								</FormControl>
 							</Grid>
@@ -180,11 +201,11 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 							<Grid item xs={12}>
 								<FormControl fullWidth>
 									<InputLabel htmlFor='account-settings-confirm-new-password'>
-										Confirm New Password
+										Xác nhận mật khẩu mới
 									</InputLabel>
 									<OutlinedInput
 										autoComplete='true'
-										label='Confirm New Password'
+										label='Xác nhận mật khẩu mới'
 										value={values.confirmNewPassword}
 										id='account-settings-confirm-new-password'
 										type={values.showConfirmNewPassword ? 'text' : 'password'}
@@ -210,9 +231,11 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 					<Grid item xs={12} sm={6}>
 						<Grid container spacing={5}>
 							<Grid item xs={12}>
-								<Box>
+								<Box
+									sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 2 }}
+								>
 									<KeyOutline sx={{ marginRight: 3 }} />
-									<Typography variant='h6'>Two-factor authentication</Typography>
+									<Typography variant='h6'>Xác thực hai yếu tố</Typography>
 								</Box>
 							</Grid>
 							<Grid item xs={12}>
@@ -238,11 +261,11 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 											<LockOpenOutline sx={{ fontSize: '1.75rem' }} />
 										</Avatar>
 										<Typography sx={{ fontWeight: 600, marginTop: 3.5, marginBottom: 3.5 }}>
-											Two factor authentication is not enabled yet.
+											Xác thực hai yếu tố chưa được kích hoạt.
 										</Typography>
 										<Typography variant='body2'>
-											Two-factor authentication adds an additional layer of security to your
-											account by requiring more than just a password to log in. Learn more.
+											Xác thực hai yếu tố bổ sung thêm một lớp bảo mật cho tài khoản của bạn bằng
+											cách yêu cầu nhiều hơn chỉ mật khẩu để đăng nhập. Tìm hiểu thêm.
 										</Typography>
 									</Box>
 								</Box>
@@ -257,7 +280,7 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 					<Grid item xs={12} sm={12} md={6}>
 						<Box sx={{ mt: 2, mr: 5, display: 'flex', justifyContent: 'flex-end' }}>
 							<Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
-								Save Changes
+								Lưa thay đổi
 							</Button>
 							<Button
 								type='reset'
@@ -272,7 +295,7 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 									})
 								}
 							>
-								Reset
+								Hủy
 							</Button>
 						</Box>
 					</Grid>

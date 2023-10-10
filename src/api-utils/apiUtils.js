@@ -125,4 +125,55 @@ const getListOfAllUser = async () => {
 	return json
 }
 
-module.exports = { updateUserAvatar, updateUserInfo, getUserInfo, changeUserPass, getAllMajors, getListOfAllUser }
+const getProposalById = async id => {
+	const data = JSON.stringify({ type: 'one', id: id })
+
+	const config = {
+		headers: {
+			'Content-Type': 'application/json; charset=utf-8'
+		}
+	}
+
+	const json = await axios
+		.post('http://localhost:8080/api/proposal', data, config)
+		.then(response => {
+			console.log(response.data)
+
+			return response.data
+		})
+		.catch(error => {
+			console.log('Error: ', error)
+
+			return null
+		})
+
+	return json
+}
+
+const getProposalsByUserId = async id => {
+	const json = await axios
+		.get('http://localhost:8080/api/proposal?id=' + id)
+		.then(response => {
+			console.log(response.data)
+
+			return response.data
+		})
+		.catch(error => {
+			console.log('Error: ', error)
+
+			return null
+		})
+
+	return json
+}
+
+module.exports = {
+	updateUserAvatar,
+	updateUserInfo,
+	getUserInfo,
+	changeUserPass,
+	getAllMajors,
+	getListOfAllUser,
+	getProposalById,
+	getProposalsByUserId
+}

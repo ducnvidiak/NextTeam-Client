@@ -24,13 +24,13 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import axios from 'axios'
 import { Autocomplete, Box, Typography } from '@mui/material'
 import { Country, State, City } from 'country-state-city'
-import { updateUserInfo } from '../../pages/user/apiUtils'
+import { updateUserInfo } from '../../api-utils/apiUtils'
 import { Cookie } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
 import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../input-validation/index'
 
 const CustomInput = forwardRef((props, ref) => {
-	return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
+	return <TextField inputRef={ref} label='Ngày sinh' fullWidth {...props} />
 })
 
 const TabInfo = ({ userInfo, setUserInfo, majors }) => {
@@ -105,16 +105,14 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							label='Bio'
 							minRows={2}
 							placeholder='Bio'
-							value={`The name’s ${
-								currentUserInfo.lastname || 'John'
-							}. I am a tireless seeker of knowledge, occasional purveyor of wisdom and also, coincidentally, a graphic designer. Algolia helps businesses across industries quickly create relevant 😎, scalable 😀, and lightning 😍 fast search and discovery experiences.`}
+							value={`Tên tôi là ${currentUserInfo.lastname}. Sau đây là mô tả ngắn gọn của tôi ...  😎😀😍`}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
 							type='text'
-							label='Student code'
+							label='Mã sinh viên'
 							placeholder='DE160488'
 							value={currentUserInfo?.username.toUpperCase() || ''}
 							error={studentCodeError.status}
@@ -151,12 +149,12 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
           </Grid> */}
 					<Grid item xs={12} sm={6}>
 						<FormControl fullWidth>
-							<InputLabel id='major-label'>Major</InputLabel>
+							<InputLabel id='major-label'>Chuyên ngành</InputLabel>
 							<Select
 								labelId='major-label'
 								id='major'
 								value={currentUserInfo?.major || ''}
-								label='Major'
+								label='Chuyên ngành'
 								onChange={event => {
 									setCurrentUserInfo(current => {
 										return { ...current, major: event?.target.value }
@@ -177,7 +175,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 						<TextField
 							fullWidth
 							type='text'
-							label='Phone'
+							label='Số điện thoại'
 							placeholder='0123456789'
 							value={currentUserInfo?.phoneNumber || ''}
 							error={phoneNumberError.status}
@@ -207,7 +205,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								id='account-settings-date'
 								placeholderText='MM-DD-YYYY'
 								customInput={<CustomInput />}
-								error={dobError}
+								error={dobError.status}
 								onChange={newValue => {
 									setDate(newValue)
 									const validDoB = validateBirthOfDate(newValue?.toISOString().split('T')[0])
@@ -220,7 +218,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 										})
 									}
 								}}
-							/>{' '}
+							/>
 							{dobError.status && (
 								<Typography variant='caption' color='error' sx={{ marginLeft: '20px' }}>
 									Ngày sinh của bạn phải đủ 7 tuổi trở lên
@@ -261,7 +259,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								renderInput={params => (
 									<TextField
 										{...params}
-										label='Choose a country'
+										label='Chọn quốc gia'
 										inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
 									/>
 								)}
@@ -293,7 +291,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								renderInput={params => (
 									<TextField
 										{...params}
-										label='City'
+										label='Thành phố/ Tỉnh'
 										inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
 									/>
 								)}
@@ -303,7 +301,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
-							label='Facebook Url'
+							label='Link tài khoản Facebook'
 							placeholder='https://www.facebook.com/profile.php?id=[user_id]'
 							value={currentUserInfo?.facebookUrl || ''}
 							onChange={event => {
@@ -317,7 +315,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
-							label='LinkedIn Url'
+							label='Link tài khoản Linkedin'
 							placeholder='https://www.linkedin.com/in/[user_id]/'
 							value={currentUserInfo.linkedInUrl || ''}
 							onChange={event => {
@@ -333,7 +331,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<FormControl>
-							<FormLabel sx={{ fontSize: '0.875rem' }}>Gender</FormLabel>
+							<FormLabel sx={{ fontSize: '0.875rem' }}>Giới tính</FormLabel>
 							<RadioGroup
 								onChange={event => {
 									setCurrentUserInfo(current => {
@@ -359,18 +357,18 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								aria-label='gender'
 								name='account-settings-info-radio'
 							>
-								<FormControlLabel value='Male' label='Male' control={<Radio />} />
-								<FormControlLabel value='Female' label='Female' control={<Radio />} />
-								<FormControlLabel value='Others' label='Other' control={<Radio />} />
+								<FormControlLabel value='Male' label='Nam' control={<Radio />} />
+								<FormControlLabel value='Female' label='Nữ' control={<Radio />} />
+								<FormControlLabel value='Others' label='Đười ươi' control={<Radio />} />
 							</RadioGroup>
 						</FormControl>
 					</Grid>
 					<Grid item xs={12}>
 						<Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
-							Save Changes
+							Lưu thay đổi
 						</Button>
 						<Button type='reset' variant='outlined' color='secondary' onClick={handleReset}>
-							Reset
+							Hủy
 						</Button>
 					</Grid>
 				</Grid>
