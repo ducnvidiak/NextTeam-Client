@@ -134,6 +134,7 @@ const TableStickyHeader = props => {
 
   useEffect(() => {
     refreshClubData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clubs])
 
   useEffect(() => {

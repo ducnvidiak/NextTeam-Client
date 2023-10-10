@@ -27,6 +27,7 @@ function FeedbackTable({ event }) {
 				setFeedbacks(data)
 			})
 			.catch(error => console.error('Error:', error))
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [cookies])
 
 	const rows = feedbacks.map((item, index) =>

@@ -281,6 +281,7 @@ function ClubList() {
 
 	useEffect(() => {
 		callAPI()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
 
 	return (

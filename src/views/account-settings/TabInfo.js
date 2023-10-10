@@ -27,7 +27,7 @@ import { Country, State, City } from 'country-state-city'
 import { updateUserInfo } from '../../pages/user/apiUtils'
 import { Cookie } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
-import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../pages/input-validation/index'
+import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../input-validation/index'
 
 const CustomInput = forwardRef((props, ref) => {
 	return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
@@ -47,6 +47,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 
 	useEffect(() => {
 		setCurrentUserInfo({ ...userInfo })
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userInfo.id])
 
 	const [country, setCountry] = useState(

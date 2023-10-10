@@ -40,6 +40,7 @@ function Department() {
   }
   useEffect(() => {
     handleLoadDataDepartments()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [departments])
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)

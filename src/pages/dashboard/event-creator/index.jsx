@@ -56,6 +56,7 @@ function EventCreatorPage() {
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
 
 	return (
