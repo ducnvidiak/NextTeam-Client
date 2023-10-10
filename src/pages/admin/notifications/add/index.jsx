@@ -48,7 +48,8 @@ function NotificationCreator() {
 	const [save, setSave] = useState(false)
 	const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
 	const [isSearchable, setIsSearchable] = useState(true)
-	const [clubMember, setClubMember] = useState([])
+	const [userMember, setUserMember] = useState([])
+	const [clubList, setClubList] = useState([])
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue)
@@ -59,7 +60,7 @@ function NotificationCreator() {
 			fetch('http://localhost:8080/notification?action=send-public-email', {
 				method: 'POST',
 				body: JSON.stringify({
-					clubId: clubData['clubData']?.clubId,
+					clubId: null,
 					title: title.trim(),
 					content: content.trim()
 				}),
@@ -75,7 +76,7 @@ function NotificationCreator() {
 		fetch('http://localhost:8080/notification?action=add-noti', {
 			method: 'POST',
 			body: JSON.stringify({
-				clubId: clubData['clubData']?.clubId,
+				clubId: null,
 				title: title.trim(),
 				content: content.trim()
 			}),
@@ -88,10 +89,57 @@ function NotificationCreator() {
 			})
 			.then(function (data) {
 				if (data.id == null) {
+					console.log(data)
 					toast.error(data)
 				} else {
+					console.log('Gửi thông báo thành công')
 					toast.success('Gửi thông báo thành công, đang chuyển hướng sang trang chủ!')
-					router.push('/dashboard/notification-creator')
+					router.push('/admin/notifications')
+				}
+			})
+			.catch(error => console.error('Error:', error))
+	}
+
+	const handleClubSubmit = event => {
+		if (save) {
+			fetch('http://localhost:8080/notification?action=send-public-email', {
+				method: 'POST',
+				body: JSON.stringify({
+					clubId: clubId,
+					title: title.trim(),
+					content: content.trim()
+				}),
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.catch(error => console.error('Error:', error))
+		}
+		fetch('http://localhost:8080/notification?action=add-noti', {
+			method: 'POST',
+			body: JSON.stringify({
+				clubId: clubId,
+				title: title.trim(),
+				content: content.trim()
+			}),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				if (data.id == null) {
+					console.log(data)
+					toast.error(data)
+				} else {
+					console.log('Gửi thông báo thành công')
+					toast.success('Gửi thông báo thành công, đang chuyển hướng sang trang chủ!')
+					router.push('/admin/notifications')
 				}
 			})
 			.catch(error => console.error('Error:', error))
@@ -102,7 +150,7 @@ function NotificationCreator() {
 			fetch('http://localhost:8080/notification?action=send-private-email', {
 				method: 'POST',
 				body: JSON.stringify({
-					clubId: clubData['clubData']?.clubId,
+					clubId: null,
 					sendTo: sendTo,
 					title: title.trim(),
 					content: content.trim()
@@ -119,7 +167,7 @@ function NotificationCreator() {
 		fetch('http://localhost:8080/notification?action=add-private-noti', {
 			method: 'POST',
 			body: JSON.stringify({
-				clubId: clubData['clubData']?.clubId,
+				clubId: null,
 				sendTo: sendTo,
 				title: title.trim(),
 				content: content.trim()
@@ -133,10 +181,12 @@ function NotificationCreator() {
 			})
 			.then(function (data) {
 				if (data.id == null) {
+					console.log(data)
 					toast.error(data)
 				} else {
+					console.log('Gửi thông báo thành công')
 					toast.success('Gửi thông báo thành công, đang chuyển hướng sang trang chủ!')
-					router.push('/dashboard/notification-creator')
+					router.push('/admin/notifications')
 				}
 			})
 			.catch(error => console.error('Error:', error))
@@ -150,8 +200,8 @@ function NotificationCreator() {
 	}))
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
-			method: 'GET',
+		fetch(`http://localhost:8080/club-user?action=view-list-user`, {
+			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
 			}
@@ -160,10 +210,15 @@ function NotificationCreator() {
 				return response.json()
 			})
 			.then(function (data) {
-				setClubMember(data)
+				setUserMember(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [clubData])
+		fetch('http://localhost:8080/api/club?cmd=list')
+			.then(res => res.json())
+			.then(result => {
+				setClubList(result)
+			})
+	}, [])
 
 	return (
 		<Grid item xs={12}>
@@ -171,8 +226,9 @@ function NotificationCreator() {
 			<Card>
 				<TabContext value={value}>
 					<TabList onChange={handleChange} aria-label='card navigation example'>
-						<Tab value='1' label='Tất cả thành viên CLB' />
+						<Tab value='1' label='Thông báo chung' />
 						<Tab value='2' label='Tạo thông báo cho cá nhân' />
+						<Tab value='3' label='Tạo thông báo cho CLB' />
 					</TabList>
 					<CardContent>
 						<TabPanel value='1' sx={{ p: 0 }}>
@@ -186,7 +242,6 @@ function NotificationCreator() {
 												id='title'
 												name='title'
 												onChange={event => setTitle(event.target.value)}
-												value={title}
 											/>
 										</Grid>
 										<Grid item xs={12} sm={12}>
@@ -250,7 +305,6 @@ function NotificationCreator() {
 												id='title'
 												name='title'
 												onChange={event => setTitle(event.target.value)}
-												value={title}
 											/>
 										</Grid>
 										<Grid item xs={12} sm={12}>
@@ -288,7 +342,7 @@ function NotificationCreator() {
 											<Autocomplete
 												id='sendTo'
 												fullWidth
-												options={clubMember}
+												options={userMember}
 												autoHighlight
 												getOptionLabel={option => option.email}
 												onChange={event => setSendTo(event.target.value)}
@@ -326,6 +380,98 @@ function NotificationCreator() {
 										variant='contained'
 										sx={{ marginBottom: 7, marginTop: 6 }}
 										onClick={e => handleSubmitPrivate(e)}
+									>
+										Gửi thông báo
+									</Button>
+								</form>
+							</CardContent>
+						</TabPanel>
+						<TabPanel value='3' sx={{ p: 0 }}>
+							<CardContent>
+								<form noValidate autoComplete='off' method='POST'>
+									<Grid container spacing={6}>
+										<Grid item xs={12} sm={12}>
+											<TextField
+												fullWidth
+												label='Tiêu đề'
+												id='title'
+												name='title'
+												onChange={event => setTitle(event.target.value)}
+											/>
+										</Grid>
+										<Grid item xs={12} sm={12}>
+											<Editor
+												apiKey='prt9ektecsmty8j5e4o3sv1kwt1kmaadr8blewpfqi4ue43c'
+												onChange={(event, editor) => {
+													const data = editor.getContent()
+													setContent(data)
+												}}
+												init={{
+													height: 500,
+													menubar: true,
+													plugins: [
+														'advlist',
+														'autolink',
+														'lists',
+														'link',
+														'image',
+														'charmap',
+														'preview',
+														'searchreplace',
+														'insertdatetime',
+														'table',
+														'wordcount'
+													],
+													toolbar:
+														'undo redo | blocks | ' +
+														'bold italic forecolor | alignleft aligncenter ' +
+														'alignright alignjustify | bullist numlist outdent indent | ' +
+														'image, table'
+												}}
+											/>
+										</Grid>
+										<Grid item xs={12} sm={12}>
+											<Autocomplete
+												id='sendTo'
+												fullWidth
+												options={clubList}
+												autoHighlight
+												getOptionLabel={option => option.subname + ' - ' + option.name}
+												onChange={event => setClubId(event.target.value)}
+												renderOption={(props, option) => (
+													<Box
+														component='li'
+														sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+														{...props}
+														value={option.id}
+													>
+														{option.subname} - {option.name}
+													</Box>
+												)}
+												renderInput={params => (
+													<TextField
+														{...params}
+														label='Gửi cho'
+														inputProps={{
+															...params.inputProps,
+															autoComplete: 'new-password' // disable autocomplete and autofill
+														}}
+													/>
+												)}
+											/>
+										</Grid>
+									</Grid>
+									<Box>
+										<FormControlLabel
+											control={<Checkbox onChange={event => setSave(event.target.value)} />}
+											label='Gửi đồng thời email'
+										/>
+									</Box>
+
+									<Button
+										variant='contained'
+										sx={{ marginBottom: 7, marginTop: 6 }}
+										onClick={e => handleClubSubmit(e)}
 									>
 										Gửi thông báo
 									</Button>

@@ -49,13 +49,16 @@ function ClubItem({ club, index }) {
 	const [open, setOpen] = useState(false)
 	const [department, setDepartment] = useState([])
 	const [loading, setLoading] = useState(false)
-	const [userData, setUserData] = useCookies(['userData'])
+	const [cookies, setCookies] = useCookies(['userData'])
 
 	//formData
 	const [departmentId, setDepartmentId] = useState('')
 	const [clubId, setClubId] = useState()
 	const [cv, setCv] = useState()
-	const userId = userData['userData']?.id
+	const [userId, setUserId] = useState()
+	useEffect(() => {
+		;(async () => setUserId((await getUserInfo(cookies['userData'])).id))()
+	}, [cookies])
 
 	const handleUpload = () => {
 		const formData = new FormData()
@@ -74,6 +77,7 @@ function ClubItem({ club, index }) {
 			)
 			.then(response => {
 				console.log(response.data) // Xử lý phản hồi từ server (nếu cần)
+				handleClose()
 			})
 			.catch(error => {
 				console.error(error)
@@ -264,19 +268,18 @@ function ClubList() {
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
-	
 
 	const callAPI = async () => {
-		if(userData)
-		try {
-			setLoading(true)
-			const res = await getAPI(`http://localhost:8080/api/club?cmd=list-res&userId=${userData?.id}`)
-			setClubs(res)
-		} catch (error) {
-			console.log(error)
-		} finally {
-			setLoading(false)
-		}
+		if (userData)
+			try {
+				setLoading(true)
+				const res = await getAPI(`http://localhost:8080/api/club?cmd=list-res&userId=${userData?.id}`)
+				setClubs(res)
+			} catch (error) {
+				console.log(error)
+			} finally {
+				setLoading(false)
+			}
 	}
 
 	useEffect(() => {

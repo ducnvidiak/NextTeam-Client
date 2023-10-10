@@ -95,11 +95,11 @@ const UserDropdown = () => {
 				return response.json()
 			})
 			.then(function (data) {
+				console.log(data)
 				setClubOfMeData(data)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData])
-
 
 	// ** Hooks
 	const router = useRouter()
@@ -126,10 +126,12 @@ const UserDropdown = () => {
 		}
 		setSelectedValue(event.target.value)
 
-		setclubData('clubData', JSON.stringify(clubData), { path: '/' })
-		toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
+		{
+			clubData.clubId == 'none' ? '' : router.push('/dashboard')
+			setclubData('clubData', JSON.stringify(clubData), { path: '/' })
+			toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
+		}
 		setOpen(false)
-		router.push('/dashboard')
 	}
 
 	const styles = {
@@ -194,7 +196,7 @@ const UserDropdown = () => {
 								onChange={e => handleChange(e)}
 								value={selectedValue}
 							>
-								<MenuItem>Lựa chọn</MenuItem>
+								<MenuItem value='none'>Lựa chọn</MenuItem>
 
 								{clubOfMeData.map(option => (
 									<MenuItem key={option.id} value={option.id}>
@@ -301,7 +303,13 @@ const UserDropdown = () => {
 						</Link>
 					</Box>
 				</MenuItem>
-				<MenuItem sx={{ p: 0 }} onClick={() => {handleDropdownClose(); handleLogout()}}>
+				<MenuItem
+					sx={{ p: 0 }}
+					onClick={() => {
+						handleDropdownClose()
+						handleLogout()
+					}}
+				>
 					<Box sx={styles}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
 						<Link passHref underline='none' href=''>
