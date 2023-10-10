@@ -109,8 +109,10 @@ const UserDropdown = () => {
 		setAnchorEl(event.currentTarget)
 	}
 
-	const handleLogout = () => {
+	const handleLogout = e => {
+		e.preventDefault()
 		removeCookie('userData')
+		removeclubData('clubData')
 		router.push('/auth/login')
 	}
 
@@ -302,16 +304,10 @@ const UserDropdown = () => {
 						</Link>
 					</Box>
 				</MenuItem>
-				<MenuItem
-					sx={{ p: 0 }}
-					onClick={() => {
-						handleDropdownClose()
-						handleLogout()
-					}}
-				>
+				<MenuItem sx={{ p: 0 }} onClick={handleLogout}>
 					<Box sx={styles}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
-						<Link passHref underline='none' href=''>
+						<Link onClick={handleLogout} passHref underline='none' href=''>
 							<Button>Đăng xuất</Button>
 						</Link>
 					</Box>
