@@ -4,36 +4,6 @@ import React from 'react'
 import { useCookies } from 'react-cookie'
 import { getUserInfo, getUserPoints, getUserPointsHistory } from 'src/utils/info'
 
-const data = [
-	{
-		progress: 80,
-		imgHeight: 27,
-		title: 'Hoạt động 1',
-		color: 'primary',
-		amount: '+ 22 điểm',
-		subtitle: 'Hoạt động 1',
-		imgSrc: '/images/cards/logo-bitbank.png'
-	},
-	{
-		progress: 90,
-		color: 'info',
-		imgHeight: 27,
-		title: 'Hoạt động 2',
-		amount: '+ 37 điểm',
-		subtitle: 'Hoạt động 2',
-		imgSrc: '/images/cards/logo-bitbank.png'
-	},
-	{
-		progress: 10,
-		imgHeight: 20,
-		title: 'Hoạt động 3',
-		color: 'error',
-		amount: '- 30 điểm',
-		subtitle: 'Vắng mặt',
-		imgSrc: '/images/cards/logo-aviato.png'
-	}
-]
-
 const arrowStyle = {
 	borderRadius: '50%'
 }
@@ -79,7 +49,7 @@ const ActivityPoint = () => {
 							sx={{
 								display: 'flex',
 								alignItems: 'center',
-								...(index !== data.length - 1 ? { mb: 8.5 } : {})
+								...(index !== userPointsHistories.length - 1 ? { mb: 8.5 } : {})
 							}}
 						>
 							<Avatar

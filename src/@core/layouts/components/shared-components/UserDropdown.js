@@ -111,8 +111,8 @@ const UserDropdown = () => {
 
 	const handleLogout = e => {
 		e.preventDefault()
-		removeCookie('userData')
-		removeclubData('clubData')
+		removeCookie('userData', { path: '/' })
+		removeclubData('clubData', { path: '/' })
 		router.push('/auth/login')
 	}
 
