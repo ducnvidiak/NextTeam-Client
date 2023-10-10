@@ -65,8 +65,9 @@ const TableStickyHeader = () => {
 	}
 
 	const statusObj = {
-		private: { color: 'primary' },
-		public: { color: 'success' }
+		private: { color: 'primary', label: 'Cá nhân' },
+		public: { color: 'success', label: 'CLB' },
+		wide: { color: 'warning', label: 'Chung' }
 	}
 
 	const handleChangePage = (event, newPage) => {
@@ -189,7 +190,7 @@ const TableStickyHeader = () => {
 										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
 											<Chip
-												label={row.type == 'private' ? 'TB Cá nhân' : 'TB Chung'}
+												label={statusObj[row.type]?.label}
 												color={statusObj[row.type]?.color}
 												sx={{
 													height: 24,

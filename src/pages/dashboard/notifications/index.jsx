@@ -49,7 +49,7 @@ const Notifications = () => {
 	const [open, setOpen] = useState(false)
 	const [scroll, setScroll] = useState('paper')
 
-	function handleClickOpen(id, title, content, type, createdAt) {
+	function handleClickOpen(id, title, content, type, createdAt, hasSeen) {
 		setNotificationDetail({
 			id: id,
 			title: title,
@@ -58,7 +58,7 @@ const Notifications = () => {
 			createdAt: createdAt
 		})
 		setOpen(true)
-		updateView(id, type)
+		updateView(id, type, hasSeen)
 	}
 
 	const handleClose = () => {
@@ -74,48 +74,51 @@ const Notifications = () => {
 	}
 
 	const statusObj = {
-		private: { color: 'primary' },
-		public: { color: 'success' }
+		private: { color: 'primary', label: 'Cá nhân' },
+		public: { color: 'success', label: 'CLB' },
+		wide: { color: 'warning', label: 'Chung' }
 	}
 
-	const updateView = (id, type) => {
-		if (type == 'private') {
-			fetch('http://localhost:8080/notification?action=update-view-private-email&id=' + id, {
-				method: 'GET',
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
-				}
-			})
-				.then(function (response) {
-					return response.json()
-				})
-				.then(function (data) {
-					console.log(data)
-					dispatch({ type: 'trigger' })
-				})
-				.catch(error => console.error('Error:', error))
-		}
-		if (type == 'public') {
-			fetch(
-				'http://localhost:8080/notification?action=update-view-public-email&id=' +
-					id +
-					'&userId=' +
-					userData.id,
-				{
+	const updateView = (id, type, hasSeen) => {
+		if (hasSeen == 0) {
+			if (type == 'private') {
+				fetch('http://localhost:8080/notification?action=update-view-private-email&id=' + id, {
 					method: 'GET',
 					headers: {
 						'Content-type': 'application/json; charset=UTF-8'
 					}
-				}
-			)
-				.then(function (response) {
-					return response.json()
 				})
-				.then(function (data) {
-					console.log(data)
-					dispatch({ type: 'trigger' })
-				})
-				.catch(error => console.error('Error:', error))
+					.then(function (response) {
+						return response.json()
+					})
+					.then(function (data) {
+						console.log(data)
+						dispatch({ type: 'trigger' })
+					})
+					.catch(error => console.error('Error:', error))
+			}
+			if (type == 'public') {
+				fetch(
+					'http://localhost:8080/notification?action=update-view-public-email&id=' +
+						id +
+						'&userId=' +
+						userData.id,
+					{
+						method: 'GET',
+						headers: {
+							'Content-type': 'application/json; charset=UTF-8'
+						}
+					}
+				)
+					.then(function (response) {
+						return response.json()
+					})
+					.then(function (data) {
+						console.log(data)
+						dispatch({ type: 'trigger' })
+					})
+					.catch(error => console.error('Error:', error))
+			}
 		}
 	}
 
@@ -181,7 +184,8 @@ const Notifications = () => {
 											notification.title,
 											notification.content,
 											notification.type,
-											notification.createdAt
+											notification.createdAt,
+											notification.hasSeen
 										)
 									}
 								>
@@ -211,7 +215,7 @@ const Notifications = () => {
 												)}
 											</Typography>
 											<Chip
-												label={notification.type == 'private' ? 'TB Cá nhân' : 'TB Chung'}
+												label={statusObj[notification.type].label}
 												color={statusObj[notification.type].color}
 												sx={{
 													height: 24,

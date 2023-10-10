@@ -195,7 +195,7 @@ const NotificationCreator = () => {
 				return response.json()
 			})
 			.then(function (data) {
-				setNotificationsData(data)
+				setNotificationsData(data.filter(item => item.type == 'public'))
 			})
 			.catch(error => console.error('Error:', error))
 

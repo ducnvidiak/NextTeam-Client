@@ -14,6 +14,7 @@ import { Button, Container } from '@mui/material'
 import { useCookies } from 'react-cookie'
 import { useEffect, useState } from 'react'
 import ViewPDF from './ViewPDF'
+import { getUserInfo } from 'src/utils/info'
 
 const Application = () => {
 	const [application, setApplication] = useState([])

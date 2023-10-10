@@ -1,25 +1,39 @@
 import * as React from 'react'
+import { useEffect, useState } from 'react'
+
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
-import Slide from '@mui/material/Slide'
-import { Avatar, Box, Card, CardContent, CardHeader, Chip, Grid, Typography } from '@mui/material'
+import {
+	Autocomplete,
+	Avatar,
+	Box,
+	Card,
+	CardContent,
+	CardHeader,
+	Checkbox,
+	Chip,
+	FormControl,
+	FormControlLabel,
+	Grid,
+	InputLabel,
+	MenuItem,
+	Select,
+	Stack,
+	TextField,
+	Typography
+} from '@mui/material'
 import Link from 'next/link'
 
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { styled, useTheme } from '@mui/material/styles'
-import { DotsVertical } from 'mdi-material-ui'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import CancelIcon from '@mui/icons-material/Cancel'
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
-// Import the main component
-import { Worker } from '@react-pdf-viewer/core'
-import { Viewer, SpecialZoomLevel } from '@react-pdf-viewer/core'
+import { ToastContainer, toast } from 'react-toastify'
 
 // Styled component for the triangle shaped background image
 const TriangleImg = styled('img')({
@@ -37,18 +51,72 @@ const TrophyImg = styled('img')({
 	position: 'absolute'
 })
 
-export default function ViewInfo({ applicationDetail, handleClose, open, statusObj }) {
+export default function Interview({
+	applicationDetail,
+	handleClose,
+	openInterviewDialog,
+	setOpenInterviewDialog,
+	dispatch,
+	statusObj,
+	userData
+}) {
 	// ** Hook
 	const theme = useTheme()
 	const imageSrc = theme.palette.mode === 'light' ? 'triangle-light.png' : 'triangle-dark.png'
+	const [locationList, setLocationList] = useState([])
+
+	const [interviewDetail, setInterviewDetail] = useState({
+		id: applicationDetail?.interview.id,
+		engagementId: applicationDetail?.interview.engagementId,
+		comment: applicationDetail?.interview.comment,
+		isApproved: applicationDetail?.interview.isApproved,
+		approvedBy: userData?.id
+	})
+
+	useEffect(() => {
+		setInterviewDetail({
+			id: applicationDetail?.interview.id,
+			engagementId: applicationDetail?.interview.engagementId,
+			comment: applicationDetail?.interview.comment,
+			isApproved: applicationDetail?.interview.isApproved,
+			approvedBy: userData?.id
+		})
+	}, [applicationDetail, userData])
+
+	const fullname = applicationDetail?.user.firstname + ' ' + applicationDetail?.user.lastname
+
+	const handleSubmit = async () => {
+		fetch('http://localhost:8080/engagement?action=interview', {
+			method: 'POST',
+			body: JSON.stringify(interviewDetail),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				toast.success('Lưu thông tin phỏng vấn thành công')
+				handleClose()
+			})
+			.catch(error => {
+				console.error('Error:', error)
+
+				toast.error('Có lỗi xảy ra khi lưu cuộc phỏng vấn, vui lòng thử lại')
+			})
+			.finally(() => {
+				handleClose()
+			})
+	}
 
 	return (
 		<div>
-			<Dialog open={open} onClose={handleClose} scroll='paper' maxWidth='lg' fullWidth>
+			<ToastContainer></ToastContainer>
+			<Dialog open={openInterviewDialog} onClose={handleClose} scroll='paper' maxWidth='lg' fullWidth>
 				<DialogTitle id='scroll-dialog-title'>
 					<strong>
-						Thông tin đơn tham gia của {applicationDetail?.user?.firstname}{' '}
-						{applicationDetail?.user?.lastname}
+						Phỏng vấn {applicationDetail?.user?.firstname} {applicationDetail?.user?.lastname}
 					</strong>
 					<div>
 						<span>
@@ -152,53 +220,43 @@ export default function ViewInfo({ applicationDetail, handleClose, open, statusO
 							</Grid>
 							<Grid item xs={12} md={8}>
 								<Card>
-									<CardHeader title='Thông tin phỏng vấn' />
+									<CardHeader title='Phỏng vấn' />
 									<CardContent>
-										{applicationDetail?.interview ? (
-											<div>
-												<Typography variant='body1'>
-													<strong>Thời gian bắt đầu: </strong>
-													{applicationDetail?.interview.startTime}
-												</Typography>
-												<Typography variant='body1'>
-													<strong>Thời gian kết thúc: </strong>
-													{applicationDetail?.interview.endTime}
-												</Typography>
-												<Typography variant='body1'>
-													<strong>Nhận xét: </strong>
-													{applicationDetail?.interview.comment}
-												</Typography>
-												<Typography variant='body1'>
-													<strong>Trạng thái: </strong>
-													{applicationDetail?.interview.isApproved ? (
-														<CheckCircleIcon sx={{ color: 'green' }}></CheckCircleIcon>
-													) : (
-														<CancelIcon sx={{ color: 'red' }}></CancelIcon>
-													)}
-												</Typography>
-												<Typography variant='body1'>
-													<strong>Phê duyệt bởi: </strong>
-													{applicationDetail?.interview.approvedBy}
-												</Typography>
-												<Typography variant='body1'>
-													<strong>Ngày cập nhật: </strong>
-													{applicationDetail?.interview.updatedAt}
-												</Typography>
-											</div>
-										) : (
-											'Chưa có thông tin'
-										)}
-									</CardContent>
-								</Card>
-								<Card sx={{ marginTop: 5 }}>
-									<CardHeader title='CV của ứng viên' />
-									<CardContent>
-										<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
-											<Viewer
-												fileUrl={`http://localhost:8080${applicationDetail?.engagement.cvUrl}`}
-												defaultScale={SpecialZoomLevel.PageFit}
-											/>
-										</Worker>
+										<TextField
+											sx={{ marginTop: 5 }}
+											fullWidth
+											id='outlined-multiline-static'
+											label='Nhận xét'
+											multiline
+											rows={10}
+											onChange={event =>
+												setInterviewDetail({
+													...interviewDetail,
+													comment: event.target.value
+												})
+											}
+											value={interviewDetail?.comment}
+										/>
+										<FormControlLabel
+											label='Phê duyệt'
+											control={
+												<Checkbox
+													checked={interviewDetail?.isApproved}
+													onChange={event =>
+														setInterviewDetail({
+															...interviewDetail,
+															isApproved: event.target.checked
+														})
+													}
+												/>
+											}
+										/>
+
+										<DialogActions>
+											<Button variant='contained' onClick={handleSubmit}>
+												Xác nhận
+											</Button>
+										</DialogActions>
 									</CardContent>
 								</Card>
 							</Grid>

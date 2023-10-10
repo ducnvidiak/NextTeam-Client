@@ -126,10 +126,12 @@ const UserDropdown = () => {
 		}
 		setSelectedValue(event.target.value)
 
-		setclubData('clubData', JSON.stringify(clubData), { path: '/' })
-		toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
+		{
+			clubData.clubId == 'none' ? '' : router.push('/dashboard')
+			setclubData('clubData', JSON.stringify(clubData), { path: '/' })
+			toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
+		}
 		setOpen(false)
-		router.push('/dashboard')
 	}
 
 	const styles = {
@@ -194,7 +196,7 @@ const UserDropdown = () => {
 								onChange={e => handleChange(e)}
 								value={selectedValue}
 							>
-								<MenuItem>Lựa chọn</MenuItem>
+								<MenuItem value='none'>Lựa chọn</MenuItem>
 
 								{clubOfMeData.map(option => (
 									<MenuItem key={option.id} value={option.id}>
