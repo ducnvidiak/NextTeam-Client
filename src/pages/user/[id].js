@@ -27,9 +27,6 @@ import { set } from 'nprogress'
 
 import { getUserInfo, getAllMajors } from './apiUtils'
 
-// import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
-// const axios = require('axios')
-
 const Tab = styled(MuiTab)(({ theme }) => ({
 	[theme.breakpoints.down('md')]: {
 		minWidth: 100
@@ -89,15 +86,6 @@ const AccountSettings = () => {
 							</Box>
 						}
 					/>
-					{/* <Tab
-						value='security'
-						label={
-							<Box sx={{ display: 'flex', alignItems: 'center' }}>
-								<LockOpenOutline />
-								<TabName>Bảo mật</TabName>
-							</Box>
-						}
-					/> */}
 					<Tab
 						value='info'
 						label={
@@ -112,9 +100,6 @@ const AccountSettings = () => {
 				<TabPanel sx={{ p: 0 }} value='account'>
 					<TabAccount userInfo={userInfo} setUserInfo={setUserInfo} />
 				</TabPanel>
-				{/* <TabPanel sx={{ p: 0 }} value='security'>
-					<TabSecurity userInfo={userInfo} setUserInfo={setUserInfo} />
-				</TabPanel> */}
 				<TabPanel sx={{ p: 0 }} value='info'>
 					<TabInfo userInfo={userInfo} setUserInfo={setUserInfo} majors={majors} />
 				</TabPanel>

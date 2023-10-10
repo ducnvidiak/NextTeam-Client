@@ -25,15 +25,18 @@ const axios = require('axios')
 
 import { changeUserPass } from '../../pages/user/apiUtils'
 import { ToastContainer, toast } from 'react-toastify'
+import { validatePassword } from '../../input-validation/index'
+import { FormHelperText } from '@mui/material'
 
 const TabSecurity = ({ userInfo, setUserInfo }) => {
 	// ** States
 	const [values, setValues] = useState({
 		newPassword: '',
-		currentPassword: '',
 		showNewPassword: false,
-		confirmNewPassword: '',
+		newPasswordError: { status: false, message: '' },
+		currentPassword: '',
 		showCurrentPassword: false,
+		confirmNewPassword: '',
 		showConfirmNewPassword: false
 	})
 
@@ -86,9 +89,15 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 			newPassword: values.newPassword,
 			email: userInfo.email
 		}
+		const checkValidPassword = validatePassword(values.newPassword)
+		setValues({
+			...values,
+			newPasswordError: { status: !checkValidPassword.valid, message: checkValidPassword.message }
+		})
+
 		if (values.confirmNewPassword !== values.newPassword) {
 			toast.error("New Password and Confirm password aren't the same!")
-		} else {
+		} else if (checkValidPassword.valid) {
 			changeUserPass(authInfo, userInfo.id).then(response => {
 				if (response.message == 'success') {
 					setUserInfo({ ...currentUserInfo })
@@ -105,8 +114,8 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 
 	return (
 		<form>
-			<CardContent sx={{ paddingBottom: 0 }}>
-				<Grid container spacing={5}>
+			<CardContent sx={{ paddingBottom: 10 }}>
+				<Grid container spacing={10}>
 					<Grid item xs={12} sm={6}>
 						<Grid container spacing={5}>
 							<Grid item xs={12} sx={{ marginTop: 4.75 }}>
@@ -160,6 +169,11 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 											</InputAdornment>
 										}
 									/>
+									{values.newPasswordError.status && (
+										<FormHelperText sx={{ color: 'red' }}>
+											{values.newPasswordError.message}
+										</FormHelperText>
+									)}
 								</FormControl>
 							</Grid>
 
@@ -193,66 +207,77 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 						</Grid>
 					</Grid>
 
-					<Grid
-						item
-						sm={6}
-						xs={12}
-						sx={{ display: 'flex', marginTop: [7.5, 2.5], alignItems: 'center', justifyContent: 'center' }}
-					>
-						<img width={183} alt='avatar' height={256} src='/images/pages/pose-m-1.png' />
+					<Grid item xs={12} sm={6}>
+						<Grid container spacing={5}>
+							<Grid item xs={12}>
+								<Box>
+									<KeyOutline sx={{ marginRight: 3 }} />
+									<Typography variant='h6'>Two-factor authentication</Typography>
+								</Box>
+							</Grid>
+							<Grid item xs={12}>
+								<Box sx={{ mt: 5.75, display: 'flex', justifyContent: 'center' }}>
+									<Box
+										sx={{
+											maxWidth: 368,
+											display: 'flex',
+											textAlign: 'center',
+											alignItems: 'center',
+											flexDirection: 'column'
+										}}
+									>
+										<Avatar
+											variant='rounded'
+											sx={{
+												width: 48,
+												height: 48,
+												color: 'common.white',
+												backgroundColor: 'primary.main'
+											}}
+										>
+											<LockOpenOutline sx={{ fontSize: '1.75rem' }} />
+										</Avatar>
+										<Typography sx={{ fontWeight: 600, marginTop: 3.5, marginBottom: 3.5 }}>
+											Two factor authentication is not enabled yet.
+										</Typography>
+										<Typography variant='body2'>
+											Two-factor authentication adds an additional layer of security to your
+											account by requiring more than just a password to log in. Learn more.
+										</Typography>
+									</Box>
+								</Box>
+							</Grid>
+						</Grid>
 					</Grid>
 				</Grid>
 			</CardContent>
 
-			<Divider sx={{ margin: 0 }} />
-
 			<CardContent>
-				<Box sx={{ mt: 1.75, display: 'flex', alignItems: 'center' }}>
-					<KeyOutline sx={{ marginRight: 3 }} />
-					<Typography variant='h6'>Two-factor authentication</Typography>
-				</Box>
-
-				<Box sx={{ mt: 5.75, display: 'flex', justifyContent: 'center' }}>
-					<Box
-						sx={{
-							maxWidth: 368,
-							display: 'flex',
-							textAlign: 'center',
-							alignItems: 'center',
-							flexDirection: 'column'
-						}}
-					>
-						<Avatar
-							variant='rounded'
-							sx={{ width: 48, height: 48, color: 'common.white', backgroundColor: 'primary.main' }}
-						>
-							<LockOpenOutline sx={{ fontSize: '1.75rem' }} />
-						</Avatar>
-						<Typography sx={{ fontWeight: 600, marginTop: 3.5, marginBottom: 3.5 }}>
-							Two factor authentication is not enabled yet.
-						</Typography>
-						<Typography variant='body2'>
-							Two-factor authentication adds an additional layer of security to your account by requiring
-							more than just a password to log in. Learn more.
-						</Typography>
-					</Box>
-				</Box>
-
-				<Box sx={{ mt: 11 }}>
-					<Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
-						Save Changes
-					</Button>
-					<Button
-						type='reset'
-						variant='outlined'
-						color='secondary'
-						onClick={() =>
-							setValues({ ...values, currentPassword: '', newPassword: '', confirmNewPassword: '' })
-						}
-					>
-						Reset
-					</Button>
-				</Box>
+				<Grid container>
+					<Grid item xs={12} sm={12} md={6}>
+						<Box sx={{ mt: 2, mr: 5, display: 'flex', justifyContent: 'flex-end' }}>
+							<Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
+								Save Changes
+							</Button>
+							<Button
+								type='reset'
+								variant='outlined'
+								color='secondary'
+								onClick={() =>
+									setValues({
+										...values,
+										currentPassword: '',
+										newPassword: '',
+										confirmNewPassword: ''
+									})
+								}
+							>
+								Reset
+							</Button>
+						</Box>
+					</Grid>
+					<Grid item xs={0} sm={0} md={6}></Grid>
+				</Grid>
 			</CardContent>
 		</form>
 	)

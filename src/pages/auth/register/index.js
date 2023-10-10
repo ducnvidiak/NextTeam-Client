@@ -54,7 +54,8 @@ import {
 	validatePassword,
 	validatePhone,
 	validateStudentCode
-} from '../../input-validation/index'
+} from '../../../input-validation/index'
+
 import { postAPI } from 'src/utils/request'
 import Decentralization from 'src/layouts/Decentralization'
 
@@ -89,14 +90,15 @@ const RegisterPage = () => {
 	const [phoneNumber, setPhoneNumber] = useState('')
 	const [gender, setGender] = useState('')
 	const [agree, setAgree] = useState('')
-	const [firstnameError, setFirstnameError] = useState('')
-	const [lastnameError, setLastnameError] = useState('')
-	const [emailError, setEmailError] = useState('')
-	const [passwordError, setPasswordError] = useState('')
-	const [studentCodeError, setStudentCodeError] = useState('')
-	const [phoneNumberError, setPhoneNumberError] = useState('')
-	const [genderError, setGenderError] = useState('')
 	const [showPassword, setShowPassword] = useState(false)
+
+	const [firstnameError, setFirstnameError] = useState({ status: false, message: '' })
+	const [lastnameError, setLastnameError] = useState({ status: false, message: '' })
+	const [emailError, setEmailError] = useState({ status: false, message: '' })
+	const [passwordError, setPasswordError] = useState({ status: false, message: '' })
+	const [studentCodeError, setStudentCodeError] = useState({ status: false, message: '' })
+	const [phoneNumberError, setPhoneNumberError] = useState({ status: false, message: '' })
+	const [genderError, setGenderError] = useState(false)
 
 	// ** Hook
 	const theme = useTheme()
@@ -104,51 +106,27 @@ const RegisterPage = () => {
 
 	const handleSubmit = async event => {
 		event.preventDefault() // 👈️ prevent page refresh
-		setFirstnameError(false)
-		setLastnameError(false)
-		setEmailError(false)
-		setPasswordError(false)
-		setStudentCodeError(false)
-		setPhoneNumberError(false)
-		setGenderError(false)
-		if (!validateName(firstname)) {
-			setFirstnameError(true)
-		}
-		if (!validateName(lastname)) {
-			setLastnameError(true)
-		}
-		if (!validateEmail(email)) {
-			setEmailError(true)
-		}
-		if (!validatePassword(password)) {
-			setPasswordError(true)
-		}
-		if (studentCode == '') {
-			setStudentCodeError(true)
-		}
-		if (!validatePhone(phoneNumber)) {
-			setPhoneNumberError(true)
-		}
-		if (!validateStudentCode(studentCode)) {
-			setStudentCodeError(true)
-		}
+		if (firstname == '') setFirstnameError({ status: true, message: 'Thông tin bắt buộc' })
+		if (lastname == '') setLastnameError({ status: true, message: 'Thông tin bắt buộc' })
+		if (email == '') setEmailError({ status: true, message: 'Thông tin bắt buộc' })
+		if (password == '') setPasswordError({ status: true, message: 'Thông tin bắt buộc' })
+		if (studentCode == '') setStudentCodeError({ status: true, message: 'Thông tin bắt buộc' })
+		if (phoneNumber == '') setPhoneNumberError({ status: true, message: 'Thông tin bắt buộc' })
+
 		if (gender == '' || gender == undefined) {
 			setGenderError(true)
-		}
-		if (agree == '') {
+		} else if (agree == '' || agree == false) {
 			toast.error('Vui lòng đồng ý với điều khoản của nền tảng')
-		}
-
-		if (
-			validateName(firstname) &&
-			validateName(lastname) &&
-			validateEmail(email) &&
-			validatePassword(password) &&
-			validateStudentCode(studentCode) &&
-			validatePhone(phoneNumber) &&
-			!genderError &&
-			agree
+		} else if (
+			firstnameError.status ||
+			lastnameError.status ||
+			emailError.status ||
+			passwordError.status ||
+			studentCodeError.status ||
+			phoneNumberError.status
 		) {
+			toast.error('Vui lòng điền những thông tin còn thiếu.')
+		} else {
 			fetch('http://localhost:8080/user-register', {
 				method: 'POST',
 				body: JSON.stringify({
@@ -180,12 +158,7 @@ const RegisterPage = () => {
 					}
 				})
 				.catch(error => console.error('Error:', error))
-		} else {
-			toast.error('Thông tin không hợp lệ!')
 		}
-
-		// 👇️ clear all input values in the form
-		// setFirstName('')
 	}
 
 	const handleClickShowPassword = () => {
@@ -291,14 +264,19 @@ const RegisterPage = () => {
 									type='text'
 									label='Họ và tên đệm'
 									name='firstname'
-									onChange={event => setFirstname(event.target.value)}
+									onChange={event => {
+										const validFirstname = validateName(event.target.value)
+										if (!validFirstname.valid) {
+											setFirstnameError({ status: true, message: validFirstname.message })
+										} else {
+											setFirstnameError({ status: false, message: validFirstname.message })
+										}
+										setFirstname(event.target.value)
+									}}
 									value={firstname}
-									error={firstnameError}
+									error={firstnameError.status}
 									sx={{ marginBottom: 4 }}
-									helperText={
-										firstnameError &&
-										'Họ và tên đệm phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'
-									}
+									helperText={firstnameError.status && firstnameError.message}
 								/>
 							</Grid>
 							<Grid item xs={5}>
@@ -307,11 +285,19 @@ const RegisterPage = () => {
 									type='text'
 									label='Tên'
 									name='lastname'
-									onChange={event => setLastname(event.target.value)}
+									onChange={event => {
+										const validLastname = validateName(event.target.value)
+										if (!validLastname.valid) {
+											setLastnameError({ status: true, message: validLastname.message })
+										} else {
+											setLastnameError({ status: false, message: validLastname.message })
+										}
+										setLastname(event.target.value)
+									}}
 									value={lastname}
-									error={lastnameError}
+									error={lastnameError.status}
 									sx={{ marginBottom: 4 }}
-									helperText={lastnameError && 'Tên phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'}
+									helperText={lastnameError.status && lastnameError.message}
 								/>
 							</Grid>
 						</Grid>
@@ -320,24 +306,40 @@ const RegisterPage = () => {
 							type='email'
 							label='Email'
 							name='email'
-							onChange={event => setEmail(event.target.value)}
+							onChange={event => {
+								const validEmail = validateEmail(event.target.value)
+								if (!validEmail.valid) {
+									setEmailError({ status: true, message: validEmail.message })
+								} else {
+									setEmailError({ status: false, message: validEmail.message })
+								}
+								setEmail(event.target.value)
+							}}
 							value={email}
-							error={emailError}
+							error={emailError.status}
 							sx={{ marginBottom: 4 }}
-							helperText={
-								emailError && 'Email phải chứ ký tự @, tên miền và ít nhất 1 chữ cái phía trước @.'
-							}
+							helperText={emailError.status && emailError.message}
 						/>
 						<FormControl fullWidth>
-							<InputLabel htmlFor='auth-register-password'>Password</InputLabel>
+							<InputLabel htmlFor='auth-register-password' error={passwordError.status}>
+								Password
+							</InputLabel>
 							<OutlinedInput
 								label='Password'
 								id='auth-register-password'
-								onChange={e => setPassword(e.target.value)}
+								onChange={e => {
+									const validPassword = validatePassword(e.target.value)
+									if (!validPassword.valid) {
+										setPasswordError({ status: true, message: validPassword.message })
+									} else {
+										setPasswordError({ status: false, message: validPassword.message })
+									}
+									setPassword(e.target.value)
+								}}
 								type={showPassword ? 'text' : 'password'}
 								sx={{ marginBottom: 4 }}
 								name='password'
-								error={passwordError}
+								error={passwordError.status}
 								endAdornment={
 									<InputAdornment position='end'>
 										<IconButton
@@ -351,6 +353,12 @@ const RegisterPage = () => {
 									</InputAdornment>
 								}
 							/>
+							{passwordError.status && (
+								<FormHelperText sx={{ color: '#fa444f', marginBottom: 5 }}>
+									Mật khẩu phải chứa ít nhất 8 ký tự bao gồm chữ hoa, chữ thường, số, ký tự đặc biệt
+									(mỗi loại ít nhất một ký tự).
+								</FormHelperText>
+							)}
 						</FormControl>
 						{/* <FormControl fullWidth>
 							<InputLabel htmlFor='auth-register-password'>Mật khẩu</InputLabel>
@@ -388,13 +396,19 @@ const RegisterPage = () => {
 							type='text'
 							label='Mã số sinh viên'
 							name='studentCode'
-							onChange={event => setStudentCode(event.target.value)}
+							onChange={event => {
+								const validStudentCode = validateStudentCode(event.target.value)
+								if (!validStudentCode.valid) {
+									setStudentCodeError({ status: true, message: validStudentCode.message })
+								} else {
+									setStudentCodeError({ status: false, message: validStudentCode.message })
+								}
+								setStudentCode(event.target.value)
+							}}
 							value={studentCode}
-							error={studentCodeError}
+							error={studentCodeError.status}
 							sx={{ marginBottom: 4 }}
-							helperText={
-								studentCodeError && 'Mã sinh viên phải chứa ít nhất 1 ký tự (bao gồm số và chữ cái).'
-							}
+							helperText={studentCodeError.status && studentCodeError.message}
 						/>
 
 						<TextField
@@ -402,11 +416,21 @@ const RegisterPage = () => {
 							type='text'
 							label='Số điện thoại'
 							name='phoneNumber'
-							onChange={event => setPhoneNumber(event.target.value)}
+							onChange={event => {
+								const validPhone = validatePhone(event.target.value)
+								if (!validPhone.valid) {
+									setPhoneNumberError({ status: true, message: validPhone.message })
+								} else {
+									setPhoneNumberError({ status: false, message: validPhone.message })
+								}
+								setPhoneNumber(event.target.value)
+							}}
 							value={phoneNumber}
-							error={phoneNumberError}
+							error={phoneNumberError.status}
 							sx={{ marginBottom: 4 }}
-							helperText={phoneNumberError && 'Số điện thoại phải chứa (+84|0) 9|10 chữ số tiếp theo.'}
+							helperText={
+								phoneNumberError.status && 'Số điện thoại phải chứa (+84|0) 9|10 chữ số tiếp theo.'
+							}
 						/>
 						<FormControl fullWidth>
 							<InputLabel htmlFor='gender-select'>Giới tính</InputLabel>
@@ -415,8 +439,12 @@ const RegisterPage = () => {
 								id='gender-select'
 								name='gender'
 								onChange={event => {
+									if (event.target.value !== undefined) {
+										setGenderError(false)
+									} else {
+										setGenderError(true)
+									}
 									setGender(event.target.value)
-									console.log('gender select: ', event.target.value)
 								}}
 								value={gender}
 								error={genderError}

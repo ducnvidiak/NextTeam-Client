@@ -27,7 +27,7 @@ import { Country, State, City } from 'country-state-city'
 import { updateUserInfo } from '../../pages/user/apiUtils'
 import { Cookie } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
-import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../pages/input-validation/index'
+import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../input-validation/index'
 
 const CustomInput = forwardRef((props, ref) => {
 	return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
@@ -37,9 +37,10 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	// ** State
 
 	const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
-	const [studentCodeError, setStudentCodeError] = useState(false)
-	const [phoneNumberError, setPhoneNumberError] = useState(false)
-	const [dobError, setDobError] = useState(false)
+
+	const [studentCodeError, setStudentCodeError] = useState({ status: false, message: '' })
+	const [phoneNumberError, setPhoneNumberError] = useState({ status: false, message: '' })
+	const [dobError, setDobError] = useState({ status: false, message: '' })
 
 	const [date, setDate] = useState(
 		currentUserInfo?.dob != null && currentUserInfo.dob != '1970-01-01' ? new Date(currentUserInfo.dob) : null
@@ -52,7 +53,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	const [country, setCountry] = useState(
 		userInfo?.homeTown != '' && userInfo?.homeTown != null
 			? Country.getCountryByCode(userInfo?.homeTown.split('-')[0])
-			: null
+			: Country.getCountryByCode('VN')
 	)
 
 	const [state, setState] = useState(
@@ -64,24 +65,28 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	const [states, setStates] = useState(
 		userInfo?.homeTown != '' && userInfo?.homeTown != null
 			? State.getStatesOfCountry(userInfo?.homeTown.split('-')[0])
-			: null
+			: State.getStatesOfCountry('VN')
 	)
 
 	const [countries, setCountries] = useState(Country.getAllCountries())
 
 	const handleSubmit = event => {
 		event.preventDefault()
-		updateUserInfo(currentUserInfo).then(response => {
-			if (response.message == 'success') {
-				setUserInfo({ ...currentUserInfo })
-				toast.success('Success change detail info!', {
-					position: toast.POSITION.TOP_RIGHT
-				})
-			} else {
-				toast.error('Fail to change detail info!')
-			}
-			console.log('update detail info: ', response)
-		})
+		if (studentCodeError.status || phoneNumberError.status) {
+			toast.error('Vui lòng điền thông tin hợp lệ.')
+		} else {
+			updateUserInfo(currentUserInfo).then(response => {
+				if (response.message == 'success') {
+					setUserInfo({ ...currentUserInfo })
+					toast.success('Success change detail info!', {
+						position: toast.POSITION.TOP_RIGHT
+					})
+				} else {
+					toast.error('Fail to change detail info!')
+				}
+				console.log('update detail info: ', response)
+			})
+		}
 	}
 
 	const handleReset = event => {
@@ -112,19 +117,21 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							label='Student code'
 							placeholder='DE160488'
 							value={currentUserInfo?.username.toUpperCase() || ''}
-							error={studentCodeError}
+							error={studentCodeError.status}
 							onChange={event => {
-								if (!validateStudentCode(event.target.value)) {
-									setStudentCodeError(true)
+								const validStudentCode = validateStudentCode(event.target.value)
+								if (!validStudentCode.valid) {
+									setStudentCodeError({ status: true, message: validStudentCode.message })
 								} else {
-									setStudentCodeError(false)
+									setStudentCodeError({ status: false, message: validStudentCode.message })
 								}
 								setCurrentUserInfo(current => {
 									return { ...current, username: event.target.value }
 								})
 							}}
 							helperText={
-								studentCodeError && 'Mã sinh viên phải chứa ít nhất 1 ký tự (bao gồm số và chữ cái).'
+								studentCodeError.status &&
+								'Mã sinh viên phải chứa ít nhất 1 ký tự (bao gồm số và chữ cái).'
 							}
 						/>
 					</Grid>
@@ -173,18 +180,21 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							label='Phone'
 							placeholder='0123456789'
 							value={currentUserInfo?.phoneNumber || ''}
-							error={phoneNumberError}
+							error={phoneNumberError.status}
 							onChange={event => {
-								if (!validatePhone(event.target.value)) {
-									setPhoneNumberError(true)
+								const validPhone = validatePhone(event.target.value)
+								if (!validPhone.valid) {
+									setPhoneNumberError({ status: true, message: validPhone.message })
 								} else {
-									setPhoneNumberError(false)
+									setPhoneNumberError({ status: false, message: validPhone.message })
 								}
 								setCurrentUserInfo(current => {
 									return { ...currentUserInfo, phoneNumber: event.target.value }
 								})
 							}}
-							helperText={phoneNumberError && 'Số điện thoại phải chứa (+84|0) 9|10 chữ số tiếp theo.'}
+							helperText={
+								phoneNumberError.status && 'Số điện thoại phải chứa (+84|0) 9|10 chữ số tiếp theo.'
+							}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
@@ -200,19 +210,18 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								error={dobError}
 								onChange={newValue => {
 									setDate(newValue)
-									if (!validateBirthOfDate(newValue?.toISOString().split('T')[0])) {
-										console.log('filter date: ', newValue?.toISOString().split('T')[0])
-										console.log('original date: ', newValue?.toISOString())
-										setDobError(true)
+									const validDoB = validateBirthOfDate(newValue?.toISOString().split('T')[0])
+									if (!validDoB.valid) {
+										setDobError({ status: true, message: validDoB.message })
 									} else {
-										setDobError(false)
+										setDobError({ status: false, message: validDoB.message })
 										setCurrentUserInfo(current => {
 											return { ...current, dob: newValue?.toISOString().split('T')[0] || null }
 										})
 									}
 								}}
 							/>{' '}
-							{dobError && (
+							{dobError.status && (
 								<Typography variant='caption' color='error' sx={{ marginLeft: '20px' }}>
 									Ngày sinh của bạn phải đủ 7 tuổi trở lên
 								</Typography>

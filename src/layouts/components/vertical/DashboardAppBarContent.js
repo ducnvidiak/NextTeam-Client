@@ -16,48 +16,50 @@ import NotificationDropdown from 'src/@core/layouts/components/shared-components
 import { Typography } from '@mui/material'
 import Link from 'next/link'
 
+import { useSettings } from 'src/@core/hooks/useSettings'
+
 const AppBarContent = props => {
-  // ** Props
-  const { hidden, settings, saveSettings, toggleNavVisibility } = props
+	// ** Props
+	const { hidden, settings, saveSettings, toggleNavVisibility } = props
 
-  // ** Hook
-  const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
+	// ** Hook
+	const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
-  return (
-    <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
-        {hidden ? (
-          <IconButton
-            color='inherit'
-            onClick={toggleNavVisibility}
-            sx={{ ml: -2.75, ...(hiddenSm ? {} : { mr: 3.5 }) }}
-          >
-            <Menu />
-          </IconButton>
-        ) : null}
-      </Box>
-      <TextField
-        placeholder='Tìm kiếm...'
-        size='small'
-        sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '50%' }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position='start'>
-              <Magnify fontSize='small' />
-            </InputAdornment>
-          )
-        }}
-      />
-      {/* <Typography variant='h4' sx={{ color: '#F27123' }}>
+	return (
+		<Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+			<Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+				{hidden ? (
+					<IconButton
+						color='inherit'
+						onClick={toggleNavVisibility}
+						sx={{ ml: -2.75, ...(hiddenSm ? {} : { mr: 3.5 }) }}
+					>
+						<Menu />
+					</IconButton>
+				) : null}
+			</Box>
+			<TextField
+				placeholder='Tìm kiếm...'
+				size='small'
+				sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '50%' }}
+				InputProps={{
+					startAdornment: (
+						<InputAdornment position='start'>
+							<Magnify fontSize='small' />
+						</InputAdornment>
+					)
+				}}
+			/>
+			{/* <Typography variant='h4' sx={{ color: '#F27123' }}>
         FU-DEVER
       </Typography> */}
-      <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        <ModeToggler settings={settings} saveSettings={saveSettings} />
-        <NotificationDropdown />
-        <UserDropdown />
-      </Box>
-    </Box>
-  )
+			<Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
+				<ModeToggler settings={settings} saveSettings={saveSettings} />
+				<NotificationDropdown />
+				<UserDropdown settings={settings} saveSettings={saveSettings} />
+			</Box>
+		</Box>
+	)
 }
 
 export default AppBarContent

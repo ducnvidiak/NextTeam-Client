@@ -16,16 +16,16 @@ import NotificationDropdown from 'src/@core/layouts/components/shared-components
 import { Typography } from '@mui/material'
 
 const AdminAppBarContent = props => {
-  // ** Props
-  const { hidden, settings, saveSettings, toggleNavVisibility } = props
+	// ** Props
+	const { hidden, settings, saveSettings, toggleNavVisibility } = props
 
-  // ** Hook
-  const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
+	// ** Hook
+	const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
-  return (
-    <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
-        {/* {hidden ? (
+	return (
+		<Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+			<Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+				{/* {hidden ? (
           <IconButton
             color='inherit'
             onClick={toggleNavVisibility}
@@ -34,8 +34,8 @@ const AdminAppBarContent = props => {
             <Menu />
           </IconButton>
         ) : null} */}
-      </Box>
-      {/* <TextField
+			</Box>
+			{/* <TextField
           placeholder='Tìm kiếm...'
           size='small'
           sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: "50%" }}
@@ -47,16 +47,16 @@ const AdminAppBarContent = props => {
             )
           }}
         /> */}
-      <Typography variant='h4' sx={{color: '#F27123'}}>
-        ADMIN
-      </Typography>
-      <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        <ModeToggler settings={settings} saveSettings={saveSettings} />
-        <NotificationDropdown />
-        <UserDropdown />
-      </Box>
-    </Box>
-  )
+			<Typography variant='h4' sx={{ color: '#F27123' }}>
+				ADMIN
+			</Typography>
+			<Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
+				<ModeToggler settings={settings} saveSettings={saveSettings} />
+				<NotificationDropdown />
+				<UserDropdown settings={settings} saveSettings={saveSettings} />
+			</Box>
+		</Box>
+	)
 }
 
 export default AdminAppBarContent

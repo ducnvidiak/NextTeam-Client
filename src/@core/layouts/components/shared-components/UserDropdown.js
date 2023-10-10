@@ -71,7 +71,9 @@ const ClubModal = styled('Modal')(({ theme }) => ({
 	borderRadius: 8
 }))
 
-const UserDropdown = () => {
+const UserDropdown = props => {
+	const { settings, saveSettings } = props
+
 	// ** States
 
 	const [anchorEl, setAnchorEl] = useState(null)
@@ -80,6 +82,7 @@ const UserDropdown = () => {
 	const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
 	const [clubOfMeData, setClubOfMeData] = useState([])
 	const [userData, setUserData] = useState()
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -100,8 +103,6 @@ const UserDropdown = () => {
 			.catch(error => console.error('Error:', error))
 	}, [userData])
 
-	console.log(userData)
-
 	// ** Hooks
 	const router = useRouter()
 
@@ -111,7 +112,6 @@ const UserDropdown = () => {
 
 	const handleLogout = () => {
 		removeCookie('userData')
-		router.push('/auth/login')
 	}
 
 	const handleDropdownClose = url => {
@@ -168,7 +168,7 @@ const UserDropdown = () => {
 	}
 
 	return (
-		<Fragment>
+		<Fragment key={settings.avatarVersion}>
 			<Modal
 				open={open}
 				onClose={() => setOpen(false)}
@@ -215,10 +215,11 @@ const UserDropdown = () => {
 				anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
 			>
 				<Avatar
+					key={settings.avatarVersion}
 					alt={userData?.lastname}
 					onClick={handleDropdownOpen}
 					sx={{ width: 40, height: 40 }}
-					src={userData?.avatarURL}
+					src={settings?.avatarURL || userData?.avatarURL}
 				/>
 			</Badge>
 			<ToastContainer></ToastContainer>
@@ -239,7 +240,7 @@ const UserDropdown = () => {
 						>
 							<Avatar
 								alt={userData?.lastname}
-								src={userData?.avatarURL}
+								src={settings?.avatarURL || userData?.avatarURL}
 								sx={{ width: '2.5rem', height: '2.5rem' }}
 							/>
 						</Badge>
@@ -251,7 +252,7 @@ const UserDropdown = () => {
 								flexDirection: 'column'
 							}}
 						>
-							<Typography sx={{ fontWeight: 600 }}>{userData?.lastname}</Typography>
+							<Typography sx={{ fontWeight: 600 }}>Xin chào, {userData?.lastname}!</Typography>
 							<Typography
 								variant='body2'
 								sx={{
@@ -259,7 +260,7 @@ const UserDropdown = () => {
 									color: 'text.disabled'
 								}}
 							>
-								{userData?.studentCode}
+								{userData?.username.toUpperCase()}
 							</Typography>
 						</Box>
 					</Box>
@@ -297,43 +298,49 @@ const UserDropdown = () => {
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<LockIcon sx={{ marginRight: 2 }} />
-						<Link href={`/user/password/${userData?.id}`} underline='none'>
+						<Link href={`/user/password/${userData?.id}`}>
 							<Button>Đổi mật khẩu</Button>
 						</Link>
 					</Box>
 				</MenuItem>
-				<MenuItem sx={{ p: 0 }} onClick={() => {handleDropdownClose(); handleLogout()}}>
+				<MenuItem
+					sx={{ p: 0 }}
+					onClick={() => {
+						handleDropdownClose()
+						handleLogout()
+					}}
+				>
 					<Box sx={styles}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
-						<Link passHref underline='none' href=''>
+						<Link href='/'>
 							<Button>Đăng xuất</Button>
 						</Link>
 					</Box>
 				</MenuItem>
 				{/* <Divider />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <CogOutline sx={{ marginRight: 2 }} />
-            Settings
-          </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <CurrencyUsd sx={{ marginRight: 2 }} />
-            Pricing
-          </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <HelpCircleOutline sx={{ marginRight: 2 }} />
-            FAQ
-          </Box>
-        </MenuItem>
-        <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
-          <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
-          Logout
-        </MenuItem> */}
+				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+					<Box sx={styles}>
+						<CogOutline sx={{ marginRight: 2 }} />
+						Settings
+					</Box>
+				</MenuItem>
+				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+					<Box sx={styles}>
+						<CurrencyUsd sx={{ marginRight: 2 }} />
+						Pricing
+					</Box>
+				</MenuItem>
+				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+					<Box sx={styles}>
+						<HelpCircleOutline sx={{ marginRight: 2 }} />
+						FAQ
+					</Box>
+				</MenuItem>
+				<Divider />
+				<MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
+					<LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
+					Logout
+				</MenuItem> */}
 			</Menu>
 		</Fragment>
 	)
