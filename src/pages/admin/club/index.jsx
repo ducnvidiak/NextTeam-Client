@@ -248,7 +248,6 @@ function Club() {
       clubFormData.isActive +
       '&id=' +
       clubFormData.id
-    console.log(url_fetch)
     fetch(url_fetch)
       .then(res => {
         if (!res.ok) {

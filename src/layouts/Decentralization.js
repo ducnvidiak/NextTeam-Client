@@ -31,7 +31,6 @@ function Decentralization(props) {
 			return <React.Fragment>{props.children}</React.Fragment>
 	} else if (userData == undefined) return <></>
 
-	console.log('Èeeee!')
 	return404Error(router)
 
 	return <Error404 />

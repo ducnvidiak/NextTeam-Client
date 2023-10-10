@@ -150,7 +150,6 @@ const NotificationDropdown = () => {
 			})
 			.then(function (data) {
 				setNotificationsData(data)
-				console.log(data)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [cookies, userData, state])

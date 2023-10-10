@@ -60,7 +60,6 @@ const DashboardLayout = props => {
 	// ** Toggle Functions
 	const toggleNavVisibility = () => {
 		// setNavVisible(!navVisible)
-		console.log('toggle navbar!')
 	}
 
 	return (

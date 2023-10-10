@@ -21,10 +21,6 @@ function FileUploadForm() {
 
 	const handleSubmit = event => {
 		event.preventDefault()
-
-		// Xử lý logic gửi văn bản và tệp tin tại đây
-		console.log('Text:', text)
-		console.log('Files:', files)
 	}
 
 	return (

@@ -81,7 +81,6 @@ function NotificationCreator() {
 			})
 			.then(function (data) {
 				if (data.id == null) {
-					console.log(data)
 					toast.error(data)
 				} else {
 					console.log('Gửi thông báo thành công')

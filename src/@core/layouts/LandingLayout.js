@@ -61,7 +61,6 @@ const LandingLayout = props => {
 	// ** Toggle Functions
 	const toggleNavVisibility = () => {
 		setNavVisible(!navVisible)
-		console.log('togged!')
 	}
 
 	return (

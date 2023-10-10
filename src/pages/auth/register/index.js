@@ -149,46 +149,37 @@ const RegisterPage = () => {
 			!genderError &&
 			agree
 		) {
-			const data = await postAPI('user-register', {
-				firstname: firstname,
-				lastname: lastname,
-				email: email,
-				password: password,
-				studentCode: studentCode,
-				phoneNumber: phoneNumber,
-				gender: gender
+			fetch('http://localhost:8080/user-register', {
+				method: 'POST',
+				body: JSON.stringify({
+					firstname: firstname,
+					lastname: lastname,
+					email: email,
+					password: password,
+					username: studentCode,
+					phoneNumber: phoneNumber,
+					gender: gender
+				}),
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					console.log(data)
 
-			// fetch('http://localhost:8080/user-register', {
-			// 	method: 'POST',
-			// 	body: JSON.stringify({
-			// 		firstname: firstname,
-			// 		lastname: lastname,
-			// 		email: email,
-			// 		password: password,
-			// 		studentCode: studentCode,
-			// 		phoneNumber: phoneNumber,
-			// 		gender: gender
-			// 	}),
-			// 	headers: {
-			// 		'Content-type': 'application/json; charset=UTF-8'
-			// 	}
-			// })
-			// 	.then(function (response) {
-			// 		return response.json()
-			// 	})
-			// 	.then(function (data) {
-			if (data.code == 0) {
-				toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
-				setTimeout(() => {
-					router.push('/auth/login')
-				}, 3000)
-			} else {
-				toast.error(data.msg)
-			}
-
-			// })
-			// .catch(error => console.error('Error:', error))
+					if (data.code == 0) {
+						toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
+						setTimeout(() => {
+							router.push('/auth/login')
+						}, 3000)
+					} else {
+						toast.error(data.msg)
+					}
+				})
+				.catch(error => console.error('Error:', error))
 		} else {
 			toast.error('Thông tin không hợp lệ!')
 		}

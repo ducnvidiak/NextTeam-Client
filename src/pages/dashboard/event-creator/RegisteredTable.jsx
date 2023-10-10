@@ -3,8 +3,8 @@ import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 
-const createData = (index, name, studentCode, email, phone, time) => {
-	return { index, name, studentCode, email, phone, time }
+const createData = (index, name, username, email, phone, time) => {
+	return { index, name, username, email, phone, time }
 }
 
 function RegisteredTable({event}) {
@@ -30,7 +30,7 @@ function RegisteredTable({event}) {
 	}, [cookies])
 
 	const rows = eventRegistrations.map((item, index) =>
-		createData(index+1, `${item.firstName} ${item.lastName}`, item.studentCode, item.email, item.phoneNumber, moment(item.createdAt).format('L'))
+		createData(index+1, `${item.firstName} ${item.lastName}`, item.username, item.email, item.phoneNumber, moment(item.createdAt).format('L'))
 	)
 
 	return (
@@ -56,7 +56,7 @@ function RegisteredTable({event}) {
 							<TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
 								<TableCell align='center'>{row.index}</TableCell>
 								<TableCell align='left'>{row.name}</TableCell>
-								<TableCell align='center'>{row.studentCode}</TableCell>
+								<TableCell align='center'>{row.username}</TableCell>
 								<TableCell align='left'>{row.email}</TableCell>
 								<TableCell align='center'>{row.phone}</TableCell>
 								<TableCell align='center'>{row.time}</TableCell>
