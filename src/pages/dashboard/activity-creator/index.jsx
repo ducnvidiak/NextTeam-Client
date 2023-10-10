@@ -140,7 +140,7 @@ const AddingForm = () => {
 				renderOption={(props, option) => <li {...props}>{`${option.username} - ${option.label}`}</li>}
 				renderInput={params => <TextField {...params} label='Tên' placeholder='nhập tên...' />}
 				disableClearable
-				// getOptionDisabled={option => option.isManager == 1}
+				getOptionDisabled={option => option.isManager == 1}
 				sx={{ marginBottom: 6 }}
 				onChange={(event, value) => handleChange('name')({ target: { value } })}
 				loading={loading}
