@@ -149,7 +149,15 @@ export const dashboardLayoutVavigation = () => {
 			title: 'Điểm danh',
 			path: '/dashboard/test',
 			icon: SummarizeIcon
+		},
+		{
+			title: 'Quản lí phòng ban',
+			path: '/dashboard/department',
+			icon: NoteAddIcon
 		}
+		
+		
+
 	]
 }
 

@@ -7,37 +7,31 @@ import CardContent from '@mui/material/CardContent'
 import { PieChart, Pie, Cell } from 'recharts'
 const COLORS = ['#f27123', '#61a330', '#2b2827']
 
-const Trophy = props => {
-	const data = [
-		{ name: 'Đang hoạt động', value: props.data.total_mem_active },
-		{ name: 'Đã rời đi', value: props.data.total_mem_out },
-		{ name: 'Bị cấm', value: props.data.total_mem_ban }
-	]
-	const act = (props.data.total_mem_active * 100) / props.data.total_mem
-	const out = (props.data.total_mem_out * 100) / props.data.total_mem
-	const ban = (props.data.total_mem_ban * 100) / props.data.total_mem
+const data = [
+	{ name: 'Đã diễn ra', value: 70 },
+	{ name: 'Chuẩn bị', value: 30 }
+]
+const EventList = props => {
 	const handleButtonClick = () => {
-		window.location.href = '/dashboard/members'
+		window.location.href = '/dashboard/events'
 	}
 	// ** Hook
 	return (
 		<Card sx={{ position: 'relative' }}>
 			<CardContent>
-				<Typography variant='h6'>Tổng thành viên câu lạc bộ</Typography>
-				<Typography variant='h6'>{props.data.total_mem}</Typography>
-				<Grid container space={5} sx={{ marginTop: 5, marginBottom: 5 }}>
+				<Typography variant='h6'>Số lượng sự kiện </Typography>
+				<Typography variant='h6'>{props.data.total_event} </Typography>
+
+				<Grid container space={5}>
 					<Grid item xs={12} md={6}>
 						<Typography variant='body2' sx={{ letterSpacing: '0.25px' }}>
-							{act}% thành viên đang hoạt động
+							70% sự kiện đã diễn ra
 						</Typography>
 						<Typography variant='body2' sx={{ letterSpacing: '0.25px' }}>
-							{ban}% thành viên đang bị cấm
-						</Typography>
-						<Typography variant='body2' sx={{ letterSpacing: '0.25px' }}>
-							{out}% thành viên rời khỏi câu lạc bộ
+							30% sự kiện chưa diễn ra
 						</Typography>
 					</Grid>
-					<Grid item xs={12} md={6}>
+					<Grid item xs={12} md={6} sx={{ paddingRight: -100 }}>
 						<PieChart width={100} height={100}>
 							<Pie
 								data={data}
@@ -64,4 +58,4 @@ const Trophy = props => {
 	)
 }
 
-export default Trophy
+export default EventList

@@ -191,7 +191,7 @@ function Club() {
         })
       })
       .catch(error => {
-        toast.success('Thêm câu lạc bộ thất bại', {
+        toast.error('Thêm câu lạc bộ thất bại', {
           position: 'top-right',
           autoClose: 3000, // Close the toast after 3 seconds
           hideProgressBar: false,
@@ -270,7 +270,7 @@ function Club() {
         setIsEditDialogOpen(false)
       })
       .catch(error => {
-        toast.success('Cập nhật câu lạc bộ thất bại', {
+        toast.error('Cập nhật câu lạc bộ thất bại', {
           position: 'top-right',
           autoClose: 3000, // Close the toast after 3 seconds
           hideProgressBar: false,
@@ -285,7 +285,7 @@ function Club() {
     fetch('http://localhost:8080/api/club?cmd=delete&id=' + clubFormData.id)
       .then(res => {
         if (!res.ok) {
-          toast.success('Xóa câu lạc bộ thất bại', {
+          toast.error('Xóa câu lạc bộ thất bại', {
             position: 'top-right',
             autoClose: 3000, // Close the toast after 3 seconds
             hideProgressBar: false,
@@ -379,9 +379,7 @@ function Club() {
   const handleCategoryChange = event => {
     const selectedCategoryLabel = event.target.value
     const selectedCategory = resultClubCate.find(category => category.name === selectedCategoryLabel)
-
     setSelectedCategory(selectedCategoryLabel)
-
     setClubFormData(prevData => ({
       ...prevData,
       categoryId: selectedCategory.id,
