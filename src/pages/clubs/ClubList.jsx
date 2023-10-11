@@ -239,7 +239,7 @@ function ClubItem({ club, index }) {
 									variant='outlined'
 									color='secondary'
 									sx={{ marginTop: 4, width: '50%' }}
-									onClick={handleClickOpen}
+									onClick={()=> handleClickOpen(club.id)}
 								>
 									Đã tham gia
 								</Button>
@@ -247,7 +247,8 @@ function ClubItem({ club, index }) {
 								<Button
 									variant='outlined'
 									sx={{ marginTop: 4, width: '50%' }}
-									onClick={handleClickOpen}
+									onClick={()=> handleClickOpen(club.id)}
+
 								>
 									Đăng ký tham gia
 								</Button>

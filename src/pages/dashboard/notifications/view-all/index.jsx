@@ -111,9 +111,9 @@ const TableStickyHeader = () => {
 	useEffect(() => {
 		fetch(
 			'http://localhost:8080/notification?action=list-noti&clubId=' +
-				cookies['clubData'].clubId +
+				cookies['clubData']?.clubId +
 				'&userId=' +
-				userData.id,
+				userData?.id,
 			{
 				method: 'GET',
 				headers: {
