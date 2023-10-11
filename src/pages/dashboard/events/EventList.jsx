@@ -99,18 +99,18 @@ function EventItem({ event }) {
 
 					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
-					
 				</Stack>
-				<Card
-					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }}
-					marginBottom={10}
-					
-				>
+				<Card sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }} marginBottom={10}>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
 							{moment(event?.startTime).format('LT')}
 						</Typography>
-						<Typography variant='h6' fontWeight={700} sx={{ flex: 1, cursor: 'pointer' }} onClick={toggleDrawer('right', true)}>
+						<Typography
+							variant='h6'
+							fontWeight={700}
+							sx={{ flex: 1, cursor: 'pointer' }}
+							onClick={toggleDrawer('right', true)}
+						>
 							{event?.name}
 						</Typography>
 
@@ -122,7 +122,7 @@ function EventItem({ event }) {
 							<LocationOnIcon></LocationOnIcon>
 							<Typography variant='body1'>{event?.locationName}</Typography>
 						</Box>
-						{event?.isRegistered ? (
+						{event?.isRegistered == true || event?.isRegistered == 'true' ? (
 							<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
 								Đã đăng ký
 							</Button>
@@ -163,12 +163,15 @@ function EventList() {
 	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/member-events?clubId=${cookiesClub['clubData'].clubId}&userId=${userData?.id}&cmd=list`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			`http://localhost:8080/member-events?clubId=${cookiesClub['clubData'].clubId}&userId=${userData?.id}&cmd=list`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})
@@ -178,7 +181,7 @@ function EventList() {
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
 
 	return (

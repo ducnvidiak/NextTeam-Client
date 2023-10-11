@@ -430,7 +430,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						Upload file
 						<VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} />
 					</Button>
-					<Typography variant='body'>FES-TECHSpeak.docx</Typography>
+					<Typography variant='body'>{fileName ? fileName : "Kịch bản club day.xlsx"}</Typography>
 				</Stack>
 			</Stack>
 			<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>

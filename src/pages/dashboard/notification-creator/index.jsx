@@ -233,6 +233,7 @@ const NotificationCreator = () => {
 				setPrivateNotificationDetail={setPrivateNotificationDetail}
 				state={state}
 				dispatch={dispatch}
+				cookies={cookies}
 			/>
 			<ToastContainer></ToastContainer>
 			{/* Dialog confirm delete */}
