@@ -36,7 +36,7 @@ export default function EditPrivateNotification({
 	setPrivateNotificationDetail,
 	setPrivateUpdateModal,
 	state,
-	dispatch
+	dispatch, cookies
 }) {
 	const router = useRouter()
 	const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
