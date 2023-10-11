@@ -85,21 +85,22 @@ const UserDropdown = () => {
 	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/club-user?action=view-my-list&userId=${userData?.id}`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-				return response.json()
+		if (userData)
+			fetch(`http://localhost:8080/club-user?action=view-my-list&userId=${userData?.id}`, {
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			})
-			.then(function (data) {
-				setClubOfMeData(data)
-			})
-			.catch(error => console.error('Error:', error))
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					console.log(data)
+					setClubOfMeData(data)
+				})
+				.catch(error => console.error('Error:', error))
 	}, [userData])
-
 
 	// ** Hooks
 	const router = useRouter()
@@ -108,8 +109,10 @@ const UserDropdown = () => {
 		setAnchorEl(event.currentTarget)
 	}
 
-	const handleLogout = () => {
-		removeCookie('userData')
+	const handleLogout = e => {
+		e.preventDefault()
+		removeCookie('userData', { path: '/' })
+		removeclubData('clubData', { path: '/' })
 		router.push('/auth/login')
 	}
 
@@ -126,10 +129,12 @@ const UserDropdown = () => {
 		}
 		setSelectedValue(event.target.value)
 
-		setclubData('clubData', JSON.stringify(clubData), { path: '/' })
-		toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
+		{
+			clubData.clubId == 'none' ? '' : router.push('/dashboard')
+			setclubData('clubData', JSON.stringify(clubData), { path: '/' })
+			toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
+		}
 		setOpen(false)
-		router.push('/dashboard')
 	}
 
 	const styles = {
@@ -194,7 +199,7 @@ const UserDropdown = () => {
 								onChange={e => handleChange(e)}
 								value={selectedValue}
 							>
-								<MenuItem>Lựa chọn</MenuItem>
+								<MenuItem value='none'>Lựa chọn</MenuItem>
 
 								{clubOfMeData.map(option => (
 									<MenuItem key={option.id} value={option.id}>
@@ -301,10 +306,10 @@ const UserDropdown = () => {
 						</Link>
 					</Box>
 				</MenuItem>
-				<MenuItem sx={{ p: 0 }} onClick={() => {handleDropdownClose(); handleLogout()}}>
+				<MenuItem sx={{ p: 0 }} onClick={handleLogout}>
 					<Box sx={styles}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
-						<Link passHref underline='none' href=''>
+						<Link onClick={handleLogout} passHref underline='none' href=''>
 							<Button>Đăng xuất</Button>
 						</Link>
 					</Box>

@@ -48,7 +48,7 @@ export default function EditPrivateNotification({
 			fetch('http://localhost:8080/notification?action=send-private-email', {
 				method: 'POST',
 				body: JSON.stringify({
-					clubId: clubData['clubData']?.clubId,
+					clubId: null,
 					sendTo: privateNotificationDetail?.sendTo,
 					title: privateNotificationDetail?.title.trim(),
 					content: privateNotificationDetail?.content.trim()
@@ -66,7 +66,7 @@ export default function EditPrivateNotification({
 			method: 'POST',
 			body: JSON.stringify({
 				id: privateNotificationDetail?.id,
-				clubId: clubData['clubData']?.clubId,
+				clubId: null,
 				sendTo: privateNotificationDetail?.sendTo,
 				title: privateNotificationDetail?.title.trim(),
 				content: privateNotificationDetail?.content.trim()
@@ -84,7 +84,7 @@ export default function EditPrivateNotification({
 				} else {
 					console.log('Chỉnh sửa thông báo thành công')
 					toast.success('Chỉnh sửa thông báo thành công!')
-					router.push('/dashboard/notification-creator')
+					router.push('/admin/notifications')
 					handleClose()
 					dispatch({ type: 'trigger' })
 				}
@@ -93,20 +93,19 @@ export default function EditPrivateNotification({
 	}
 
 	useEffect(() => {
-		if (cookies['clubData'])
-			fetch(`http://localhost:8080/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
-				method: 'GET',
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
-				}
+		fetch(`http://localhost:8080/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
 			})
-				.then(function (response) {
-					return response.json()
-				})
-				.then(function (data) {
-					setClubMember(data)
-				})
-				.catch(error => console.error('Error:', error))
+			.then(function (data) {
+				setClubMember(data)
+			})
+			.catch(error => console.error('Error:', error))
 	}, [clubData])
 
 	return (

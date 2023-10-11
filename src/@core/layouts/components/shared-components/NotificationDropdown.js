@@ -23,6 +23,7 @@ import BellOutline from 'mdi-material-ui/BellOutline'
 
 // ** Third Party Components
 import PerfectScrollbarComponent from 'react-perfect-scrollbar'
+import { getUserInfo } from 'src/utils/info'
 
 // ** Styled Menu component
 const Menu = styled(MuiMenu)(({ theme }) => ({
@@ -90,9 +91,12 @@ const NotificationDropdown = () => {
 	const [state, dispatch] = useReducer((state, action) => action, 0)
 	const router = useRouter()
 	const [notificationsData, setNotificationsData] = useState([])
-	const [cookies, setCookie] = useCookies(['clubData'])
-	const [userData, setUserData] = useCookies(['userData'])
+	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [countUnview, setCountUnview] = useState(0)
+	const [userData, setUserData] = useState()
+	useEffect(() => {
+		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
+	}, [cookies])
 
 	for (let i = 0; i < notificationsData.length; i++) {
 		if (!notificationsData[i].hasSeen) {
@@ -129,17 +133,18 @@ const NotificationDropdown = () => {
 	}
 
 	useEffect(() => {
-		fetch(
-			'http://localhost:8080/notification?action=list-10-noti&clubId=' +
-				cookies['clubData']?.clubId +
-				'&userId=' +
-				userData['userData']?.id,
-			{
-				method: 'GET',
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
+		if (userData)
+			fetch(
+				'http://localhost:8080/notification?action=list-10-noti&clubId=' +
+					cookies['clubData']?.clubId +
+					'&userId=' +
+					userData?.id,
+				{
+					method: 'GET',
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
 				}
-			}
 		)
 			.then(function (response) {
 				return response.json()

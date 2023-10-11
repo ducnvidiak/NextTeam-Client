@@ -42,7 +42,7 @@ function EventCreatorPage() {
 	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080//manager-events?clubId=${clubCookies["clubData"].clubId}&cmd=list`, {
+		fetch(`http://localhost:8080//manager-events?clubId=${clubCookies['clubData'].clubId}&cmd=list`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -52,7 +52,6 @@ function EventCreatorPage() {
 				return response.json()
 			})
 			.then(function (data) {
-			
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))

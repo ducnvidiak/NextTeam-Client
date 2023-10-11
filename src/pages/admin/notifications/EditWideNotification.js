@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
 
@@ -15,7 +15,7 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
-import { Autocomplete, CardContent, Checkbox, Container, FormControlLabel, TextField } from '@mui/material'
+import { CardContent, Checkbox, Container, FormControlLabel, TextField } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 
@@ -29,29 +29,27 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction='up' ref={ref} {...props} />
 })
 
-export default function EditPrivateNotification({
-	privateUpdateModal,
+export default function EditWideNotification({
+	wideUpdateModal,
 	handleClose,
-	privateNotificationDetail,
-	setPrivateNotificationDetail,
-	setPrivateUpdateModal,
+	wideNotificationDetail,
+	setWideNotificationDetail,
+	setWideUpdateModal,
 	state,
 	dispatch
 }) {
 	const router = useRouter()
 	const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
 	const [save, setSave] = useState(false)
-	const [clubMember, setClubMember] = useState([])
 
-	const handleSubmitPrivate = event => {
+	const handleSubmit = event => {
 		if (save) {
-			fetch('http://localhost:8080/notification?action=send-private-email', {
+			fetch('http://localhost:8080/notification?action=send-public-email', {
 				method: 'POST',
 				body: JSON.stringify({
-					clubId: clubData['clubData']?.clubId,
-					sendTo: privateNotificationDetail?.sendTo,
-					title: privateNotificationDetail?.title.trim(),
-					content: privateNotificationDetail?.content.trim()
+					clubId: null,
+					title: '[CẬP NHẬT] ' + wideNotificationDetail?.title,
+					content: wideNotificationDetail?.content
 				}),
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8'
@@ -62,14 +60,13 @@ export default function EditPrivateNotification({
 				})
 				.catch(error => console.error('Error:', error))
 		}
-		fetch('http://localhost:8080/notification?action=update-private-noti', {
+		fetch('http://localhost:8080/notification?action=update-public-noti', {
 			method: 'POST',
 			body: JSON.stringify({
-				id: privateNotificationDetail?.id,
-				clubId: clubData['clubData']?.clubId,
-				sendTo: privateNotificationDetail?.sendTo,
-				title: privateNotificationDetail?.title.trim(),
-				content: privateNotificationDetail?.content.trim()
+				id: wideNotificationDetail?.id,
+				clubId: null,
+				title: wideNotificationDetail?.title,
+				content: wideNotificationDetail?.content
 			}),
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -80,46 +77,30 @@ export default function EditPrivateNotification({
 			})
 			.then(function (data) {
 				if (data.id == null) {
+					console.log(data)
 					toast.error(data)
 				} else {
-					console.log('Chỉnh sửa thông báo thành công')
-					toast.success('Chỉnh sửa thông báo thành công!')
-					router.push('/dashboard/notification-creator')
-					handleClose()
+					setWideUpdateModal(false)
+					console.log('Thay đổi thông báo thành công')
+					toast.success('Thay đổi thông báo thành công!')
+					router.push('/admin/notifications')
 					dispatch({ type: 'trigger' })
 				}
 			})
 			.catch(error => console.error('Error:', error))
 	}
 
-	useEffect(() => {
-		if (cookies['clubData'])
-			fetch(`http://localhost:8080/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
-				method: 'GET',
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
-				}
-			})
-				.then(function (response) {
-					return response.json()
-				})
-				.then(function (data) {
-					setClubMember(data)
-				})
-				.catch(error => console.error('Error:', error))
-	}, [clubData])
-
 	return (
 		<div>
 			<ToastContainer></ToastContainer>
-			<Dialog fullScreen open={privateUpdateModal} onClose={handleClose} TransitionComponent={Transition}>
+			<Dialog fullScreen open={wideUpdateModal} onClose={handleClose} TransitionComponent={Transition}>
 				<AppBar sx={{ position: 'relative' }}>
 					<Toolbar>
 						<IconButton edge='start' color='inherit' onClick={handleClose} aria-label='close'>
 							<CloseIcon />
 						</IconButton>
 						<Typography sx={{ ml: 2, flex: 1 }} color='white' variant='h6' component='div'>
-							{privateNotificationDetail?.title}
+							{wideNotificationDetail?.title}
 						</Typography>
 					</Toolbar>
 				</AppBar>
@@ -133,12 +114,12 @@ export default function EditPrivateNotification({
 									id='title'
 									name='title'
 									onChange={event =>
-										setPrivateNotificationDetail({
-											...privateNotificationDetail,
+										setWideNotificationDetail({
+											...wideNotificationDetail,
 											title: event.target.value
 										})
 									}
-									value={privateNotificationDetail?.title}
+									value={wideNotificationDetail?.title}
 								/>
 							</Grid>
 							<Grid item xs={12} sm={12}>
@@ -146,9 +127,9 @@ export default function EditPrivateNotification({
 									apiKey='prt9ektecsmty8j5e4o3sv1kwt1kmaadr8blewpfqi4ue43c'
 									onChange={(event, editor) => {
 										const data = editor.getContent()
-										setPrivateNotificationDetail({ ...privateNotificationDetail, content: data })
+										setWideNotificationDetail({ ...wideNotificationDetail, content: data })
 									}}
-									value={privateNotificationDetail?.content}
+									value={wideNotificationDetail?.content}
 									init={{
 										height: 500,
 										menubar: true,
@@ -173,43 +154,8 @@ export default function EditPrivateNotification({
 									}}
 								/>
 							</Grid>
-							<Grid item xs={12} sm={12}>
-								<Autocomplete
-									id='sendTo'
-									fullWidth
-									options={clubMember}
-									autoHighlight
-									getOptionLabel={option => option?.email}
-									onChange={event =>
-										setPrivateNotificationDetail({
-											...privateNotificationDetail,
-											sendTo: event.target.value
-										})
-									}
-									renderOption={(props, option) => (
-										<Box
-											component='li'
-											sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
-											{...props}
-											value={option?.id}
-										>
-											{option?.firstname} {option?.lastname} ({option?.studentCode}) -{' '}
-											{option?.email}
-										</Box>
-									)}
-									renderInput={params => (
-										<TextField
-											{...params}
-											label='Gửi cho'
-											inputProps={{
-												...params.inputProps,
-												autoComplete: 'new-password' // disable autocomplete and autofill
-											}}
-										/>
-									)}
-								/>
-							</Grid>
 						</Grid>
+
 						<Box>
 							<FormControlLabel
 								control={<Checkbox onChange={event => setSave(event.target.value)} />}
@@ -220,9 +166,9 @@ export default function EditPrivateNotification({
 						<Button
 							variant='contained'
 							sx={{ marginBottom: 7, marginTop: 6 }}
-							onClick={e => handleSubmitPrivate(e)}
+							onClick={e => handleSubmit(e)}
 						>
-							Gửi thông báo
+							Lưu thông báo
 						</Button>
 					</form>
 				</CardContent>

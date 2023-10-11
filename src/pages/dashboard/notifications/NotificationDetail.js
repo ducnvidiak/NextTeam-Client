@@ -25,7 +25,7 @@ export default function NotificationDetail({ notificationDetail, handleClose, op
 					<div>
 						<span>
 							<Chip
-								label={notificationDetail?.type == 'private' ? 'TB Cá nhân' : 'TB Chung'}
+								label={statusObj[notificationDetail?.type]?.label}
 								color={statusObj[notificationDetail?.type]?.color}
 								sx={{
 									height: 24,
