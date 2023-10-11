@@ -5,9 +5,13 @@ import {
 	Card,
 	CardMedia,
 	Container,
+	Dialog,
 	DialogActions,
+	DialogContent,
+	DialogTitle,
 	FormControl,
 	Input,
+	InputAdornment,
 	InputLabel,
 	MenuItem,
 	Select,
@@ -29,6 +33,7 @@ import { useCookies } from 'react-cookie'
 import { ToastContainer, toast } from 'react-toastify'
 import { convertFormat } from '.'
 import { getUserInfo } from 'src/utils/info'
+import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -42,12 +47,14 @@ const VisuallyHiddenInput = styled('input')({
 	width: 1
 })
 
-function EventOverView({ event, setEventList }) {
+function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
-	const [cookiesClub, setCookieClub, removeCookieClub] = useCookies(['clubData'])
+	const [isValidate, setIsValidate] = useState(true)
 	const [locationList, setLocationList] = useState([])
 	const [open, setOpen] = useState(false)
 	const [userData, setUserData] = useState()
+	const [isShowModal, setIsShowModal] = useState(false)
+	const [fileName, setFileName] = useState("")
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -91,7 +98,7 @@ function EventOverView({ event, setEventList }) {
 	}
 
 	const handleChangeFile = event => {
-		setFileName(event.target.files[0].name)
+		setFileName(event.target.files[0]?.name)
 		const reader = new FileReader()
 		const { files } = event.target
 		if (files && files.length !== 0) {
@@ -119,10 +126,8 @@ function EventOverView({ event, setEventList }) {
 					const data = await response.json()
 					const imageBannerUrl = data.data.url
 					setNewEvent({ ...newEvent, bannerUrl: imageBannerUrl })
-					console.log(imageBannerUrl)
 					toast.success('Tải lên hình ảnh thành công!!!')
 				} else {
-					console.log(response)
 					toast.error('Tải lên hình ảnh không thành công')
 				}
 			} catch (error) {
@@ -135,44 +140,77 @@ function EventOverView({ event, setEventList }) {
 	}
 
 	const handleSubmit = async () => {
-		console.log('submmit')
-		console.log({
-			...newEvent,
-			startTime: new Date(convertToTimestamp(newEvent.startTime)),
-			endTime: new Date(convertToTimestamp(newEvent.endTime)),
-			registeredBy: userData?.id,
-			clubId: cookiesClub['clubData']?.clubId
-		})
+		try {
+			setOpen(true)
+			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
+			fetch(`http://localhost:8080/events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
+				method: 'POST',
+				body: JSON.stringify({
+					...newEvent,
+					startTime: new Date(convertToTimestamp(newEvent.startTime)),
+					endTime: new Date(convertToTimestamp(newEvent.endTime)),
+					registeredBy: userData?.id,
+					clubId: userData?.clubId
+				}),
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					setEventList(data)
+					toast.success('Chỉnh sửa thông tin sự kiện thành công!!!')
+				})
+				.catch(error => {
+					console.error('Error:', error)
+
+					toast.error('Có lỗi xảy ra khi chỉnh sửa thông tin sự kiện, vui lòng thử lại')
+				})
+				.finally(() => {
+					setOpen(false)
+				})
+		} catch (error) {
+			setOpen(false)
+			if (error?.name === 'ValidationError') {
+				setIsValidate(false)
+				error.errors.forEach(err => toast.error(err))
+			}
+		}
+	}
+
+	const handleDelete = () => {
 		setOpen(true)
-		fetch(`http://localhost:8080/events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
+		console.log('delete~~~~')
+		fetch(`http://localhost:8080/events?cmd=delete&eventId=${event.id}&eventId=${event.id}`, {
 			method: 'POST',
-			body: JSON.stringify({
-				...newEvent,
-				startTime: new Date(convertToTimestamp(newEvent.startTime)),
-				endTime: new Date(convertToTimestamp(newEvent.endTime)),
-				registeredBy: userData?.id,
-				clubId: userData?.clubId
-			}),
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
 			}
 		})
 			.then(function (response) {
+				console.log('11111')
+				console.log(response)
+
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('update')
-				console.log(data)
+				console.log('222222')
+
 				setEventList(data)
-				toast.success('Chỉnh sửa thông tin sự kiện thành công!!!')
+				toast.success('Xóa sự kiện thành công!!!')
 			})
 			.catch(error => {
+				console.log('3333')
+
 				console.error('Error:', error)
 
-				toast.error('Có lỗi xảy ra khi chỉnh sửa thông tin sự kiện, vui lòng thử lại')
+				toast.error('Có lỗi xảy ra khi xóa sự kiện, vui lòng thử lại')
 			})
 			.finally(() => {
 				setOpen(false)
+				setOpenEventManagememntModal(false)
 			})
 	}
 
@@ -200,11 +238,58 @@ function EventOverView({ event, setEventList }) {
 				})[0]?.id
 			})
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [locationList])
 
 	return (
 		<Container maxWidth={'lg'} sx={{ padding: '0 60px !important' }}>
 			<ToastContainer></ToastContainer>
+			<Dialog
+				open={isShowModal}
+				onClose={() => setIsShowModal(false)}
+				aria-labelledby='alert-dialog-title'
+				aria-describedby='alert-dialog-description'
+				maxWidth={'md'}
+			>
+				<DialogTitle id='alert-dialog-title' sx={{ paddingX: 16, pt: 16 }}>
+					<Typography textAlign={'center'} variant='h5' mb={2}>
+						Xóa sự kiện
+					</Typography>
+					<Typography textAlign={'center'} variant='subtitle1' color={'#838383'}>
+						Bạn có chắc chắn muốn xóa sự kiện sau đây khỏi hệ thống?
+					</Typography>
+				</DialogTitle>
+				<DialogContent sx={{ paddingX: 16 }}>
+					<Stack direction={'row'} gap={2}>
+						<Typography marginBottom={1} width={'20%'}>
+							Tên sự kiện:
+						</Typography>
+						<Typography marginBottom={1} width={'80%'}>
+							"{event?.name}"
+						</Typography>
+					</Stack>
+					<Stack direction={'row'} gap={2}>
+						<Typography marginBottom={1} width={'20%'}>
+							Thời gian:
+						</Typography>
+						<Typography marginBottom={1}>6:00 PM</Typography>
+					</Stack>
+					<Stack direction={'row'} gap={2}>
+						<Typography marginBottom={1} width={'20%'}>
+							Địa điểm:
+						</Typography>
+						<Typography marginBottom={1}>Phòng 201</Typography>
+					</Stack>
+				</DialogContent>
+				<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>
+					<Button variant='contained' onClick={handleDelete}>
+						Xác nhận
+					</Button>
+					<Button variant='outlined' onClick={() => setIsShowModal(false)}>
+						Hủy
+					</Button>
+				</DialogActions>
+			</Dialog>
 			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }} open={open}></Backdrop>
 			<Stack direction={'column'}>
 				<Typography marginY={4} variant='h6'>
@@ -217,6 +302,7 @@ function EventOverView({ event, setEventList }) {
 					defaultValue={newEvent.name}
 					onChange={event => setNewEvent({ ...newEvent, name: event.target.value })}
 					sx={{ mb: 4 }}
+					error={newEvent.name === '' && !isValidate}
 				/>
 				<TextField
 					id='outlined-multiline-static'
@@ -225,6 +311,7 @@ function EventOverView({ event, setEventList }) {
 					rows={10}
 					defaultValue={newEvent.description}
 					onChange={event => setNewEvent({ ...newEvent, description: event.target.value })}
+					error={newEvent.description === '' && !isValidate}
 				/>
 				<Stack direction={'row'} justifyContent={'space-between'}>
 					<Typography marginY={4} variant='h6'>
@@ -236,6 +323,7 @@ function EventOverView({ event, setEventList }) {
 							component='span'
 							startIcon={<CloudUpload />}
 							sx={{ margin: '10px 0' }}
+							color={newEvent.bannerUrl === '' && !isValidate ? 'error' : 'primary'}
 						>
 							Tải lên hình ảnh
 						</Button>
@@ -303,6 +391,7 @@ function EventOverView({ event, setEventList }) {
 							defaultValue={
 								locationList.filter((item, index) => item.name === newEvent.locationName)[0]?.id
 							}
+							color={newEvent.planUrl === '' && !isValidate ? 'error' : 'primary'}
 						>
 							{locationList?.map(location => (
 								<MenuItem key={location?.id} value={location.id}>
@@ -348,7 +437,9 @@ function EventOverView({ event, setEventList }) {
 				<Button variant='contained' onClick={handleSubmit}>
 					Lưu thay đổi
 				</Button>
-				<Button variant='outlined'>Hủy bỏ sự kiện</Button>
+				<Button variant='outlined' onClick={() => setIsShowModal(true)}>
+					Hủy bỏ sự kiện
+				</Button>
 			</DialogActions>
 		</Container>
 	)

@@ -49,11 +49,11 @@ export const dashboardLayoutVavigation = () => {
 		{
 			title: 'Hoạt động',
 			icon: AssignmentIcon,
-			path: '/dashboard/events'
+			path: '/dashboard/activities'
 		},
 		{
 			title: 'Sự kiện',
-			path: '/dashboard/activities',
+			path: '/dashboard/events',
 			icon: CelebrationIcon
 		},
 		{
@@ -195,8 +195,13 @@ export const adminLayoutVavigation = () => {
 		},
 		{
 			icon: CelebrationIcon,
-			title: 'Quản lý sự kiện',
+			title: 'Phê duyệt sự kiện',
 			path: '/admin/events'
+		},
+		{
+			icon: CelebrationIcon,
+			title: 'Quản lý sự kiện',
+			path: '/admin/event-creator'
 		},
 	]
 }

@@ -22,12 +22,12 @@ import DatePicker from 'react-datepicker'
 // ** Styled Components
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import axios from 'axios'
-import { Autocomplete, Box } from '@mui/material'
+import { Autocomplete, Box, Typography } from '@mui/material'
 import { Country, State, City } from 'country-state-city'
 import { updateUserInfo } from '../../pages/user/apiUtils'
 import { Cookie } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
-import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../pages/input-validation/index'
+import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../input-validation/index'
 
 const CustomInput = forwardRef((props, ref) => {
 	return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
@@ -39,7 +39,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
 	const [studentCodeError, setStudentCodeError] = useState(false)
 	const [phoneNumberError, setPhoneNumberError] = useState(false)
-	const [dobError, setDobError] = useState(true)
+	const [dobError, setDobError] = useState(false)
 
 	const [date, setDate] = useState(
 		currentUserInfo?.dob != null && currentUserInfo.dob != '1970-01-01' ? new Date(currentUserInfo.dob) : null
@@ -47,6 +47,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 
 	useEffect(() => {
 		setCurrentUserInfo({ ...userInfo })
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userInfo.id])
 
 	const [country, setCountry] = useState(
@@ -111,7 +112,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							type='text'
 							label='Student code'
 							placeholder='DE160488'
-							value={currentUserInfo?.studentCode || ''}
+							value={currentUserInfo?.username.toUpperCase() || ''}
 							error={studentCodeError}
 							onChange={event => {
 								if (!validateStudentCode(event.target.value)) {
@@ -120,7 +121,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 									setStudentCodeError(false)
 								}
 								setCurrentUserInfo(current => {
-									return { ...current, studentCode: event.target.value }
+									return { ...current, username: event.target.value }
 								})
 							}}
 							helperText={
@@ -200,15 +201,23 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								error={dobError}
 								onChange={newValue => {
 									setDate(newValue)
-									if (!validateBirthOfDate(newValue?.toISOString))
+									if (!validateBirthOfDate(newValue?.toISOString().split('T')[0])) {
 										console.log('filter date: ', newValue?.toISOString().split('T')[0])
-									console.log('original date: ', newValue?.toISOString())
-									setCurrentUserInfo(current => {
-										return { ...current, dob: newValue?.toISOString().split('T')[0] || null }
-									})
+										console.log('original date: ', newValue?.toISOString())
+										setDobError(true)
+									} else {
+										setDobError(false)
+										setCurrentUserInfo(current => {
+											return { ...current, dob: newValue?.toISOString().split('T')[0] || null }
+										})
+									}
 								}}
-								helperText={dobError && 'Ngày sinh không được phép ở thời điểm tương lai.'}
-							/>
+							/>{' '}
+							{dobError && (
+								<Typography variant='caption' color='error' sx={{ marginLeft: '20px' }}>
+									Ngày sinh của bạn phải đủ 7 tuổi trở lên
+								</Typography>
+							)}
 						</DatePickerWrapper>
 					</Grid>
 					<Grid item xs={12} sm={6}>
@@ -320,11 +329,25 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							<RadioGroup
 								onChange={event => {
 									setCurrentUserInfo(current => {
-										return { ...currentUserInfo, gender: event.target.value }
+										return {
+											...currentUserInfo,
+											gender:
+												event.target.value == 'Male'
+													? 0
+													: event.target.value == 'Female'
+													? 1
+													: 2
+										}
 									})
 								}}
 								row
-								value={currentUserInfo.gender || 'Male'}
+								value={
+									currentUserInfo.gender == 0
+										? 'Male'
+										: currentUserInfo.gender == 1
+										? 'Female'
+										: 'Others' || 'Male'
+								}
 								aria-label='gender'
 								name='account-settings-info-radio'
 							>
