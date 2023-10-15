@@ -101,7 +101,8 @@ function MemberApproval() {
 									setSearch(event.target.value)
 									handleSearch()
 								}}
-								onKeyPress={handleEnterKeyPress} // Gọi handleEnterKeyPress khi có sự kiện keypress
+
+								// onKeyPress={handleEnterKeyPress} // Gọi handleEnterKeyPress khi có sự kiện keypress
 							/>
 						</div>
 

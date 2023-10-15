@@ -125,27 +125,21 @@ const getListOfAllUser = async () => {
 	return json
 }
 
-const getProposalById = async id => {
-	const data = JSON.stringify({ type: 'one', id: id })
-
+const createProposal = async (formData, id) => {
 	const config = {
 		headers: {
-			'Content-Type': 'application/json; charset=utf-8'
+			'Content-Type': 'multipart/form-data'
 		}
 	}
 
 	const json = await axios
-		.post('http://localhost:8080/api/proposal', data, config)
+		.post('http://localhost:8080/api/proposal?id=' + id, formData, config)
 		.then(response => {
-			console.log(response.data)
+			console.log('response from api: ', response)
 
 			return response.data
 		})
-		.catch(error => {
-			console.log('Error: ', error)
-
-			return null
-		})
+		.catch(error => {})
 
 	return json
 }
@@ -167,6 +161,23 @@ const getProposalsByUserId = async id => {
 	return json
 }
 
+const deleteProposalById = async id => {
+	const json = await axios
+		.delete('http://localhost:8080/api/proposal?id=' + id)
+		.then(response => {
+			console.log(response.data)
+
+			return response.data
+		})
+		.catch(error => {
+			console.log('Error: ', error)
+
+			return null
+		})
+
+	return json
+}
+
 module.exports = {
 	updateUserAvatar,
 	updateUserInfo,
@@ -174,6 +185,7 @@ module.exports = {
 	changeUserPass,
 	getAllMajors,
 	getListOfAllUser,
-	getProposalById,
-	getProposalsByUserId
+	getProposalsByUserId,
+	deleteProposalById,
+	createProposal
 }

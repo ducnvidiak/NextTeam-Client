@@ -112,6 +112,8 @@ const UserDropdown = props => {
 
 	const handleLogout = () => {
 		removeCookie('userData')
+
+		router.replace('/')
 	}
 
 	const handleDropdownClose = url => {
@@ -260,7 +262,7 @@ const UserDropdown = props => {
 									color: 'text.disabled'
 								}}
 							>
-								{userData?.username.toUpperCase()}
+								{userData?.username?.toUpperCase()}
 							</Typography>
 						</Box>
 					</Box>
@@ -312,9 +314,7 @@ const UserDropdown = props => {
 				>
 					<Box sx={styles}>
 						<LogoutVariant sx={{ marginRight: 2 }} />
-						<Link href='/'>
-							<Button>Đăng xuất</Button>
-						</Link>
+						<Button>Đăng xuất</Button>
 					</Box>
 				</MenuItem>
 				{/* <Divider />

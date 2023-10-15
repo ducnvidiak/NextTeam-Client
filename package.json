@@ -66,6 +66,7 @@
 		"clsx": "^1.1.1",
 		"country-state-city": "^3.2.1",
 		"dayjs": "^1.11.10",
+		"googleapis": "^127.0.0",
 		"install": "^0.13.0",
 		"mdi-material-ui": "^7.1.0",
 		"moment": "^2.29.4",

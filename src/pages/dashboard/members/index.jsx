@@ -110,7 +110,7 @@ const UserList = () => {
 						display: 'grid',
 						gridTemplateColumns: '1fr 1fr',
 						padding: '40px',
-						gap: '20px 50px'
+						gap: '20px'
 					}}
 				>
 					{userList?.map(user => (
@@ -123,37 +123,72 @@ const UserList = () => {
 								padding: '20px',
 								borderRadius: '15px',
 								cursor: 'pointer',
-								border: '1px solid #f5bb8e'
+								boxShadow: '0 0 10px #dedede'
 							}}
 							onClick={() => {
 								handleClick(user.id)
 							}}
 						>
 							<Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-								<Box>
+								<Box
+									sx={{
+										width: '90px',
+										height: '90px',
+										borderRadius: '1000px',
+										border: '3px solid #f58a38',
+										overflow: 'hidden'
+									}}
+								>
 									<Avatar
-										sx={{ width: '56px', height: '56px', border: '2px solid #f58a38' }}
+										sx={{
+											width: '90px',
+											height: '90px',
+											transition: 'transform .4s ease-in-out',
+											':hover': { transform: 'scale(1.2)' }
+										}}
 										alt='avatar'
 										src={user.avatarURL}
 									/>
 								</Box>
-								<Box>
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										justifyContent: 'center',
+										alignItems: 'flex-start',
+										gap: '7px'
+									}}
+								>
 									<Typography variant='h6'>{user.fullname}</Typography>
-									<Typography variant='subtitle1'>{user.studentCode}</Typography>
+									<Typography
+										variant='subtitle1'
+										sx={{
+											backgroundColor: 'orange',
+											display: 'inline-block',
+											padding: '0 5px',
+											borderRadius: '5px',
+											color: 'white'
+										}}
+									>
+										{user?.studentCode.toUpperCase()}
+									</Typography>
 								</Box>
 							</Box>
 							<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px' }}>
-								<Card
+								<Box
 									sx={{
 										padding: '5px',
 										borderRadius: '1000px',
 										display: 'flex',
 										justifyContent: 'center',
-										alignItems: 'center'
+										alignItems: 'center',
+										':hover': {
+											backgroundColor: '#ededed'
+										}
 									}}
 								>
-									<MoreHorizIcon />
-								</Card>
+									<MoreHorizIcon sx={{ color: 'orange', fontSize: '32px' }} />
+								</Box>
 							</Box>
 						</Card>
 					))}

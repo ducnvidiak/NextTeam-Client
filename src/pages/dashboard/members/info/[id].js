@@ -74,18 +74,35 @@ const UserInfoView = () => {
 			>
 				<Typography variant='h5'>Thông tin tài khoản</Typography>
 			</Box>
-			<Box sx={{ height: '100%', padding: '30px 80px' }}>
+			<Box sx={{ height: '100%', padding: '50px 80px 30px' }}>
 				<Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '40px' }}>
 					<Avatar
 						src={userInfo?.avatarURL}
 						sizes='large'
 						sx={{ width: '190px', height: '190px', border: '7px solid #f58a38' }}
 					/>
-					<Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'flex-start',
+							justifyContent: 'center',
+							gap: '10px'
+						}}
+					>
 						<Typography variant='h3'>
 							{userInfo?.firstname} {userInfo?.lastname}
 						</Typography>
-						<Typography sx={{ marginLeft: '10px', color: '#f58a38' }} variant='h6'>
+						<Typography
+							sx={{
+								marginLeft: '10px',
+								backgroundColor: 'orange',
+								color: 'white',
+								padding: '3px 15px',
+								borderRadius: '10px'
+							}}
+							variant='h6'
+						>
 							{userInfo?.username.toUpperCase()}
 						</Typography>
 					</Box>
@@ -107,7 +124,7 @@ const UserInfoView = () => {
 								<Typography variant='h6'>Chuyên ngành</Typography>
 							</Grid>
 							<Grid item xs={8}>
-								<Typography variant='subtitle1'>{majorName?.name}</Typography>
+								<Typography variant='subtitle1'>{majorName?.name || 'chưa cập nhật'}</Typography>
 							</Grid>
 						</Grid>
 					</Grid>
