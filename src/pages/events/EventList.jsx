@@ -74,7 +74,7 @@ function EventItem({ event, setEventList, eventList, userData }) {
 						event={event}
 						openRegisterModal={openRegisterModal}
 						setOpenRegisterModal={setOpenRegisterModal}
-						
+
 						// anchor={anchor}
 						// toggleDrawer={() => toggleDrawer(anchor, false)}
 						setState={setState}
@@ -113,9 +113,9 @@ function EventItem({ event, setEventList, eventList, userData }) {
 							<Stack direction={'row'}>
 								{[1, 2, 3, 4, 5].map((value, index) =>
 									value <= event?.avgRating.toFixed() ? (
-										<StarIcon color='primary'></StarIcon>
+										<StarIcon key={index} color='primary'></StarIcon>
 									) : (
-										<StarIcon></StarIcon>
+										<StarIcon key={index}></StarIcon>
 									)
 								)}
 							</Stack>
