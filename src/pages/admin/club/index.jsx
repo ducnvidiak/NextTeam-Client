@@ -40,7 +40,8 @@ function Club() {
 	const [clubs, setClubs] = useState([])
 	const [open, setOpen] = useState(false)
 	const [selectedCategory, setSelectedCategory] = useState('')
-  const initValid = {
+
+	const initValid = {
 		name: false,
 		subname: false,
 		categoryId: false,
@@ -63,7 +64,7 @@ function Club() {
 
 	const closeCreateDialog = () => {
 		setIsCreateDialogOpen(false)
-    setValidationErrors(initValid)
+		setValidationErrors(initValid)
 	}
 
 	const refreshClubCategories = () => {
@@ -93,7 +94,7 @@ function Club() {
 	const closeEditDialog = () => {
 		setIsEditDialogOpen(false)
 		setClubFormData(initialClubFormData)
-    setValidationErrors(initValid)
+		setValidationErrors(initValid)
 	}
 
 	const openEditDialog = rowData => {
@@ -157,6 +158,7 @@ function Club() {
 				pauseOnHover: true,
 				draggable: true
 			})
+
 			return
 		}
 
@@ -242,6 +244,7 @@ function Club() {
 				pauseOnHover: true,
 				draggable: true
 			})
+
 			return
 		}
 
