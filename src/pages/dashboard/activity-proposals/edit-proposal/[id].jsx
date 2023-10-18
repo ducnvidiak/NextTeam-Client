@@ -2,8 +2,10 @@ import { useState, useRef, useEffect } from 'react'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
 
+import { getProposalByPropId, getProposalFilesByPropId } from 'src/api-utils/apiUtils'
+
 import Modal from '@mui/material/Modal'
-import { createProposal } from 'src/api-utils/apiUtils'
+import { updateProposal } from 'src/api-utils/apiUtils'
 
 import { Box, Button, Chip, FormHelperText, InputLabel, Paper, TextField, Typography } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -18,25 +20,47 @@ import { AiOutlineFileUnknown } from 'react-icons/ai'
 import { BiSolidFilePdf } from 'react-icons/bi'
 import { BsFiletypePng, BsFiletypeJpg } from 'react-icons/bs'
 
-import classes from './styles.module.scss'
+import classes from '../styles.module.scss'
 
 import classNames from 'classnames'
 import { getUserInfo } from 'src/utils/info'
 import { toast } from 'react-toastify'
 
-function NewProposal() {
+function EditProposal() {
 	const [isFocused, setIsFocused] = useState(false)
-	const [fileList, setFileList] = useState([])
+	const [fileRecords, setFileRecords] = useState(null)
+	const [proposalId, setProposalId] = useState(null)
 
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [userData, setUserData] = useState()
 
+	const [newFiles, setNewFiles] = useState([])
+	const [deleteFiles, setDeleteFiles] = useState([])
+
 	const [loading, setLoading] = useState(false)
-	const router = useRouter()
 
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
+
+	const router = useRouter()
+	const { id } = router.query
+
+	useEffect(() => {
+		setProposalId(id)
+
+		if (proposalId) {
+			getProposalByPropId(proposalId).then(response => {
+				console.log('proposals: ', response)
+				setTitle(response.title)
+				setContent(response.content)
+			})
+			getProposalFilesByPropId(proposalId).then(response => {
+				console.log('file records: ', response)
+				setFileRecords(response)
+			})
+		}
+	}, [id, proposalId])
 
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
@@ -62,14 +86,7 @@ function NewProposal() {
 
 	const onFileDrop = e => {
 		const newFiles = e.target.files
-		setFileList(current => [...current, ...newFiles])
-	}
-
-	const handleDeleteFile = file => {
-		const updatedList = [...fileList]
-
-		updatedList.splice(fileList.indexOf(file), 1)
-		setFileList(updatedList)
+		setNewFiles(current => [...current, ...newFiles])
 	}
 
 	const handleResetForm = () => {
@@ -93,35 +110,45 @@ function NewProposal() {
 	const handleSubmitForm = async () => {
 		if (title.length == 0) setTitleEmpty(true)
 		if (content.length == 0) setContentEmpty(true)
+
 		if (title.length > 0 && content.length > 0) {
 			const formData = new FormData()
-			const numOfFile = fileList.length
+			const numOfFile = newFiles.length
+			const numOfDeleteFile = deleteFiles.length
 
 			for (let i = 0; i < numOfFile; i++) {
-				const fileContent = await readFile(fileList[i])
+				const fileContent = await readFile(newFiles[i])
 				formData.append(`filescontent[${i}]`, fileContent)
 
 				console.log(formData.get(`filescontent[${i}]`))
 
-				formData.append(`filesname[${i}]`, fileList[i].name)
-				formData.append(`filesType[${i}]`, fileList[i].type)
+				formData.append(`filesname[${i}]`, newFiles[i].name)
+				formData.append(`filesType[${i}]`, newFiles[i].type)
 			}
 
+			// formData.append('deleteFileRecords', deleteFiles)
+
+			for (let i = 0; i < numOfDeleteFile; i++) {
+				console.log(deleteFiles[i].fileId)
+				console.log(deleteFiles[i].id)
+				formData.append(`deleteFileId[${i}]`, deleteFiles[i].fileId)
+			}
+
+			formData.append('numOfDeleteFile', numOfDeleteFile)
 			formData.append('numOfFile', numOfFile)
 			formData.append('title', title)
 			formData.append('content', content)
-			formData.append('clubId', 1)
 
-			if (numOfFile > 0) setLoading(true)
+			if (numOfFile > 0 || numOfDeleteFile > 0) setLoading(true)
 
-			await createProposal(formData, userData.id).then(response => {
+			await updateProposal(formData, proposalId).then(response => {
 				if (response?.status == 'success') {
-					toast.success('Gửi đề xuất thành công')
-					router.push('./')
+					toast.success('Cập nhật đề xuất thành công')
+					router.push('../')
 				} else {
 					toast.error('Vui lòng thử lại sau')
 				}
-				if (numOfFile > 0) setLoading(false)
+				if (numOfFile > 0 || numOfDeleteFile > 0) setLoading(false)
 			})
 		} else {
 			toast.error('Vui lòng điền đầy đủ thông tin')
@@ -131,7 +158,7 @@ function NewProposal() {
 	return (
 		<Fragment>
 			<Typography variant='h5' sx={{ fontWeight: '600', marginBottom: '10px' }}>
-				Thêm đề xuất mới
+				Chỉnh sửa đề xuất
 			</Typography>
 			<Paper
 				sx={{
@@ -276,7 +303,45 @@ function NewProposal() {
 								gap: '10px'
 							}}
 						>
-							{fileList?.map((file, index) => {
+							{fileRecords?.map((fileRecord, index) => {
+								let avatar = <AiOutlineFileUnknown style={{ fontSize: '20px', color: 'gray' }} />
+
+								switch (fileRecord.type) {
+									case 'application/msword':
+									case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+										avatar = <AiFillFileWord style={{ fontSize: '20px', color: '#3581d7' }} />
+										break
+
+									case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+										avatar = <AiFillFileExcel style={{ fontSize: '20px', color: 'green' }} />
+										break
+
+									case 'application/pdf':
+										avatar = <BiSolidFilePdf style={{ fontSize: '20px', color: 'orange' }} />
+										break
+									case 'image/jpeg':
+										avatar = <BsFiletypeJpg style={{ fontSize: '20px' }} />
+										break
+									case 'image/png':
+										avatar = <BsFiletypePng style={{ fontSize: '20px' }} />
+								}
+
+								return (
+									<Chip
+										avatar={avatar}
+										key={index}
+										label={fileRecord.name}
+										onDelete={() => {
+											const updatedList = [...fileRecords]
+											updatedList.splice(fileRecords.indexOf(fileRecord), 1)
+											setFileRecords(updatedList)
+											setDeleteFiles(current => [...current, fileRecord])
+										}}
+										variant='outlined'
+									/>
+								)
+							})}
+							{newFiles?.map((file, index) => {
 								let avatar = <AiOutlineFileUnknown style={{ fontSize: '20px', color: 'gray' }} />
 
 								switch (file.type) {
@@ -284,9 +349,11 @@ function NewProposal() {
 									case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
 										avatar = <AiFillFileWord style={{ fontSize: '20px', color: '#3581d7' }} />
 										break
+
 									case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
 										avatar = <AiFillFileExcel style={{ fontSize: '20px', color: 'green' }} />
 										break
+
 									case 'application/pdf':
 										avatar = <BiSolidFilePdf style={{ fontSize: '20px', color: 'orange' }} />
 										break
@@ -303,7 +370,9 @@ function NewProposal() {
 										key={index}
 										label={file.name}
 										onDelete={() => {
-											handleDeleteFile(file)
+											const updatedList = [...newFiles]
+											updatedList.splice(newFiles.indexOf(fileRecord), 1)
+											setNewFiles(updatedList)
 										}}
 										variant='outlined'
 									/>
@@ -358,7 +427,7 @@ function NewProposal() {
 							color: '#fff'
 						}}
 					>
-						Các file đang được tải lên, vui lòng chờ!
+						Đang cập nhật, vui lòng chờ!
 					</Typography>
 					<LinearProgress color='primary' />
 				</Box>
@@ -367,4 +436,4 @@ function NewProposal() {
 	)
 }
 
-export default NewProposal
+export default EditProposal

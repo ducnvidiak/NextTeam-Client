@@ -128,7 +128,7 @@ const getListOfAllUser = async () => {
 const createProposal = async (formData, id) => {
 	const config = {
 		headers: {
-			'Content-Type': 'multipart/form-data'
+			'Content-Type': 'multipart/form-data; charset=utf-8'
 		}
 	}
 
@@ -144,9 +144,45 @@ const createProposal = async (formData, id) => {
 	return json
 }
 
+const updateProposal = async (formData, id) => {
+	const config = {
+		headers: {
+			'Content-Type': 'multipart/form-data; charset=utf-8'
+		}
+	}
+
+	const json = await axios
+		.put('http://localhost:8080/api/proposal?id=' + id, formData, config)
+		.then(response => {
+			console.log('response from api: ', response)
+
+			return response.data
+		})
+		.catch(error => {})
+
+	return json
+}
+
+const getProposalByPropId = async id => {
+	const json = await axios
+		.get('http://localhost:8080/api/proposal?type=byProposalId&id=' + id)
+		.then(response => {
+			console.log(response.data)
+
+			return response.data
+		})
+		.catch(error => {
+			console.log('Error: ', error)
+
+			return null
+		})
+
+	return json
+}
+
 const getProposalsByUserId = async id => {
 	const json = await axios
-		.get('http://localhost:8080/api/proposal?id=' + id)
+		.get('http://localhost:8080/api/proposal?type=byUserId&id=' + id)
 		.then(response => {
 			console.log(response.data)
 
@@ -178,6 +214,40 @@ const deleteProposalById = async id => {
 	return json
 }
 
+const getProposalFilesByPropId = async id => {
+	const json = await axios
+		.get('http://localhost:8080/api/proposal_files?type=one&id=' + id)
+		.then(response => {
+			console.log(response.data)
+
+			return response.data
+		})
+		.catch(error => {
+			console.log('Error: ', error)
+
+			return null
+		})
+
+	return json
+}
+
+const getAllProposalFilesByUserId = async id => {
+	const json = await axios
+		.get('http://localhost:8080/api/proposal_files?type=many&id=' + id)
+		.then(response => {
+			console.log(response.data)
+
+			return response.data
+		})
+		.catch(error => {
+			console.log('Error: ', error)
+
+			return null
+		})
+
+	return json
+}
+
 module.exports = {
 	updateUserAvatar,
 	updateUserInfo,
@@ -186,6 +256,10 @@ module.exports = {
 	getAllMajors,
 	getListOfAllUser,
 	getProposalsByUserId,
+	getProposalByPropId,
 	deleteProposalById,
-	createProposal
+	createProposal,
+	updateProposal,
+	getProposalFilesByPropId,
+	getAllProposalFilesByUserId
 }
