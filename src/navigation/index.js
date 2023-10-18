@@ -155,9 +155,6 @@ export const dashboardLayoutVavigation = () => {
 			path: '/dashboard/department',
 			icon: NoteAddIcon
 		}
-		
-		
-
 	]
 }
 
@@ -169,7 +166,7 @@ export const adminLayoutVavigation = () => {
 			path: '/admin'
 		},
 		{
-			title: 'Câu lạc bộ',
+			title: 'Quản lí câu lạc bộ',
 			icon: Groups2Icon,
 			path: '/admin/club'
 		},
@@ -202,7 +199,7 @@ export const adminLayoutVavigation = () => {
 			icon: CelebrationIcon,
 			title: 'Quản lý sự kiện',
 			path: '/admin/event-creator'
-		},
+		}
 	]
 }
 

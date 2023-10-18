@@ -40,14 +40,14 @@ function Club() {
 	const [clubs, setClubs] = useState([])
 	const [open, setOpen] = useState(false)
 	const [selectedCategory, setSelectedCategory] = useState('')
-
-	const [validationErrors, setValidationErrors] = useState({
+  const initValid = {
 		name: false,
 		subname: false,
 		categoryId: false,
 		movementPoint: false,
 		balance: false
-	})
+	}
+	const [validationErrors, setValidationErrors] = useState(initValid)
 
 	const handleInputChange = e => {
 		const { name, value } = e.target
@@ -63,6 +63,7 @@ function Club() {
 
 	const closeCreateDialog = () => {
 		setIsCreateDialogOpen(false)
+    setValidationErrors(initValid)
 	}
 
 	const refreshClubCategories = () => {
@@ -92,6 +93,7 @@ function Club() {
 	const closeEditDialog = () => {
 		setIsEditDialogOpen(false)
 		setClubFormData(initialClubFormData)
+    setValidationErrors(initValid)
 	}
 
 	const openEditDialog = rowData => {
@@ -147,6 +149,14 @@ function Club() {
 
 		// Nếu có lỗi, không thực hiện gửi yêu cầu
 		if (Object.keys(errors).length > 0) {
+			toast.error('Thông tin câu lạc bộ bị thiếu hoặc không đúng ! Vui lòng nhập lại !', {
+				position: 'top-right',
+				autoClose: 3000, // Close the toast after 3 seconds
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true
+			})
 			return
 		}
 
@@ -224,6 +234,14 @@ function Club() {
 
 		// Nếu có lỗi, không thực hiện gửi yêu cầu
 		if (Object.keys(errors).length > 0) {
+			toast.error('Thông tin câu lạc bộ bị thiếu hoặc không đúng ! Vui lòng nhập lại !', {
+				position: 'top-right',
+				autoClose: 3000, // Close the toast after 3 seconds
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true
+			})
 			return
 		}
 
@@ -248,7 +266,7 @@ function Club() {
 			clubFormData.isActive +
 			'&id=' +
 			clubFormData.id
-		console.log(url_fetch)
+
 		fetch(url_fetch)
 			.then(res => {
 				if (!res.ok) {
