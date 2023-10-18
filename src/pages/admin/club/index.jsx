@@ -40,6 +40,8 @@ function Club() {
 	const [clubs, setClubs] = useState([])
 	const [open, setOpen] = useState(false)
 	const [selectedCategory, setSelectedCategory] = useState('')
+	
+	console.log(selectedCategory);
 
 	const initValid = {
 		name: false,
