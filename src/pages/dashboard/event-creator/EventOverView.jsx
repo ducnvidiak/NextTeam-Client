@@ -54,23 +54,30 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	const [open, setOpen] = useState(false)
 	const [userData, setUserData] = useState()
 	const [isShowModal, setIsShowModal] = useState(false)
-	const [fileName, setFileName] = useState("")
+	const [fileName, setFileName] = useState('')
+	const [file, setFile] = useState()
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	const [newEvent, setNewEvent] = useState({
 		...event,
-		startTime: convertFormat(event.startTime),
-		endTime: convertFormat(event.endTime),
+		startTime: event?.startTime,
+		endTime: event.endTime,
 		locationId: locationList.filter((item, index) => {
 			return item.name == event?.locationName
 		})[0]?.id
 	})
 
+// console.log('event');
+// console.log(event??.startTime);
+// console.log(dayjs(event??.startTime));
+// console.log(newEvent);
+
+
 	const handleDateChange = date => {
 		const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm')
-		const startString = `${formattedDate.substring(0, 11)}T${newEvent.startTime.slice(-5)}`
+		const startString = `${formattedDate.substring(0, 11)}T${newEvent?.startTime.slice(-5)}`
 		const endString = `${formattedDate.substring(0, 11)}T${newEvent.endTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
@@ -81,7 +88,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const handleStartTimeChange = time => {
 		const formattedTime = dayjs(time).format('YYYY-MM-DDTHH:mm')
-		const combinedString = `${newEvent.startTime.substring(0, 11)}T${formattedTime.slice(-5)}`
+		const combinedString = `${newEvent?.startTime.substring(0, 11)}T${formattedTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
 			startTime: combinedString
@@ -140,6 +147,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	}
 
 	const handleSubmit = async () => {
+		console.log("!!!!");
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
@@ -147,7 +155,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
-					startTime: new Date(convertToTimestamp(newEvent.startTime)),
+					startTime: new Date(convertToTimestamp(newEvent?.startTime)),
 					endTime: new Date(convertToTimestamp(newEvent.endTime)),
 					registeredBy: userData?.id,
 					clubId: userData?.clubId
@@ -231,14 +239,14 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		if (locationList.length > 0) {
 			setNewEvent({
 				...event,
-				startTime: convertFormat(event.startTime),
+				startTime: convertFormat(event?.startTime),
 				endTime: convertFormat(event.endTime),
 				locationId: locationList.filter((item, index) => {
 					return item.name == event?.locationName
 				})[0]?.id
 			})
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [locationList])
 
 	return (
@@ -359,14 +367,14 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 									helperText: 'MM/DD/YYYY'
 								}
 							}}
-							defaultValue={dayjs(newEvent.startTime)}
+							defaultValue={dayjs(newEvent?.startTime)}
 							sx={{ flex: 1 }}
 							onChange={handleDateChange}
 						/>
 						<TimePicker
 							sx={{ flex: 1 }}
 							label='Bắt đầu'
-							defaultValue={dayjs(newEvent.startTime)}
+							defaultValue={dayjs(newEvent?.startTime)}
 							onChange={handleStartTimeChange}
 						/>
 						<TimePicker
@@ -430,7 +438,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						Upload file
 						<VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} />
 					</Button>
-					<Typography variant='body'>{fileName ? fileName : "Kịch bản club day.xlsx"}</Typography>
+					<Typography variant='body'>{fileName ? fileName : 'Kịch bản club day.xlsx'}</Typography>
 				</Stack>
 			</Stack>
 			<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>

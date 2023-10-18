@@ -51,7 +51,7 @@ function EventManagement({ openEventManagememntModal, setOpenEventManagememntMod
 						<CloseIcon />
 					</IconButton>
 					<Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div' color={'#fff'}>
-						{event.name}
+						{event?.name}
 					</Typography>
 				</Toolbar>
 			</AppBar>

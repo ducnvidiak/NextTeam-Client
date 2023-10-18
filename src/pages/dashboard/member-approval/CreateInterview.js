@@ -253,7 +253,7 @@ export default function CreateInterview({
 										<Typography variant='body1'>
 											<strong>Facebook: </strong>
 											{applicationDetail?.user.facebookUrl ? (
-												<Link target='_blank' href={`${applicationDetail?.user.facebookUrl}`}>
+												<Link passHref target='_blank' href={`${applicationDetail?.user.facebookUrl}`}>
 													<Button>Truy cập</Button>
 												</Link>
 											) : (

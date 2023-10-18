@@ -23,7 +23,7 @@ import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 
 const axios = require('axios')
 
-import { changeUserPass } from '../../pages/user/apiUtils'
+import { changeUserPass } from '../../utils/apiUtils'
 import { ToastContainer, toast } from 'react-toastify'
 
 const TabSecurity = ({ userInfo, setUserInfo }) => {

@@ -32,6 +32,7 @@ const Dashboard = () => {
 	const [cookies, setCookie] = useCookies(['clubData'])
 	const [data, setData] = useState([])
 	const clubId = cookies['clubData']?.clubId
+
 	const refreshData = () => {
 		fetch(`${ORIGIN_URL}${clubId}`)
 			.then(res => res.json())
@@ -43,7 +44,9 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		refreshData()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [cookies])
+	
 	return (
 		<ApexChartWrapper>
 			<Grid container spacing={6}>

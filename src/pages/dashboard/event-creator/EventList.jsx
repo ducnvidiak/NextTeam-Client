@@ -40,8 +40,9 @@ import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
 import EventManagement from './EventManagement'
 import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 
-function EventItem({ event, setEventList }) {
+function EventItem({ event, setEventList, eventList, index }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
 	const [openEventManagememntModal, setOpenEventManagememntModal] = useState(false)
@@ -78,6 +79,7 @@ function EventItem({ event, setEventList }) {
 				event={event}
 				setEventList={setEventList}
 			></EventManagement>
+			
 			{['left', 'right', 'top', 'bottom'].map(anchor => (
 				<>
 					<SwipeableDrawer
@@ -96,16 +98,25 @@ function EventItem({ event, setEventList }) {
 					</SwipeableDrawer>
 				</>
 			))}
+			{new Date() > new Date(eventList[index]?.endTime) &&
+				new Date() < new Date(eventList[index - 1]?.endTime) && (
+					<Divider sx={{ marginTop: 5, color: 'green' }}>
+						<Stack direction={'column'} alignItems={'center'} gap={2}>
+							<Chip label='ĐÃ QUA' color='error' />
+						</Stack>
+					</Divider>
+				)}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
-					{event?.isApproved == 'true' || event?.isApproved == true ? (
+					{new Date() > new Date(event?.endTime) && !event?.isApproved ? (
+						<Chip label='Quá hạn' sx={{ mb: 4, fontSize: 16 }} color='error' />
+					) : event?.isApproved == 'true' || event?.isApproved == true ? (
 						<Chip label='Đã duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
 					) : (
 						<Chip label='Đang chờ' sx={{ mb: 4, fontSize: 16 }} color='warning' />
 					)}
 					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
-					
 				</Stack>
 				<Card
 					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
@@ -149,6 +160,7 @@ function EventItem({ event, setEventList }) {
 					/>
 				</Card>
 			</Stack>
+			
 		</>
 	)
 }
@@ -158,7 +170,13 @@ function EventList({ eventList, setEventList }) {
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
 				{eventList?.map((event, index) => (
-					<EventItem key={event.id} event={event} setEventList={setEventList}></EventItem>
+					<EventItem
+						key={event.id}
+						event={event}
+						setEventList={setEventList}
+						index={index}
+						eventList={eventList}
+					></EventItem>
 				))}
 			</Container>
 		</>

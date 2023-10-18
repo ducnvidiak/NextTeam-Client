@@ -13,12 +13,15 @@ import Link from 'next/link'
 import { ToastContainer, toast } from 'react-toastify'
 import { translateDayOfWeek } from 'src/ultis/dateTime'
 import moment from 'moment'
+import { useRouter } from 'next/router'
 
-function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer, setOpenFeedbackModal }) {
+function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer, setOpenFeedbackModal, userData }) {
+	const router = useRouter()
+
 	const handleFeedbackClick = () => {
 		if (event?.isFeedback) {
-			toast.error("Bạn đã feedback cho sự kiện này rồi!!!");
-			
+			toast.error('Bạn đã feedback cho sự kiện này rồi!!!')
+
 			return
 		}
 		setOpenFeedbackModal(true)
@@ -119,7 +122,13 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 						<Typography sx={'body1'}>{event?.description}</Typography>
 					</CardContent>
 				</Card>
-				{event?.isRegistered == 'true' || event?.isRegistered == true ? (
+				{new Date() > new Date(event?.endTime) ? (
+					<>
+						<Button variant='outlined' color='secondary' disabled fullWidth sx={{ marginTop: 4 }}>
+							Sự kiện đã kết thúc
+						</Button>
+					</>
+				) : event?.isRegistered == 'true' || event?.isRegistered == true ? (
 					<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
 						Đã đăng ký
 					</Button>
@@ -128,7 +137,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 						variant='contained'
 						fullWidth
 						sx={{ marginTop: 4 }}
-						onClick={() => setOpenRegisterModal(true)}
+						onClick={() => (userData?.id ? setOpenRegisterModal(true) : router.push('/auth/login'))}
 					>
 						Đăng ký
 					</Button>

@@ -40,10 +40,12 @@ import FeedbackModal from './FeedbackModal'
 import { getUserInfo } from 'src/utils/info'
 import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
 
 function EventItem({ event, setEventList, eventList, userData }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
+	const router = useRouter()
 
 	const [state, setState] = useState({
 		top: false,
@@ -68,18 +70,19 @@ function EventItem({ event, setEventList, eventList, userData }) {
 				event={event}
 				userData={userData}
 			></FeedbackModal>
-			{['left', 'right', 'top', 'bottom'].map(anchor => (
-				<>
-					<RegisterEventModal
+			<RegisterEventModal
 						event={event}
 						openRegisterModal={openRegisterModal}
 						setOpenRegisterModal={setOpenRegisterModal}
-						anchor={anchor}
-						toggleDrawer={() => toggleDrawer(anchor, false)}
+						
+						// anchor={anchor}
+						// toggleDrawer={() => toggleDrawer(anchor, false)}
 						setState={setState}
 						state={state}
 						setEventList={setEventList}
 					></RegisterEventModal>
+			{['left', 'right', 'top', 'bottom'].map(anchor => (
+				<>
 					<SwipeableDrawer
 						anchor={anchor}
 						open={state[anchor]}
@@ -92,6 +95,7 @@ function EventItem({ event, setEventList, eventList, userData }) {
 							setOpenRegisterModal={setOpenRegisterModal}
 							setOpenFeedbackModal={setOpenFeedbackModal}
 							toggleDrawer={toggleDrawer}
+							userData={userData}
 						></SwipeableDrawerList>
 					</SwipeableDrawer>
 				</>
@@ -155,7 +159,7 @@ function EventItem({ event, setEventList, eventList, userData }) {
 								variant='contained'
 								fullWidth
 								sx={{ marginTop: 4 }}
-								onClick={() => setOpenRegisterModal(true)}
+								onClick={() => userData?.id ? setOpenRegisterModal(true) : router.push("/auth/login")}
 							>
 								Đăng ký
 							</Button>

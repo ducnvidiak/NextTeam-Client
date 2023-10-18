@@ -62,7 +62,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const [newEvent, setNewEvent] = useState({
 		...event,
-		startTime: event.startTime,
+		startTime: event?.startTime,
 		endTime: event.endTime,
 		locationId: locationList.filter((item, index) => {
 			return item.name == event?.locationName
@@ -73,7 +73,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const handleDateChange = date => {
 		const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm')
-		const startString = `${formattedDate.substring(0, 11)}T${newEvent.startTime.slice(-5)}`
+		const startString = `${formattedDate.substring(0, 11)}T${newEvent?.startTime.slice(-5)}`
 		const endString = `${formattedDate.substring(0, 11)}T${newEvent.endTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
@@ -84,7 +84,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const handleStartTimeChange = time => {
 		const formattedTime = dayjs(time).format('YYYY-MM-DDTHH:mm')
-		const combinedString = `${newEvent.startTime.substring(0, 11)}T${formattedTime.slice(-5)}`
+		const combinedString = `${newEvent?.startTime.substring(0, 11)}T${formattedTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
 			startTime: combinedString
@@ -150,7 +150,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
-					startTime: new Date(convertToTimestamp(newEvent.startTime)),
+					startTime: new Date(convertToTimestamp(newEvent?.startTime)),
 					endTime: new Date(convertToTimestamp(newEvent.endTime)),
 					registeredBy: userData?.id,
 
@@ -234,7 +234,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		if (locationList.length > 0) {
 			setNewEvent({
 				...event,
-				startTime: convertFormat(event.startTime),
+				startTime: convertFormat(event?.startTime),
 				endTime: convertFormat(event.endTime),
 				locationId: locationList.filter((item, index) => {
 					return item.name == event?.locationName
@@ -362,14 +362,14 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 									helperText: 'MM/DD/YYYY'
 								}
 							}}
-							defaultValue={dayjs(newEvent.startTime)}
+							defaultValue={dayjs(newEvent?.startTime)}
 							sx={{ flex: 1 }}
 							onChange={handleDateChange}
 						/>
 						<TimePicker
 							sx={{ flex: 1 }}
 							label='Bắt đầu'
-							defaultValue={dayjs(newEvent.startTime)}
+							defaultValue={dayjs(newEvent?.startTime)}
 							onChange={handleStartTimeChange}
 						/>
 						<TimePicker

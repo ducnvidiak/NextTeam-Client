@@ -107,6 +107,7 @@ export default function EditPrivateNotification({
 					setClubMember(data)
 				})
 				.catch(error => console.error('Error:', error))
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [clubData])
 
 	return (

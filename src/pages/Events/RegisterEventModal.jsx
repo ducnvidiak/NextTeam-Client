@@ -34,11 +34,13 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 				setEventList(data)
 				toast.success('Đăng ký sự kiện thành công!!!!')
 				setOpenRegisterModal(false)
-				toggleDrawer(anchor, false)
+
+				// toggleDrawer(anchor, false)
 			})
 			.catch(error => {
 				console.error('Error:', error)
-				toggleDrawer(anchor, false)
+				
+				// toggleDrawer(anchor, false)
 				setOpenRegisterModal(false)
 				toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
 			})

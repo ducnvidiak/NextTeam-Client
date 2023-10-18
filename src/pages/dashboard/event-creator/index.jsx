@@ -1,6 +1,7 @@
 import {
 	Box,
 	Button,
+	CircularProgress,
 	Container,
 	FormControl,
 	IconButton,
@@ -17,6 +18,7 @@ import { useEffect, useState } from 'react'
 import EventCreator from './EventCreator'
 import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
+import { toast } from 'react-toastify'
 
 export function convertFormat(inputString) {
 	const [datePart, timePart] = inputString.split(' ')
@@ -36,12 +38,17 @@ function EventCreatorPage() {
 	const [clubCookies, setClubCookie] = useCookies(['clubData'])
 	const [openEventCreatorModal, setOpenEventCreatorModal] = useState(false)
 	const [eventList, setEventList] = useState()
+	const [eventListFiltered, setEventListFiltered] = useState()
 	const [userData, setUserData] = useState()
+	const [loading, setLoading] = useState(false)
+	const [filter, setFilter] = useState('all')
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	useEffect(() => {
+		setLoading(true)
 		fetch(`http://localhost:8080//manager-events?clubId=${clubCookies['clubData'].clubId}&cmd=list`, {
 			method: 'GET',
 			headers: {
@@ -53,10 +60,53 @@ function EventCreatorPage() {
 			})
 			.then(function (data) {
 				setEventList(data)
+				setEventListFiltered(data)
+				setLoading(false)
 			})
-			.catch(error => console.error('Error:', error))
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+			.catch(error => {
+				console.error('Error:', error)
+				toast.error('Có lỗi xảy ra, vui lòng thử lại!!!')
+				setLoading(false)
+			})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
+
+	useEffect(() => {
+		switch (filter) {
+			case 'all':
+				setEventListFiltered(eventList)
+				toast.success('Lọc toàn bộ sự kiện')
+
+				return
+			case 'approved':
+				setEventListFiltered(eventList?.filter(event => event?.isApproved))
+				toast.success('Lọc các sự kiện đã được duyệt')
+
+				return
+			case 'pending':
+				setEventListFiltered(eventList?.filter(event => !event?.isApproved))
+				toast.success('Lọc các sự kiện chưa được duyệt')
+
+				return
+			case 'upcoming':
+				setEventListFiltered(eventList?.filter(event => new Date() < new Date(event?.startTime)))
+				toast.success('Lọc các sự kiện sắp diễn ra')
+
+				return
+			case 'past':
+				setEventListFiltered(eventList?.filter(event => new Date() > new Date(event?.endTime)))
+				toast.success('Lọc các sự kiện đã diễn ra')
+
+				return
+			default:
+				return
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filter])
+
+	useEffect(() => {
+		setEventListFiltered(eventList)
+	}, [eventList])
 
 	return (
 		<Container maxWidth='lg' style={{ padding: 0 }}>
@@ -77,14 +127,16 @@ function EventCreatorPage() {
 				</Stack>
 				<FormControl variant='outlined' size='small'>
 					<InputLabel>Bộ lọc</InputLabel>
-					<Select label='Status' defaultValue='active'>
-						<MenuItem value='active'>Tất cả</MenuItem>
-						<MenuItem value='inactive'>Đã Đăng ký</MenuItem>
-						<MenuItem value='pending'>Sự kiện đã qua</MenuItem>
+					<Select label='Status' defaultValue='all' onChange={e => setFilter(e.target.value)}>
+						<MenuItem value='all'>Tất cả</MenuItem>
+						<MenuItem value='approved'>Đã duyệt</MenuItem>
+						<MenuItem value='pending'>Chưa duyệt</MenuItem>
+						<MenuItem value='upcoming'>Sắp diễn ra</MenuItem>
+						<MenuItem value='past'>Đã qua</MenuItem>
 					</Select>
 				</FormControl>
 			</Stack>
-			<EventList eventList={eventList} setEventList={setEventList}></EventList>
+			<EventList eventList={eventListFiltered} setEventList={setEventList}></EventList>
 		</Container>
 	)
 }
