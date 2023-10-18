@@ -25,7 +25,7 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'nprogress'
 
-import { getUserInfo, getAllMajors } from '../apiUtils'
+import { getUserInfo, getAllMajors } from '../../../api-utils/apiUtils'
 
 // import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 const axios = require('axios')
@@ -73,22 +73,13 @@ const AccountSettings = () => {
 	}, [router.query.id])
 
 	return (
-		<Card sx={{ marginTop: 10 }}>
+		<Card sx={{ margin: '0 50px', marginTop: 20, paddingBottom: 5 }}>
 			<TabContext value={value}>
 				<TabList
 					onChange={handleChange}
 					aria-label='account-settings tabs'
 					sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
 				>
-					{/* <Tab
-						value='account'
-						label={
-							<Box sx={{ display: 'flex', alignItems: 'center' }}>
-								<AccountOutline />
-								<TabName>Tài khoản</TabName>
-							</Box>
-						}
-					/> */}
 					<Tab
 						value='security'
 						label={
@@ -98,25 +89,10 @@ const AccountSettings = () => {
 							</Box>
 						}
 					/>
-					{/* <Tab
-						value='info'
-						label={
-							<Box sx={{ display: 'flex', alignItems: 'center' }}>
-								<InformationOutline />
-								<TabName>Thông tin</TabName>
-							</Box>
-						}
-					/> */}
 				</TabList>
 
-				<TabPanel sx={{ p: 0 }} value='account'>
-					<TabAccount userInfo={userInfo} setUserInfo={setUserInfo} />
-				</TabPanel>
-				<TabPanel sx={{ p: 0 }} value='security'>
+				<TabPanel sx={{ p: '0 20px' }} value='security'>
 					<TabSecurity userInfo={userInfo} setUserInfo={setUserInfo} />
-				</TabPanel>
-				<TabPanel sx={{ p: 0 }} value='info'>
-					<TabInfo userInfo={userInfo} setUserInfo={setUserInfo} majors={majors} />
 				</TabPanel>
 			</TabContext>
 		</Card>

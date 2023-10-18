@@ -63,7 +63,7 @@ const LandingAppContent = props => {
 					<div>
 						<ModeToggler settings={settings} saveSettings={saveSettings} />
 						<NotificationDropdown />
-						<UserDropdown />
+						<UserDropdown settings={settings} saveSettings={saveSettings} />
 					</div>
 				) : (
 					<Grid item xs={12}>

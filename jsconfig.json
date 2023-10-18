@@ -2,5 +2,5 @@
 	"compilerOptions": {
 		"baseUrl": "."
 	},
-	"include": ["src", "src/pages/application/.js"]
+	"include": ["src", "src/pages/application/.js", "src/api-utils/uploadFiles.js"]
 }

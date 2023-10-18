@@ -44,6 +44,8 @@ import { EyeOffOutline, EyeOutline } from 'mdi-material-ui'
 import { useEffect } from 'react'
 import ForRole from 'src/layouts/ForRole'
 
+import { useSettings } from 'src/@core/hooks/useSettings'
+
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
 	[theme.breakpoints.up('sm')]: { width: '28rem' }
@@ -65,6 +67,7 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 const LoginPage = () => {
 	// ** State
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const { settings, saveSettings } = useSettings()
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -122,7 +125,7 @@ const LoginPage = () => {
 				}
 				if (!save) {
 				}
-
+				console.log('cookies: ', res.res)
 				console.log('Đăng nhập thành công')
 				toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
 				setTimeout(() => {
@@ -131,6 +134,7 @@ const LoginPage = () => {
 						setCookie('userData', res.res, {
 							path: '/'
 						})
+						saveSettings({ ...settings, avatarURL: res.res.avatarURL })
 					}, 1000)
 				}, 1000)
 			}
