@@ -323,7 +323,7 @@ function NewProposal() {
 						padding: '0 30px'
 					}}
 				>
-					<Link href={'/dashboard/activity-proposals'}>
+					<Link passHref href={'/dashboard/activity-proposals'}>
 						<Button variant='contained'>Quay trở lại</Button>
 					</Link>
 					<Box sx={{ display: 'flex', gap: '40px' }}>
