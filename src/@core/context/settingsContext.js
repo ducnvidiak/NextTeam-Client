@@ -5,26 +5,28 @@ import { createContext, useState } from 'react'
 import themeConfig from 'src/configs/themeConfig'
 
 const initialSettings = {
-  themeColor: 'primary',
-  mode: themeConfig.mode,
-  contentWidth: themeConfig.contentWidth
+	themeColor: 'primary',
+	mode: themeConfig.mode,
+	contentWidth: themeConfig.contentWidth,
+	avatarURL: null,
+	avatarVersion: 0
 }
 
 // ** Create Context
 export const SettingsContext = createContext({
-  saveSettings: () => null,
-  settings: initialSettings
+	saveSettings: () => null,
+	settings: initialSettings
 })
 
 export const SettingsProvider = ({ children }) => {
-  // ** State
-  const [settings, setSettings] = useState({ ...initialSettings })
+	// ** State
+	const [settings, setSettings] = useState({ ...initialSettings })
 
-  const saveSettings = updatedSettings => {
-    setSettings(updatedSettings)
-  }
+	const saveSettings = updatedSettings => {
+		setSettings(updatedSettings)
+	}
 
-  return <SettingsContext.Provider value={{ settings, saveSettings }}>{children}</SettingsContext.Provider>
+	return <SettingsContext.Provider value={{ settings, saveSettings }}>{children}</SettingsContext.Provider>
 }
 
 export const SettingsConsumer = SettingsContext.Consumer
