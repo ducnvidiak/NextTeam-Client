@@ -154,7 +154,6 @@ const Notifications = () => {
 				open={open}
 				setOpen={setOpen}
 				handleClose={handleClose}
-				statusObj={statusObj}
 			></NotificationDetail>
 			<Card style={{ height: '100%' }}>
 				<div

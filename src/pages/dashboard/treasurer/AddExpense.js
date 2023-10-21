@@ -14,7 +14,7 @@ export default function AddExpense({
 	const [expense, setExpense] = useState({
 		title: '',
 		description: '',
-		clubId: cookies['clubData']?.clubId,
+		clubId: cookies?.['clubData']?.clubId,
 		amount: ''
 	})
 

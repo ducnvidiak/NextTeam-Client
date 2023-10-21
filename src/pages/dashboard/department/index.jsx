@@ -31,6 +31,7 @@ function Department() {
 	const [updateData, setUpdateData] = useState(false)
 	const loadDataUrl = ORIGIN_URL + '?action=list-dept&clubId=' + cookies['clubData']?.clubId
 	console.log(loadDataUrl)
+
 	const [validationErrors, setValidationErrors] = useState({
 		name: false
 	})
@@ -53,7 +54,7 @@ function Department() {
 				})
 				.catch(error => console.error('Error:', error))
 		}
-	}, [cookies, updateData, departments])
+	}, [cookies, updateData, departments, loadDataUrl])
 
 	const [departmentToDelete, setDepartmentToDelete] = useState(null)
 
@@ -72,6 +73,7 @@ function Department() {
 					if (!res.ok) {
 						throw new Error('Something went wrong')
 					}
+
 					return res.json()
 				})
 				.then(data => {
@@ -99,15 +101,17 @@ function Department() {
 				})
 		}
 	}
+
 	// Create department dialog state
 	const [openCreateDialog, setOpenCreateDialog] = useState(false)
 	const [newDepartmentName, setNewDepartmentName] = useState('') // Add state for department name
+
 	const handleCreateDepartment = () => {
 		// Kiểm tra xem tên phòng ban có được nhập không
 		if (!newDepartmentName) {
 			setValidationErrors({ name: true })
-			return
 		}
+
 		// Handle the creation of the department here, for example, make an API call.
 		const CREATE_DATA_URL =
 			ORIGIN_URL + '?action=add-dept&clubId=' + cookies['clubData']?.clubId + '&name=' + newDepartmentName
@@ -117,6 +121,7 @@ function Department() {
 				if (!res.ok) {
 					throw new Error('Something went wrong')
 				}
+
 				return res.json()
 			})
 			.then(data => {
@@ -145,6 +150,7 @@ function Department() {
 
 		closeCreateDepartmentDialog()
 	}
+
 	const openCreateDepartmentDialog = () => {
 		setOpenCreateDialog(true)
 	}
@@ -156,12 +162,14 @@ function Department() {
 	const [openEditDialog, setOpenEditDialog] = useState(false)
 	const [editedDepartmentName, setEditedDepartmentName] = useState('')
 	const [editedDepartmentId, setEditedDepartmentId] = useState('')
+
 	// Hàm để mở dialog chỉnh sửa tên phòng ban
 	const handleOpenEditDialog = department => {
 		setEditedDepartmentId(department.id)
 		setEditedDepartmentName(department.name) // Đặt giá trị mặc định cho tên phòng ban
 		setOpenEditDialog(true)
 	}
+
 	// Hàm để lưu các thay đổi trong dialog chỉnh sửa tên phòng ban
 	const handleSaveEditedDepartment = () => {
 		// Thực hiện xử lý cập nhật tên phòng ban ở đây (ví dụ: gửi API request)
@@ -179,6 +187,7 @@ function Department() {
 				if (!res.ok) {
 					throw new Error('Something went wrong')
 				}
+
 				return res.json()
 			})
 			.then(data => {
@@ -204,9 +213,11 @@ function Department() {
 				})
 				console.log(error)
 			})
+
 		// Sau khi cập nhật xong, đóng dialog
 		setOpenEditDialog(false)
 	}
+
 	return (
 		<div>
 			<Typography>Danh Sách Phòng Ban Câu Lạc Bộ</Typography>

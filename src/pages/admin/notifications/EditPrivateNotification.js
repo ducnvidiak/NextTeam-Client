@@ -147,7 +147,7 @@ export default function EditPrivateNotification({
 										const data = editor.getContent()
 										setPrivateNotificationDetail({ ...privateNotificationDetail, content: data })
 									}}
-									value={privateNotificationDetail?.content}
+									initialValue={privateNotificationDetail?.content}
 									init={{
 										height: 500,
 										menubar: true,

@@ -42,7 +42,7 @@ const data = [
 	}
 ]
 
-const TotalEarning = (props) => {
+const TotalEarning = props => {
 	return (
 		<Card>
 			<CardHeader
@@ -62,7 +62,7 @@ const TotalEarning = (props) => {
 			<CardContent sx={{ pt: theme => `${theme.spacing(2.25)} !important` }}>
 				<Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center' }}>
 					<Typography variant='h4' sx={{ fontWeight: 600, fontSize: '2.125rem !important' }}>
-						{props.data.activity_point}
+						{props?.data?.activity_point}
 					</Typography>
 				</Box>
 

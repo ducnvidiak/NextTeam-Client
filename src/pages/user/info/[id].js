@@ -8,7 +8,7 @@ import { styled } from '@mui/material/styles'
 
 import 'react-datepicker/dist/react-datepicker.css'
 
-import { getUserInfo, getAllMajors } from '../apiUtils'
+import { getUserInfo, getAllMajors } from '../../../utils/apiUtils'
 import classes from './styles.module.scss'
 
 const ImgStyled = styled('img')(({ theme }) => ({

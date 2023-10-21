@@ -25,7 +25,7 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'nprogress'
 
-import { getUserInfo, getAllMajors } from './apiUtils'
+import { getUserInfo, getAllMajors } from '../../utils/apiUtils'
 
 // import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 // const axios = require('axios')
