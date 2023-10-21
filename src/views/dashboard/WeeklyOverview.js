@@ -116,7 +116,7 @@ const WeeklyOverview = props => {
 					type='bar'
 					height={205}
 					options={options}
-					series={[{ data: props.data.total_event_months }]}
+					series={[{ data: props?.data?.total_event_months }]}
 				/>
 				<Box sx={{ mb: 7, display: 'flex', alignItems: 'center' }}>
 					<Typography variant='h5' sx={{ mr: 4 }}>

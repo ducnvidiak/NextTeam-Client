@@ -25,7 +25,7 @@ import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
 
 // ** Icons Imports
 import Magnify from 'mdi-material-ui/Magnify'
-import { Chip } from '@mui/material'
+import { Chip, Container, FormControl, InputLabel, Select, Slide } from '@mui/material'
 import { getUserInfo } from 'src/utils/info'
 
 // **Toasify Imports
@@ -43,13 +43,14 @@ const TableStickyHeader = () => {
 	const [page, setPage] = useState(0)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [application, setApplication] = useState([])
+	const [applicationFiltered, setApplicationFiltered] = useState([])
 	const [applicationDetail, setApplicationDetail] = useState()
-	const [search, setSearch] = useState('')
+	const [filter, setFilter] = useState('all')
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
+	console.log(application)
 
 	//modal
 	const [open, setOpen] = useState(false)
-	const [scroll, setScroll] = useState('paper')
 	const [openCreateInterviewDialog, setOpenCreateInterviewDialog] = useState(false)
 	const [openInterviewDialog, setOpenInterviewDialog] = useState(false)
 
@@ -71,23 +72,6 @@ const TableStickyHeader = () => {
 	function handleInterview(application) {
 		setApplicationDetail(application)
 		setOpenInterviewDialog(true)
-	}
-
-	function handleApproveApplication(id) {
-		fetch('http://localhost:8080/engagement?action=approve-application&id=' + id, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				toast.success(data)
-				dispatch({ type: 'trigger' })
-			})
-			.catch(error => console.error('Error:', error))
 	}
 
 	function handleRejectApplication(id) {
@@ -118,7 +102,8 @@ const TableStickyHeader = () => {
 		0: { color: 'primary', label: 'Đăng ký mới' },
 		1: { color: 'success', label: 'Đã duyệt đơn' },
 		2: { color: 'warning', label: 'Đang phỏng vấn' },
-		3: { color: 'error', label: 'Đã từ chối' }
+		3: { color: 'error', label: 'Đã từ chối' },
+		4: { color: 'error', label: 'Drop out' }
 	}
 
 	const handleChangePage = (event, newPage) => {
@@ -130,44 +115,20 @@ const TableStickyHeader = () => {
 		setPage(0)
 	}
 
-	const handleEnterKeyPress = event => {
-		if (event.key === 'Enter') {
-			// Gọi hàm của bạn ở đây khi người dùng nhấn phím Enter
-			handleSearch()
-		}
-	}
-
-	const handleSearch = () => {
-		// Thực hiện tìm kiếm hoặc gọi hàm bạn muốn khi người dùng nhấn Enter
-		if (search == ' ') {
-			dispatch({ type: 'trigger' })
-		} else {
-			fetch(
-				`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData.id}`,
-				{
-					method: 'GET',
-					headers: {
-						'Content-type': 'application/json; charset=UTF-8'
-					}
-				}
-			)
-				.then(function (response) {
-					return response.json()
-				})
-				.then(function (data) {
-					setApplication(data)
-				})
-				.catch(error => console.error('Error:', error))
-		}
-	}
+	const Transition = React.forwardRef(function Transition(props, ref) {
+		return <Slide direction='up' ref={ref} {...props} />
+	})
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/engagement?action=application-list-of-user&userId=${userData?.id}`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			`http://localhost:8080/engagement?action=application-list-of-club&clubId=${cookies['clubData']?.clubId}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})
@@ -175,7 +136,43 @@ const TableStickyHeader = () => {
 				setApplication(data)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [userData, state])
+	}, [cookies, state])
+
+	useEffect(() => {
+		switch (filter) {
+			case 'all':
+				setApplicationFiltered(application)
+
+				return
+			case '0':
+				setApplicationFiltered(application?.filter(application => application?.engagement?.status == '0'))
+
+				return
+			case '1':
+				setApplicationFiltered(application?.filter(application => application?.engagement?.status == '1'))
+
+				return
+			case '2':
+				setApplicationFiltered(application?.filter(application => application?.engagement?.status == '2'))
+
+				return
+			case '3':
+				setApplicationFiltered(application?.filter(application => application?.engagement?.status == '3'))
+
+				return
+			case '4':
+				setApplicationFiltered(application?.filter(application => application?.engagement?.status == '4'))
+
+				return
+			default:
+				return
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filter])
+
+	useEffect(() => {
+		setApplicationFiltered(application)
+	}, [application])
 
 	return (
 		<Grid item xs={12}>
@@ -187,6 +184,7 @@ const TableStickyHeader = () => {
 				setOpen={setOpen}
 				handleClose={handleClose}
 				statusObj={statusObj}
+				Transition={Transition}
 			></ViewInfo>
 			<CreateInterview
 				applicationDetail={applicationDetail}
@@ -216,7 +214,24 @@ const TableStickyHeader = () => {
 						paddingRight: '10px'
 					}}
 				>
-					<CardHeader title='Tất cả đơn đăng ký' titleTypographyProps={{ variant: 'h6' }} />
+					<Container>
+						<FormControl
+							variant='outlined'
+							size='small'
+							sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%', marginTop: '20px' }}
+						>
+							<InputLabel>Bộ lọc</InputLabel>
+							<Select label='filter' defaultValue='all' onChange={e => setFilter(e.target.value)}>
+								<MenuItem value='all'>Tất cả đơn đăng ký</MenuItem>
+								<MenuItem value='0'>Đơn đăng ký mới</MenuItem>
+								<MenuItem value='1'>Đơn đã phê duyệt</MenuItem>
+								<MenuItem value='2'>Đơn đang phỏng vấn</MenuItem>
+								<MenuItem value='3'>Đơn đã từ chối</MenuItem>
+								<MenuItem value='4'>Thành viên đã Drop out</MenuItem>
+							</Select>
+						</FormControl>
+					</Container>
+
 					<TextField
 						placeholder='Tìm kiếm...'
 						size='small'
@@ -227,10 +242,6 @@ const TableStickyHeader = () => {
 									<Magnify fontSize='small' />
 								</InputAdornment>
 							)
-						}}
-						onChange={event => {
-							setSearch(event.target.value)
-							handleSearch()
 						}}
 					/>
 				</div>
@@ -249,7 +260,7 @@ const TableStickyHeader = () => {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{application.map(row => (
+								{applicationFiltered.map(row => (
 									<TableRow
 										hover
 										key={row.id}
@@ -279,56 +290,29 @@ const TableStickyHeader = () => {
 										</TableCell>
 
 										<TableCell>
-											<PopupState variant='popover' popupId='demo-popup-menu'>
-												{popupState => (
-													<React.Fragment>
-														<Button
-															variant='contained'
-															size='small'
-															{...bindTrigger(popupState)}
-														>
-															Tác vụ
-														</Button>
-														<Menu {...bindMenu(popupState)}>
-															{row.interview ? (
-																''
-															) : (
-																<MenuItem
-																	onClick={() => {
-																		handleCreatInterview(row)
-																	}}
-																>
-																	Tạo phỏng vấn
-																</MenuItem>
-															)}
+											{!row.interview ? (
+												<Button
+													variant='contained'
+													size='small'
+													onClick={() => {
+														handleCreatInterview(row)
+													}}
+												>
+													Tạo phỏng vấn
+												</Button>
+											) : (
+												''
+											)}
 
-															<MenuItem
-																onClick={() => {
-																	handleInterview(row)
-																}}
-															>
-																Phỏng vấn
-															</MenuItem>
-															<MenuItem
-																onClick={() => {
-																	handleApproveApplication(row?.engagement.id)
-																	popupState.close
-																}}
-															>
-																Phê duyệt
-															</MenuItem>
-															<MenuItem
-																onClick={() => {
-																	handleRejectApplication(row?.engagement.id)
-																	popupState.close
-																}}
-															>
-																Từ chối
-															</MenuItem>
-														</Menu>
-													</React.Fragment>
-												)}
-											</PopupState>
+											<Button
+												variant='contained'
+												size='small'
+												onClick={() => {
+													handleInterview(row)
+												}}
+											>
+												{row.engagement.status == '2' ? 'Phỏng vấn' : 'Cập nhật'}
+											</Button>
 										</TableCell>
 									</TableRow>
 								))}

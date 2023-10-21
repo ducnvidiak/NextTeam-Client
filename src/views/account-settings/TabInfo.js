@@ -24,7 +24,7 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import axios from 'axios'
 import { Autocomplete, Box, Typography } from '@mui/material'
 import { Country, State, City } from 'country-state-city'
-import { updateUserInfo } from '../../api-utils/apiUtils'
+import { updateUserInfo } from '../../utils/apiUtils'
 import { Cookie } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
 import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../input-validation/index'
@@ -48,7 +48,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 
 	useEffect(() => {
 		setCurrentUserInfo({ ...userInfo })
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userInfo.id])
 
 	const [country, setCountry] = useState(

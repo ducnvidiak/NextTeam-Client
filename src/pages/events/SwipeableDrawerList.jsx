@@ -14,11 +14,11 @@ import { ToastContainer, toast } from 'react-toastify'
 import { translateDayOfWeek } from 'src/ultis/dateTime'
 import moment from 'moment'
 
-function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer, setOpenFeedbackModal }) {
+function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer = () => {}, setOpenFeedbackModal }) {
 	const handleFeedbackClick = () => {
 		if (event?.isFeedback) {
-			toast.error("Bạn đã feedback cho sự kiện này rồi!!!");
-			
+			toast.error('Bạn đã feedback cho sự kiện này rồi!!!')
+
 			return
 		}
 		setOpenFeedbackModal(true)
@@ -101,7 +101,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 									Tại
 								</Typography>
 								<Typography variant='body1' fontWeight={600}>
-									{event.locationName}
+									{event?.locationName}
 								</Typography>
 							</Box>
 						</Box>

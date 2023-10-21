@@ -23,7 +23,7 @@ import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 
 const axios = require('axios')
 
-import { changeUserPass } from '../../api-utils/apiUtils'
+import { changeUserPass } from '../../utils/apiUtils'
 import { ToastContainer, toast } from 'react-toastify'
 import { validatePassword } from '../../input-validation/index'
 import { FormHelperText } from '@mui/material'

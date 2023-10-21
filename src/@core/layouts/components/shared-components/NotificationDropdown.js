@@ -17,6 +17,7 @@ import MuiMenu from '@mui/material/Menu'
 import MuiAvatar from '@mui/material/Avatar'
 import MuiMenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
+import Badge from '@mui/material/Badge'
 
 // ** Icons Imports
 import BellOutline from 'mdi-material-ui/BellOutline'
@@ -145,14 +146,14 @@ const NotificationDropdown = () => {
 						'Content-type': 'application/json; charset=UTF-8'
 					}
 				}
-		)
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				setNotificationsData(data)
-			})
-			.catch(error => console.error('Error:', error))
+			)
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					setNotificationsData(data)
+				})
+				.catch(error => console.error('Error:', error))
 	}, [cookies, userData, state])
 
 	return (
@@ -163,8 +164,11 @@ const NotificationDropdown = () => {
 				onClick={handleDropdownOpen}
 				aria-controls='customized-menu'
 			>
-				<BellOutline />
+				<Badge badgeContent={countUnview} color='primary'>
+					<BellOutline />
+				</Badge>
 			</IconButton>
+
 			<Menu
 				anchorEl={anchorEl}
 				open={Boolean(anchorEl)}

@@ -19,8 +19,10 @@ import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
 
 export function convertFormat(inputString) {
-	const [datePart, timePart] = inputString.split(' ')
-	const [year, month, day] = datePart.split('-')
+	if (!inputString) return
+
+	const [datePart, timePart] = inputString?.split(' ')
+	const [year, month, day] = datePart?.split('-')
 	const newDay = new Date(year, month - 1, day - 1)
 	const newTime = timePart.slice(0, 5)
 
@@ -55,7 +57,7 @@ function EventCreatorPage() {
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
 
 	return (

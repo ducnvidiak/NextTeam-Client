@@ -165,7 +165,7 @@ function NotificationCreator() {
 					setClubMember(data)
 				})
 				.catch(error => console.error('Error:', error))
-	}, [clubData])
+	}, [clubData, cookies])
 
 	return (
 		<Grid item xs={12}>
