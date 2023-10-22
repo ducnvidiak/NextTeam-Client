@@ -5,28 +5,36 @@ import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 
 // ** MUI Imports
-import Paper from '@mui/material/Paper'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TablePagination from '@mui/material/TablePagination'
-import Grid from '@mui/material/Grid'
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment'
-import Button from '@mui/material/Button'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
+import {
+	Paper,
+	Table,
+	TableRow,
+	TableHead,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TablePagination,
+	Grid,
+	Card,
+	CardHeader,
+	TextField,
+	InputAdornment,
+	Button,
+	Menu,
+	MenuItem,
+	Chip,
+	Container,
+	FormControl,
+	InputLabel,
+	Select,
+	Slide,
+	Backdrop
+} from '@mui/material'
 
 // ** Icons Imports
 import Magnify from 'mdi-material-ui/Magnify'
-import { Chip, Container, FormControl, InputLabel, Select, Slide } from '@mui/material'
 import { getUserInfo } from 'src/utils/info'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // **Toasify Imports
 import { ToastContainer, toast } from 'react-toastify'
@@ -35,7 +43,7 @@ import ViewInfo from './ViewInfo'
 import CreateInterview from './CreateInterview'
 import Interview from './Interview'
 
-const TableStickyHeader = () => {
+const MemberApproval = () => {
 	const router = useRouter()
 	const [state, dispatch] = useReducer((state, action) => action, 0)
 
@@ -47,7 +55,8 @@ const TableStickyHeader = () => {
 	const [applicationDetail, setApplicationDetail] = useState()
 	const [filter, setFilter] = useState('all')
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
-	console.log(application)
+	const [loading, setLoading] = useState(true)
+	const [search, setSearch] = useState('')
 
 	//modal
 	const [open, setOpen] = useState(false)
@@ -59,36 +68,22 @@ const TableStickyHeader = () => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
+	// ** Functions mở xem chi tiết đơn
 	function handleClickOpen(application) {
 		setApplicationDetail(application)
 		setOpen(true)
 	}
 
+	// ** Functions tạo phỏng vấn
 	function handleCreatInterview(application) {
 		setApplicationDetail(application)
 		setOpenCreateInterviewDialog(true)
 	}
 
+	// ** Functions phỏng vấn
 	function handleInterview(application) {
 		setApplicationDetail(application)
 		setOpenInterviewDialog(true)
-	}
-
-	function handleRejectApplication(id) {
-		fetch('http://localhost:8080/engagement?action=reject-application&id=' + id, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				toast.success(data)
-				dispatch({ type: 'trigger' })
-			})
-			.catch(error => console.error('Error:', error))
 	}
 
 	const handleClose = () => {
@@ -106,10 +101,12 @@ const TableStickyHeader = () => {
 		4: { color: 'error', label: 'Drop out' }
 	}
 
+	// ** Functions chuyển trang
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage)
 	}
 
+	// ** Functions thay đổi số bài 1 trang
 	const handleChangeRowsPerPage = event => {
 		setRowsPerPage(+event.target.value)
 		setPage(0)
@@ -134,6 +131,7 @@ const TableStickyHeader = () => {
 			})
 			.then(function (data) {
 				setApplication(data)
+				setLoading(false)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [cookies, state])
@@ -176,6 +174,9 @@ const TableStickyHeader = () => {
 
 	return (
 		<Grid item xs={12}>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 			<ToastContainer></ToastContainer>
 			<ViewInfo
 				applicationDetail={applicationDetail}
@@ -334,4 +335,4 @@ const TableStickyHeader = () => {
 	)
 }
 
-export default TableStickyHeader
+export default MemberApproval

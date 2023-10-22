@@ -36,7 +36,7 @@ export default function AddCategory({
 			.catch(error => {
 				console.error('Error:', error)
 
-				toast.error('Có lỗi xảy ra khi them khoản nộp, vui lòng thử lại')
+				toast.error('Có lỗi xảy ra khi thêm khoản nộp, vui lòng thử lại')
 			})
 			.finally(() => {
 				handleClose()
