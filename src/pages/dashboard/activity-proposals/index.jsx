@@ -41,7 +41,7 @@ function ActivityProposals() {
 	const [openPreviewModal, setOpenPreviewModal] = useState(false)
 
 	const [filterBy, setFilterBy] = useState('all')
-	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [cookies, setCookie, removeCookie] = useCookies(['userData', 'clubId'])
 	const [userData, setUserData] = useState()
 	const [proposals, setProposals] = useState(null)
 	const [fileRecords, setFileRecords] = useState(null)
@@ -54,6 +54,8 @@ function ActivityProposals() {
 	const [openModal, setOpenModal] = useState(false)
 
 	const router = useRouter()
+	console.log('club id: ', cookies['clubData']?.clubId)
+	const clubId = cookies['clubData']?.clubId
 
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
@@ -117,8 +119,9 @@ function ActivityProposals() {
 	}
 
 	const filteredProposal = proposals?.filter(proposal => filterBy == 'all' || filterBy == proposal.isApproved)
+	const filteredProposalInClub = filteredProposal?.filter(proposal => proposal.clubId == clubId)
 
-	const renderFilteredProposal = filteredProposal?.map(proposal => {
+	const renderFilteredProposal = filteredProposalInClub?.map(proposal => {
 		if (filterBy == 'all' || filterBy == proposal.isApproved)
 			return (
 				<Box
@@ -126,7 +129,7 @@ function ActivityProposals() {
 					sx={{
 						overflow: 'hidden',
 						borderRadius: '15px',
-						border: '2px solid orange',
+						border: '2px solid #f27123',
 						position: 'relative',
 						padding: '5px 10px'
 					}}
@@ -136,7 +139,7 @@ function ActivityProposals() {
 							position: 'absolute',
 							top: '0',
 							right: '-5px',
-							backgroundColor: 'orange',
+							backgroundColor: '#f27123',
 							color: 'white',
 							fontSize: '12px',
 							fontWeight: '600',
@@ -320,15 +323,10 @@ function ActivityProposals() {
 
 	return (
 		<Fragment>
-			<Typography variant='h4' sx={{ fontWeight: '600', marginBottom: '30px' }}>
-				Các đề xuất ý tưởng, kế hoạch của bạn
-			</Typography>
 			<Paper
 				sx={{
 					width: '100%',
-					height: '100%',
-					borderRadius: '15px',
-					padding: '0px 20px'
+					height: '100%'
 				}}
 			>
 				<Box
@@ -336,8 +334,9 @@ function ActivityProposals() {
 						display: 'flex',
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						borderBottom: '2px solid #F8C883',
-						height: '80px'
+						borderBottom: '2px solid #f27123',
+						height: '58px',
+						padding: '0 10px'
 					}}
 				>
 					<Typography variant='h6'>Tổng cộng: {filteredProposal?.length || 0} đề xuất</Typography>
@@ -345,7 +344,7 @@ function ActivityProposals() {
 						className={classes.btn__primary}
 						style={{
 							fontWeight: '600',
-							fontSize: '16px',
+							fontSize: '12px',
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
@@ -389,7 +388,7 @@ function ActivityProposals() {
 						</Select>
 					</FormControl>
 				</Box>
-				<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+				<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', padding: '0 20px' }}>
 					{proposals !== null && renderFilteredProposal}
 				</Box>
 				<Modal
@@ -558,7 +557,4 @@ function ActivityProposals() {
 
 export default ActivityProposals
 
-// 12@$%HYrwr  ducnsde160488@gmail.com
-// 34JHer&*$ van@gmail.com
-// 8KHuf&$%f phong@gmail.com
-// pas$w0URR123 ngankim@gmail.com
+// 23$@#HURury an@gmail.com

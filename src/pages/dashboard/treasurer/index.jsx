@@ -10,11 +10,15 @@ import {
 	Card,
 	CardHeader,
 	Chip,
+	Container,
+	FormControl,
 	Grid,
 	InputAdornment,
+	InputLabel,
 	Menu,
 	MenuItem,
 	Paper,
+	Select,
 	Table,
 	TableBody,
 	TableCell,
@@ -25,6 +29,8 @@ import {
 	TextField,
 	Typography
 } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
 import PopupState from 'material-ui-popup-state'
 import { Magnify } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
@@ -32,6 +38,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import AddCategory from './AddCategory'
 import PayByCash from './PayByCash'
 import AddExpense from './AddExpense'
+import PaymentDetail from './PaymentDetail'
 
 function Treasurer() {
 	const router = useRouter()
@@ -43,36 +50,57 @@ function Treasurer() {
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [userData, setUserData] = useState()
 	const [paymentData, setPaymentData] = useState([])
-	const [sumBalance, setSumBalance] = useState([])
+	const [paymentDataDetail, setPaymentDataDetail] = useState([])
+	const [paymentDataFilter, setPaymentDataFilter] = useState([])
+	const [filter, setFilter] = useState('all')
+	const [loading, setLoading] = useState(true)
+	const [balance, setBalance] = useState()
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
-	console.log('sum', sumBalance)
-
 	//modal
 	const [scroll, setScroll] = useState('paper')
 	const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false)
-	const [openPayByCashDialog, setOpenPayByCashDialog] = useState(false)
 	const [openAddExpenseDialog, setOpenAddExpenseDialog] = useState(false)
+	const [openPaymentDetailDialog, setOpenPaymentDetailDialog] = useState(false)
 
 	const handleAddCategory = () => {
 		setOpenAddCategoryDialog(true)
-	}
-
-	const handlePayByCash = () => {
-		setOpenPayByCashDialog(true)
 	}
 
 	const handleAddExpense = () => {
 		setOpenAddExpenseDialog(true)
 	}
 
+	// Tính tổng của items.amount với items.status='in'
+	var totalInAmount = paymentData.reduce(function (sum, item) {
+		if (item?.type == 'in') {
+			return sum + item.amount
+		}
+
+		return sum
+	}, 0)
+
+	// Tính tổng của items.amount với items.status='out'
+	var totalOutAmount = paymentData.reduce(function (sum, item) {
+		if (item?.type == 'out') {
+			return sum + item.amount
+		}
+
+		return sum
+	}, 0)
+
+	const difference = totalInAmount - totalOutAmount
+
 	const handleClose = () => {
 		setOpenAddCategoryDialog(false)
-		setOpenPayByCashDialog(false)
 		setOpenAddExpenseDialog(false)
+		setOpenPaymentDetailDialog(false)
 		dispatch({ type: 'trigger' })
+		setBalance(difference)
+		console.log(balance)
+		updateBalance()
 	}
 
 	const handleChangePage = (event, newPage) => {
@@ -85,7 +113,7 @@ function Treasurer() {
 	}
 
 	const statusObj = {
-		0: { color: 'primary', label: 'Mới' },
+		0: { color: 'primary', label: 'Chưa thanh toán' },
 		1: { color: 'success', label: 'Thanh toán thành công' },
 		2: { color: 'warning', label: 'Thanh toán thất bại' }
 	}
@@ -95,8 +123,42 @@ function Treasurer() {
 		out: { color: 'warning', label: 'Khoản chi' }
 	}
 
+	const getApiPaymentDetail = id => {
+		setOpenPaymentDetailDialog(true)
+		fetch(`http://localhost:8080/payment?action=list-payments-in-category&categoryId=${id}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				setPaymentDataDetail(data)
+			})
+			.catch(error => console.error('Error:', error))
+	}
+
+	const updateBalance = () => {
+		fetch(
+			`http://localhost:8080/payment?action=update-balance&clubId=${cookies['clubData']?.clubId}&balance=${balance}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
+			}
+		)
+			.then(function (response) {
+				return response.json()
+			})
+
+			.catch(error => console.error('Error:', error))
+	}
+
 	useEffect(() => {
-		fetch(`http://localhost:8080/payment?action=list-payments&clubId=${cookies['clubData']?.clubId}`, {
+		fetch(`http://localhost:8080/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -107,27 +169,41 @@ function Treasurer() {
 			})
 			.then(function (data) {
 				setPaymentData(data)
+				setLoading(false)
+				setBalance(difference)
 			})
 			.catch(error => console.error('Error:', error))
-		fetch(`http://localhost:8080/payment?action=sum-balance&clubId=${cookies['clubData']?.clubId}`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				setSumBalance(data)
-			})
-			.catch(error => console.error('Error:', error))
-	}, [cookies, state])
+	}, [cookies, state, difference])
 
-	const paymentDataTypeIn = paymentData.filter(item => item.type == 'in' && item.status == 0)
+	useEffect(() => {
+		switch (filter) {
+			case 'all':
+				setPaymentDataFilter(paymentData)
+
+				return
+			case 'in':
+				setPaymentDataFilter(paymentData?.filter(paymentData => paymentData?.type == 'in'))
+
+				return
+			case 'out':
+				setPaymentDataFilter(paymentData?.filter(paymentData => paymentData?.type == 'out'))
+
+				return
+			default:
+				return
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filter])
+
+	useEffect(() => {
+		setPaymentDataFilter(paymentData)
+	}, [paymentData])
 
 	return (
 		<Grid item xs={12}>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 			<AddCategory
 				openAddCategoryDialog={openAddCategoryDialog}
 				setOpenAddCategoryDialog={setOpenAddCategoryDialog}
@@ -135,14 +211,14 @@ function Treasurer() {
 				handleAddCategory={handleAddCategory}
 				cookies={cookies}
 			></AddCategory>
-			<PayByCash
-				openPayByCashDialog={openPayByCashDialog}
-				setOpenPayByCashDialog={setOpenPayByCashDialog}
+			<PaymentDetail
+				openPaymentDetailDialog={openPaymentDetailDialog}
+				setOpenPaymentDetailDialog={setOpenPaymentDetailDialog}
 				handleClose={handleClose}
-				handlePayByCash={handlePayByCash}
-				cookies={cookies}
-				paymentDataTypeIn={paymentDataTypeIn}
-			></PayByCash>
+				paymentDataDetail={paymentDataDetail}
+				statusObj={statusObj}
+				dispatch={dispatch}
+			></PaymentDetail>
 			<AddExpense
 				openAddExpenseDialog={openAddExpenseDialog}
 				setOpenAddExpenseDialog={setOpenAddExpenseDialog}
@@ -151,16 +227,14 @@ function Treasurer() {
 				cookies={cookies}
 			></AddExpense>
 			<ToastContainer></ToastContainer>
-			<Button variant='contained' size='small' onClick={handleAddCategory}>
-				Thêm khoản nộp
-			</Button>
-			<Button variant='contained' size='small' onClick={handleAddExpense} sx={{ marginLeft: 2 }}>
-				Thêm khoản chi
-			</Button>
-			<Button variant='contained' size='small' onClick={handlePayByCash} sx={{ marginLeft: 2 }}>
-				Thanh toán tiền mặt
-			</Button>
+
 			<Card style={{ height: '100%' }}>
+				<Button variant='contained' size='small' onClick={handleAddCategory} sx={{ margin: 2 }}>
+					Thêm khoản nộp
+				</Button>
+				<Button variant='contained' size='small' onClick={handleAddExpense} sx={{ marginLeft: 2 }}>
+					Thêm khoản chi
+				</Button>
 				<div
 					style={{
 						display: 'flex',
@@ -169,17 +243,21 @@ function Treasurer() {
 						paddingRight: '10px'
 					}}
 				>
-					<CardHeader title='Quản lý thu chi' titleTypographyProps={{ variant: 'h6' }} />
-					<Chip
-						color='success'
-						label={sumBalance?.balance}
-						sx={{
-							height: 24,
-							textTransform: 'capitalize',
-							'& .MuiChip-label': { fontWeight: 500 }
-						}}
-					/>
-
+					<Container>
+						<FormControl
+							variant='outlined'
+							size='small'
+							sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%', marginTop: '20px' }}
+						>
+							<InputLabel>Bộ lọc</InputLabel>
+							<Select label='filter' defaultValue='all' onChange={e => setFilter(e.target.value)}>
+								<MenuItem value='all'>Tất cả khoản thu chi</MenuItem>
+								<MenuItem value='in'>Khoản thu</MenuItem>
+								<MenuItem value='out'>Khoản chi</MenuItem>
+							</Select>
+						</FormControl>
+					</Container>
+					<Chip label={'Số dư: ' + balance?.toLocaleString()} color='primary' sx={{ marginRight: 5 }} />
 					<TextField
 						placeholder='Tìm kiếm...'
 						size='small'
@@ -208,16 +286,15 @@ function Treasurer() {
 									<TableCell>Mô tả</TableCell>
 									<TableCell>Số tiền</TableCell>
 									<TableCell>Loại</TableCell>
-									<TableCell>Tình trạng</TableCell>
-									<TableCell>Người nộp</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{paymentData.map(row => (
+								{paymentDataFilter?.map(row => (
 									<TableRow
 										hover
 										key={row.id}
 										sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}
+										onClick={() => (row?.type == 'in' ? getApiPaymentDetail(row?.id) : '')}
 									>
 										<TableCell>
 											<div>
@@ -239,7 +316,7 @@ function Treasurer() {
 										</TableCell>
 										<TableCell>{row?.title}</TableCell>
 										<TableCell>{row?.description}</TableCell>
-										<TableCell>{row?.amount}</TableCell>
+										<TableCell>{row?.amount.toLocaleString()}</TableCell>
 										<TableCell>
 											{row.type ? (
 												<Chip
@@ -256,25 +333,6 @@ function Treasurer() {
 												''
 											)}
 										</TableCell>
-										<TableCell>
-											{row.status ? (
-												<Chip
-													color={statusObj[row?.status]?.color}
-													label={statusObj[row?.status]?.label}
-													sx={{
-														height: 24,
-														fontSize: '0.75rem',
-														textTransform: 'capitalize',
-														'& .MuiChip-label': { fontWeight: 500 }
-													}}
-												/>
-											) : (
-												''
-											)}
-										</TableCell>
-										<TableCell>
-											{row?.firstname} {row?.lastname}
-										</TableCell>
 									</TableRow>
 								))}
 							</TableBody>
@@ -283,7 +341,7 @@ function Treasurer() {
 					<TablePagination
 						rowsPerPageOptions={[10, 25, 100]}
 						component='div'
-						count={paymentData.length}
+						count={paymentDataFilter.length}
 						rowsPerPage={rowsPerPage}
 						page={page}
 						onPageChange={handleChangePage}

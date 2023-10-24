@@ -202,9 +202,8 @@ function ClubPage() {
 				setClub(data)
 			})
 			.catch(error => console.error('Error:', error))
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
-
 
 	return (
 		<Container maxWidth='lg' sx={{ marginTop: 20 }}>
@@ -220,7 +219,13 @@ function ClubPage() {
 				/>
 				<CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
 					<Card sx={{ height: '140px', width: '140px' }}>
-						<img src={club?.avatarUrl} alt='' width={'100%'} height={'100%'} objectFit={'cover'} />
+						<img
+							src={club?.avatarUrl}
+							alt=''
+							width={'100%'}
+							height={'100%'}
+							style={{ objectFit: 'cover' }}
+						/>
 					</Card>
 					<Stack direction={'column'} flex={1}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
@@ -275,6 +280,5 @@ function ClubPage() {
 		</Container>
 	)
 }
-
 
 export default ClubPage

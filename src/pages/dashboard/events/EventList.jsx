@@ -41,7 +41,7 @@ import FeedbackModal from './FeedbackModal'
 import { getUserInfo } from 'src/utils/info'
 import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
 
-function EventItem({ event }) {
+function EventItem({ event, setEventList, userData }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
 
@@ -70,6 +70,9 @@ function EventItem({ event }) {
 			<FeedbackModal
 				openFeedbackModal={openFeedbackModal}
 				setOpenFeedbackModal={setOpenFeedbackModal}
+				setEventList={setEventList}
+				event={event}
+				userData={userData}
 			></FeedbackModal>
 			{['left', 'right', 'top', 'bottom'].map(anchor => (
 				<>
@@ -99,6 +102,23 @@ function EventItem({ event }) {
 
 					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
+
+					{new Date() > new Date(event?.endTime) ? (
+						<>
+							<Typography variant='h7' mt={4}>
+								Đánh giá: {event?.avgRating}
+							</Typography>
+							<Stack direction={'row'}>
+								{[1, 2, 3, 4, 5].map((value, index) =>
+									value <= event?.avgRating.toFixed() ? (
+										<StarIcon key={index} color='primary'></StarIcon>
+									) : (
+										<StarIcon key={index}></StarIcon>
+									)
+								)}
+							</Stack>
+						</>
+					) : null}
 				</Stack>
 				<Card sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }} marginBottom={10}>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -122,7 +142,13 @@ function EventItem({ event }) {
 							<LocationOnIcon></LocationOnIcon>
 							<Typography variant='body1'>{event?.locationName}</Typography>
 						</Box>
-						{event?.isRegistered == true || event?.isRegistered == 'true' ? (
+						{new Date() > new Date(event?.endTime) ? (
+							<>
+								<Button variant='outlined' color='secondary' disabled fullWidth sx={{ marginTop: 4 }}>
+									Sự kiện đã kết thúc
+								</Button>
+							</>
+						) : event?.isRegistered == 'true' || event?.isRegistered == true ? (
 							<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
 								Đã đăng ký
 							</Button>
@@ -131,7 +157,7 @@ function EventItem({ event }) {
 								variant='contained'
 								fullWidth
 								sx={{ marginTop: 4 }}
-								onClick={() => setOpenRegisterModal(true)}
+								onClick={() => (userData?.id ? setOpenRegisterModal(true) : router.push('/auth/login'))}
 							>
 								Đăng ký
 							</Button>
@@ -153,42 +179,12 @@ function EventItem({ event }) {
 	)
 }
 
-function EventList() {
-	const [eventList, setEventList] = useState()
-	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
-	const [cookiesClub, setCookieClub, removeCookieClub] = useCookies(['clubData'])
-	const [userData, setUserData] = useState()
-	useEffect(() => {
-		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
-	}, [cookies])
-
-	useEffect(() => {
-		fetch(
-			`http://localhost:8080/member-events?clubId=${cookiesClub['clubData'].clubId}&userId=${userData?.id}&cmd=list`,
-			{
-				method: 'GET',
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
-				}
-			}
-		)
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				console.log('data')
-				console.log(data)
-				setEventList(data)
-			})
-			.catch(error => console.error('Error:', error))
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userData])
-
+function EventList({ eventListFiltered, setEventList, userData }) {
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-				{eventList?.map((event, index) => (
-					<EventItem key={event.id} event={event}></EventItem>
+				{eventListFiltered?.map((event, index) => (
+					<EventItem key={event.id} event={event} setEventList={setEventList} userData={userData}></EventItem>
 				))}
 			</Container>
 		</>
