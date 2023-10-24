@@ -59,7 +59,7 @@ function PlanListPage() {
 			console.log('file records: ', response)
 			setFileRecords(response)
 		})
-	}, [])
+	}, [clubId])
 
 	const handleCloseModal = () => {
 		setOpenModal(false)

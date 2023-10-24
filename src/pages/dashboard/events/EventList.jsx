@@ -136,7 +136,9 @@ function EventItem({ event, setEventList, userData }) {
 
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
-							<Typography variant='body1'>{event?.clubSubname}</Typography>
+							<Typography variant='body1'>
+								{event?.clubSubname}
+							</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<LocationOnIcon></LocationOnIcon>

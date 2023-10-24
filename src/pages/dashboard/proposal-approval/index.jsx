@@ -56,7 +56,7 @@ function ProposalListPage() {
 			console.log('file records: ', response)
 			setFileRecords(response)
 		})
-	}, [])
+	}, [clubId])
 
 	const handleCloseModal = () => {
 		setOpenModal(false)

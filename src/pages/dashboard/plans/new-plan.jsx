@@ -291,7 +291,7 @@ function NewPlan() {
 						padding: '0 30px'
 					}}
 				>
-					<Link href={'/dashboard/plans'}>
+					<Link passHref href={'/dashboard/plans'}>
 						<Button variant='contained'>Quay trở lại</Button>
 					</Link>
 					<Box sx={{ display: 'flex', gap: '40px' }}>

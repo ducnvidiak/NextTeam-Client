@@ -50,7 +50,7 @@ function Department() {
 				})
 				.then(function (data) {
 					setDepartments(data)
-					setUpdateData(false) // Đặt lại tín hiệu cập nhật sau khi cập nhật dữ liệu
+					setUpdateData(false) 
 				})
 				.catch(error => console.error('Error:', error))
 		}
@@ -65,7 +65,7 @@ function Department() {
 
 	const confirmDelete = () => {
 		if (departmentToDelete) {
-			// Handle the creation of the department here, for example, make an API call.
+			
 			const DELETE_DATA_URL = ORIGIN_URL + `?action=delete-dept&depId=${departmentToDelete.id}`
 			console.log(`Testing create url: ${DELETE_DATA_URL}`)
 			fetch(DELETE_DATA_URL)

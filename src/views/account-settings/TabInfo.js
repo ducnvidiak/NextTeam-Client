@@ -49,7 +49,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	useEffect(() => {
 		setCurrentUserInfo({ ...userInfo })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userInfo.id])
+	}, [userInfo?.id])
 
 	const [country, setCountry] = useState(
 		userInfo?.homeTown != '' && userInfo?.homeTown != null
@@ -115,7 +115,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							type='text'
 							label='Mã sinh viên'
 							placeholder='DE160488'
-							value={currentUserInfo?.username.toUpperCase() || ''}
+							value={currentUserInfo?.username?.toUpperCase() || ''}
 							error={studentCodeError.status}
 							onChange={event => {
 								const validStudentCode = validateStudentCode(event.target.value)

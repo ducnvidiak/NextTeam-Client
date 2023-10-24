@@ -67,6 +67,7 @@ const UserInfoView = () => {
 					State.getStateByCodeAndCountry(userInfo.homeTown.split('-')[1], userInfo.homeTown.split('-')[0])
 				)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.query.id])
 
 	return (

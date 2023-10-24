@@ -73,7 +73,7 @@ function ActivityProposals() {
 				setFileRecords(response)
 			})
 		}
-	}, [userData])
+	}, [userData,clubId])
 
 	const handleAddNewPlan = () => {
 		router.push('./plans/new-plan')

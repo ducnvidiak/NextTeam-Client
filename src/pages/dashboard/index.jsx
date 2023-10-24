@@ -20,12 +20,12 @@ import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 // ** Demo Components Imports
 import Table from 'src/views/dashboard/Table'
 import Trophy from 'src/views/dashboard/Trophy'
+import ClubStructure from 'src/views/dashboard/ClubStructure'
+import Member from 'src/views/dashboard/Member'
+import Balance from 'src/views/dashboard/Balance'
 import TotalEarning from 'src/views/dashboard/TotalEarning'
-import StatisticsCard from 'src/views/dashboard/StatisticsCard'
 import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
-import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
-import SalesByCountries from 'src/views/dashboard/SalesByCountries'
-import EventList from './events/eventStatis'
+import Event from 'src/views/dashboard/Event'
 
 const Dashboard = () => {
 	const ORIGIN_URL = 'http://localhost:8080/api/statis?clubId='
@@ -48,16 +48,27 @@ const Dashboard = () => {
 	return (
 		<ApexChartWrapper>
 			<Grid container spacing={6}>
+				<Grid item xs={12} md={12}>
+					<ClubStructure data={data} />
+				</Grid>
 				<Grid item xs={12} md={6}>
 					<Trophy data={data} />
 				</Grid>
+
 				<Grid item xs={12} md={6}>
-					<EventList data={data} />
+					<Event data={data} />
 				</Grid>
 
+				<Grid item xs={12} md={6}>
+					<Member data={data} />
+				</Grid>
+				<Grid item xs={12} md={6}>
+					<Balance data={data} />
+				</Grid>
 				<Grid item xs={12} md={6} lg={4}>
 					<WeeklyOverview data={data} />
 				</Grid>
+
 				<Grid item xs={12} md={6} lg={4}>
 					<TotalEarning data={data} />
 				</Grid>
@@ -68,9 +79,9 @@ const Dashboard = () => {
 								stats={data.balance}
 								icon={<Poll />}
 								color='success'
-								trendNumber='+42%'
+								
 								title='Số dư'
-								subtitle='Trong kỳ'
+								
 							/>
 						</Grid>
 						<Grid item xs={6}>
@@ -79,8 +90,8 @@ const Dashboard = () => {
 								title='Điểm Hoạt Động'
 								trend='negative'
 								color='secondary'
-								trendNumber='-15%'
-								subtitle='Trong năm'
+								
+								
 								icon={<CurrencyUsd />}
 							/>
 						</Grid>
@@ -88,9 +99,9 @@ const Dashboard = () => {
 							<CardStatisticsVerticalComponent
 								stats={data.total_report}
 								trend='negative'
-								trendNumber='-18%'
+								
 								title='Số báo cáo'
-								subtitle='Trong tháng'
+								
 								icon={<BriefcaseVariantOutline />}
 							/>
 						</Grid>
@@ -99,22 +110,13 @@ const Dashboard = () => {
 								stats={data.total_post}
 								color='warning'
 								trend='negative'
-								trendNumber='-18%'
-								subtitle='Trong tháng'
+							
+								
 								title='Số bài viết'
 								icon={<HelpCircleOutline />}
 							/>
 						</Grid>
 					</Grid>
-				</Grid>
-				<Grid item xs={12} md={6} lg={4}>
-					<SalesByCountries />
-				</Grid>
-				<Grid item xs={12} md={12} lg={8}>
-					<DepositWithdraw />
-				</Grid>
-				<Grid item xs={12}>
-					<Table />
 				</Grid>
 			</Grid>
 		</ApexChartWrapper>

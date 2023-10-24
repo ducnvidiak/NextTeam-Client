@@ -25,8 +25,7 @@ import ClubCategory from 'src/components/ClubCategory'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { getUserInfo } from 'src/utils/info'
-import Decentralization from 'src/layouts/Decentralization'
-import BlankLayout from 'src/@core/layouts/BlankLayout'
+import RegisterClub from './RegisterClub'
 
 function EventItem() {
 	const [state, setState] = useState({
@@ -182,14 +181,66 @@ function ClubPage() {
 	const [club, setClub] = useState({})
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [userData, setUserData] = useState()
+	const [open, setOpen] = useState(false)
+	const [clubId, setClubId] = useState()
+	const [loading, setLoading] = useState(false)
+	const dateString = club.createdAt
+
+	// Create Date object from the string
+	const date = new Date(dateString)
+
+	// Define options for toLocaleDateString
+	const options = { year: 'numeric', month: 'short', day: 'numeric' }
+
+	// Format the date
+	const formattedDate = date.toLocaleDateString('en-US', options)
+
+	const handleClose = () => {
+		setOpen(false)
+	}
+
+	const callAPIDepartment = async clubId => {
+		try {
+			setLoading(true)
+			const res = await getAPI('/department?action=list-dept&clubId=' + clubId)
+			setDepartment(res)
+		} catch (error) {
+			console.log(error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const [userId, setUserId] = useState()
+
+	useEffect(() => {
+		;(async () => setUserId((await getUserInfo(cookies['userData'])).id))()
+	}, [cookies])
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	const router = useRouter()
 
+	const handleClickOpen = clubId => {
+		if (userId) {
+			setClubId(clubId)
+			callAPIDepartment(clubId)
+			setOpen(true)
+		} else {
+			router.push('/auth/login')
+		}
+	}
+
 	useEffect(() => {
-		fetch(`http://localhost:8080/club-detail?subname=${router.query.clubId}&userId=${userData?.id}`, {
+		let url_query = ''
+		if (userData?.id == undefined) {
+			url_query = `http://localhost:8080/club-detail?subname=${router.query.clubId}`
+		} else {
+			url_query = `http://localhost:8080/club-detail?subname=${router.query.clubId}&userId=${userData?.id}`
+		}
+		fetch(url_query, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -199,6 +250,7 @@ function ClubPage() {
 				return response.json()
 			})
 			.then(function (data) {
+				console.log(data)
 				setClub(data)
 			})
 			.catch(error => console.error('Error:', error))
@@ -207,6 +259,8 @@ function ClubPage() {
 
 	return (
 		<Container maxWidth='lg' sx={{ marginTop: 20 }}>
+			<RegisterClub clubId={club.id} userId={userId} isOpen={open} handleClose={handleClose} />
+
 			<Card>
 				<img
 					src={club?.bannerUrl}
@@ -243,21 +297,33 @@ function ClubPage() {
 								</Box>
 								<Box sx={{ display: 'flex', gap: 4 }}>
 									<CakeIcon></CakeIcon>
-									<Typography variant='body1'>
-										{moment(club?.createdAt).subtract(0, 'days').calendar()}
-									</Typography>
+									<Typography variant='body1'>{formattedDate}</Typography>
 								</Box>
 							</Stack>
-							{club?.isJoined === true ? (
-								<Button variant='outlined'>Đã tham gia</Button>
+							{club?.isJoined ? (
+								<Button
+									variant='outlined'
+									color='secondary'
+									sx={{ marginTop: 4, width: '50%' }}
+									onClick={() => handleClickOpen(club.id)}
+									disabled
+								>
+									Đã tham gia
+								</Button>
 							) : (
-								<Button variant='contained'>Tham gia</Button>
+								<Button
+									variant='outlined'
+									sx={{ marginTop: 4, width: '50%' }}
+									onClick={() => handleClickOpen(club.id)}
+								>
+									Đăng ký tham gia
+								</Button>
 							)}
 						</Stack>
 					</Stack>
 				</CardContent>
 			</Card>
-			<Container maxWidth='lg' sx={{ marginTop: 20 }}>
+			{/* <Container maxWidth='lg' sx={{ marginTop: 20 }}>
 				<Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-end'} marginBottom={10}>
 					<Typography fontSize={32} fontWeight={600}>
 						CÁC SỰ KIỆN
@@ -276,7 +342,7 @@ function ClubPage() {
 						<EventItem key={index}></EventItem>
 					))}
 				</Container>
-			</Container>
+			</Container> */}
 		</Container>
 	)
 }

@@ -44,7 +44,7 @@ const UserList = () => {
 		getListOfAllUserForManage(clubId).then(data => {
 			setUserList(data)
 		})
-	}, [])
+	}, [clubId])
 
 	function handleClick(id) {
 		router.push('./members/info/' + id)
