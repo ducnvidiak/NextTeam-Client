@@ -40,10 +40,12 @@ import FeedbackModal from './FeedbackModal'
 import { getUserInfo } from 'src/utils/info'
 import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
 
 function EventItem({ event, setEventList, eventList, userData }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
+	const router = useRouter()
 
 	const [state, setState] = useState({
 		top: false,
@@ -67,19 +69,18 @@ function EventItem({ event, setEventList, eventList, userData }) {
 				setOpenFeedbackModal={setOpenFeedbackModal}
 				event={event}
 				userData={userData}
+				setEventList={setEventList}
 			></FeedbackModal>
+			<RegisterEventModal
+				event={event}
+				openRegisterModal={openRegisterModal}
+				setOpenRegisterModal={setOpenRegisterModal}
+				setState={setState}
+				state={state}
+				setEventList={setEventList}
+			></RegisterEventModal>
 			{['left', 'right', 'top', 'bottom'].map(anchor => (
 				<>
-					<RegisterEventModal
-						event={event}
-						openRegisterModal={openRegisterModal}
-						setOpenRegisterModal={setOpenRegisterModal}
-						anchor={anchor}
-						toggleDrawer={() => toggleDrawer(anchor, false)}
-						setState={setState}
-						state={state}
-						setEventList={setEventList}
-					></RegisterEventModal>
 					<SwipeableDrawer
 						anchor={anchor}
 						open={state[anchor]}
@@ -92,6 +93,7 @@ function EventItem({ event, setEventList, eventList, userData }) {
 							setOpenRegisterModal={setOpenRegisterModal}
 							setOpenFeedbackModal={setOpenFeedbackModal}
 							toggleDrawer={toggleDrawer}
+							userData={userData}
 						></SwipeableDrawerList>
 					</SwipeableDrawer>
 				</>
@@ -109,9 +111,9 @@ function EventItem({ event, setEventList, eventList, userData }) {
 							<Stack direction={'row'}>
 								{[1, 2, 3, 4, 5].map((value, index) =>
 									value <= event?.avgRating.toFixed() ? (
-										<StarIcon color='primary'></StarIcon>
+										<StarIcon key={index} color='primary'></StarIcon>
 									) : (
-										<StarIcon></StarIcon>
+										<StarIcon key={index}></StarIcon>
 									)
 								)}
 							</Stack>
@@ -155,7 +157,7 @@ function EventItem({ event, setEventList, eventList, userData }) {
 								variant='contained'
 								fullWidth
 								sx={{ marginTop: 4 }}
-								onClick={() => setOpenRegisterModal(true)}
+								onClick={() => (userData?.id ? setOpenRegisterModal(true) : router.push('/auth/login'))}
 							>
 								Đăng ký
 							</Button>
@@ -199,9 +201,7 @@ function EventList({ filter }) {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data)
-				setEventList(data?.filter(event => event?.isApproved))
-				setEventListFiltered(data?.filter(event => event?.isApproved))
+				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData])
@@ -210,22 +210,18 @@ function EventList({ filter }) {
 		switch (filter) {
 			case 'all':
 				setEventListFiltered(eventList)
-				toast.success('Lọc toàn bộ sự kiện')
 
 				return
 			case 'registered':
 				setEventListFiltered(eventList?.filter(event => event?.isRegistered))
-				toast.success('Lọc các sự kiện bạn đã đăng ký')
 
 				return
 			case 'upcoming':
 				setEventListFiltered(eventList?.filter(event => new Date() < new Date(event?.startTime)))
-				toast.success('Lọc các sự kiện sắp diễn ra')
 
 				return
 			case 'past':
 				setEventListFiltered(eventList?.filter(event => new Date() > new Date(event?.endTime)))
-				toast.success('Lọc các sự kiện đã diễn ra')
 
 				return
 			default:
@@ -237,6 +233,8 @@ function EventList({ filter }) {
 	useEffect(() => {
 		setEventListFiltered(eventList)
 	}, [eventList])
+
+	console.log(eventList)
 
 	return (
 		<>

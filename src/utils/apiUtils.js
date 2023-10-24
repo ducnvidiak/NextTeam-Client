@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const updateUserAvatar = async (imgSrc, id) => {
+export const updateUserAvatar = async (imgSrc, id) => {
 	const formData = new FormData()
 	if (imgSrc !== '') {
 		formData.append('image', imgSrc.split(',')[1])
@@ -26,7 +26,7 @@ const updateUserAvatar = async (imgSrc, id) => {
 	}
 }
 
-const updateUserInfo = async objectData => {
+export const updateUserInfo = async objectData => {
 	console.log('data sending: ', objectData)
 	const data = JSON.stringify(objectData)
 
@@ -50,7 +50,7 @@ const updateUserInfo = async objectData => {
 	return json
 }
 
-const getUserInfo = async id => {
+export const getUserInfo = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/user?id=' + id)
 		.then(response => {
@@ -67,7 +67,7 @@ const getUserInfo = async id => {
 	return json
 }
 
-const changeUserPass = async (authInfo, id) => {
+export const changeUserPass = async (authInfo, id) => {
 	const data = JSON.stringify(authInfo)
 	console.log(authInfo)
 
@@ -91,7 +91,7 @@ const changeUserPass = async (authInfo, id) => {
 	return json
 }
 
-const getAllMajors = async () => {
+export const getAllMajors = async () => {
 	const json = await axios
 		.get('http://localhost:8080/api/allMajors')
 		.then(response => {
@@ -108,7 +108,7 @@ const getAllMajors = async () => {
 	return json
 }
 
-const getListOfAllUser = async () => {
+export const getListOfAllUser = async () => {
 	const json = await axios
 		.get('http://localhost:8080/api/userlist')
 		.then(response => {
@@ -125,4 +125,4 @@ const getListOfAllUser = async () => {
 	return json
 }
 
-module.exports = { updateUserAvatar, updateUserInfo, getUserInfo, changeUserPass, getAllMajors, getListOfAllUser }
+// module.exports = { updateUserAvatar, updateUserInfo, getUserInfo, changeUserPass, getAllMajors, getListOfAllUser }
