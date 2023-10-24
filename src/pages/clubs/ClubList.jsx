@@ -239,7 +239,7 @@ function ClubItem({ club, index }) {
 									variant='outlined'
 									color='secondary'
 									sx={{ marginTop: 4, width: '50%' }}
-									onClick={()=> handleClickOpen(club.id)}
+									onClick={() => handleClickOpen(club.id)}
 								>
 									Đã tham gia
 								</Button>
@@ -247,8 +247,7 @@ function ClubItem({ club, index }) {
 								<Button
 									variant='outlined'
 									sx={{ marginTop: 4, width: '50%' }}
-									onClick={()=> handleClickOpen(club.id)}
-
+									onClick={() => handleClickOpen(club.id)}
 								>
 									Đăng ký tham gia
 								</Button>
@@ -285,7 +284,7 @@ function ClubList() {
 
 	useEffect(() => {
 		callAPI()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
 
 	return (
