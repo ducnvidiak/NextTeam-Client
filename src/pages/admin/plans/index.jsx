@@ -191,7 +191,7 @@ function PlanListPage() {
 							title='Tải xuống'
 						/>
 						<div
-							sx={{
+							style={{
 								position: 'absolute',
 								top: '0',
 								left: '0',
