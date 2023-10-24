@@ -72,7 +72,7 @@ export default function EventDashboard() {
 		right: false
 	})
 
-	const filteredEvents = events.filter(event => event.clubId == clubId)
+	const filteredEvents = events?.filter(event => event.clubId == clubId)
 
 	const toggleDrawer = (anchor, open) => event => {
 		if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
