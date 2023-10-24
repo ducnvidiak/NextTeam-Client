@@ -203,6 +203,7 @@ function EventList({ filter }) {
 				return response.json()
 			})
 			.then(function (data) {
+				console.log(data);
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
