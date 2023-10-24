@@ -15,7 +15,7 @@ import { translateDayOfWeek } from 'src/ultis/dateTime'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 
-function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer, setOpenFeedbackModal, userData }) {
+function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer = () => {}, setOpenFeedbackModal, userData }) {
 	const router = useRouter()
 
 	const handleFeedbackClick = () => {

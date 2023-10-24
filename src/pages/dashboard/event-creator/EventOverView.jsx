@@ -67,19 +67,9 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
-	const [newEvent, setNewEvent] = useState({
-		...event,
-		startTime: convertFormat(event?.startTime),
-		endTime: convertFormat(event?.endTime),
-		locationId: locationList.filter((item, index) => {
-			return item.name == event?.locationName
-		})[0]?.id
-	})
+	const [newEvent, setNewEvent] = useState({})
 
 	const handleDateChange = date => {
-		const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm')
-		const startString = `${formattedDate.substring(0, 11)}T${newEvent?.startTime.slice(-5)}`
-		const endString = `${formattedDate.substring(0, 11)}T${newEvent?.endTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
 			dateTime: date
@@ -87,8 +77,6 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	}
 
 	const handleStartTimeChange = time => {
-		const formattedTime = dayjs(time).format('YYYY-MM-DDTHH:mm')
-		const combinedString = `${newEvent?.startTime.substring(0, 11)}T${formattedTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
 			startTime: time
@@ -96,8 +84,6 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	}
 
 	const handleEndTimeChange = time => {
-		const formattedTime = dayjs(time).format('YYYY-MM-DDTHH:mm')
-		const combinedString = `${newEvent?.endTime.substring(0, 11)}T${formattedTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
 			endTime: time
@@ -153,8 +139,14 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
-					startTime: new Date(convertToTimestamp(newEvent?.startTime)),
-					endTime: new Date(convertToTimestamp(newEvent?.endTime)),
+					startTime: combineDateTime(
+						moment(new Date(newEvent.dateTime)).format(),
+						moment(new Date(newEvent.startTime)).format()
+					),
+					endTime: combineDateTime(
+						moment(new Date(newEvent.dateTime)).format(),
+						moment(new Date(newEvent.endTime)).format()
+					),
 					registeredBy: userData?.id,
 					clubId: userData?.clubId
 				}),
@@ -191,7 +183,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const handleDelete = () => {
 		setOpen(true)
-		fetch(`http://localhost:8080/events?cmd=delete&eventId=${event.id}&eventId=${event.id}`, {
+		fetch(`http://localhost:8080/events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -204,6 +196,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 			})
 			.then(function (data) {
 				setEventList(data)
+				console.log(data);
 				toast.success('Xóa sự kiện thành công!!!')
 			})
 			.catch(error => {
@@ -230,21 +223,18 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		callAPI()
 	}, [])
 
-
-
 	useEffect(() => {
-		if (locationList.length > 0) {
-			setNewEvent({
-				...event,
-				startTime: convertFormat(event?.startTime),
-				endTime: convertFormat(event?.endTime),
-				locationId: locationList.filter((item, index) => {
-					return item.name == event?.locationName
-				})[0]?.id
-			})
-		}
+		setNewEvent({
+			...event,
+			dateTime: dayjs(event?.startTime),
+			startTime: dayjs(event?.startTime),
+			endTime: dayjs(event.endTime),
+			locationId: locationList.filter((item, index) => {
+				return item.name == event?.locationName
+			})[0]?.id
+		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [locationList])
+	}, [event, locationList])
 
 	return (
 		<Container maxWidth={'lg'} sx={{ padding: '0 60px !important' }}>
@@ -304,7 +294,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					id='outlined-basic'
 					label='Tên sự kiện'
 					variant='outlined'
-					defaultValue={newEvent?.name}
+					value={newEvent.name}
 					onChange={event => setNewEvent({ ...newEvent, name: event.target.value })}
 					sx={{ mb: 4 }}
 					error={newEvent.name === '' && !isValidate}
@@ -364,14 +354,14 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 									helperText: 'MM/DD/YYYY'
 								}
 							}}
-							defaultValue={dayjs(newEvent?.startTime)}
+							value={dayjs(newEvent?.startTime)}
 							sx={{ flex: 1 }}
 							onChange={handleDateChange}
 						/>
 						<TimePicker
 							sx={{ flex: 1 }}
 							label='Bắt đầu'
-							defaultValue={dayjs(newEvent?.startTime)}
+							value={dayjs(newEvent?.startTime)}
 							onChange={handleStartTimeChange}
 						/>
 						<TimePicker
