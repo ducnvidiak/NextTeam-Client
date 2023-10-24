@@ -192,8 +192,8 @@ const AdminManageUsers = () => {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{users.map(user => (
-								<TableRow key={user.id}>
+							{users?.map(user => (
+								<TableRow key={user?.id}>
 									<TableCell>{user.id}</TableCell>
 									<TableCell>{user.firstname + ' ' + user.lastname}</TableCell>
 									<TableCell>{user.username}</TableCell>
