@@ -29,8 +29,6 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('new data')
-				console.log(data)
 				setEventList(data)
 				toast.success('Đăng ký sự kiện thành công!!!!')
 				setOpenRegisterModal(false)

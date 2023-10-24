@@ -27,7 +27,6 @@ const updateUserAvatar = async (imgSrc, id) => {
 }
 
 const updateUserInfo = async objectData => {
-	console.log('data sending: ', objectData)
 	const data = JSON.stringify(objectData)
 
 	const config = {
@@ -54,7 +53,6 @@ const getUserInfo = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/user?id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -69,7 +67,6 @@ const getUserInfo = async id => {
 
 const changeUserPass = async (authInfo, id) => {
 	const data = JSON.stringify(authInfo)
-	console.log(authInfo)
 
 	const config = {
 		headers: {
@@ -95,7 +92,6 @@ const getAllMajors = async () => {
 	const json = await axios
 		.get('http://localhost:8080/api/allMajors')
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -112,7 +108,6 @@ const getListOfAllUser = async cludId => {
 	const json = await axios
 		.get('http://localhost:8080/api/userlist?type=list&clubId=' + cludId)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -135,7 +130,6 @@ const createProposal = async (formData, id) => {
 	const json = await axios
 		.post('http://localhost:8080/api/proposal?id=' + id, formData, config)
 		.then(response => {
-			console.log('response from api: ', response)
 
 			return response.data
 		})
@@ -154,7 +148,6 @@ const updateProposal = async (formData, id) => {
 	const json = await axios
 		.put('http://localhost:8080/api/proposal?type=content&id=' + id, formData, config)
 		.then(response => {
-			console.log('response from api: ', response)
 
 			return response.data
 		})
@@ -167,7 +160,6 @@ const getProposalByPropId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal?type=byProposalId&id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -184,7 +176,6 @@ const getProposalsByUserId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal?type=byUserId&id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -201,7 +192,6 @@ const deleteProposalById = async id => {
 	const json = await axios
 		.delete('http://localhost:8080/api/proposal?id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -218,7 +208,7 @@ const getProposalFilesByPropId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal_files?type=one&id=' + id)
 		.then(response => {
-			console.log(response.data)
+			(response.data)
 
 			return response.data
 		})
@@ -235,7 +225,6 @@ const getAllProposalFilesByUserId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal_files?type=many&id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -260,7 +249,6 @@ const createPlan = async (formData, id) => {
 	const json = await axios
 		.post('http://localhost:8080/api/plans?id=' + id, formData, config)
 		.then(response => {
-			console.log('response from api: ', response)
 
 			return response.data
 		})
@@ -322,7 +310,6 @@ const updateEventStatus = async (id, status, feedback) => {
 	const json = await axios
 		.put('http://localhost:8080/admin-events?id=' + id + '&status=' + status, formData, config)
 		.then(response => {
-			console.log('response from api: ', response)
 
 			return response.data
 		})
@@ -335,7 +322,6 @@ const getPlanByPlanId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/plans?type=byPlanId&id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -352,7 +338,6 @@ const getPlansByClubId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/plans?type=byClubId&id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -369,7 +354,6 @@ const deletePlanById = async id => {
 	const json = await axios
 		.delete('http://localhost:8080/api/plans?id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -386,7 +370,6 @@ const getPlanFilesByPlanId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/plan_files?type=one&id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -403,7 +386,6 @@ const getAllPlanFilesByClubId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/plan_files?type=many&id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -420,7 +402,6 @@ const getAllEvents = async () => {
 	const json = await axios
 		.get('http://localhost:8080/admin-events?cmd=list')
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -437,7 +418,6 @@ const getAllProposalByClubId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal?type=byClubId&id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -454,7 +434,6 @@ const getAllProposalFilesByClubId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal_files?type=much&id=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -477,7 +456,6 @@ const updateProposalStatus = async (id, status) => {
 	const json = await axios
 		.put('http://localhost:8080/api/proposal?type=status&id=' + id + '&status=' + status, config)
 		.then(response => {
-			console.log('response from api: ', response)
 
 			return response.data
 		})
@@ -490,7 +468,6 @@ const getListOfAllUserForManage = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/userlist?type=managelist&clubId=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -507,7 +484,6 @@ const getDepartmentByClubId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/department?action=list-dept&clubId=' + id)
 		.then(response => {
-			console.log(response.data)
 
 			return response.data
 		})
@@ -533,7 +509,6 @@ const changeDepartment = async (memberId, departmentId, clubId) => {
 			config
 		)
 		.then(response => {
-			console.log('response from api: ', response)
 
 			return response.data
 		})
@@ -552,7 +527,6 @@ const changeMemberStatus = async (memberId, clubId, status) => {
 	const json = await axios
 		.put('http://localhost:8080/engagement?clubId=' + clubId + '&status=' + status + '&userId=' + memberId, config)
 		.then(response => {
-			console.log('response from api: ', response)
 
 			return response.data
 		})

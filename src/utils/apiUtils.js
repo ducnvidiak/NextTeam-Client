@@ -27,7 +27,6 @@ export const updateUserAvatar = async (imgSrc, id) => {
 }
 
 export const updateUserInfo = async objectData => {
-	console.log('data sending: ', objectData)
 	const data = JSON.stringify(objectData)
 
 	const config = {
@@ -54,7 +53,7 @@ export const getUserInfo = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/user?id=' + id)
 		.then(response => {
-			console.log(response.data)
+			
 
 			return response.data
 		})
@@ -69,7 +68,6 @@ export const getUserInfo = async id => {
 
 export const changeUserPass = async (authInfo, id) => {
 	const data = JSON.stringify(authInfo)
-	console.log(authInfo)
 
 	const config = {
 		headers: {
@@ -95,7 +93,7 @@ export const getAllMajors = async () => {
 	const json = await axios
 		.get('http://localhost:8080/api/allMajors')
 		.then(response => {
-			console.log(response.data)
+			
 
 			return response.data
 		})
@@ -112,7 +110,7 @@ export const getListOfAllUser = async () => {
 	const json = await axios
 		.get('http://localhost:8080/api/userlist')
 		.then(response => {
-			console.log(response.data)
+			
 
 			return response.data
 		})

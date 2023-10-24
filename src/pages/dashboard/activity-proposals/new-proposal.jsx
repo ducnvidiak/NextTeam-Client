@@ -41,7 +41,6 @@ function NewProposal() {
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
 
-	console.log('club id: ', cookies['clubData']?.clubId)
 	const clubId = cookies['clubData']?.clubId
 
 	const [titleEmpty, setTitleEmpty] = useState(false)
@@ -104,7 +103,6 @@ function NewProposal() {
 				const fileContent = await readFile(fileList[i])
 				formData.append(`filescontent[${i}]`, fileContent)
 
-				console.log(formData.get(`filescontent[${i}]`))
 
 				formData.append(`filesname[${i}]`, fileList[i].name)
 				formData.append(`filesType[${i}]`, fileList[i].type)
@@ -118,7 +116,7 @@ function NewProposal() {
 			if (numOfFile > 0) setLoading(true)
 
 			await createProposal(formData, userData.id).then(response => {
-				console.log(response)
+				(response)
 				if (response?.status == 'success') {
 					toast.success('Gửi đề xuất thành công')
 					router.push('./')

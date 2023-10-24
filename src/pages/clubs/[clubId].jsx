@@ -251,7 +251,7 @@ function ClubPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data)
+				
 				setClub(data)
 			})
 			.catch(error => console.error('Error:', error))

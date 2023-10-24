@@ -164,7 +164,6 @@ function EventItem({ event, setEventList, eventList, index }) {
 }
 
 function EventList({ eventList, setEventList, filterType }) {
-	console.log(filterType)
 
 	return (
 		<>

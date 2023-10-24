@@ -37,7 +37,6 @@ function PlanListPage() {
 	const router = useRouter()
 
 	const [plans, setPlans] = useState([])
-	console.log('club id: ', cookies['clubData']?.clubId)
 	const clubId = cookies['clubData']?.clubId
 
 	const handleOpenPreview = fileRecord => {

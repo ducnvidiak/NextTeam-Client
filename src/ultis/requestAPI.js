@@ -18,7 +18,6 @@ async function postAPI(link, json, contentType = 'application/x-www-form-urlenco
 		body: formData
 	})
   const r = await response.json()
-	console.log(r)
 
 	return response.json()
 }

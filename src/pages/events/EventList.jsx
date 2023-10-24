@@ -121,7 +121,7 @@ function EventItem({ event, setEventList, eventList, userData }) {
 					) : null}
 				</Stack>
 				<Card sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }} marginBottom={10}>
-					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
+					<CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
 							{`${moment(event?.startTime).format('LT')} - ${moment(event?.endTime).format('LT')}`}
 						</Typography>
@@ -203,6 +203,7 @@ function EventList({ filter }) {
 				return response.json()
 			})
 			.then(function (data) {
+				console.log(data);
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
@@ -236,7 +237,6 @@ function EventList({ filter }) {
 		setEventListFiltered(eventList)
 	}, [eventList])
 
-	console.log(eventList)
 
 	return (
 		<>

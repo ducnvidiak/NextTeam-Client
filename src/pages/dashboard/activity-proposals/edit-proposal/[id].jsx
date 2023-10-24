@@ -51,12 +51,10 @@ function EditProposal() {
 
 		if (proposalId) {
 			getProposalByPropId(proposalId).then(response => {
-				console.log('proposals: ', response)
 				setTitle(response.title)
 				setContent(response.content)
 			})
 			getProposalFilesByPropId(proposalId).then(response => {
-				console.log('file records: ', response)
 				setFileRecords(response)
 			})
 		}
@@ -120,7 +118,6 @@ function EditProposal() {
 				const fileContent = await readFile(newFiles[i])
 				formData.append(`filescontent[${i}]`, fileContent)
 
-				console.log(formData.get(`filescontent[${i}]`))
 
 				formData.append(`filesname[${i}]`, newFiles[i].name)
 				formData.append(`filesType[${i}]`, newFiles[i].type)
@@ -129,8 +126,6 @@ function EditProposal() {
 			// formData.append('deleteFileRecords', deleteFiles)
 
 			for (let i = 0; i < numOfDeleteFile; i++) {
-				console.log(deleteFiles[i].fileId)
-				console.log(deleteFiles[i].id)
 				formData.append(`deleteFileId[${i}]`, deleteFiles[i].fileId)
 			}
 
