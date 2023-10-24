@@ -1,6 +1,7 @@
 import {
 	Box,
 	Button,
+	CircularProgress,
 	Container,
 	FormControl,
 	IconButton,
@@ -17,10 +18,13 @@ import { useEffect, useState } from 'react'
 import EventCreator from './EventCreator'
 import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
+import { toast } from 'react-toastify'
 
 export function convertFormat(inputString) {
-	const [datePart, timePart] = inputString.split(' ')
-	const [year, month, day] = datePart.split('-')
+	if (!inputString) return
+
+	const [datePart, timePart] = inputString?.split(' ')
+	const [year, month, day] = datePart?.split('-')
 	const newDay = new Date(year, month - 1, day - 1)
 	const newTime = timePart.slice(0, 5)
 
@@ -36,12 +40,18 @@ function EventCreatorPage() {
 	const [clubCookies, setClubCookie] = useCookies(['clubData'])
 	const [openEventCreatorModal, setOpenEventCreatorModal] = useState(false)
 	const [eventList, setEventList] = useState()
+	const [eventListFiltered, setEventListFiltered] = useState()
 	const [userData, setUserData] = useState()
+	const [loading, setLoading] = useState(false)
+	const [filter, setFilter] = useState('all')
+	const [filterType, setFilterType] = useState('all')
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	useEffect(() => {
+		setLoading(true)
 		fetch(`http://localhost:8080/admin-events?cmd=list`, {
 			method: 'GET',
 			headers: {
@@ -52,12 +62,50 @@ function EventCreatorPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('data');
-				console.log(data);
+				console.log(data)
 				setEventList(data)
+				setEventListFiltered(data)
+				setLoading(false)
 			})
-			.catch(error => console.error('Error:', error))
+			.catch(error => {
+				console.error('Error:', error)
+				toast.error('Có lỗi xảy ra, vui lòng thử lại!!!')
+				setLoading(false)
+			})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
+
+	useEffect(() => {
+		switch (filter) {
+			case 'all':
+				setEventListFiltered(eventList)
+
+				return
+			case 'approved':
+				setEventListFiltered(eventList?.filter(event => event?.isApproved))
+
+				return
+			case 'pending':
+				setEventListFiltered(eventList?.filter(event => !event?.isApproved))
+
+				return
+			case 'upcoming':
+				setEventListFiltered(eventList?.filter(event => new Date() < new Date(event?.startTime)))
+
+				return
+			case 'past':
+				setEventListFiltered(eventList?.filter(event => new Date() > new Date(event?.endTime)))
+
+				return
+			default:
+				return
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filter])
+
+	useEffect(() => {
+		setEventListFiltered(eventList)
+	}, [eventList])
 
 	return (
 		<Container maxWidth='lg' style={{ padding: 0 }}>
@@ -76,16 +124,28 @@ function EventCreatorPage() {
 						DANH SÁCH SỰ KIỆN
 					</Typography>
 				</Stack>
-				<FormControl variant='outlined' size='small'>
-					<InputLabel>Bộ lọc</InputLabel>
-					<Select label='Status' defaultValue='active'>
-						<MenuItem value='active'>Tất cả</MenuItem>
-						<MenuItem value='inactive'>Đã Đăng ký</MenuItem>
-						<MenuItem value='pending'>Sự kiện đã qua</MenuItem>
-					</Select>
-				</FormControl>
+				<Stack direction={'row'} gap={2}>
+					<FormControl variant='outlined' size='small'>
+						<InputLabel>Trạng thái</InputLabel>
+						<Select label='Status' defaultValue='all' onChange={e => setFilter(e.target.value)}>
+							<MenuItem value='all'>Tất cả</MenuItem>
+							<MenuItem value='approved'>Đã duyệt</MenuItem>
+							<MenuItem value='pending'>Chưa duyệt</MenuItem>
+							<MenuItem value='upcoming'>Sắp diễn ra</MenuItem>
+							<MenuItem value='past'>Đã qua</MenuItem>
+						</Select>
+					</FormControl>
+					<FormControl variant='outlined' size='small'>
+						<InputLabel>Thể loại</InputLabel>
+						<Select label='Status' defaultValue='all' onChange={e => setFilterType(e.target.value)}>
+							<MenuItem value='all'>Tất cả</MenuItem>
+							<MenuItem value='public'>Toàn trường</MenuItem>
+							<MenuItem value='internal'>Nội bộ</MenuItem>
+						</Select>
+					</FormControl>
+				</Stack>
 			</Stack>
-			<EventList eventList={eventList} setEventList={setEventList}></EventList>
+			<EventList filterType={filterType} eventList={eventListFiltered} setEventList={setEventList}></EventList>
 		</Container>
 	)
 }

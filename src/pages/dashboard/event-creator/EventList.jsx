@@ -107,12 +107,12 @@ function EventItem({ event, setEventList, eventList, index }) {
 			)}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
-					{new Date() > new Date(event?.endTime) && !event?.isApproved ? (
-						<Chip label='Quá hạn' sx={{ mb: 4, fontSize: 16 }} color='error' />
-					) : event?.isApproved == 'true' || event?.isApproved == true ? (
-						<Chip label='Đã duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
-					) : (
+					{event?.isApproved == 'rejected' ? (
+						<Chip label='Từ chối' sx={{ mb: 4, fontSize: 16 }} color='error' />
+					) : event?.isApproved == 'pending' ? (
 						<Chip label='Đang chờ' sx={{ mb: 4, fontSize: 16 }} color='warning' />
+					) : (
+						<Chip label='Phê duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
 					)}
 					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
@@ -120,8 +120,6 @@ function EventItem({ event, setEventList, eventList, index }) {
 				<Card
 					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
 					marginBottom={10}
-
-					// onClick={toggleDrawer('right', true)}
 				>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
@@ -133,7 +131,9 @@ function EventItem({ event, setEventList, eventList, index }) {
 
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
-							<Typography variant='body1'>{event?.clubSubname}</Typography>
+							<Typography variant='body1'>
+								{event?.clubSubname}
+							</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<LocationOnIcon></LocationOnIcon>
@@ -164,8 +164,8 @@ function EventItem({ event, setEventList, eventList, index }) {
 }
 
 function EventList({ eventList, setEventList, filterType }) {
-	console.log(filterType);
-	
+	console.log(filterType)
+
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
