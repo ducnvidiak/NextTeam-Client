@@ -148,7 +148,7 @@ function ActivityProposals() {
 							textTransform: 'uppercase'
 						}}
 					>
-						dever
+						{proposal.clubsubname}
 					</Typography>
 					<Box sx={{ display: 'flex', alignItems: 'center' }}>
 						<Typography sx={{ color: 'rgb(86, 129, 249)', fontSize: '12px' }}>
@@ -181,6 +181,7 @@ function ActivityProposals() {
 							{proposal.content}
 						</Typography>
 					</Box>
+
 					<Box>
 						<Typography>Files đính kèm:</Typography>
 						<Box sx={{ display: 'flex', flexWrap: 'wrap', margin: '10px 30px', gap: '10px' }}>
@@ -250,52 +251,55 @@ function ActivityProposals() {
 								sx={{ backgroundColor: 'rgb(236, 156, 64)', color: 'floralwhite' }}
 							/>
 						)}
-						<Box sx={{ display: 'flex', gap: '15px' }}>
-							<Button
-								sx={{
-									border: 'none',
-									backgroundColor: 'transparent',
-									color: 'rgb(233, 166, 41)',
-									fontSize: '22px',
-									display: 'flex',
-									justifyContent: 'center',
-									alignItems: 'center',
-									minWidth: 'auto',
-									padding: '0',
-									':hover': {
+						{proposal.isApproved == 'pending' && (
+							<Box sx={{ display: 'flex', gap: '15px' }}>
+								<Button
+									sx={{
+										border: 'none',
 										backgroundColor: 'transparent',
-										transform: 'scale(1.2)'
-									}
-								}}
-								onClick={() => {
-									router.push(`./activity-proposals/edit-proposal/${proposal.id}`)
-								}}
-							>
-								<VscTools />
-							</Button>
-							<Button
-								sx={{
-									border: 'none',
-									backgroundColor: 'transparent',
-									color: 'rgb(234, 53, 21)',
-									fontSize: '22px',
-									display: 'flex',
-									justifyContent: 'center',
-									minWidth: 'auto',
-									alignItems: 'center',
-									padding: '0',
-									':hover': {
+										color: 'rgb(233, 166, 41)',
+										fontSize: '22px',
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+										minWidth: 'auto',
+										padding: '0',
+										':hover': {
+											backgroundColor: 'transparent',
+											transform: 'scale(1.2)'
+										}
+									}}
+									onClick={() => {
+										router.push(`./activity-proposals/edit-proposal/${proposal.id}`)
+									}}
+								>
+									<VscTools />
+								</Button>
+
+								<Button
+									sx={{
+										border: 'none',
 										backgroundColor: 'transparent',
-										transform: 'scale(1.2)'
-									}
-								}}
-								onClick={() => {
-									handleConfirmDelete(proposal.id)
-								}}
-							>
-								<RiDeleteBinLine />
-							</Button>
-						</Box>
+										color: 'rgb(234, 53, 21)',
+										fontSize: '22px',
+										display: 'flex',
+										justifyContent: 'center',
+										minWidth: 'auto',
+										alignItems: 'center',
+										padding: '0',
+										':hover': {
+											backgroundColor: 'transparent',
+											transform: 'scale(1.2)'
+										}
+									}}
+									onClick={() => {
+										handleConfirmDelete(proposal.id)
+									}}
+								>
+									<RiDeleteBinLine />
+								</Button>
+							</Box>
+						)}
 						<Box
 							sx={{
 								display: 'flex',
