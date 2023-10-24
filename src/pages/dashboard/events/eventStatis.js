@@ -5,22 +5,25 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import { PieChart, Pie, Cell } from 'recharts'
+
 const COLORS = ['#f27123', '#61a330', '#2b2827']
 
 const data = [
 	{ name: 'Đã diễn ra', value: 70 },
 	{ name: 'Chuẩn bị', value: 30 }
 ]
+
 const EventList = props => {
 	const handleButtonClick = () => {
 		window.location.href = '/dashboard/events'
 	}
+
 	// ** Hook
 	return (
 		<Card sx={{ position: 'relative' }}>
 			<CardContent>
 				<Typography variant='h6'>Số lượng sự kiện </Typography>
-				<Typography variant='h6'>{props.data.total_event} </Typography>
+				<Typography variant='h6'>{props?.data?.total_event} </Typography>
 
 				<Grid container space={5}>
 					<Grid item xs={12} md={6}>

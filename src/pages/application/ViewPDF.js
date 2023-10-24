@@ -1,42 +1,32 @@
 import * as React from 'react'
-import { useState } from 'react'
-import { useCookies } from 'react-cookie'
-import { useRouter } from 'next/router'
-
-import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
-import ListItemText from '@mui/material/ListItemText'
-import ListItem from '@mui/material/ListItem'
-import List from '@mui/material/List'
-import Divider from '@mui/material/Divider'
+
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
-import { CardContent, Checkbox, Container, FormControlLabel, TextField } from '@mui/material'
-import Grid from '@mui/material/Grid'
+import { CardContent, Container } from '@mui/material'
 import Box from '@mui/material/Box'
 
-import { Editor } from '@tinymce/tinymce-react'
-
-// **Toasify Imports
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-
 // Import the main component
-import { Worker } from '@react-pdf-viewer/core'
-import { Viewer, SpecialZoomLevel } from '@react-pdf-viewer/core'
+import { Worker, Viewer, ScrollMode } from '@react-pdf-viewer/core'
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
+import { scrollModePlugin } from '@react-pdf-viewer/scroll-mode'
 
-// Import the styles
+// Import styles
 import '@react-pdf-viewer/core/lib/styles/index.css'
+import '@react-pdf-viewer/default-layout/lib/styles/index.css'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction='up' ref={ref} {...props} />
 })
 
 export default function ViewPDF({ viewCvModal, handleClose, cv }) {
+	const defaultLayoutPluginInstance = defaultLayoutPlugin()
+	const scrollModePluginInstance = scrollModePlugin()
+
 	return (
 		<div>
 			<Dialog fullScreen open={viewCvModal} onClose={handleClose} TransitionComponent={Transition}>
@@ -52,11 +42,12 @@ export default function ViewPDF({ viewCvModal, handleClose, cv }) {
 				</AppBar>
 				<Container>
 					<CardContent>
-						<Box sx={{ marginTop: '70px' }}>
+						<Box sx={{ marginTop: '8vh', height: '85vh' }}>
 							<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
 								<Viewer
 									fileUrl={`http://localhost:8080${cv?.cvUrl}`}
-									defaultScale={SpecialZoomLevel.PageFit}
+									plugins={[defaultLayoutPluginInstance, scrollModePluginInstance]}
+									scrollMode={ScrollMode.Vertical}
 								/>
 							</Worker>
 						</Box>

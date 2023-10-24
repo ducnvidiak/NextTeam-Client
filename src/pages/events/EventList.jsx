@@ -231,7 +231,7 @@ function EventList({ filter }) {
 			default:
 				return
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filter])
 
 	useEffect(() => {

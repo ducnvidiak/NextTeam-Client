@@ -226,7 +226,15 @@ const UserDropdown = props => {
 					alt={userData?.lastname}
 					onClick={handleDropdownOpen}
 					sx={{ width: 40, height: 40 }}
-					src={settings?.avatarURL || userData?.avatarURL}
+					src={
+						settings?.avatarURL ||
+						userData?.avatarURL ||
+						(userData?.gender == '0'
+							? '/images/avatars/5.png'
+							: userData?.gender == '1'
+							? '/images/avatars/6.png'
+							: null)
+					}
 				/>
 			</Badge>
 			<ToastContainer></ToastContainer>
@@ -247,7 +255,15 @@ const UserDropdown = props => {
 						>
 							<Avatar
 								alt={userData?.lastname}
-								src={settings?.avatarURL || userData?.avatarURL}
+								src={
+									settings?.avatarURL ||
+									userData?.avatarURL ||
+									(userData?.gender == '0'
+										? '/images/avatars/5.png'
+										: userData?.gender == '1'
+										? '/images/avatars/6.png'
+										: null)
+								}
 								sx={{ width: '2.5rem', height: '2.5rem' }}
 							/>
 						</Badge>

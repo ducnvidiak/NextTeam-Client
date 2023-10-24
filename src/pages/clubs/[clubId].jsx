@@ -202,9 +202,8 @@ function ClubPage() {
 				setClub(data)
 			})
 			.catch(error => console.error('Error:', error))
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
-
 
 	return (
 		<Container maxWidth='lg' sx={{ marginTop: 20 }}>
@@ -275,6 +274,5 @@ function ClubPage() {
 		</Container>
 	)
 }
-
 
 export default ClubPage

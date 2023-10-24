@@ -12,6 +12,15 @@ import { getUserInfo, getAllMajors } from '../../../../api-utils/apiUtils'
 import { Country, State, City } from 'country-state-city'
 import Link from 'next/link'
 
+import EmailIcon from '@mui/icons-material/Email'
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone'
+import LocationCityIcon from '@mui/icons-material/LocationCity'
+import FacebookIcon from '@mui/icons-material/Facebook'
+import CakeIcon from '@mui/icons-material/Cake'
+import TransgenderIcon from '@mui/icons-material/Transgender'
+import LinkedInIcon from '@mui/icons-material/LinkedIn'
+import SchoolIcon from '@mui/icons-material/School'
+
 const ImgStyled = styled('img')(({ theme }) => ({
 	width: 100,
 	height: 100,
@@ -58,13 +67,13 @@ const UserInfoView = () => {
 					State.getStateByCodeAndCountry(userInfo.homeTown.split('-')[1], userInfo.homeTown.split('-')[0])
 				)
 		}
-	}, [router.query.id, userInfo])
+	}, [router.query.id])
 
 	return (
-		<Paper sx={{ width: '100%', height: '100%', borderRadius: '15px' }}>
+		<Paper sx={{ width: '100%', height: '100%' }}>
 			<Box
 				sx={{
-					borderBottom: '3px solid #F8C883',
+					borderBottom: '3px solid #f27123',
 					display: 'flex',
 					justifyContent: 'flex-start',
 					alignItems: 'center',
@@ -72,14 +81,14 @@ const UserInfoView = () => {
 					padding: '0 20px'
 				}}
 			>
-				<Typography variant='h5'>Thông tin tài khoản</Typography>
+				<Typography variant='h6'>Thông tin tài khoản</Typography>
 			</Box>
 			<Box sx={{ height: '100%', padding: '50px 80px 30px' }}>
 				<Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '40px' }}>
 					<Avatar
 						src={userInfo?.avatarURL}
 						sizes='large'
-						sx={{ width: '190px', height: '190px', border: '7px solid #f58a38' }}
+						sx={{ width: '120px', height: '120px', border: '2px solid #f27123' }}
 					/>
 					<Box
 						sx={{
@@ -90,18 +99,18 @@ const UserInfoView = () => {
 							gap: '10px'
 						}}
 					>
-						<Typography variant='h3'>
+						<Typography variant='h5'>
 							{userInfo?.firstname} {userInfo?.lastname}
 						</Typography>
 						<Typography
 							sx={{
-								marginLeft: '10px',
-								backgroundColor: 'orange',
-								color: 'white',
+								marginLeft: '0px',
+								backgroundColor: '#f27123',
+								color: '#fff',
 								padding: '3px 15px',
 								borderRadius: '10px'
 							}}
-							variant='h6'
+							variant='p'
 						>
 							{userInfo?.username.toUpperCase()}
 						</Typography>
@@ -109,51 +118,51 @@ const UserInfoView = () => {
 				</Box>
 				<Grid container sx={{ marginTop: '20px', padding: '0 10px' }} spacing={6}>
 					<Grid item xs={6}>
-						<Grid container sx={{ border: '1px solid #f5bb8e', padding: '5px 25px', borderRadius: '15px' }}>
-							<Grid item xs={4}>
-								<Typography variant='h6'>Email</Typography>
+						<Grid container>
+							<Grid item xs={1}>
+								<EmailIcon />
 							</Grid>
-							<Grid item xs={8}>
+							<Grid item xs={11}>
 								<Typography variant='subtitle1'>{userInfo?.email}</Typography>
 							</Grid>
 						</Grid>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container sx={{ border: '1px solid #f5bb8e', padding: '5px 25px', borderRadius: '15px' }}>
-							<Grid item xs={4}>
-								<Typography variant='h6'>Chuyên ngành</Typography>
+						<Grid container>
+							<Grid item xs={1}>
+								<SchoolIcon />
 							</Grid>
-							<Grid item xs={8}>
+							<Grid item xs={11}>
 								<Typography variant='subtitle1'>{majorName?.name || 'chưa cập nhật'}</Typography>
 							</Grid>
 						</Grid>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container sx={{ border: '1px solid #f5bb8e', padding: '5px 25px', borderRadius: '15px' }}>
-							<Grid item xs={4}>
-								<Typography variant='h6'>Số điện thoại</Typography>
+						<Grid container>
+							<Grid item xs={1}>
+								<LocalPhoneIcon />
 							</Grid>
-							<Grid item xs={8}>
+							<Grid item xs={11}>
 								<Typography variant='subtitle1'>{userInfo?.phoneNumber}</Typography>
 							</Grid>
 						</Grid>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container sx={{ border: '1px solid #f5bb8e', padding: '5px 25px', borderRadius: '15px' }}>
-							<Grid item xs={4}>
-								<Typography variant='h6'>Ngày sinh</Typography>
+						<Grid container>
+							<Grid item xs={1}>
+								<CakeIcon />
 							</Grid>
-							<Grid item xs={8}>
+							<Grid item xs={11}>
 								<Typography variant='subtitle1'>{userInfo?.dob}</Typography>
 							</Grid>
 						</Grid>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container sx={{ border: '1px solid #f5bb8e', padding: '5px 25px', borderRadius: '15px' }}>
-							<Grid item xs={4}>
-								<Typography variant='h6'>Quê quán</Typography>
+						<Grid container>
+							<Grid item xs={1}>
+								<LocationCityIcon />
 							</Grid>
-							<Grid item xs={8}>
+							<Grid item xs={11}>
 								<Typography variant='subtitle1'>
 									{country?.name} - {state.name}
 								</Typography>
@@ -161,11 +170,11 @@ const UserInfoView = () => {
 						</Grid>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container sx={{ border: '1px solid #f5bb8e', padding: '5px 25px', borderRadius: '15px' }}>
-							<Grid item xs={4}>
-								<Typography variant='h6'>Giới tính</Typography>
+						<Grid container>
+							<Grid item xs={1}>
+								<TransgenderIcon />
 							</Grid>
-							<Grid item xs={8}>
+							<Grid item xs={11}>
 								<Typography variant='subtitle1'>
 									{userInfo?.gender == '1' ? 'Female' : 'Male'}
 								</Typography>
@@ -173,28 +182,28 @@ const UserInfoView = () => {
 						</Grid>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container sx={{ border: '1px solid #f5bb8e', padding: '5px 25px', borderRadius: '15px' }}>
-							<Grid item xs={4}>
-								<Typography variant='h6'>Link Facebook</Typography>
+						<Grid container>
+							<Grid item xs={1}>
+								<FacebookIcon />
 							</Grid>
-							<Grid item xs={8}>
+							<Grid item xs={11}>
 								<Typography variant='subtitle1'>{userInfo?.facebookUrl}</Typography>
 							</Grid>
 						</Grid>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container sx={{ border: '1px solid #f5bb8e', padding: '5px 25px', borderRadius: '15px' }}>
-							<Grid item xs={4}>
-								<Typography variant='h6'>Link Linkedin</Typography>
+						<Grid container>
+							<Grid item xs={1}>
+								<LinkedInIcon />
 							</Grid>
-							<Grid item xs={8}>
+							<Grid item xs={11}>
 								<Typography variant='subtitle1'>{userInfo?.linkedInUrl}</Typography>
 							</Grid>
 						</Grid>
 					</Grid>
 				</Grid>
 				<Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '50px' }}>
-					<Link href={'/dashboard/members/'}>
+					<Link passHref href={'/dashboard/members/'}>
 						<Button variant='contained'>Quay trở lại</Button>
 					</Link>
 				</Box>

@@ -129,7 +129,7 @@ export default function EditWideNotification({
 										const data = editor.getContent()
 										setWideNotificationDetail({ ...wideNotificationDetail, content: data })
 									}}
-									value={wideNotificationDetail?.content}
+									initialValue={wideNotificationDetail?.content}
 									init={{
 										height: 500,
 										menubar: true,
