@@ -113,6 +113,7 @@ function Department() {
 		}
 
 		// Handle the creation of the department here, for example, make an API call.
+
 		const CREATE_DATA_URL =
 			ORIGIN_URL + '?action=add-dept&clubId=' + cookies['clubData']?.clubId + '&name=' + newDepartmentName
 		console.log(`Testing create url: ${CREATE_DATA_URL}`)

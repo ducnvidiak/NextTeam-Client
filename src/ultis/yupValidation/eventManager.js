@@ -13,8 +13,9 @@ export const EventCreatorSchema = Yup.object().shape({
     .required("Vui lòng chọn loại hình tổ chức"),
     bannerUrl: Yup.string()
     .required("Vui lòng tải lên ảnh bìa cho sự kiện"),
-    planUrl: Yup.string()
-    .required("Vui lòng tải lên tệp kế hoạch sự kiện"),
+    
+    // planUrl: Yup.string()
+    // .required("Vui lòng tải lên tệp kế hoạch sự kiện"),
     locationId: Yup.string()
     .required("Vui lòng chọn địa điểm tổ chức"),
 });
