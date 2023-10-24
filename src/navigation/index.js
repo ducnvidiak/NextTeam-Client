@@ -107,7 +107,7 @@ export const dashboardLayoutVavigation = () => {
 			path: '/dashboard/attendances'
 		},
 		{
-			title: 'Quản lý thành viên',
+			title: 'Duyệt thành viên',
 			icon: HowToRegIcon,
 			path: '/dashboard/member-approval'
 		},
