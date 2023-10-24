@@ -144,7 +144,11 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 										? imgSrc
 										: currentUserInfo?.avatarURL
 										? currentUserInfo.avatarURL
-										: '/images/avatars/1.png'
+										: currentUserInfo.gender == '0'
+										? '/images/avatars/5.png'
+										: currentUserInfo.gender == '1'
+										? '/images/avatars/6.png'
+										: null
 								}
 								alt='Profile Pic'
 							/>
@@ -320,10 +324,10 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 
 					<Grid item xs={12}>
 						<Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
-							Save Changes
+							LƯU THAY ĐỔI
 						</Button>
 						<Button type='reset' variant='outlined' color='secondary' onClick={handleResetAccountInfo}>
-							Reset
+							HỦY
 						</Button>
 					</Grid>
 				</Grid>

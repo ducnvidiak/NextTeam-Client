@@ -3,7 +3,7 @@ import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
 
 import Modal from '@mui/material/Modal'
-import { createProposal } from 'src/api-utils/apiUtils'
+import { createPlan } from 'src/api-utils/apiUtils'
 
 import { Box, Button, Chip, FormHelperText, InputLabel, Paper, TextField, Typography } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -24,7 +24,7 @@ import classNames from 'classnames'
 import { getUserInfo } from 'src/utils/info'
 import { toast } from 'react-toastify'
 
-function NewProposal() {
+function NewPlan() {
 	const [isFocused, setIsFocused] = useState(false)
 	const [fileList, setFileList] = useState([])
 
@@ -41,11 +41,11 @@ function NewProposal() {
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
 
-	console.log('club id: ', cookies['clubData']?.clubId)
-	const clubId = cookies['clubData']?.clubId
-
 	const [titleEmpty, setTitleEmpty] = useState(false)
 	const [contentEmpty, setContentEmpty] = useState(false)
+
+	console.log('club id: ', cookies['clubData']?.clubId)
+	const clubId = cookies['clubData']?.clubId
 
 	const wrapperRef = useRef(null)
 
@@ -117,10 +117,9 @@ function NewProposal() {
 
 			if (numOfFile > 0) setLoading(true)
 
-			await createProposal(formData, userData.id).then(response => {
-				console.log(response)
+			await createPlan(formData, 2).then(response => {
 				if (response?.status == 'success') {
-					toast.success('Gửi đề xuất thành công')
+					toast.success('Gửi kế hoạch thành công')
 					router.push('./')
 				} else {
 					toast.error('Vui lòng thử lại sau')
@@ -143,91 +142,9 @@ function NewProposal() {
 			>
 				<Box
 					sx={{
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						borderBottom: '2px solid #f27123',
-						height: '58px',
-						padding: '0 10px'
+						width: '100%'
 					}}
 				>
-					<Typography variant='h5' sx={{ fontWeight: '600', marginLeft: '10px' }}>
-						Thêm đề xuất mới
-					</Typography>
-				</Box>
-				<Box
-					sx={{
-						width: '100%',
-
-						borderRadius: '15px',
-						display: 'grid',
-						gridTemplateColumns: '1fr 1fr',
-						columnGap: '20px',
-						overflow: 'hidden',
-						marginBottom: '50px'
-					}}
-				>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							alignItems: 'center',
-							padding: '20px',
-							gap: '20px'
-						}}
-					>
-						<Box
-							sx={{
-								width: '100%',
-								position: 'relative'
-							}}
-						>
-							<img
-								src='/assets/images/friends.jpg'
-								width={'100%'}
-								height={'250px'}
-								alt='friends picture'
-								style={{ borderRadius: '15px' }}
-							/>
-							<Typography
-								sx={{
-									position: 'absolute',
-									top: '50%',
-									left: '50%',
-									transform: 'translate(-50%, -50%)',
-									width: 'auto',
-									fontSize: '38px',
-									fontWeight: '600',
-									width: '70%',
-									color: '#fff',
-									textAlign: 'center'
-								}}
-							>
-								Nơi cánh của mở ra
-							</Typography>
-						</Box>
-						<Typography>
-							Thật tuyệt khi bạn có đề xuất, ý tưởng giúp chúng ta phát triển và trở nên tốt đẹp, lớn mạnh
-							hơn.
-						</Typography>
-						<Box sx={{ marginTop: '20px' }}>
-							<div
-								className={classes.dropbox}
-								ref={wrapperRef}
-								onDragEnter={onDragEnter}
-								onDragLeave={onDragLeave}
-								onDrop={onDrop}
-							>
-								<div className={classes.dropbox__label}>
-									<AiOutlineCloudUpload className={classes.upload__icon} />
-									<Typography sx={{ fontSize: '26px', fontWeight: '600', color: '#e3e3e3' }}>
-										Kéo thả files ở đây
-									</Typography>
-								</div>
-								<input type='file' value={''} onChange={onFileDrop} multiple />
-							</div>
-						</Box>
-					</Box>
 					<Box
 						sx={{
 							padding: '20px'
@@ -251,11 +168,11 @@ function NewProposal() {
 						/>
 
 						<InputLabel htmlFor='title' sx={{ fontSize: '20px', fontWeight: '600', margin: '30px 0 20px' }}>
-							Nội dung đề xuất
+							Nội dung kế hoạch
 						</InputLabel>
 						<TextareaAutosize
-							maxRows={6}
-							minRows={6}
+							maxRows={3}
+							minRows={3}
 							style={{
 								width: 'calc(100% - 30px)',
 
@@ -279,51 +196,86 @@ function NewProposal() {
 								Thông tin nay là bắt buộc
 							</FormHelperText>
 						)}
+						<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+							<Box>
+								<Typography sx={{ marginTop: '20px', fontSize: '16px', fontWeight: '600' }}>
+									Files đính kèm:
+								</Typography>
+								<Box
+									sx={{
+										display: 'flex',
+										flexWrap: 'wrap',
+										margin: '20px 30px',
+										gap: '10px'
+									}}
+								>
+									{fileList?.map((file, index) => {
+										let avatar = (
+											<AiOutlineFileUnknown style={{ fontSize: '20px', color: 'gray' }} />
+										)
 
-						<Typography sx={{ marginTop: '20px', fontSize: '16px', fontWeight: '600' }}>
-							Files đính kèm:
-						</Typography>
-						<Box
-							sx={{
-								display: 'flex',
-								flexWrap: 'wrap',
-								margin: '20px 30px',
-								gap: '10px'
-							}}
-						>
-							{fileList?.map((file, index) => {
-								let avatar = <AiOutlineFileUnknown style={{ fontSize: '20px', color: 'gray' }} />
+										switch (file.type) {
+											case 'application/msword':
+											case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+												avatar = (
+													<AiFillFileWord style={{ fontSize: '20px', color: '#3581d7' }} />
+												)
+												break
+											case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+												avatar = (
+													<AiFillFileExcel style={{ fontSize: '20px', color: 'green' }} />
+												)
+												break
+											case 'application/pdf':
+												avatar = (
+													<BiSolidFilePdf style={{ fontSize: '20px', color: 'orange' }} />
+												)
+												break
+											case 'image/jpeg':
+												avatar = <BsFiletypeJpg style={{ fontSize: '20px' }} />
+												break
+											case 'image/png':
+												avatar = <BsFiletypePng style={{ fontSize: '20px' }} />
+										}
 
-								switch (file.type) {
-									case 'application/msword':
-									case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-										avatar = <AiFillFileWord style={{ fontSize: '20px', color: '#3581d7' }} />
-										break
-									case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-										avatar = <AiFillFileExcel style={{ fontSize: '20px', color: 'green' }} />
-										break
-									case 'application/pdf':
-										avatar = <BiSolidFilePdf style={{ fontSize: '20px', color: 'orange' }} />
-										break
-									case 'image/jpeg':
-										avatar = <BsFiletypeJpg style={{ fontSize: '20px' }} />
-										break
-									case 'image/png':
-										avatar = <BsFiletypePng style={{ fontSize: '20px' }} />
-								}
-
-								return (
-									<Chip
-										avatar={avatar}
-										key={index}
-										label={file.name}
-										onDelete={() => {
-											handleDeleteFile(file)
-										}}
-										variant='outlined'
-									/>
-								)
-							})}
+										return (
+											<Chip
+												avatar={avatar}
+												key={index}
+												label={file.name}
+												onDelete={() => {
+													handleDeleteFile(file)
+												}}
+												variant='outlined'
+											/>
+										)
+									})}
+								</Box>
+							</Box>
+							<Box
+								sx={{
+									marginTop: '30px',
+									marginRight: '30px',
+									display: 'flex',
+									justifyContent: 'flex-end'
+								}}
+							>
+								<div
+									className={classes.dropbox}
+									ref={wrapperRef}
+									onDragEnter={onDragEnter}
+									onDragLeave={onDragLeave}
+									onDrop={onDrop}
+								>
+									<div className={classes.dropbox__label}>
+										<AiOutlineCloudUpload className={classes.upload__icon} />
+										<Typography sx={{ fontSize: '26px', fontWeight: '600', color: '#e3e3e3' }}>
+											Kéo thả files ở đây
+										</Typography>
+									</div>
+									<input type='file' value={''} onChange={onFileDrop} multiple />
+								</div>
+							</Box>
 						</Box>
 					</Box>
 				</Box>
@@ -334,11 +286,11 @@ function NewProposal() {
 						justifyContent: 'space-between',
 						position: 'absolute',
 						width: '100%',
-						bottom: '10px',
+						bottom: '20px',
 						padding: '0 30px'
 					}}
 				>
-					<Link href={'/dashboard/activity-proposals'}>
+					<Link href={'/dashboard/plans'}>
 						<Button variant='contained'>Quay trở lại</Button>
 					</Link>
 					<Box sx={{ display: 'flex', gap: '40px' }}>
@@ -382,4 +334,4 @@ function NewProposal() {
 	)
 }
 
-export default NewProposal
+export default NewPlan

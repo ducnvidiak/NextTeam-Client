@@ -48,7 +48,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 
 	useEffect(() => {
 		setCurrentUserInfo({ ...userInfo })
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userInfo.id])
 
 	const [country, setCountry] = useState(
@@ -360,7 +360,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							>
 								<FormControlLabel value='Male' label='Nam' control={<Radio />} />
 								<FormControlLabel value='Female' label='Nữ' control={<Radio />} />
-								<FormControlLabel value='Others' label='Đười ươi' control={<Radio />} />
+								<FormControlLabel value='Others' label='Khác' control={<Radio />} />
 							</RadioGroup>
 						</FormControl>
 					</Grid>

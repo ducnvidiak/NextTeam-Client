@@ -116,6 +116,16 @@ export const dashboardLayoutVavigation = () => {
 			path: '/dashboard/member-approval'
 		},
 		{
+			title: 'Quản lý thành viên',
+			icon: HowToRegIcon,
+			path: '/dashboard/member-management'
+		},
+		{
+			title: 'Duyệt đề xuất',
+			icon: HowToRegIcon,
+			path: '/dashboard/proposal-approval'
+		},
+		{
 			title: 'Thông báo',
 			icon: NotificationAddIcon,
 			path: '/dashboard/notification-creator'
