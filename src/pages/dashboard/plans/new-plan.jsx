@@ -142,7 +142,8 @@ function NewPlan() {
 			>
 				<Box
 					sx={{
-						width: '100%'
+						width: '100%',
+						paddingBottom: '90px'
 					}}
 				>
 					<Box
