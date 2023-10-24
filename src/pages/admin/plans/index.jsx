@@ -51,7 +51,7 @@ function PlanListPage() {
 			console.log('file records: ', response)
 			setFileRecords(response)
 		})
-	}, [])
+	}, [clubId])
 
 	const handleUpdatePlanStatus = (uplan, status) => {
 		// Xử lý logic cập nhật trạng thái kế hoạch

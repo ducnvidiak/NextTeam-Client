@@ -71,7 +71,7 @@ const TableStickyHeader = () => {
 		getDepartmentByClubId(clubId).then(data => {
 			setDepartments(data)
 		})
-	}, [cookies])
+	}, [cookies,clubId])
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage)

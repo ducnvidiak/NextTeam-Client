@@ -44,7 +44,7 @@ const UserList = () => {
 		getListOfAllUser(clubId).then(data => {
 			setUserList(data)
 		})
-	}, [])
+	}, [clubId])
 
 	function handleClick(id) {
 		router.push('http://localhost:3000/dashboard/members/info/' + id)
