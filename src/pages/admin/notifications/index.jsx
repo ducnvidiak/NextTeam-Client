@@ -263,7 +263,6 @@ const NotificationCreator = () => {
 						<TabList sx={{ float: 'left' }} onChange={handleChange} aria-label='card navigation example'>
 							<Tab value='1' label='Thông báo chung' />
 							<Tab value='2' label='Thông báo cá nhân' />
-							<Tab value='3' label='Thông báo CLB' />
 						</TabList>
 						<div style={{ float: 'right', padding: '10px 10px 0 0 ' }}>
 							<Button variant='contained' onClick={() => router.push('/admin/notifications/add')}>
@@ -448,35 +447,6 @@ const NotificationCreator = () => {
 								onPageChange={handleChangePage}
 								onRowsPerPageChange={handleChangeRowsPerPage}
 							/>
-						</TabPanel>
-						<TabPanel value='3' sx={{ p: 0 }}>
-							<div
-								style={{
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-									paddingRight: '10px'
-								}}
-							>
-								<CardHeader title='Tất cả thông báo' titleTypographyProps={{ variant: 'h6' }} />
-								<TextField
-									placeholder='Tìm kiếm...'
-									size='small'
-									sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position='start'>
-												<Magnify fontSize='small' />
-											</InputAdornment>
-										)
-									}}
-									onChange={event => {
-										setSearch(event.target.value)
-										handleSearch()
-									}}
-									onKeyPress={handleEnterKeyPress} // Gọi handleEnterKeyPress khi có sự kiện keypress
-								/>
-							</div>
 						</TabPanel>
 					</CardContent>
 				</TabContext>

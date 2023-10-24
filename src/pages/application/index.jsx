@@ -9,7 +9,6 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
 import TableContainer from '@mui/material/TableContainer'
-import Grid from '@mui/material/Grid'
 import { Button, Container } from '@mui/material'
 import { useCookies } from 'react-cookie'
 import { useEffect, useState } from 'react'
@@ -58,7 +57,8 @@ const Application = () => {
 		0: { color: 'primary', label: 'Đăng ký mới' },
 		1: { color: 'success', label: 'Đã duyệt đơn' },
 		2: { color: 'warning', label: 'Đang phỏng vấn' },
-		3: { color: 'error', label: 'Đã từ chối' }
+		3: { color: 'error', label: 'Đã từ chối' },
+		4: { color: 'error', label: 'Drop out' }
 	}
 
 	return (

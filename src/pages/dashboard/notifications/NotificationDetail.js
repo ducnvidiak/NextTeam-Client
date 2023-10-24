@@ -9,12 +9,18 @@ import Slide from '@mui/material/Slide'
 import { Chip, Grid } from '@mui/material'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 
-export default function NotificationDetail({ notificationDetail, handleClose, open, statusObj }) {
+export default function NotificationDetail({ notificationDetail, handleClose, open }) {
 	function validateContent(content) {
 		// Implement your content validation logic here
 		// For example, check for <script> tags or other unsafe HTML
 		// Return true if content is safe, false otherwise
 		return !/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/i.test(content)
+	}
+
+	const statusObj = {
+		private: { color: 'primary', label: 'Cá nhân' },
+		public: { color: 'success', label: 'CLB' },
+		wide: { color: 'warning', label: 'Chung' }
 	}
 
 	return (

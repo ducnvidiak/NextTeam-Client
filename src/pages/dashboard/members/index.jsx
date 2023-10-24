@@ -19,7 +19,7 @@ import NativeSelect from '@mui/material/NativeSelect'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useCookies } from 'react-cookie'
 
-import { getListOfAllUser } from '../../../api-utils/apiUtils'
+import { getListOfAllUser } from '../../../utils/apiUtils'
 import { useState } from 'react'
 import { useEffect } from 'react'
 

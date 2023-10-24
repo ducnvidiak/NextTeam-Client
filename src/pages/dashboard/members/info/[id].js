@@ -203,7 +203,7 @@ const UserInfoView = () => {
 					</Grid>
 				</Grid>
 				<Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '50px' }}>
-					<Link href={'/dashboard/members/'}>
+					<Link passHref href={'/dashboard/members/'}>
 						<Button variant='contained'>Quay trở lại</Button>
 					</Link>
 				</Box>
