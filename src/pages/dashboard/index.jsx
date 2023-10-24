@@ -75,7 +75,7 @@ const Dashboard = () => {
 					<Grid container spacing={6}>
 						<Grid item xs={6}>
 							<CardStatisticsVerticalComponent
-								stats={data.balance}
+								stats={data?.balance}
 								icon={<Poll />}
 								color='success'
 								title='Số dư'
@@ -92,7 +92,7 @@ const Dashboard = () => {
 						</Grid>
 						<Grid item xs={6}>
 							<CardStatisticsVerticalComponent
-								stats={data.total_report}
+								stats={data?.total_report}
 								trend='negative'
 								title='Số báo cáo'
 								icon={<BriefcaseVariantOutline />}
@@ -100,7 +100,7 @@ const Dashboard = () => {
 						</Grid>
 						<Grid item xs={6}>
 							<CardStatisticsVerticalComponent
-								stats={data.total_post}
+								stats={data?.total_post}
 								color='warning'
 								trend='negative'
 								title='Số bài viết'

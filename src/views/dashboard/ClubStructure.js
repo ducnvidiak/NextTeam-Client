@@ -26,7 +26,7 @@ const StyledIcon = styled(AccountCircleIcon)(({ theme }) => ({
 const ClubStructure = props => {
 	const router = useRouter()
 	function handleClick(id) {
-		router.push('http://localhost:3000/dashboard/members/info/' + id)
+		router.push('/dashboard/members/info/' + id)
 	}
 	const boardMembers = [{ position: 'Chủ nhiệm câu lạc bộ', name: props?.data?.manager_club_name }]
 
