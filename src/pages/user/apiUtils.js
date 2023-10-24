@@ -125,4 +125,4 @@ const getListOfAllUser = async () => {
 	return json
 }
 
-module.exports = { updateUserAvatar, updateUserInfo, getUserInfo, changeUserPass, getAllMajors, getListOfAllUser }
+export { updateUserAvatar, updateUserInfo, getUserInfo, changeUserPass, getAllMajors, getListOfAllUser }
