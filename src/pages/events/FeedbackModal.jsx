@@ -20,14 +20,14 @@ import { toast } from 'react-toastify'
 
 const feedbackValues = ['Tệ', 'Chưa tốt', 'Ổn', 'Tốt', 'Tuyệt vời']
 
-function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal, event, userData }) {
+function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal, event, userData, setEventList }) {
 	const [feedback, setFeedback] = useState({
 		point: 3,
 		content: ''
 	})
 
 	const handleSubmit = async () => {
-		fetch('http://localhost:8080/feedbacks?cmd=create', {
+		fetch(`http://localhost:8080/feedbacks?cmd=create&userId=${userData?.id}`, {
 			method: 'POST',
 			body: JSON.stringify({
 				...feedback,
@@ -42,8 +42,11 @@ function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal, event, userDat
 				return response.json()
 			})
 			.then(function (data) {
+				console.log('data!!!!')
+				console.log(data)
 				toast.success('Gửi feedback thành công!!!!')
 				setOpenFeedbackModal(false)
+				setEventList(data)
 			})
 			.catch(error => {
 				console.error('Error:', error)
