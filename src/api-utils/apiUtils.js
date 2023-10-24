@@ -152,7 +152,7 @@ const updateProposal = async (formData, id) => {
 	}
 
 	const json = await axios
-		.put('http://localhost:8080/api/proposal?id=' + id, formData, config)
+		.put('http://localhost:8080/api/proposal?type=content&id=' + id, formData, config)
 		.then(response => {
 			console.log('response from api: ', response)
 
@@ -277,7 +277,7 @@ const updatePlan = async (formData, id) => {
 	}
 
 	const json = await axios
-		.put('http://localhost:8080/api/plans?id=' + id, formData, config)
+		.put('http://localhost:8080/api/plans?type=content&id=' + id, formData, config)
 		.then(response => {
 			console.log('response from api: ', response)
 
@@ -288,15 +288,39 @@ const updatePlan = async (formData, id) => {
 	return json
 }
 
-const updatePlanStatus = async (id, status) => {
+const updatePlanStatus = async (id, status, feedback) => {
+	const config = {
+		headers: {
+			'Content-Type': 'multipart/form-data; charset=utf-8'
+		}
+	}
+	const formData = new FormData()
+	formData.append('feedback', feedback)
+
+	const json = await axios
+		.put('http://localhost:8080/api/plans?type=changeStatus&id=' + id + '&status=' + status, formData, config)
+		.then(response => {
+			console.log('response from api: ', response)
+
+			return response.data
+		})
+		.catch(error => {})
+
+	return json
+}
+
+const updateEventStatus = async (id, status, feedback) => {
 	const config = {
 		headers: {
 			'Content-Type': 'multipart/form-data; charset=utf-8'
 		}
 	}
 
+	const formData = new FormData()
+	formData.append('feedback', feedback)
+
 	const json = await axios
-		.put('http://localhost:8080/api/plans?type=changeStatus&id=' + id + '&status=' + status, config)
+		.put('http://localhost:8080/admin-events?id=' + id + '&status=' + status, formData, config)
 		.then(response => {
 			console.log('response from api: ', response)
 
@@ -360,7 +384,7 @@ const deletePlanById = async id => {
 
 const getPlanFilesByPlanId = async id => {
 	const json = await axios
-		.get('http://localhost:8080/api/proposal_files?type=one&id=' + id)
+		.get('http://localhost:8080/api/plan_files?type=one&id=' + id)
 		.then(response => {
 			console.log(response.data)
 
@@ -405,25 +429,6 @@ const getAllEvents = async () => {
 
 			return null
 		})
-
-	return json
-}
-
-const updateEventStatus = async (id, status) => {
-	const config = {
-		headers: {
-			'Content-Type': 'multipart/form-data; charset=utf-8'
-		}
-	}
-
-	const json = await axios
-		.put('http://localhost:8080/admin-events?id=' + id + '&status=' + status, config)
-		.then(response => {
-			console.log('response from api: ', response)
-
-			return response.data
-		})
-		.catch(error => {})
 
 	return json
 }
@@ -556,6 +561,40 @@ const changeMemberStatus = async (memberId, clubId, status) => {
 	return json
 }
 
+const getAllPlansForAdmin = async () => {
+	const json = await axios
+		.get('http://localhost:8080/api/plans?type=all')
+		.then(response => {
+			console.log(response.data)
+
+			return response.data
+		})
+		.catch(error => {
+			console.log('Error: ', error)
+
+			return null
+		})
+
+	return json
+}
+
+const getAllPlanFiles = async () => {
+	const json = await axios
+		.get('http://localhost:8080/api/plan_files?type=all')
+		.then(response => {
+			console.log(response.data)
+
+			return response.data
+		})
+		.catch(error => {
+			console.log('Error: ', error)
+
+			return null
+		})
+
+	return json
+}
+
 module.exports = {
 	updateUserAvatar,
 	updateUserInfo,
@@ -586,5 +625,7 @@ module.exports = {
 	getListOfAllUserForManage,
 	getDepartmentByClubId,
 	changeDepartment,
-	changeMemberStatus
+	changeMemberStatus,
+	getAllPlansForAdmin,
+	getAllPlanFiles
 }

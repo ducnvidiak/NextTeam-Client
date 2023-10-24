@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import classes from './styles.module.scss'
 import { useCookies } from 'react-cookie'
+import { TextareaAutosize } from '@mui/base'
 
 import {
 	Card,
@@ -15,6 +16,7 @@ import {
 	CardContent,
 	Container,
 	Stack,
+	Modal,
 	Typography,
 	Button,
 	Divider,
@@ -47,7 +49,11 @@ import { toast } from 'react-toastify'
 export default function EventDashboard() {
 	const [events, setEvents] = useState([])
 	const [selectedEvent, setSelectedEvent] = useState(null)
+	const [selectedConfirmEvent, setSelectedConfirmEvent] = useState(null)
+	const [status, setStatus] = useState(null)
 	const [cookies, setCookie] = useCookies(['clubData'])
+	const [openModal, setOpenModal] = useState(false)
+	const [feedback, setFeedback] = useState(null)
 
 	console.log('club id: ', cookies['clubData']?.clubId)
 	const clubId = cookies['clubData']?.clubId
@@ -146,8 +152,14 @@ export default function EventDashboard() {
 		</Box>
 	)
 
-	const handleUpdateStatus = (uevent, status) => {
-		updateEventStatus(uevent.id, status).then(response => {
+	const handleConfirmAction = (event, status) => {
+		setSelectedConfirmEvent(event)
+		setStatus(status)
+		setOpenModal(true)
+	}
+
+	const handleUpdateStatus = (uevent, status, feedback) => {
+		updateEventStatus(uevent.id, status, feedback).then(response => {
 			if (response?.status == 'success') {
 				const updateEvents = events.map(event => {
 					if (event.id != uevent.id) return event
@@ -155,10 +167,20 @@ export default function EventDashboard() {
 				})
 				toast.success('Đã cập nhật')
 				setEvents(updateEvents)
+				setFeedback(null)
 			} else {
 				toast.error('Vui lòng thử lại sau')
 			}
 		})
+	}
+
+	const handleCloseModal = () => {
+		setOpenModal(false)
+	}
+
+	const handleAction = () => {
+		setOpenModal(false)
+		handleUpdateStatus(selectedConfirmEvent, status, feedback)
 	}
 
 	return (
@@ -221,7 +243,7 @@ export default function EventDashboard() {
 										size='small'
 										sx={{ marginRight: '10px' }}
 										onClick={() => {
-											handleUpdateStatus(event, 'accepted')
+											handleConfirmAction(event, 'accepted')
 										}}
 									>
 										Chấp nhận
@@ -230,7 +252,7 @@ export default function EventDashboard() {
 										variant='outlined'
 										size='small'
 										onClick={() => {
-											handleUpdateStatus(event, 'rejected')
+											handleConfirmAction(event, 'rejected')
 										}}
 									>
 										Từ chối
@@ -248,6 +270,80 @@ export default function EventDashboard() {
 					</Drawer>
 				</Fragment>
 			))}
+			<Modal
+				open={openModal}
+				onClose={handleCloseModal}
+				aria-labelledby='proposal deleting'
+				aria-describedby='modal for confirm delete proposal'
+			>
+				<Paper
+					sx={{
+						width: '650px',
+						position: 'absolute',
+						top: '10%',
+						left: '50%',
+						transform: 'translateX(-50%)',
+						paddingBottom: '100px'
+					}}
+				>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							height: '50px',
+							padding: '0 20px',
+							borderBottom: '2px solid orange'
+						}}
+					>
+						<Typography variant='h6'>Xác nhận hành động của bạn?</Typography>
+					</Box>
+
+					<Box
+						sx={{
+							padding: '0 20px'
+						}}
+					>
+						<InputLabel htmlFor='response' sx={{ margin: '30px 0 20px' }}>
+							Bạn có thể thêm phản hồi khi xác nhận hành động
+						</InputLabel>
+						<TextareaAutosize
+							maxRows={3}
+							minRows={3}
+							style={{
+								width: 'calc(100% - 70px)',
+								marginLeft: '30px',
+								borderRadius: '10px',
+								padding: '20px',
+								fontSize: '18px',
+								resize: 'none'
+							}}
+							spellCheck='false'
+							value={feedback}
+							onChange={event => {
+								setFeedback(event.target.value)
+							}}
+						/>
+					</Box>
+
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: '20px',
+							position: 'absolute',
+							bottom: '15px',
+							right: '20px'
+						}}
+					>
+						<Button variant='contained' onClick={handleAction}>
+							Xác nhận
+						</Button>
+						<Button variant='outlined' onClick={handleCloseModal}>
+							Hủy
+						</Button>
+					</Box>
+				</Paper>
+			</Modal>
 		</Fragment>
 	)
 }
