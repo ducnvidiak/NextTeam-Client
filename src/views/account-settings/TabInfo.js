@@ -24,22 +24,23 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import axios from 'axios'
 import { Autocomplete, Box, Typography } from '@mui/material'
 import { Country, State, City } from 'country-state-city'
-import { updateUserInfo } from '../../pages/user/apiUtils'
+import { updateUserInfo } from '../../utils/apiUtils'
 import { Cookie } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
 import { validateStudentCode, validatePhone, validateBirthOfDate } from '../../input-validation/index'
 
 const CustomInput = forwardRef((props, ref) => {
-	return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
+	return <TextField inputRef={ref} label='Ngày sinh' fullWidth {...props} />
 })
 
 const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	// ** State
 
 	const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
-	const [studentCodeError, setStudentCodeError] = useState(false)
-	const [phoneNumberError, setPhoneNumberError] = useState(false)
-	const [dobError, setDobError] = useState(false)
+
+	const [studentCodeError, setStudentCodeError] = useState({ status: false, message: '' })
+	const [phoneNumberError, setPhoneNumberError] = useState({ status: false, message: '' })
+	const [dobError, setDobError] = useState({ status: false, message: '' })
 
 	const [date, setDate] = useState(
 		currentUserInfo?.dob != null && currentUserInfo.dob != '1970-01-01' ? new Date(currentUserInfo.dob) : null
@@ -47,13 +48,13 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 
 	useEffect(() => {
 		setCurrentUserInfo({ ...userInfo })
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userInfo.id])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userInfo?.id])
 
 	const [country, setCountry] = useState(
 		userInfo?.homeTown != '' && userInfo?.homeTown != null
 			? Country.getCountryByCode(userInfo?.homeTown.split('-')[0])
-			: null
+			: Country.getCountryByCode('VN')
 	)
 
 	const [state, setState] = useState(
@@ -65,24 +66,28 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	const [states, setStates] = useState(
 		userInfo?.homeTown != '' && userInfo?.homeTown != null
 			? State.getStatesOfCountry(userInfo?.homeTown.split('-')[0])
-			: null
+			: State.getStatesOfCountry('VN')
 	)
 
 	const [countries, setCountries] = useState(Country.getAllCountries())
 
 	const handleSubmit = event => {
 		event.preventDefault()
-		updateUserInfo(currentUserInfo).then(response => {
-			if (response.message == 'success') {
-				setUserInfo({ ...currentUserInfo })
-				toast.success('Success change detail info!', {
-					position: toast.POSITION.TOP_RIGHT
-				})
-			} else {
-				toast.error('Fail to change detail info!')
-			}
-			console.log('update detail info: ', response)
-		})
+		if (studentCodeError.status || phoneNumberError.status) {
+			toast.error('Vui lòng điền thông tin hợp lệ.')
+		} else {
+			updateUserInfo(currentUserInfo).then(response => {
+				if (response.message == 'success') {
+					setUserInfo({ ...currentUserInfo })
+					toast.success('Success change detail info!', {
+						position: toast.POSITION.TOP_RIGHT
+					})
+				} else {
+					toast.error('Fail to change detail info!')
+				}
+				console.log('update detail info: ', response)
+			})
+		}
 	}
 
 	const handleReset = event => {
@@ -101,31 +106,31 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							label='Bio'
 							minRows={2}
 							placeholder='Bio'
-							value={`The name’s ${
-								currentUserInfo.lastname || 'John'
-							}. I am a tireless seeker of knowledge, occasional purveyor of wisdom and also, coincidentally, a graphic designer. Algolia helps businesses across industries quickly create relevant 😎, scalable 😀, and lightning 😍 fast search and discovery experiences.`}
+							value={`Tên tôi là ${currentUserInfo.lastname}. Sau đây là mô tả ngắn gọn của tôi ...  😎😀😍`}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
 							type='text'
-							label='Student code'
+							label='Mã sinh viên'
 							placeholder='DE160488'
-							value={currentUserInfo?.username.toUpperCase() || ''}
-							error={studentCodeError}
+							value={currentUserInfo?.username?.toUpperCase() || ''}
+							error={studentCodeError.status}
 							onChange={event => {
-								if (!validateStudentCode(event.target.value)) {
-									setStudentCodeError(true)
+								const validStudentCode = validateStudentCode(event.target.value)
+								if (!validStudentCode.valid) {
+									setStudentCodeError({ status: true, message: validStudentCode.message })
 								} else {
-									setStudentCodeError(false)
+									setStudentCodeError({ status: false, message: validStudentCode.message })
 								}
 								setCurrentUserInfo(current => {
 									return { ...current, username: event.target.value }
 								})
 							}}
 							helperText={
-								studentCodeError && 'Mã sinh viên phải chứa ít nhất 1 ký tự (bao gồm số và chữ cái).'
+								studentCodeError.status &&
+								'Mã sinh viên phải chứa ít nhất 1 ký tự (bao gồm số và chữ cái).'
 							}
 						/>
 					</Grid>
@@ -145,12 +150,12 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
           </Grid> */}
 					<Grid item xs={12} sm={6}>
 						<FormControl fullWidth>
-							<InputLabel id='major-label'>Major</InputLabel>
+							<InputLabel id='major-label'>Chuyên ngành</InputLabel>
 							<Select
 								labelId='major-label'
 								id='major'
 								value={currentUserInfo?.major || ''}
-								label='Major'
+								label='Chuyên ngành'
 								onChange={event => {
 									setCurrentUserInfo(current => {
 										return { ...current, major: event?.target.value }
@@ -171,21 +176,24 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 						<TextField
 							fullWidth
 							type='text'
-							label='Phone'
+							label='Số điện thoại'
 							placeholder='0123456789'
 							value={currentUserInfo?.phoneNumber || ''}
-							error={phoneNumberError}
+							error={phoneNumberError.status}
 							onChange={event => {
-								if (!validatePhone(event.target.value)) {
-									setPhoneNumberError(true)
+								const validPhone = validatePhone(event.target.value)
+								if (!validPhone.valid) {
+									setPhoneNumberError({ status: true, message: validPhone.message })
 								} else {
-									setPhoneNumberError(false)
+									setPhoneNumberError({ status: false, message: validPhone.message })
 								}
 								setCurrentUserInfo(current => {
 									return { ...currentUserInfo, phoneNumber: event.target.value }
 								})
 							}}
-							helperText={phoneNumberError && 'Số điện thoại phải chứa (+84|0) 9|10 chữ số tiếp theo.'}
+							helperText={
+								phoneNumberError.status && 'Số điện thoại phải chứa (+84|0) 9|10 chữ số tiếp theo.'
+							}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
@@ -198,22 +206,21 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								id='account-settings-date'
 								placeholderText='MM-DD-YYYY'
 								customInput={<CustomInput />}
-								error={dobError}
+								error={dobError.status}
 								onChange={newValue => {
 									setDate(newValue)
-									if (!validateBirthOfDate(newValue?.toISOString().split('T')[0])) {
-										console.log('filter date: ', newValue?.toISOString().split('T')[0])
-										console.log('original date: ', newValue?.toISOString())
-										setDobError(true)
+									const validDoB = validateBirthOfDate(newValue?.toISOString().split('T')[0])
+									if (!validDoB.valid) {
+										setDobError({ status: true, message: validDoB.message })
 									} else {
-										setDobError(false)
+										setDobError({ status: false, message: validDoB.message })
 										setCurrentUserInfo(current => {
 											return { ...current, dob: newValue?.toISOString().split('T')[0] || null }
 										})
 									}
 								}}
-							/>{' '}
-							{dobError && (
+							/>
+							{dobError.status && (
 								<Typography variant='caption' color='error' sx={{ marginLeft: '20px' }}>
 									Ngày sinh của bạn phải đủ 7 tuổi trở lên
 								</Typography>
@@ -253,7 +260,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								renderInput={params => (
 									<TextField
 										{...params}
-										label='Choose a country'
+										label='Chọn quốc gia'
 										inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
 									/>
 								)}
@@ -285,7 +292,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								renderInput={params => (
 									<TextField
 										{...params}
-										label='City'
+										label='Thành phố/ Tỉnh'
 										inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
 									/>
 								)}
@@ -295,7 +302,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
-							label='Facebook Url'
+							label='Link tài khoản Facebook'
 							placeholder='https://www.facebook.com/profile.php?id=[user_id]'
 							value={currentUserInfo?.facebookUrl || ''}
 							onChange={event => {
@@ -309,7 +316,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
-							label='LinkedIn Url'
+							label='Link tài khoản Linkedin'
 							placeholder='https://www.linkedin.com/in/[user_id]/'
 							value={currentUserInfo.linkedInUrl || ''}
 							onChange={event => {
@@ -325,7 +332,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<FormControl>
-							<FormLabel sx={{ fontSize: '0.875rem' }}>Gender</FormLabel>
+							<FormLabel sx={{ fontSize: '0.875rem' }}>Giới tính</FormLabel>
 							<RadioGroup
 								onChange={event => {
 									setCurrentUserInfo(current => {
@@ -351,18 +358,18 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 								aria-label='gender'
 								name='account-settings-info-radio'
 							>
-								<FormControlLabel value='Male' label='Male' control={<Radio />} />
-								<FormControlLabel value='Female' label='Female' control={<Radio />} />
-								<FormControlLabel value='Others' label='Other' control={<Radio />} />
+								<FormControlLabel value='Male' label='Nam' control={<Radio />} />
+								<FormControlLabel value='Female' label='Nữ' control={<Radio />} />
+								<FormControlLabel value='Others' label='Khác' control={<Radio />} />
 							</RadioGroup>
 						</FormControl>
 					</Grid>
 					<Grid item xs={12}>
 						<Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
-							Save Changes
+							Lưu thay đổi
 						</Button>
 						<Button type='reset' variant='outlined' color='secondary' onClick={handleReset}>
-							Reset
+							Hủy
 						</Button>
 					</Grid>
 				</Grid>

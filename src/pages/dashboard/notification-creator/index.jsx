@@ -18,7 +18,7 @@ import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import Backdrop from '@mui/material/Backdrop'
 import InputAdornment from '@mui/material/InputAdornment'
 import Button from '@mui/material/Button'
 import ButtonGroup from '@mui/material/ButtonGroup'
@@ -31,6 +31,7 @@ import Tab from '@mui/material/Tab'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import TabContext from '@mui/lab/TabContext'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Icons Imports
 import Menu from 'mdi-material-ui/Menu'
@@ -66,6 +67,7 @@ const NotificationCreator = () => {
 	const [value, setValue] = useState('1') //tab
 	const [publicUpdateModal, setPublicUpdateModal] = useState(false)
 	const [privateUpdateModal, setPrivateUpdateModal] = useState(false)
+	const [loading, setLoading] = useState(true)
 
 	//change phân trang
 	const handleChangePage = (event, newPage) => {
@@ -196,6 +198,7 @@ const NotificationCreator = () => {
 			})
 			.then(function (data) {
 				setNotificationsData(data.filter(item => item.type == 'public'))
+				setLoading(false)
 			})
 			.catch(error => console.error('Error:', error))
 
@@ -216,6 +219,9 @@ const NotificationCreator = () => {
 
 	return (
 		<Grid item xs={12} style={{ height: '100%' }}>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 			<EditPublicNotification
 				publicUpdateModal={publicUpdateModal}
 				setPublicUpdateModal={setPublicUpdateModal}
@@ -233,6 +239,7 @@ const NotificationCreator = () => {
 				setPrivateNotificationDetail={setPrivateNotificationDetail}
 				state={state}
 				dispatch={dispatch}
+				cookies={cookies}
 			/>
 			<ToastContainer></ToastContainer>
 			{/* Dialog confirm delete */}

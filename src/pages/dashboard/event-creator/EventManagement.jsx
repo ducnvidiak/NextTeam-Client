@@ -52,7 +52,7 @@ function EventManagement({ openEventManagememntModal, setOpenEventManagememntMod
 						<CloseIcon />
 					</IconButton>
 					<Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div' color={'#fff'}>
-						{event.name}
+						{event?.name}
 					</Typography>
 				</Toolbar>
 			</AppBar>
@@ -63,7 +63,11 @@ function EventManagement({ openEventManagememntModal, setOpenEventManagememntMod
 					<Tab value='3' label='Feedback sự kiện' />
 				</TabList>
 				<TabPanel value='1'>
-					<EventOverView event={event} setEventList={setEventList} setOpenEventManagememntModal={setOpenEventManagememntModal}></EventOverView>
+					<EventOverView
+						event={event}
+						setEventList={setEventList}
+						setOpenEventManagememntModal={setOpenEventManagememntModal}
+					></EventOverView>
 				</TabPanel>
 				<TabPanel value='2'>
 					<RegisteredTable event={event}></RegisteredTable>

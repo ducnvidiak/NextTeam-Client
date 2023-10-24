@@ -1,4 +1,4 @@
-// ** React Imports
+// ** React Imports Pasw0rd12!@ re
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
@@ -25,7 +25,7 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'nprogress'
 
-import { getUserInfo, getAllMajors } from './apiUtils'
+import { getUserInfo, getAllMajors } from '../../utils/apiUtils'
 
 // import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 // const axios = require('axios')
@@ -89,15 +89,6 @@ const AccountSettings = () => {
 							</Box>
 						}
 					/>
-					{/* <Tab
-						value='security'
-						label={
-							<Box sx={{ display: 'flex', alignItems: 'center' }}>
-								<LockOpenOutline />
-								<TabName>Bảo mật</TabName>
-							</Box>
-						}
-					/> */}
 					<Tab
 						value='info'
 						label={
@@ -112,9 +103,6 @@ const AccountSettings = () => {
 				<TabPanel sx={{ p: 0 }} value='account'>
 					<TabAccount userInfo={userInfo} setUserInfo={setUserInfo} />
 				</TabPanel>
-				{/* <TabPanel sx={{ p: 0 }} value='security'>
-					<TabSecurity userInfo={userInfo} setUserInfo={setUserInfo} />
-				</TabPanel> */}
 				<TabPanel sx={{ p: 0 }} value='info'>
 					<TabInfo userInfo={userInfo} setUserInfo={setUserInfo} majors={majors} />
 				</TabPanel>

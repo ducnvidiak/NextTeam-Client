@@ -10,20 +10,22 @@ import LocationOnIcon from '@mui/icons-material/LocationOn'
 
 import Link from 'next/link'
 
-function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer, setOpenFeedbackModal }) {
-    const handleFeedbackClick = () => {
-        setOpenFeedbackModal(true);
-    }
+function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer = () => {}, setOpenFeedbackModal }) {
+	const handleFeedbackClick = () => {
+		setOpenFeedbackModal(true)
+	}
 
 	return (
 		<>
 			<Box sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 500, padding: 4 }} role='presentation'>
 				<Stack direction={'row'} justifyContent={'space-between'} marginBottom={2}>
-					<Button variant='text'>
-						<CloseIcon onClick={toggleDrawer(anchor, false)}></CloseIcon>
+					<Button variant='text' onClick={toggleDrawer(anchor, false)}>
+						<CloseIcon></CloseIcon>
 					</Button>
-                    <Button variant='text'  onClick={handleFeedbackClick}>
-                        <Typography mr={2} variant='button'>Feedback</Typography>
+					<Button variant='text' onClick={handleFeedbackClick}>
+						<Typography mr={2} variant='button'>
+							Feedback
+						</Typography>
 						<FeedbackIcon></FeedbackIcon>
 					</Button>
 				</Stack>
@@ -80,7 +82,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 									Tại
 								</Typography>
 								<Typography variant='body1' fontWeight={600}>
-									{event.locationName}
+									{event?.locationName}
 								</Typography>
 							</Box>
 						</Box>

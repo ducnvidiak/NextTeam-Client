@@ -14,7 +14,7 @@ export default function AddExpense({
 	const [expense, setExpense] = useState({
 		title: '',
 		description: '',
-		clubId: cookies['clubData']?.clubId,
+		clubId: cookies?.['clubData']?.clubId,
 		amount: ''
 	})
 
@@ -32,6 +32,7 @@ export default function AddExpense({
 			.then(function (data) {
 				toast.success('Thêm khoản chi mới thành công')
 				handleClose()
+				setExpense('')
 			})
 			.catch(error => {
 				console.error('Error:', error)

@@ -129,7 +129,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					setOpen(false)
 				})
 				.catch(error => {
-					setOpen(false)
 					console.error('Error:', error)
 					toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
 				})

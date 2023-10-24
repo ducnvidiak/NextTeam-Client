@@ -1,0 +1,315 @@
+.btn__primary {
+	background-image: linear-gradient(to right, #ff8008 0%, #ffc837 51%, #ff8008 100%);
+	margin: 10px;
+	padding: 3px 15px;
+	text-align: center;
+	text-transform: uppercase;
+	transition: 0.5s;
+	background-size: 200% auto;
+	color: white;
+	// box-shadow: 0 0 20px #eee;
+	border-radius: 10px;
+	display: inline-block;
+	border: none;
+}
+
+.btn__primary:hover {
+	background-position: right center; /* change the direction of the change here */
+	color: #fff;
+	text-decoration: none;
+}
+
+.box {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 15px;
+	&__list {
+		margin-top: 45px;
+		display: grid;
+		gap: 20px;
+		grid-template-columns: repeat(3, 1fr);
+		&__item {
+			overflow: hidden;
+			width: 430px;
+			border-radius: 15px;
+			border: 2px solid orange;
+			position: relative;
+			padding: 5px 10px;
+			background-color: #f9f9f9;
+
+			&__header {
+				display: flex;
+				align-items: center;
+				width: 100%;
+				height: 35px;
+			}
+			&__content {
+				h4 {
+					margin: 5px 0;
+					background-color: #faeee4;
+					padding: 10px 25px;
+					border-radius: 15px;
+				}
+				p {
+					padding: 10px 25px;
+					border-radius: 8px;
+					background-color: #fff;
+					margin: 20px 0;
+				}
+			}
+			&__footer {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 10px;
+			}
+		}
+	}
+}
+
+.clubtag {
+	position: absolute;
+	top: 0;
+	right: -5px;
+	background-color: orange;
+	color: floralwhite;
+	font-size: 12px;
+	font-weight: 600;
+	padding: 5px 15px;
+	border-bottom-left-radius: 15px;
+}
+
+.hashtag {
+	color: rgb(86, 129, 249);
+	font-size: 12px;
+	.hash {
+		font-size: 20px;
+	}
+}
+
+.approved {
+	background-color: rgb(0, 186, 0);
+	display: inline-block;
+	color: floralwhite;
+	font-size: 10px;
+	padding: 2px 7px;
+	border-radius: 10px;
+}
+.refused {
+	background-color: rgb(230, 63, 41);
+	display: inline-block;
+	color: floralwhite;
+	font-size: 10px;
+	padding: 2px 7px;
+	border-radius: 10px;
+}
+.pending {
+	background-color: rgb(236, 156, 64);
+	display: inline-block;
+	color: floralwhite;
+	font-size: 10px;
+	padding: 2px 7px;
+	border-radius: 10px;
+}
+
+.timemark {
+	color: rgb(164, 164, 164);
+	font-size: 12px;
+	text-align: end;
+	margin: 0;
+}
+
+.changeBtn {
+	border: none;
+	background-color: transparent;
+	color: rgb(233, 166, 41);
+	font-size: 22px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	&:hover {
+		transform: scale(1.2);
+	}
+}
+.deleteBtn {
+	border: none;
+	background-color: transparent;
+	color: rgb(234, 53, 21);
+	font-size: 22px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	&:hover {
+		transform: scale(1.2);
+	}
+}
+.tools {
+	display: flex;
+	gap: 5px;
+}
+
+.modal {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 750px;
+	background-color: #f4f4f4;
+	box-shadow: 2;
+	border-radius: 5px;
+	overflow: hidden;
+}
+// ----------- Chỉnh sửa đề xuất ----------------
+.editform__header {
+	background-color: #fba14d;
+	h2 {
+		padding: 20px;
+		margin: 0;
+		color: #fff;
+	}
+}
+.editform__main {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	background-color: #faeee4;
+}
+
+.editform__footer {
+	padding: 40px 20px;
+	height: 40px;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	background-color: #faeee4;
+	gap: 20px;
+	button {
+		background-color: transparent;
+		border: none;
+		font-size: 20px;
+		padding: 5px 20px;
+		border-radius: 5px;
+	}
+	button:first-of-type {
+		color: #fff;
+		background-color: rgb(247, 150, 94);
+		&:hover {
+			background-color: rgb(245, 131, 66);
+		}
+	}
+	button:last-of-type {
+		&:hover {
+			color: #fff;
+			background-color: rgb(247, 150, 94);
+		}
+		color: rgb(247, 150, 94);
+		border: 2px solid rgb(247, 150, 94);
+	}
+}
+
+.form__control {
+	display: grid;
+	grid-template-columns: 1fr 4fr;
+	label {
+		font-size: 20px;
+		font-weight: 600;
+	}
+	input,
+	textarea {
+		padding: 10px;
+	}
+	input,
+	textarea,
+	select {
+		border: none;
+		border-radius: 5px;
+		// background-color: #faeee4;
+	}
+	select {
+		width: 200px;
+		color: #ff8008;
+		padding-left: 10px;
+	}
+	textarea {
+	}
+	input:focus,
+	textarea:focus,
+	select:focus {
+		outline: 2px solid rgb(242, 171, 109);
+	}
+}
+
+.outline__orange {
+	outline: 2px solid #f27123;
+	border: none;
+}
+
+// drop drag
+
+.dropbox {
+	width: 350px;
+	height: 180px;
+	border: 2px dashed orange;
+	border-radius: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+.dropbox > input {
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+}
+
+.dropbox:hover,
+.dropbox.dragover {
+	opacity: 0.6;
+}
+
+.dropbox__label {
+	text-align: center;
+	color: gray;
+	font-weight: 600;
+	padding: 10px;
+}
+
+.upload__icon {
+	font-size: 96px;
+	color: #fa9a40;
+}
+
+//   download button
+.btn__download {
+	text-decoration: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	right: 20px;
+	bottom: 25px;
+}
+
+.btn__download > div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 1000px;
+	background-color: rgba(102, 102, 102, 0.685);
+	transition: all 0.1s ease-in-out;
+}
+
+.btn__download:hover > div {
+	background-color: #f57e34;
+}

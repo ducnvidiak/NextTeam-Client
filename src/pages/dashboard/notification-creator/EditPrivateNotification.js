@@ -36,7 +36,8 @@ export default function EditPrivateNotification({
 	setPrivateNotificationDetail,
 	setPrivateUpdateModal,
 	state,
-	dispatch
+	dispatch,
+	cookies
 }) {
 	const router = useRouter()
 	const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
@@ -107,7 +108,7 @@ export default function EditPrivateNotification({
 					setClubMember(data)
 				})
 				.catch(error => console.error('Error:', error))
-	}, [clubData])
+	}, [clubData, cookies])
 
 	return (
 		<div>
@@ -148,7 +149,7 @@ export default function EditPrivateNotification({
 										const data = editor.getContent()
 										setPrivateNotificationDetail({ ...privateNotificationDetail, content: data })
 									}}
-									value={privateNotificationDetail?.content}
+									initialValue={privateNotificationDetail?.content}
 									init={{
 										height: 500,
 										menubar: true,

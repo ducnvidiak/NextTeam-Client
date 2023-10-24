@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useState } from 'react'
 import {
 	Paper,
@@ -31,6 +31,8 @@ import { postAPI } from 'src/utils/request'
 import { reformatTimestamp, spaceTimestamp } from 'src/utils/timestamp'
 import { useReducer } from 'react'
 import { useEffect } from 'react'
+
+// import { createQrCode } from 'src/utils/qr'
 
 const members = [
 	{ id: 1, name: 'John Doe' },
@@ -137,7 +139,12 @@ function Attendance({ eid, cmd, setOpen }) {
 			cmd: 'set',
 			data: JSON.stringify(convertJsonToArray(attendanceData))
 		})
-		if (res.code == 0) setOpen(false)
+		if (res.code == 0) setOpen['setOpen'](false)
+	}
+
+	const handleCreate = cmd => event => {
+		event.preventDefault()
+		setOpen['setOpen2']({ cmd, data: eid })
 	}
 
 	return (
@@ -186,8 +193,12 @@ function Attendance({ eid, cmd, setOpen }) {
 			>
 				{cmd == 'take' && (
 					<>
-						<StyledButton variant='outlined'>Tạo mã</StyledButton>
-						<StyledButton variant='outlined'>Tạo mã QR</StyledButton>
+						<StyledButton variant='outlined' onClick={handleCreate('code')}>
+							Tạo mã
+						</StyledButton>
+						<StyledButton variant='outlined' onClick={handleCreate('qr')}>
+							Tạo mã QR
+						</StyledButton>
 					</>
 				)}
 				<StyledButton variant='contained' onClick={handleConfirm}>
@@ -198,8 +209,34 @@ function Attendance({ eid, cmd, setOpen }) {
 	)
 }
 
+function AttendanceCode({ open }) {
+	const ref = useRef()
+
+	var [qrCode, setQrCode] = useState()
+
+	// useEffect(() => {
+	// 	setQrCode(createQrCode())
+	// }, [])
+
+	// useEffect(() => {
+	// 	qrCode.append(ref.current)
+	// }, [qrCode])
+
+	// useEffect(() => {
+	// 	qrCode.update({
+	// 		data: 'https://next-team-client.vercel.app/'
+	// 	})
+	// }, [qrCode])
+
+	if (open.cmd == 'qr') return <Box variant='div' ref={ref}></Box>
+	if (open.cmd == 'code') return <Box></Box>
+
+	return <></>
+}
+
 function Attendances() {
 	const [open, setOpen] = React.useState(false)
+	const [open2, setOpen2] = React.useState(false)
 	const [eventList, setEventList] = useState([])
 	const [cookies] = useCookies(['userData', 'clubData'])
 
@@ -241,8 +278,22 @@ function Attendances() {
 							Điểm danh
 						</Typography>
 						<Box>
-							<Attendance eid={open.id} cmd={open.cmd} setOpen={setOpen} />
+							<Attendance eid={open.id} cmd={open.cmd} setOpen={{ setOpen, setOpen2 }} />
 						</Box>
+					</Box>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby='transition-modal-description'
+				open={open2 != false}
+				onClose={() => setOpen2(false)}
+				closeAfterTransition
+				slots={{ backdrop: Backdrop }}
+			>
+				<Fade in={open2 != false}>
+					<Box sx={{ ...style, width: 'fit-content', height: 'fit-content', minWidth: 50, minHeight: 50 }}>
+						<AttendanceCode open={open2} />
 					</Box>
 				</Fade>
 			</Modal>

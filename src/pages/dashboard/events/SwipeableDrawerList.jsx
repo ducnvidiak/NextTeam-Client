@@ -10,22 +10,33 @@ import LocationOnIcon from '@mui/icons-material/LocationOn'
 
 import Link from 'next/link'
 
-function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer, setOpenFeedbackModal }) {
-    const handleFeedbackClick = () => {
-        setOpenFeedbackModal(true);
-    }
+function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer = () => {}, setOpenFeedbackModal }) {
+	const handleFeedbackClick = () => {
+		setOpenFeedbackModal(true)
+	}
 
 	return (
 		<>
 			<Box sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 500, padding: 4 }} role='presentation'>
 				<Stack direction={'row'} justifyContent={'space-between'} marginBottom={2}>
-					<Button variant='text'>
-						<CloseIcon onClick={toggleDrawer(anchor, false)}></CloseIcon>
+					<Button variant='text' onClick={toggleDrawer(anchor, false)}>
+						<CloseIcon></CloseIcon>
 					</Button>
-                    <Button variant='text'  onClick={handleFeedbackClick}>
-                        <Typography mr={2} variant='button'>Feedback</Typography>
-						<FeedbackIcon></FeedbackIcon>
-					</Button>
+                    {event?.isRegistered && !event?.isFeedback && new Date() > new Date(event?.endTime) ? (
+						<Button variant='text' onClick={handleFeedbackClick}>
+							<Typography mr={2} variant='button'>
+								Feedback
+							</Typography>
+							<FeedbackIcon></FeedbackIcon>
+						</Button>
+					) : event?.isRegistered && event?.isFeedback && new Date() > new Date(event?.endTime) ? (
+						<Button variant='text' color='secondary'>
+							<Typography mr={2} variant='button'>
+								Đã Feedback
+							</Typography>
+							<FeedbackIcon></FeedbackIcon>
+						</Button>
+					) : null}
 				</Stack>
 				<Card sx={{ padding: 2 }}>
 					<img
@@ -80,7 +91,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 									Tại
 								</Typography>
 								<Typography variant='body1' fontWeight={600}>
-									{event.locationName}
+									{event?.locationName}
 								</Typography>
 							</Box>
 						</Box>
@@ -98,7 +109,13 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 						<Typography sx={'body1'}>{event?.description}</Typography>
 					</CardContent>
 				</Card>
-				{event?.isRegistered ? (
+				{new Date() > new Date(event?.endTime) ? (
+					<>
+						<Button variant='outlined' color='secondary' disabled fullWidth sx={{ marginTop: 4 }}>
+							Sự kiện đã kết thúc
+						</Button>
+					</>
+				) : event?.isRegistered == 'true' || event?.isRegistered == true ? (
 					<Button variant='outlined' fullWidth sx={{ marginTop: 4 }}>
 						Đã đăng ký
 					</Button>
@@ -107,7 +124,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 						variant='contained'
 						fullWidth
 						sx={{ marginTop: 4 }}
-						onClick={() => setOpenRegisterModal(true)}
+						onClick={() => (userData?.id ? setOpenRegisterModal(true) : router.push('/auth/login'))}
 					>
 						Đăng ký
 					</Button>

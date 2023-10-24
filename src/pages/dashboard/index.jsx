@@ -1,4 +1,8 @@
+import React, { useState, useEffect } from 'react'
+import { useCookies } from 'react-cookie'
+
 // ** MUI Imports
+
 import Grid from '@mui/material/Grid'
 
 // ** Icons Imports
@@ -16,87 +20,107 @@ import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 // ** Demo Components Imports
 import Table from 'src/views/dashboard/Table'
 import Trophy from 'src/views/dashboard/Trophy'
+import ClubStructure from 'src/views/dashboard/ClubStructure'
+import Member from 'src/views/dashboard/Member'
+import Balance from 'src/views/dashboard/Balance'
 import TotalEarning from 'src/views/dashboard/TotalEarning'
-import StatisticsCard from 'src/views/dashboard/StatisticsCard'
 import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
-import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
-import SalesByCountries from 'src/views/dashboard/SalesByCountries'
+import Event from 'src/views/dashboard/Event'
 
 const Dashboard = () => {
-  return (
-    <ApexChartWrapper>
-      
-      <Grid container spacing={6}>
-        <Grid item xs={12} md={4}>
-          <Trophy />
-        </Grid>
-        <Grid item xs={12} md={8}>
-          <StatisticsCard />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <WeeklyOverview />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <TotalEarning />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <Grid container spacing={6}>
-            <Grid item xs={6}>
-              <CardStatisticsVerticalComponent
-                stats='$25.6k'
-                icon={<Poll />}
-                color='success'
-                trendNumber='+42%'
-                title='Total Profit'
-                subtitle='Weekly Profit'
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <CardStatisticsVerticalComponent
-                stats='$78'
-                title='Refunds'
-                trend='negative'
-                color='secondary'
-                trendNumber='-15%'
-                subtitle='Past Month'
-                icon={<CurrencyUsd />}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <CardStatisticsVerticalComponent
-                stats='862'
-                trend='negative'
-                trendNumber='-18%'
-                title='New Project'
-                subtitle='Yearly Project'
-                icon={<BriefcaseVariantOutline />}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <CardStatisticsVerticalComponent
-                stats='15'
-                color='warning'
-                trend='negative'
-                trendNumber='-18%'
-                subtitle='Last Week'
-                title='Sales Queries'
-                icon={<HelpCircleOutline />}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <SalesByCountries />
-        </Grid>
-        <Grid item xs={12} md={12} lg={8}>
-          <DepositWithdraw />
-        </Grid>
-        <Grid item xs={12}>
-          <Table />
-        </Grid>
-      </Grid>
-    </ApexChartWrapper>
-  )
+	const ORIGIN_URL = 'http://localhost:8080/api/statis?clubId='
+	const [cookies, setCookie] = useCookies(['clubData'])
+	const [data, setData] = useState([])
+	const clubId = cookies['clubData']?.clubId
+
+	useEffect(() => {
+		const refreshData = () => {
+			fetch(`${ORIGIN_URL}${clubId}`)
+				.then(res => res.json())
+				.then(result => {
+					setData(result)
+					console.log(result)
+				})
+		}
+		refreshData()
+	}, [cookies, clubId])
+
+	return (
+		<ApexChartWrapper>
+			<Grid container spacing={6}>
+				<Grid item xs={12} md={12}>
+					<ClubStructure data={data} />
+				</Grid>
+				<Grid item xs={12} md={6}>
+					<Trophy data={data} />
+				</Grid>
+
+				<Grid item xs={12} md={6}>
+					<Event data={data} />
+				</Grid>
+
+				<Grid item xs={12} md={6}>
+					<Member data={data} />
+				</Grid>
+				<Grid item xs={12} md={6}>
+					<Balance data={data} />
+				</Grid>
+				<Grid item xs={12} md={6} lg={4}>
+					<WeeklyOverview data={data} />
+				</Grid>
+
+				<Grid item xs={12} md={6} lg={4}>
+					<TotalEarning data={data} />
+				</Grid>
+				<Grid item xs={12} md={6} lg={4}>
+					<Grid container spacing={6}>
+						<Grid item xs={6}>
+							<CardStatisticsVerticalComponent
+								stats={data.balance}
+								icon={<Poll />}
+								color='success'
+								
+								title='Số dư'
+								
+							/>
+						</Grid>
+						<Grid item xs={6}>
+							<CardStatisticsVerticalComponent
+								stats={data?.activity_point}
+								title='Điểm Hoạt Động'
+								trend='negative'
+								color='secondary'
+								
+								
+								icon={<CurrencyUsd />}
+							/>
+						</Grid>
+						<Grid item xs={6}>
+							<CardStatisticsVerticalComponent
+								stats={data.total_report}
+								trend='negative'
+								
+								title='Số báo cáo'
+								
+								icon={<BriefcaseVariantOutline />}
+							/>
+						</Grid>
+						<Grid item xs={6}>
+							<CardStatisticsVerticalComponent
+								stats={data.total_post}
+								color='warning'
+								trend='negative'
+							
+								
+								title='Số bài viết'
+								icon={<HelpCircleOutline />}
+							/>
+						</Grid>
+					</Grid>
+				</Grid>
+			</Grid>
+		</ApexChartWrapper>
+	)
 }
 
 export default Dashboard

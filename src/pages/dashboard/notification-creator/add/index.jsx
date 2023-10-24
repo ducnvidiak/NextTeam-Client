@@ -49,6 +49,7 @@ function NotificationCreator() {
 	const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
 	const [isSearchable, setIsSearchable] = useState(true)
 	const [clubMember, setClubMember] = useState([])
+	const [cookies, setCookie] = useCookies(['clubData']) // cookiee club id
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue)
@@ -164,7 +165,7 @@ function NotificationCreator() {
 					setClubMember(data)
 				})
 				.catch(error => console.error('Error:', error))
-	}, [clubData])
+	}, [clubData, cookies])
 
 	return (
 		<Grid item xs={12}>
