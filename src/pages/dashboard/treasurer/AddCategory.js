@@ -31,12 +31,13 @@ export default function AddCategory({
 			})
 			.then(function (data) {
 				toast.success('Thêm khoản nộp mới thành công')
+				setCategory('')
 				handleClose()
 			})
 			.catch(error => {
 				console.error('Error:', error)
 
-				toast.error('Có lỗi xảy ra khi them khoản nộp, vui lòng thử lại')
+				toast.error('Có lỗi xảy ra khi thêm khoản nộp, vui lòng thử lại')
 			})
 			.finally(() => {
 				handleClose()

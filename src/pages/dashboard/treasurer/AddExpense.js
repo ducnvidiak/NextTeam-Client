@@ -32,6 +32,7 @@ export default function AddExpense({
 			.then(function (data) {
 				toast.success('Thêm khoản chi mới thành công')
 				handleClose()
+				setExpense('')
 			})
 			.catch(error => {
 				console.error('Error:', error)

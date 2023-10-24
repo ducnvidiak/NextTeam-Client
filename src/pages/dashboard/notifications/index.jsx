@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 
 // ** MUI Imports
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Paper from '@mui/material/Paper'
@@ -35,6 +37,8 @@ const Notifications = () => {
 	const [notificationDetail, setNotificationDetail] = useState()
 	const [countUnview, setCountUnview] = useState(0)
 	const [userData, setUserData] = useState()
+	const [loading, setLoading] = useState(true)
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -141,13 +145,16 @@ const Notifications = () => {
 				})
 				.then(function (data) {
 					setNotificationsData(data)
-					console.log(data)
+					setLoading(false)
 				})
 				.catch(error => console.error('Error:', error))
 	}, [cookies, userData, state])
 
 	return (
 		<Grid item xs={12} style={{ height: '100%' }}>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 			<NotificationDetail
 				notificationDetail={notificationDetail}
 				handleClickOpen={handleClickOpen}

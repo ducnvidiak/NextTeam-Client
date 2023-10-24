@@ -4,6 +4,8 @@ import { useState, useEffect, useReducer } from 'react'
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
 
 function PaymentForm() {
 	const router = useRouter()
@@ -11,6 +13,8 @@ function PaymentForm() {
 	const [paymentData, setPaymentData] = useState([])
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [userData, setUserData] = useState()
+	const [loading, setLoading] = useState(true)
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -27,6 +31,7 @@ function PaymentForm() {
 			})
 			.then(function (data) {
 				setPaymentData(data)
+				setLoading(false)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData, state])
@@ -41,8 +46,28 @@ function PaymentForm() {
 		2: { color: 'warning', label: 'Thanh toán thất bại' }
 	}
 
+	const handlePay = row => {
+		console.log(row)
+		fetch(`http://localhost:8080/vnpayajax?amount=${row?.amount}&id=${row?.id}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				window.location.href = data?.data
+			})
+			.catch(error => console.error('Error:', error))
+	}
+
 	return (
 		<Grid item xs={12} style={{ height: '100%' }}>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 			<Card style={{ height: '100%' }}>
 				<div
 					style={{
@@ -55,7 +80,7 @@ function PaymentForm() {
 					<CardHeader title='Khoản nộp' titleTypographyProps={{ variant: 'h6' }} />
 				</div>
 				<CardContent>
-					{paymentData.map(row => {
+					{paymentData?.map(row => {
 						return (
 							<Card key={row.id} sx={{ ...cardStyle, borderLeft: 4, borderColor: 'primary.main' }}>
 								<CardContent>
@@ -86,11 +111,17 @@ function PaymentForm() {
 										</Grid>
 										<Grid item xs={2} md={2}>
 											<Typography variant='body1' style={{ fontWeight: 'bold' }}>
-												Số tiền: {row?.amount}
+												Số tiền: {row?.amount.toLocaleString()}
 											</Typography>
 										</Grid>
 										<Grid item xs={2} md={2}>
-											{row.status == 0 ? <Button variant='contained'>Thanh toán</Button> : ''}
+											{row.status == 0 ? (
+												<Button fullWidth variant='contained' onClick={() => handlePay(row)}>
+													Thanh toán
+												</Button>
+											) : (
+												''
+											)}
 										</Grid>
 									</Grid>
 								</CardContent>
