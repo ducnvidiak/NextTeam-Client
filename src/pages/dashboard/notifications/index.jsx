@@ -130,7 +130,7 @@ const Notifications = () => {
 		if (userData)
 			fetch(
 				'http://localhost:8080/notification?action=list-10-noti&clubId=' +
-					cookies['clubData'].clubId +
+					cookies['clubData']?.clubId +
 					'&userId=' +
 					userData?.id,
 				{

@@ -2,7 +2,7 @@
 import Grid from '@mui/material/Grid'
 import CardHeader from '@mui/material/CardHeader'
 import TableStickyHeader from 'src/views/tables/TableStickyHeader'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -18,6 +18,10 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 function Club() {
+	const nameRef = useRef(null)
+	const subnameRef = useRef(null)
+	const categoryIdRef = useRef(null)
+
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
 	const initialClubFormData = {
@@ -140,13 +144,19 @@ function Club() {
 		if (!clubFormData.categoryId) {
 			errors.categoryId = true
 		}
-		if (clubFormData.movementPoint < 0) {
-			errors.movementPoint = true
-		}
+
 		if (clubFormData.balance < 0) {
 			errors.balance = true
 		}
 		setValidationErrors(errors)
+
+		if (errors.name) {
+			nameRef.current?.scrollIntoView({ behavior: 'smooth' })
+		} else if (errors.subname) {
+			subnameRef.current?.scrollIntoView({ behavior: 'smooth' })
+		} else if (errors.categoryId) {
+			categoryIdRef.current?.scrollIntoView({ behavior: 'smooth' })
+		}
 
 		// Nếu có lỗi, không thực hiện gửi yêu cầu
 		if (Object.keys(errors).length > 0) {
@@ -158,6 +168,8 @@ function Club() {
 				pauseOnHover: true,
 				draggable: true
 			})
+
+			return
 		}
 
 		const url_fetch =
@@ -173,13 +185,12 @@ function Club() {
 			clubFormData.avatarUrl +
 			'&bannerUrl=' +
 			clubFormData.bannerUrl +
-			'&movementPoint=' +
-			clubFormData.movementPoint +
 			'&balance=' +
 			clubFormData.balance +
 			'&isActive=' +
 			clubFormData.isActive
-
+		console.log('test')
+		console.log(url_fetch)
 		fetch(url_fetch)
 			.then(res => {
 				if (!res.ok) {
@@ -242,6 +253,8 @@ function Club() {
 				pauseOnHover: true,
 				draggable: true
 			})
+
+			return
 		}
 
 		const url_fetch =
@@ -579,23 +592,6 @@ function Club() {
 						)}
 					</FormControl>
 
-					{/*Điểm hoạt động  */}
-					<TextField
-						autoFocus
-						margin='dense'
-						id='movementPoint'
-						name='movementPoint'
-						label='Điểm Hoạt Động Câu Lạc Bộ'
-						type='number'
-						fullWidth
-						value={clubFormData.movementPoint}
-						onChange={handleInputChange}
-						error={validationErrors.movementPoint} // Add error prop
-						helperText={
-							validationErrors.movementPoint &&
-							'Điểm Hoạt Động Câu Lạc Bộ phải lớn hơn hoặc bằng 0 hoặc bỏ trống'
-						} // Display error message
-					/>
 					{/*Số dư */}
 					<TextField
 						autoFocus
@@ -668,6 +664,7 @@ function Club() {
 						fullWidth
 						value={clubFormData.name}
 						onChange={handleInputChange}
+						inputRef={nameRef}
 					/>
 					<TextField
 						autoFocus
@@ -679,6 +676,7 @@ function Club() {
 						fullWidth
 						value={clubFormData.subname}
 						onChange={handleInputChange}
+						inputRef={subnameRef}
 					/>
 					<>
 						<DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
@@ -690,6 +688,7 @@ function Club() {
 								id='category'
 								value={selectedCategory}
 								onChange={handleCategoryChange}
+								inputRef={categoryIdRef}
 							>
 								{resultClubCate.map(category => (
 									<MenuItem key={category.id} value={category.name}>
