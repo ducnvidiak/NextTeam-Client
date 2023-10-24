@@ -50,7 +50,7 @@ function ProposalListPage() {
 			console.log('file records: ', response)
 			setFileRecords(response)
 		})
-	}, [])
+	}, [clubId])
 
 	const handleUpdateProposalStatus = (uproposal, status) => {
 		// Xử lý logic cập nhật trạng thái kế hoạch

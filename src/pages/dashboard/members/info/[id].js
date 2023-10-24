@@ -67,7 +67,7 @@ const UserInfoView = () => {
 					State.getStateByCodeAndCountry(userInfo.homeTown.split('-')[1], userInfo.homeTown.split('-')[0])
 				)
 		}
-	}, [router.query.id])
+	}, [router.query.id,clubId])
 
 	return (
 		<Paper sx={{ width: '100%', height: '100%' }}>
