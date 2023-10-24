@@ -143,7 +143,7 @@ export default function PaymentDetail({
 											sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}
 										>
 											<TableCell>{row?.firstname + ' ' + row.lastname}</TableCell>
-											<TableCell>{row?.amount}</TableCell>
+											<TableCell>{row?.amount.toLocaleString()}</TableCell>
 											<TableCell>
 												{row?.status ? (
 													<Chip

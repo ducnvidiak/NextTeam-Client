@@ -194,7 +194,7 @@ const NotificationDropdown = () => {
 				})
 				.catch(error => console.error('Error:', error))
 		}
-	}, [cookies, userData, state])
+	}, [cookies, userData, state, notificationsData])
 
 	const updateView = (id, type, hasSeen) => {
 		if (hasSeen == 0) {

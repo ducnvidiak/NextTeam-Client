@@ -85,6 +85,26 @@ function TransactionHistory() {
 		setPage(0)
 	}
 
+	// Tính tổng của items.amount với items.status='in'
+	var totalInAmount = paymentData.reduce(function (sum, item) {
+		if (item?.type == 'in') {
+			return sum + item.amount
+		}
+
+		return sum
+	}, 0)
+
+	// Tính tổng của items.amount với items.status='out'
+	var totalOutAmount = paymentData.reduce(function (sum, item) {
+		if (item?.type == 'out') {
+			return sum + item.amount
+		}
+
+		return sum
+	}, 0)
+
+	var difference = totalInAmount - totalOutAmount
+
 	const statusObj = {
 		0: { color: 'primary', label: 'Chưa thanh toán' },
 		1: { color: 'success', label: 'Thanh toán thành công' },
@@ -194,7 +214,7 @@ function TransactionHistory() {
 							</Select>
 						</FormControl>
 					</Container>
-
+					<Chip label={'Số dư: ' + difference.toLocaleString()} color='primary' sx={{ marginRight: 5 }} />
 					<TextField
 						placeholder='Tìm kiếm...'
 						size='small'
@@ -253,7 +273,7 @@ function TransactionHistory() {
 										</TableCell>
 										<TableCell>{row?.title}</TableCell>
 										<TableCell>{row?.description}</TableCell>
-										<TableCell>{row?.amount}</TableCell>
+										<TableCell>{row?.amount.toLocaleString()}</TableCell>
 										<TableCell>
 											{row.type ? (
 												<Chip

@@ -40,7 +40,7 @@ export default function PaymentDetail({
 	const [page, setPage] = useState(0)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 
-	console.log(paymentDataDetail)
+	console.log(paymentDetailFilter)
 
 	const paymentFormObj = {
 		cash: { color: 'primary', label: 'Thanh toán tiền mặt' },
@@ -164,7 +164,7 @@ export default function PaymentDetail({
 											sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}
 										>
 											<TableCell>{row?.firstname + ' ' + row.lastname}</TableCell>
-											<TableCell>{row?.amount}</TableCell>
+											<TableCell>{row?.amount.toLocaleString()}</TableCell>
 											<TableCell>
 												{row?.status ? (
 													<Chip

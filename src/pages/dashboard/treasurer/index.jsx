@@ -50,10 +50,11 @@ function Treasurer() {
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [userData, setUserData] = useState()
 	const [paymentData, setPaymentData] = useState([])
-	const [paymentDataDetail, setPaymentDataDetail] = useState()
+	const [paymentDataDetail, setPaymentDataDetail] = useState([])
 	const [paymentDataFilter, setPaymentDataFilter] = useState([])
 	const [filter, setFilter] = useState('all')
 	const [loading, setLoading] = useState(true)
+	const [balance, setBalance] = useState()
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -72,11 +73,34 @@ function Treasurer() {
 		setOpenAddExpenseDialog(true)
 	}
 
+	// Tính tổng của items.amount với items.status='in'
+	var totalInAmount = paymentData.reduce(function (sum, item) {
+		if (item?.type == 'in') {
+			return sum + item.amount
+		}
+
+		return sum
+	}, 0)
+
+	// Tính tổng của items.amount với items.status='out'
+	var totalOutAmount = paymentData.reduce(function (sum, item) {
+		if (item?.type == 'out') {
+			return sum + item.amount
+		}
+
+		return sum
+	}, 0)
+
+	const difference = totalInAmount - totalOutAmount
+
 	const handleClose = () => {
 		setOpenAddCategoryDialog(false)
 		setOpenAddExpenseDialog(false)
 		setOpenPaymentDetailDialog(false)
 		dispatch({ type: 'trigger' })
+		setBalance(difference)
+		console.log(balance)
+		updateBalance()
 	}
 
 	const handleChangePage = (event, newPage) => {
@@ -116,6 +140,23 @@ function Treasurer() {
 			.catch(error => console.error('Error:', error))
 	}
 
+	const updateBalance = () => {
+		fetch(
+			`http://localhost:8080/payment?action=update-balance&clubId=${cookies['clubData']?.clubId}&balance=${balance}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
+			}
+		)
+			.then(function (response) {
+				return response.json()
+			})
+
+			.catch(error => console.error('Error:', error))
+	}
+
 	useEffect(() => {
 		fetch(`http://localhost:8080/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`, {
 			method: 'GET',
@@ -129,9 +170,10 @@ function Treasurer() {
 			.then(function (data) {
 				setPaymentData(data)
 				setLoading(false)
+				setBalance(difference)
 			})
 			.catch(error => console.error('Error:', error))
-	}, [cookies, state])
+	}, [cookies, state, difference])
 
 	useEffect(() => {
 		switch (filter) {
@@ -215,7 +257,7 @@ function Treasurer() {
 							</Select>
 						</FormControl>
 					</Container>
-
+					<Chip label={'Số dư: ' + balance?.toLocaleString()} color='primary' sx={{ marginRight: 5 }} />
 					<TextField
 						placeholder='Tìm kiếm...'
 						size='small'
@@ -247,7 +289,7 @@ function Treasurer() {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{paymentDataFilter.map(row => (
+								{paymentDataFilter?.map(row => (
 									<TableRow
 										hover
 										key={row.id}
@@ -274,7 +316,7 @@ function Treasurer() {
 										</TableCell>
 										<TableCell>{row?.title}</TableCell>
 										<TableCell>{row?.description}</TableCell>
-										<TableCell>{row?.amount}</TableCell>
+										<TableCell>{row?.amount.toLocaleString()}</TableCell>
 										<TableCell>
 											{row.type ? (
 												<Chip

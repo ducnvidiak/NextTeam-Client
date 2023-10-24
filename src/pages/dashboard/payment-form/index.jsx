@@ -111,7 +111,7 @@ function PaymentForm() {
 										</Grid>
 										<Grid item xs={2} md={2}>
 											<Typography variant='body1' style={{ fontWeight: 'bold' }}>
-												Số tiền: {row?.amount}
+												Số tiền: {row?.amount.toLocaleString()}
 											</Typography>
 										</Grid>
 										<Grid item xs={2} md={2}>

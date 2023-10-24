@@ -123,7 +123,7 @@ function PaymentResult() {
 						Mã giao dịch thanh toán: {router?.query?.vnp_TxnRef}
 					</Typography>
 					<Typography variant='subtitle2' gutterBottom>
-						Số tiền: {parseInt(router?.query?.vnp_Amount, 10) / 100}
+						Số tiền: {(parseInt(router?.query?.vnp_Amount, 10) / 100).toLocaleString()}
 					</Typography>
 					<Typography variant='subtitle2' gutterBottom>
 						Mô tả giao dịch: {router?.query?.vnp_OrderInfo}

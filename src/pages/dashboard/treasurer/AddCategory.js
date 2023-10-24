@@ -31,6 +31,7 @@ export default function AddCategory({
 			})
 			.then(function (data) {
 				toast.success('Thêm khoản nộp mới thành công')
+				setCategory('')
 				handleClose()
 			})
 			.catch(error => {
