@@ -32,6 +32,8 @@ import ClubCategory from 'src/components/ClubCategory'
 import moment from 'moment'
 import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
+import { useRouter } from 'next/router'
+import RegisterClub from './RegisterClub'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -46,6 +48,8 @@ const VisuallyHiddenInput = styled('input')({
 })
 
 function ClubItem({ club, index }) {
+	const router = useRouter()
+
 	const [open, setOpen] = useState(false)
 	const [department, setDepartment] = useState([])
 	const [loading, setLoading] = useState(false)
@@ -56,33 +60,17 @@ function ClubItem({ club, index }) {
 	const [clubId, setClubId] = useState()
 	const [cv, setCv] = useState()
 	const [userId, setUserId] = useState()
+
 	useEffect(() => {
 		;(async () => setUserId((await getUserInfo(cookies['userData'])).id))()
 	}, [cookies])
 
-	const handleUpload = () => {
-		const formData = new FormData()
-
-		formData.append('cvUrl', cv)
-
-		axios
-			.post(
-				`http://localhost:8080/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}`,
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data'
-					}
-				}
-			)
-			.then(response => {
-				console.log(response.data) // Xử lý phản hồi từ server (nếu cần)
-				handleClose()
-			})
-			.catch(error => {
-				console.error(error)
-			})
+	const handleClick = () => {
+		console.log('a')
+		router.push(`/clubs/${club.subname}`)
 	}
+
+	
 
 	const callAPIDepartment = async clubId => {
 		try {
@@ -97,9 +85,13 @@ function ClubItem({ club, index }) {
 	}
 
 	const handleClickOpen = clubId => {
-		setClubId(clubId)
-		callAPIDepartment(clubId)
-		setOpen(true)
+		if (userId) {
+			setClubId(clubId)
+			callAPIDepartment(clubId)
+			setOpen(true)
+		} else {
+			router.push('/auth/login')
+		}
 	}
 
 	const handleClose = () => {
@@ -112,70 +104,21 @@ function ClubItem({ club, index }) {
 		setAge(event.target.value)
 	}
 
+	const dateString = club.createdAt
+
+	// Create Date object from the string
+	const date = new Date(dateString)
+
+	// Define options for toLocaleDateString
+	const options = { year: 'numeric', month: 'short', day: 'numeric' }
+
+	// Format the date
+	const formattedDate = date.toLocaleDateString('en-US', options)
+
 	return (
 		<>
-			<Dialog
-				open={open}
-				onClose={handleClose}
-				aria-labelledby='alert-dialog-title'
-				aria-describedby='alert-dialog-description'
-			>
-				<DialogTitle id='alert-dialog-title'>Đăng ký tham gia câu lạc bộ</DialogTitle>
-				<DialogContent>
-					<DialogContentText id='alert-dialog-description' marginBottom={2}>
-						Vui lòng điền những thông tin bên dưới để đăng ký tham gia vào câu lạc bộ này
-					</DialogContentText>
-					<Box sx={{ maxWidth: '50%', marginBottom: 2 }}>
-						<Autocomplete
-							id='sendTo'
-							fullWidth
-							options={department}
-							autoHighlight
-							getOptionLabel={option => option.name}
-							onChange={event => setDepartmentId(event.target.value)}
-							renderOption={(props, option) => (
-								<Box
-									component='li'
-									sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
-									{...props}
-									value={option.id}
-								>
-									{option.name}
-								</Box>
-							)}
-							renderInput={params => (
-								<TextField
-									{...params}
-									label='Ban đăng ký'
-									inputProps={{
-										...params.inputProps,
-										autoComplete: 'new-password' // disable autocomplete and autofill
-									}}
-								/>
-							)}
-						/>
-					</Box>
-					<Typography marginBottom={1}>Chọn CV: </Typography>
-					<Button
-						component='label'
-						variant='contained'
-						startIcon={<CloudUploadIcon />}
-						sx={{ marginBottom: 2 }}
-					>
-						Upload file
-						<VisuallyHiddenInput type='file' onChange={e => setCv(e.target.files[0])} />
-					</Button>
-					{/* <Typography marginBottom={1}>Chọn Ban tham gia:</Typography> */}
-				</DialogContent>
-				<DialogActions>
-					<Button variant='contained' onClick={handleUpload}>
-						Xác nhận
-					</Button>
-					<Button variant='outlined' onClick={handleClose}>
-						Hủy
-					</Button>
-				</DialogActions>
-			</Dialog>
+			<RegisterClub clubId={clubId} userId={userId} isOpen={open} handleClose={handleClose} />
+
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'5%'}>
 					<Typography variant='h5'>{index + 1}.</Typography>
@@ -220,26 +163,28 @@ function ClubItem({ club, index }) {
 								<Groups2Icon></Groups2Icon>
 								<Typography variant='body1'>{club.numberOfMembers} thành viên</Typography>
 							</Box>
+
 							<Box sx={{ display: 'flex', gap: 4 }}>
 								<CakeIcon></CakeIcon>
-								<Typography variant='body1'>
-									{moment(club.createAt).subtract(0, 'days').calendar()}
-								</Typography>
+
+								<Typography variant='body1'>{formattedDate}</Typography>
 							</Box>
 						</Stack>
 
 						<Stack direction={'row'} gap={4}>
-							<Link href={`http://localhost:3000/clubs/${club.subname}`} passHref>
-								<Button variant='contained' sx={{ marginTop: 4, width: '50%' }}>
-									Xem chi tiết
-								</Button>
-							</Link>
+							{/* <Link passHref href={`${club.subname}`}> */}
+							<Button onClick={handleClick} variant='contained' sx={{ marginTop: 4, width: '50%' }}>
+								Xem chi tiết
+							</Button>
+							{/* </Link> */}
+
 							{club?.isJoined ? (
 								<Button
 									variant='outlined'
 									color='secondary'
 									sx={{ marginTop: 4, width: '50%' }}
 									onClick={() => handleClickOpen(club.id)}
+									disabled
 								>
 									Đã tham gia
 								</Button>
@@ -273,8 +218,14 @@ function ClubList() {
 		if (userData)
 			try {
 				setLoading(true)
-				const res = await getAPI(`http://localhost:8080/api/club?cmd=list-res&userId=${userData?.id}`)
-				setClubs(res)
+				const uid = userData?.id
+				if (uid == undefined) {
+					const res = await getAPI(`http://localhost:8080/api/club?cmd=list-res`)
+					setClubs(res)
+				} else {
+					const res = await getAPI(`http://localhost:8080/api/club?cmd=list-res&userId=${userData?.id}`)
+					setClubs(res)
+				}
 			} catch (error) {
 				console.log(error)
 			} finally {
