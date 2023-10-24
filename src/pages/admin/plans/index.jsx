@@ -200,7 +200,9 @@ function PlanListPage() {
 								borderRadius: '1000px',
 								backgroundColor: 'orange'
 							}}
-						></div>
+						>
+							{' '}
+						</div>
 					</a>
 				</Paper>
 			</Modal>
