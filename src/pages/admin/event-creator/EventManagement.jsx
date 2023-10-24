@@ -61,7 +61,11 @@ function EventManagement({ openEventManagememntModal, setOpenEventManagememntMod
 					<Tab value='2' label='Danh sách đăng ký' />
 				</TabList>
 				<TabPanel value='1'>
-					<EventOverView event={event} setEventList={setEventList} setOpenEventManagememntModal={setOpenEventManagememntModal}></EventOverView>
+					<EventOverView
+						event={event}
+						setEventList={setEventList}
+						setOpenEventManagememntModal={setOpenEventManagememntModal}
+					></EventOverView>
 				</TabPanel>
 				<TabPanel value='2'>
 					<RegisteredTable event={event}></RegisteredTable>

@@ -1,35 +1,27 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
 import {
 	Autocomplete,
-	Avatar,
 	Box,
 	Card,
 	CardContent,
 	CardHeader,
-	Chip,
-	FormControl,
 	Grid,
-	InputLabel,
-	MenuItem,
-	Select,
 	Stack,
 	TextField,
-	Typography
+	Typography,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle
 } from '@mui/material'
 import Link from 'next/link'
 
-import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { styled, useTheme } from '@mui/material/styles'
 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
@@ -66,8 +58,7 @@ export default function CreateInterview({
 	handleClose,
 	openCreateInterviewDialog,
 	setOpenCreateInterviewDialog,
-	dispatch,
-	statusObj
+	dispatch
 }) {
 	// ** Hook
 	const theme = useTheme()
@@ -180,47 +171,14 @@ export default function CreateInterview({
 					<strong>
 						Tạo lịch phỏng vấn cho {applicationDetail?.user?.firstname} {applicationDetail?.user?.lastname}
 					</strong>
-					<div>
-						<span>
-							<Chip
-								color={statusObj[applicationDetail?.engagement.status]?.color}
-								label={statusObj[applicationDetail?.engagement.status]?.label}
-								sx={{
-									height: 24,
-									fontSize: '0.75rem',
-									textTransform: 'capitalize',
-									'& .MuiChip-label': { fontWeight: 500 }
-								}}
-							/>
-						</span>
-						<span>
-							<Chip
-								icon={<AccessAlarmIcon />}
-								label={applicationDetail?.engagement.createdAt}
-								sx={{
-									height: 24,
-									fontSize: '0.75rem',
-									textTransform: 'capitalize',
-									'& .MuiChip-label': { fontWeight: 500 },
-									marginLeft: 2
-								}}
-								color='secondary'
-							/>
-						</span>
-					</div>
 				</DialogTitle>
 
 				<DialogContent>
 					<DialogContentText>
 						<Grid container spacing={6}>
 							<Grid item xs={12} md={4}>
-								<Card sx={{ position: 'relative' }}>
+								<Card sx={{ position: 'relative' }} variant='outlined'>
 									<CardContent>
-										<Avatar
-											sx={{ width: '50%', height: '50%' }}
-											alt={applicationDetail?.user.username}
-											src={applicationDetail?.user.avatarURL}
-										/>
 										<Typography variant='h6'>
 											{applicationDetail?.user.firstname} {applicationDetail?.user.lastname}
 										</Typography>
@@ -231,7 +189,7 @@ export default function CreateInterview({
 										<TriangleImg alt='triangle background' src={`/images/misc/${imageSrc}`} />
 									</CardContent>
 								</Card>
-								<Card sx={{ position: 'relative', marginTop: 5 }}>
+								<Card sx={{ position: 'relative', marginTop: 5 }} variant='outlined'>
 									<CardHeader title='Thông tin cơ bản' />
 									<CardContent>
 										<Typography variant='body1'>
@@ -253,7 +211,11 @@ export default function CreateInterview({
 										<Typography variant='body1'>
 											<strong>Facebook: </strong>
 											{applicationDetail?.user.facebookUrl ? (
-												<Link passHref target='_blank' href={`${applicationDetail?.user.facebookUrl}`}>
+												<Link
+													passHref
+													target='_blank'
+													href={`${applicationDetail?.user.facebookUrl}`}
+												>
 													<Button>Truy cập</Button>
 												</Link>
 											) : (
@@ -262,7 +224,7 @@ export default function CreateInterview({
 										</Typography>
 									</CardContent>
 								</Card>
-								<Card sx={{ marginTop: 5 }}>
+								<Card sx={{ marginTop: 5 }} variant='outlined'>
 									<CardHeader title='Thông tin ứng tuyển' />
 									<CardContent>
 										<Typography variant='body1'>
@@ -281,7 +243,7 @@ export default function CreateInterview({
 								</Card>
 							</Grid>
 							<Grid item xs={12} md={8}>
-								<Card>
+								<Card variant='outlined'>
 									<CardHeader title='Tạo lịch phỏng vấn' />
 									<CardContent>
 										<LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -289,18 +251,15 @@ export default function CreateInterview({
 												<DatePicker
 													disablePast
 													label='Ngày'
-													slotProps={{
-														textField: {
-															helperText: 'MM/DD/YYYY'
-														}
-													}}
 													onChange={handleDateChange}
 													sx={{ flex: 1 }}
+													required
 												/>
 												<TimePicker
 													sx={{ flex: 1 }}
 													label='Bắt đầu'
 													onChange={handleStartTimeChange}
+													required
 
 													// defaultValue={dayjs('2022-04-17T15:30')}
 												/>
@@ -308,12 +267,14 @@ export default function CreateInterview({
 													sx={{ flex: 1 }}
 													label='Kết thúc'
 													onChange={handleEndTimeChange}
+													required
 
 													// defaultValue={dayjs('2022-04-17T20:30')}
 												/>
 											</Stack>
 										</LocalizationProvider>
 										<Autocomplete
+											sx={{ marginTop: 5 }}
 											id='location'
 											fullWidth
 											options={locationList}
@@ -351,12 +312,6 @@ export default function CreateInterview({
 											rows={10}
 											onChange={event => setInterview({ ...interview, note: event.target.value })}
 										/>
-										<DialogActions>
-											<Button variant='contained' onClick={handleSubmit}>
-												Xác nhận
-											</Button>
-											<Button variant='outlined'>Hủy</Button>
-										</DialogActions>
 									</CardContent>
 								</Card>
 							</Grid>
@@ -364,6 +319,9 @@ export default function CreateInterview({
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
+					<Button variant='contained' onClick={handleSubmit}>
+						Xác nhận
+					</Button>
 					<Button onClick={handleClose}>Đóng</Button>
 				</DialogActions>
 			</Dialog>

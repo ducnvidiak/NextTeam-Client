@@ -54,7 +54,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	const [open, setOpen] = useState(false)
 	const [userData, setUserData] = useState()
 	const [isShowModal, setIsShowModal] = useState(false)
-	const [fileName, setFileName] = useState("")
+	const [fileName, setFileName] = useState('')
 
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
@@ -63,18 +63,18 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	const [newEvent, setNewEvent] = useState({
 		...event,
 		startTime: event?.startTime,
-		endTime: event.endTime,
+		endTime: event?.endTime,
 		locationId: locationList.filter((item, index) => {
 			return item.name == event?.locationName
 		})[0]?.id
 	})
-	console.log("newEvent");
-	console.log(newEvent);
+	console.log('newEvent')
+	console.log(newEvent)
 
 	const handleDateChange = date => {
 		const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm')
 		const startString = `${formattedDate.substring(0, 11)}T${newEvent?.startTime.slice(-5)}`
-		const endString = `${formattedDate.substring(0, 11)}T${newEvent.endTime.slice(-5)}`
+		const endString = `${formattedDate.substring(0, 11)}T${newEvent?.endTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
 			startTime: startString,
@@ -151,8 +151,8 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				body: JSON.stringify({
 					...newEvent,
 					startTime: new Date(convertToTimestamp(newEvent?.startTime)),
-					endTime: new Date(convertToTimestamp(newEvent.endTime)),
-					registeredBy: userData?.id,
+					endTime: new Date(convertToTimestamp(newEvent?.endTime)),
+					registeredBy: userData?.id
 
 					// clubId: userData?.clubId
 				}),
@@ -235,13 +235,13 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 			setNewEvent({
 				...event,
 				startTime: convertFormat(event?.startTime),
-				endTime: convertFormat(event.endTime),
+				endTime: convertFormat(event?.endTime),
 				locationId: locationList.filter((item, index) => {
 					return item.name == event?.locationName
 				})[0]?.id
 			})
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [locationList])
 
 	return (

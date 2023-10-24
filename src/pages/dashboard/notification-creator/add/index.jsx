@@ -165,8 +165,7 @@ function NotificationCreator() {
 					setClubMember(data)
 				})
 				.catch(error => console.error('Error:', error))
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [clubData])
+	}, [clubData, cookies])
 
 	return (
 		<Grid item xs={12}>

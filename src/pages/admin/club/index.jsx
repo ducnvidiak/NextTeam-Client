@@ -40,8 +40,6 @@ function Club() {
 	const [clubs, setClubs] = useState([])
 	const [open, setOpen] = useState(false)
 	const [selectedCategory, setSelectedCategory] = useState('')
-	
-	console.log(selectedCategory);
 
 	const initValid = {
 		name: false,
@@ -160,8 +158,6 @@ function Club() {
 				pauseOnHover: true,
 				draggable: true
 			})
-
-			return
 		}
 
 		const url_fetch =
@@ -246,8 +242,6 @@ function Club() {
 				pauseOnHover: true,
 				draggable: true
 			})
-
-			return
 		}
 
 		const url_fetch =

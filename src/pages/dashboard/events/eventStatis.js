@@ -23,7 +23,7 @@ const EventList = props => {
 		<Card sx={{ position: 'relative' }}>
 			<CardContent>
 				<Typography variant='h6'>Số lượng sự kiện </Typography>
-				<Typography variant='h6'>{props.data?.total_event} </Typography>
+				<Typography variant='h6'>{props?.data?.total_event} </Typography>
 
 				<Grid container space={5}>
 					<Grid item xs={12} md={6}>

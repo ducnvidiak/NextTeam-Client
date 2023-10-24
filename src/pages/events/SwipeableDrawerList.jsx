@@ -104,7 +104,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 									Tại
 								</Typography>
 								<Typography variant='body1' fontWeight={600}>
-									{event.locationName}
+									{event?.locationName}
 								</Typography>
 							</Box>
 						</Box>

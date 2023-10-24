@@ -31,7 +31,7 @@ function Department() {
 	const [updateData, setUpdateData] = useState(false)
 	const loadDataUrl = ORIGIN_URL + '?action=list-dept&clubId=' + cookies['clubData']?.clubId
 	console.log(loadDataUrl)
-	
+
 	const [validationErrors, setValidationErrors] = useState({
 		name: false
 	})
@@ -54,8 +54,7 @@ function Department() {
 				})
 				.catch(error => console.error('Error:', error))
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [cookies, updateData, departments])
+	}, [cookies, updateData, departments, loadDataUrl])
 
 	const [departmentToDelete, setDepartmentToDelete] = useState(null)
 
@@ -74,7 +73,7 @@ function Department() {
 					if (!res.ok) {
 						throw new Error('Something went wrong')
 					}
-					
+
 					return res.json()
 				})
 				.then(data => {
@@ -111,8 +110,6 @@ function Department() {
 		// Kiểm tra xem tên phòng ban có được nhập không
 		if (!newDepartmentName) {
 			setValidationErrors({ name: true })
-
-			return
 		}
 
 		// Handle the creation of the department here, for example, make an API call.
@@ -221,7 +218,7 @@ function Department() {
 		// Sau khi cập nhật xong, đóng dialog
 		setOpenEditDialog(false)
 	}
-	
+
 	return (
 		<div>
 			<Typography>Danh Sách Phòng Ban Câu Lạc Bộ</Typography>

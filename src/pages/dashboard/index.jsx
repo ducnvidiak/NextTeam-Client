@@ -33,20 +33,18 @@ const Dashboard = () => {
 	const [data, setData] = useState([])
 	const clubId = cookies['clubData']?.clubId
 
-	const refreshData = () => {
-		fetch(`${ORIGIN_URL}${clubId}`)
-			.then(res => res.json())
-			.then(result => {
-				setData(result)
-				console.log(result)
-			})
-	}
-
 	useEffect(() => {
+		const refreshData = () => {
+			fetch(`${ORIGIN_URL}${clubId}`)
+				.then(res => res.json())
+				.then(result => {
+					setData(result)
+					console.log(result)
+				})
+		}
 		refreshData()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [cookies])
-	
+	}, [cookies, clubId])
+
 	return (
 		<ApexChartWrapper>
 			<Grid container spacing={6}>
@@ -77,7 +75,7 @@ const Dashboard = () => {
 						</Grid>
 						<Grid item xs={6}>
 							<CardStatisticsVerticalComponent
-								stats={data.activity_point}
+								stats={data?.activity_point}
 								title='Điểm Hoạt Động'
 								trend='negative'
 								color='secondary'

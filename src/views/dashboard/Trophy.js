@@ -10,13 +10,13 @@ const COLORS = ['#f27123', '#61a330', '#2b2827']
 
 const Trophy = props => {
 	const data = [
-		{ name: 'Đang hoạt động', value: props.data?.total_mem_active },
-		{ name: 'Đã rời đi', value: props.data.total_mem_out },
-		{ name: 'Bị cấm', value: props.data.total_mem_ban }
+		{ name: 'Đang hoạt động', value: props?.data?.total_mem_active },
+		{ name: 'Đã rời đi', value: props?.data?.total_mem_out },
+		{ name: 'Bị cấm', value: props?.data?.total_mem_ban }
 	]
-	const act = (props.data?.total_mem_active * 100) / props.data.total_mem
-	const out = (props.data.total_mem_out * 100) / props.data.total_mem
-	const ban = (props.data.total_mem_ban * 100) / props.data.total_mem
+	const act = (props?.data?.total_mem_active * 100) / props?.data?.total_mem
+	const out = (props?.data?.total_mem_out * 100) / props?.data?.total_mem
+	const ban = (props?.data?.total_mem_ban * 100) / props?.data?.total_mem
 
 	const handleButtonClick = () => {
 		window.location.href = '/dashboard/members'

@@ -75,15 +75,11 @@ export const dashboardLayoutVavigation = () => {
 			path: '/dashboard/payment-form'
 		},
 		{
-			title: 'Lịch sử giao dịch',
+			title: 'Quản lý quỹ',
 			path: '/dashboard/transaction-history',
 			icon: HistoryIcon
 		},
-		{
-			title: 'Chi tiêu CLB',
-			icon: MonetizationOnIcon,
-			path: '/dashboard/expense-details'
-		},
+
 		{
 			sectionTitle: 'Tài liệu'
 		},
@@ -101,7 +97,7 @@ export const dashboardLayoutVavigation = () => {
 			sectionTitle: 'Quản lý'
 		},
 		{
-			title: 'Thủ quỹ',
+			title: 'Quản lý quỹ',
 			icon: PriceChangeIcon,
 			path: '/dashboard/treasurer'
 		},
@@ -111,12 +107,12 @@ export const dashboardLayoutVavigation = () => {
 			path: '/dashboard/attendances'
 		},
 		{
-			title: 'Duyệt thành viên',
+			title: 'Quản lý thành viên',
 			icon: HowToRegIcon,
 			path: '/dashboard/member-approval'
 		},
 		{
-			title: 'Thông báo',
+			title: 'Quản lý thông báo',
 			icon: NotificationAddIcon,
 			path: '/dashboard/notification-creator'
 		},

@@ -17,6 +17,7 @@ import MuiMenu from '@mui/material/Menu'
 import MuiAvatar from '@mui/material/Avatar'
 import MuiMenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
+import Badge from '@mui/material/Badge'
 
 // ** Icons Imports
 import BellOutline from 'mdi-material-ui/BellOutline'
@@ -24,6 +25,7 @@ import BellOutline from 'mdi-material-ui/BellOutline'
 // ** Third Party Components
 import PerfectScrollbarComponent from 'react-perfect-scrollbar'
 import { getUserInfo } from 'src/utils/info'
+import NotificationDetail from 'src/pages/dashboard/notifications/NotificationDetail'
 
 // ** Styled Menu component
 const Menu = styled(MuiMenu)(({ theme }) => ({
@@ -92,6 +94,28 @@ const NotificationDropdown = () => {
 	const router = useRouter()
 	const [notificationsData, setNotificationsData] = useState([])
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
+	const [notificationDetail, setNotificationDetail] = useState()
+
+	//modal
+	const [open, setOpen] = useState(false)
+	const [scroll, setScroll] = useState('paper')
+
+	function handleClickOpen(id, title, content, type, createdAt, hasSeen) {
+		setNotificationDetail({
+			id: id,
+			title: title,
+			content: content,
+			type: type,
+			createdAt: createdAt
+		})
+		setOpen(true)
+		updateView(id, type, hasSeen)
+	}
+
+	const handleClose = () => {
+		setOpen(false)
+	}
+
 	const [countUnview, setCountUnview] = useState(0)
 	const [userData, setUserData] = useState()
 	useEffect(() => {
@@ -128,12 +152,13 @@ const NotificationDropdown = () => {
 	}
 
 	const statusObj = {
-		private: { color: 'primary' },
-		public: { color: 'success' }
+		private: { color: 'primary', label: 'Cá nhân' },
+		public: { color: 'success', label: 'CLB' },
+		wide: { color: 'warning', label: 'Chung' }
 	}
 
 	useEffect(() => {
-		if (userData)
+		if (cookies['clubData'] != null) {
 			fetch(
 				'http://localhost:8080/notification?action=list-10-noti&clubId=' +
 					cookies['clubData']?.clubId +
@@ -145,15 +170,73 @@ const NotificationDropdown = () => {
 						'Content-type': 'application/json; charset=UTF-8'
 					}
 				}
-		)
-			.then(function (response) {
-				return response.json()
+			)
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					setNotificationsData(data)
+				})
+				.catch(error => console.error('Error:', error))
+		} else {
+			fetch('http://localhost:8080/notification?action=list-wide-noti', {
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			})
-			.then(function (data) {
-				setNotificationsData(data)
-			})
-			.catch(error => console.error('Error:', error))
-	}, [cookies, userData, state])
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					setNotificationsData(data)
+					console.log(notificationsData)
+				})
+				.catch(error => console.error('Error:', error))
+		}
+	}, [cookies, userData, state, notificationsData])
+
+	const updateView = (id, type, hasSeen) => {
+		if (hasSeen == 0) {
+			if (type == 'private') {
+				fetch('http://localhost:8080/notification?action=update-view-private-email&id=' + id, {
+					method: 'GET',
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				})
+					.then(function (response) {
+						return response.json()
+					})
+					.then(function (data) {
+						console.log(data)
+						dispatch({ type: 'trigger' })
+					})
+					.catch(error => console.error('Error:', error))
+			} else {
+				fetch(
+					'http://localhost:8080/notification?action=update-view-public-email&id=' +
+						id +
+						'&userId=' +
+						userData.id,
+					{
+						method: 'GET',
+						headers: {
+							'Content-type': 'application/json; charset=UTF-8'
+						}
+					}
+				)
+					.then(function (response) {
+						return response.json()
+					})
+					.then(function (data) {
+						console.log(data)
+						dispatch({ type: 'trigger' })
+					})
+					.catch(error => console.error('Error:', error))
+			}
+		}
+	}
 
 	return (
 		<Fragment>
@@ -163,8 +246,11 @@ const NotificationDropdown = () => {
 				onClick={handleDropdownOpen}
 				aria-controls='customized-menu'
 			>
-				<BellOutline />
+				<Badge badgeContent={countUnview} color='primary'>
+					<BellOutline />
+				</Badge>
 			</IconButton>
+
 			<Menu
 				anchorEl={anchorEl}
 				open={Boolean(anchorEl)}
@@ -183,6 +269,13 @@ const NotificationDropdown = () => {
 						/>
 					</Box>
 				</MenuItem>
+				<NotificationDetail
+					notificationDetail={notificationDetail}
+					handleClickOpen={handleClickOpen}
+					open={open}
+					setOpen={setOpen}
+					handleClose={handleClose}
+				></NotificationDetail>
 				<ScrollWrapper>
 					{notificationsData.map(notification => {
 						return (
@@ -196,23 +289,45 @@ const NotificationDropdown = () => {
 											overflow: 'hidden',
 											flexDirection: 'column'
 										}}
+										onClick={() =>
+											handleClickOpen(
+												notification?.id,
+												notification?.title,
+												notification?.content,
+												notification?.type,
+												notification?.createdAt,
+												notification?.hasSeen
+											)
+										}
 									>
 										<MenuItemTitle>{notification.title}</MenuItemTitle>
 										<MenuItemSubtitle variant='caption'>
 											<span>
-												<Chip
-													label={notification.type == 'private' ? 'TB Cá nhân' : 'TB Chung'}
-													color={statusObj[notification.type]?.color}
-													sx={{
-														height: 20,
-														fontSize: '0.5rem',
-														textTransform: 'capitalize',
-														'& .MuiChip-label': { fontWeight: 500 },
-														marginRight: 2
-													}}
-												/>
+												{notification.type ? (
+													<Chip
+														label={statusObj?.[notification.type]?.label}
+														color={statusObj?.[notification.type]?.color}
+														sx={{
+															height: 24,
+															fontSize: '0.75rem',
+															textTransform: 'capitalize',
+															'& .MuiChip-label': { fontWeight: 500 }
+														}}
+													/>
+												) : (
+													<Chip
+														label='Chung'
+														color='warning'
+														sx={{
+															height: 24,
+															fontSize: '0.75rem',
+															textTransform: 'capitalize',
+															'& .MuiChip-label': { fontWeight: 500 }
+														}}
+													/>
+												)}
 											</span>
-											{notification.createdAt}
+											{' ' + notification.createdAt}
 										</MenuItemSubtitle>
 									</Box>
 									<Typography variant='caption' sx={{ color: 'text.disabled' }}></Typography>
@@ -225,9 +340,13 @@ const NotificationDropdown = () => {
 					disableRipple
 					sx={{ py: 3.5, borderBottom: 0, borderTop: theme => `1px solid ${theme.palette.divider}` }}
 				>
-					<Button fullWidth variant='contained' onClick={() => router.push('/dashboard/notifications')}>
-						Xem chi tiết thông báo
-					</Button>
+					{cookies['clubData'] != null ? (
+						<Button fullWidth variant='contained' onClick={() => router.push('/dashboard/notifications')}>
+							Xem chi tiết thông báo
+						</Button>
+					) : (
+						''
+					)}
 				</MenuItem>
 			</Menu>
 		</Fragment>

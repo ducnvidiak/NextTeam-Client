@@ -138,10 +138,10 @@ const TableStickyHeader = props => {
 	}, [clubs])
 
 	useEffect(() => {
-		  const newRows = clubs.map(club => {
-        const balanceNumber = parseFloat(club.balance);
-        const balanceFormatted = balanceNumber.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-		
+		const newRows = clubs.map(club => {
+			const balanceNumber = parseFloat(club.balance)
+			const balanceFormatted = balanceNumber.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+
 			return createData(
 				club.id,
 				club.name,

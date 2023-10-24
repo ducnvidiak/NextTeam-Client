@@ -10,10 +10,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn'
 
 import Link from 'next/link'
 
-function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer, setOpenFeedbackModal }) {
-    const handleFeedbackClick = () => {
-        setOpenFeedbackModal(true);
-    }
+function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer = () => {}, setOpenFeedbackModal }) {
+	const handleFeedbackClick = () => {
+		setOpenFeedbackModal(true)
+	}
 
 	return (
 		<>
@@ -91,7 +91,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 									Tại
 								</Typography>
 								<Typography variant='body1' fontWeight={600}>
-									{event.locationName}
+									{event?.locationName}
 								</Typography>
 							</Box>
 						</Box>

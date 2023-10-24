@@ -28,6 +28,8 @@ import { validateEmail, validateName } from '../../input-validation/index'
 import { ConsoleLine } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
 
+import { useSettings } from 'src/@core/hooks/useSettings'
+
 const ImgStyled = styled('img')(({ theme }) => ({
 	width: 120,
 	height: 120,
@@ -53,15 +55,17 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 }))
 
 const TabAccount = ({ userInfo, setUserInfo }) => {
+	const { settings, saveSettings } = useSettings()
+
 	// ** State
 	const [openAlert, setOpenAlert] = useState(false)
 
 	const [imgSrc, setImgSrc] = useState('')
 	const [currentUserInfo, setCurrentUserInfo] = useState({ ...userInfo })
 
-	const [firstnameError, setFirstnameError] = useState(false)
-	const [lastnameError, setLastnameError] = useState(false)
-	const [emailError, setEmailError] = useState(false)
+	const [firstnameError, setFirstnameError] = useState({ status: false, message: '' })
+	const [lastnameError, setLastnameError] = useState({ status: false, message: '' })
+	const [emailError, setEmailError] = useState({ status: false, message: '' })
 
 	useEffect(() => {
 		setCurrentUserInfo({ ...userInfo })
@@ -80,38 +84,48 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 		event.preventDefault()
 		if (imgSrc != '')
 			updateUserAvatar(imgSrc, userInfo?.id).then(response => {
+				const avatarURL = response.avatarURL
+
 				if (response.message == 'success') {
-					setUserInfo({ ...currentUserInfo })
-					toast.success('Success upload avatar!', {
-						position: toast.POSITION.TOP_RIGHT
-					})
+					setTimeout(() => {
+						setImgSrc('')
+						setUserInfo({ ...currentUserInfo, avatarURL: `${avatarURL}?${Date.now()}` })
+						toast.success('Success upload avatar!', {
+							position: toast.POSITION.TOP_RIGHT
+						})
+						saveSettings(settings => ({ ...settings, avatarURL: `${avatarURL}?${Date.now()}` }))
+					}, 3000)
 				} else {
 					toast.error('Fail to upload avatar!')
 				}
-				console.log('update avatar: ', response)
 			})
 
-		updateUserInfo(currentUserInfo).then(response => {
-			if (response.message == 'success') {
-				setUserInfo({ ...currentUserInfo })
-				toast.success('Success change info!', {
-					position: toast.POSITION.TOP_RIGHT
-				})
-			} else {
-				toast.error('Fail to change info!')
-			}
-			console.log('update info: ', response)
-		})
+		if (lastnameError.status || firstnameError.status || emailError.status) {
+			toast.error('Vui lòng điền thông tin còn thiếu.')
+		} else {
+			updateUserInfo(currentUserInfo).then(response => {
+				if (response.message == 'success') {
+					setUserInfo({ ...currentUserInfo })
+					toast.success('Success change info!', {
+						position: toast.POSITION.TOP_RIGHT
+					})
+				} else {
+					toast.error('Fail to change info!')
+				}
+			})
+		}
 	}
 
 	const handleResetAvatar = event => {
 		event.preventDefault()
+
 		setImgSrc('')
 		setUserInfo({ ...userInfo, avatarURL: userInfo.avatarURL })
 	}
 
 	const handleResetAccountInfo = event => {
 		event.preventDefault()
+
 		setEmailError(false)
 		setFirstnameError(false)
 		setLastnameError(false)
@@ -140,7 +154,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 									variant='contained'
 									htmlFor='account-settings-upload-image'
 								>
-									Upload New Photo
+									Tải ảnh đại diện
 									<input
 										hidden
 										type='file'
@@ -150,10 +164,11 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 									/>
 								</ButtonStyled>
 								<ResetButtonStyled color='error' variant='outlined' onClick={handleResetAvatar}>
-									Reset
+									Hủy
 								</ResetButtonStyled>
 								<Typography variant='body2' sx={{ marginTop: 5 }}>
-									Allowed PNG or JPEG. Max size of 800K.
+									Cho phép PNG hoặc JPEG.{' '}
+									<span style={{ color: 'grey', fontSize: '12px' }}>(kích thước tối đa 800K)</span>
 								</Typography>
 							</Box>
 						</Box>
@@ -169,7 +184,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 								setCurrentUserInfo(current => {
 									return { ...current, username: event.target.value }
 								})
-							}}
+							}} 
 						/>
 					</Grid> */}
 					<Grid item xs={12} sm={6}>
@@ -177,64 +192,63 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 							fullWidth
 							type='email'
 							label='Email'
-							placeholder='johnDoe@example.com'
+							placeholder='ducns@example.com'
 							value={currentUserInfo?.email || ''}
-							error={emailError}
+							error={emailError.status}
 							onChange={event => {
-								if (!validateEmail(event.target.value)) {
-									setEmailError(true)
+								const validEmail = validateEmail(event.target.value)
+								if (!validEmail.valid) {
+									setEmailError({ status: true, message: validEmail.message })
 								} else {
-									setEmailError(false)
+									setEmailError({ status: false, message: validEmail.message })
 								}
 								setCurrentUserInfo(current => {
 									return { ...current, email: event.target.value }
 								})
 							}}
-							helperText={
-								emailError && 'Email phải chứ ký tự @, tên miền và ít nhất 1 chữ cái phía trước @.'
-							}
+							helperText={emailError.status && emailError.message}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
-							label='First name'
-							placeholder='John Doe'
+							label='Họ và tên đệm'
+							placeholder='Bùi Thiên'
 							value={currentUserInfo?.firstname || ''}
-							error={firstnameError}
+							error={firstnameError.status}
 							onChange={event => {
-								if (!validateName(event.target.value)) {
-									setFirstnameError(true)
+								const validFirstname = validateName(event.target.value)
+								if (!validFirstname.valid) {
+									setFirstnameError({ status: true, message: validFirstname.message })
 								} else {
-									setFirstnameError(false)
+									setFirstnameError({ status: false, message: validFirstname.message })
 								}
 								setCurrentUserInfo(current => {
 									return { ...current, firstname: event.target.value }
 								})
 							}}
-							helperText={
-								firstnameError && 'Họ và tên đệm phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'
-							}
+							helperText={firstnameError.status && firstnameError.message}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
-							label='Last name'
-							placeholder='John Doe'
+							label='Tên'
+							placeholder='Ân'
 							value={currentUserInfo?.lastname || ''}
-							error={lastnameError}
+							error={lastnameError.status}
 							onChange={event => {
-								if (!validateName(event.target.value)) {
-									setLastnameError(true)
+								const validLastname = validateName(event.target.value)
+								if (!validLastname.valid) {
+									setLastnameError({ status: true, message: validLastname.message })
 								} else {
-									setLastnameError(false)
+									setLastnameError({ status: false, message: validLastname.message })
 								}
 								setCurrentUserInfo(current => {
 									return { ...current, lastname: event.target.value }
 								})
 							}}
-							helperText={lastnameError && 'Tên phải chứa ít nhất 2 kí tự (chỉ bao gồm chữ cái).'}
+							helperText={lastnameError.status && lastnameError.message}
 						/>
 					</Grid>
 
@@ -280,7 +294,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
             <TextField fullWidth label='Company' placeholder='ABC Pvt. Ltd.' defaultValue='ABC Pvt. Ltd.' />
           </Grid> */}
 
-					{openAlert ? (
+					{/* {openAlert ? (
 						<Grid item xs={12} sx={{ mb: 3 }}>
 							<Alert
 								severity='warning'
@@ -302,7 +316,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 								</Link>
 							</Alert>
 						</Grid>
-					) : null}
+					) : null} */}
 
 					<Grid item xs={12}>
 						<Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
