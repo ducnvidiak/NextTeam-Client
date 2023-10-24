@@ -139,7 +139,7 @@ function Attendance({ eid, cmd, setOpen }) {
 			cmd: 'set',
 			data: JSON.stringify(convertJsonToArray(attendanceData))
 		})
-		if (res.code == 0) setOpen['setOpen'](false)
+		if (res.res == '0') setOpen['setOpen'](false)
 	}
 
 	const handleCreate = cmd => event => {
