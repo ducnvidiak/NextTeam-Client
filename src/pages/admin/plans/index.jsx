@@ -29,7 +29,6 @@ function PlanListPage() {
 	const router = useRouter()
 
 	const [plans, setPlans] = useState([])
-	console.log('club id: ', cookies['clubData']?.clubId)
 	const clubId = cookies['clubData']?.clubId
 
 	const handleOpenPreview = fileRecord => {
@@ -44,11 +43,9 @@ function PlanListPage() {
 
 	useEffect(() => {
 		getPlansByClubId(clubId).then(response => {
-			console.log('plans: ', response)
 			setPlans(response)
 		})
 		getAllPlanFilesByClubId(clubId).then(response => {
-			console.log('file records: ', response)
 			setFileRecords(response)
 		})
 	}, [clubId])

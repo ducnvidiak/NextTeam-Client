@@ -96,7 +96,7 @@ const Notifications = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						console.log(data)
+						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))
@@ -118,7 +118,7 @@ const Notifications = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						console.log(data)
+						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))

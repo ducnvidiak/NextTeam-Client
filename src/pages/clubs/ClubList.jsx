@@ -66,7 +66,6 @@ function ClubItem({ club, index }) {
 	}, [cookies])
 
 	const handleClick = () => {
-		console.log('a')
 		router.push(`/clubs/${club.subname}`)
 	}
 

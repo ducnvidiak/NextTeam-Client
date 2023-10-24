@@ -43,11 +43,9 @@ function ProposalListPage() {
 
 	useEffect(() => {
 		getAllProposalByClubId(clubId).then(response => {
-			console.log('plans: ', response)
 			setProposals(response)
 		})
 		getAllProposalFilesByClubId(clubId).then(response => {
-			console.log('file records: ', response)
 			setFileRecords(response)
 		})
 	}, [clubId])

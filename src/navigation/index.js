@@ -164,6 +164,71 @@ export const dashboardLayoutVavigation = () => {
 	]
 }
 
+export const memberLayoutNavigation = () => {
+	return [
+		{
+			title: 'Trang chủ',
+			icon: HomeOutline,
+			path: '/dashboard'
+		},
+		{
+			sectionTitle: 'Thông tin'
+		},
+		{
+			title: 'Thông báo',
+			icon: NotificationsIcon,
+			path: '/dashboard/notifications'
+		},
+		{
+			title: 'Hoạt động',
+			icon: AssignmentIcon,
+			path: '/dashboard/activities'
+		},
+		{
+			title: 'Sự kiện',
+			path: '/dashboard/events',
+			icon: CelebrationIcon
+		},
+		{
+			title: 'Điểm hoạt động',
+			icon: AssessmentIcon,
+			path: '/dashboard/ranking'
+		},
+		{
+			title: 'Thành viên',
+			icon: Groups2Icon,
+			path: '/dashboard/members'
+		},
+		{
+			sectionTitle: 'Tài chính'
+		},
+		{
+			title: 'Khoản nộp',
+			icon: PaymentsIcon,
+			path: '/dashboard/payment-form'
+		},
+		{
+			title: 'Quản lý quỹ',
+			path: '/dashboard/transaction-history',
+			icon: HistoryIcon
+		},
+
+		{
+			sectionTitle: 'Tài liệu'
+		},
+		{
+			title: 'Kho lưu trữ',
+			icon: StorageIcon,
+			path: '/dashboard/document-storage'
+		},
+		{
+			title: 'Đề xuất hoạt động',
+			path: '/dashboard/activity-proposals',
+			icon: AddCommentIcon
+		}
+	]
+}
+
 export const adminLayoutVavigation = () => {
 	return [
 		{

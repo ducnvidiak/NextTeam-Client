@@ -125,7 +125,6 @@ const AdminManageUsers = () => {
 	const handleGrantPermission = () => {
 		if (selectedRole === 'Quản trị viên') {
 			const DCT_ADMIN_URL = `${ORIGIN_URL}dct_admin&id=${selectedUser.id}`
-			console.log(DCT_ADMIN_URL)
 			fetch(DCT_ADMIN_URL)
 				.then(res => res.json())
 				.then(result => {
@@ -153,7 +152,6 @@ const AdminManageUsers = () => {
 				})
 		} else {
 			const DCT_USER_URL = `${ORIGIN_URL}dct_admin&id=${selectedUser.id}`
-			console.log(DCT_USER_URL)
 			fetch(DCT_USER_URL)
 				.then(res => res.json())
 				.then(result => {

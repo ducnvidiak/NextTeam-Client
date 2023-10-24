@@ -49,13 +49,11 @@ export default function EventDashboard() {
 	const [selectedEvent, setSelectedEvent] = useState(null)
 	const [cookies, setCookie] = useCookies(['clubData'])
 
-	console.log('club id: ', cookies['clubData']?.clubId)
 	const clubId = cookies['clubData']?.clubId
 
 	useEffect(() => {
 		getAllEvents().then(response => {
 			setEvents(response)
-			console.log(response)
 		})
 	}, [])
 

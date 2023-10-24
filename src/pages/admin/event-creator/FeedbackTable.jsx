@@ -22,8 +22,7 @@ function FeedbackTable({ event }) {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('data')
-				console.log(data)
+				
 				setFeedbacks(data)
 			})
 			.catch(error => console.error('Error:', error))

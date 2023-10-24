@@ -104,7 +104,6 @@ const TabSecurity = ({ userInfo, setUserInfo }) => {
 				} else {
 					toast.error('Fail to change password!')
 				}
-				console.log(response)
 			})
 		}
 	}
