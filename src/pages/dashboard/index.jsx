@@ -50,11 +50,11 @@ const Dashboard = () => {
 				<Grid item xs={12} md={12}>
 					<ClubStructure data={data} />
 				</Grid>
-				<Grid item xs={12} md={6}>
+				<Grid item xs={12} md={5.9} sx={{ marginLeft: 3 }}>
 					<Trophy data={data} />
 				</Grid>
 
-				<Grid item xs={12} md={6}>
+				<Grid item xs={12} md={5.9} >
 					<Event data={data} />
 				</Grid>
 
@@ -78,9 +78,7 @@ const Dashboard = () => {
 								stats={data.balance}
 								icon={<Poll />}
 								color='success'
-								
 								title='Số dư'
-								
 							/>
 						</Grid>
 						<Grid item xs={6}>
@@ -89,8 +87,6 @@ const Dashboard = () => {
 								title='Điểm Hoạt Động'
 								trend='negative'
 								color='secondary'
-								
-								
 								icon={<CurrencyUsd />}
 							/>
 						</Grid>
@@ -98,9 +94,7 @@ const Dashboard = () => {
 							<CardStatisticsVerticalComponent
 								stats={data.total_report}
 								trend='negative'
-								
 								title='Số báo cáo'
-								
 								icon={<BriefcaseVariantOutline />}
 							/>
 						</Grid>
@@ -109,8 +103,6 @@ const Dashboard = () => {
 								stats={data.total_post}
 								color='warning'
 								trend='negative'
-							
-								
 								title='Số bài viết'
 								icon={<HelpCircleOutline />}
 							/>
