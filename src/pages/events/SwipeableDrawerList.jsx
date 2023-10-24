@@ -19,11 +19,6 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 	const router = useRouter()
 
 	const handleFeedbackClick = () => {
-		if (event?.isFeedback) {
-			toast.error('Bạn đã feedback cho sự kiện này rồi!!!')
-
-			return
-		}
 		setOpenFeedbackModal(true)
 	}
 
@@ -33,13 +28,20 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 
 			<Box sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 500, padding: 4 }} role='presentation'>
 				<Stack direction={'row'} justifyContent={'space-between'} marginBottom={2}>
-					<Button variant='text'>
-						<CloseIcon onClick={toggleDrawer(anchor, false)}></CloseIcon>
+					<Button variant='text' onClick={toggleDrawer(anchor, false)}>
+						<CloseIcon></CloseIcon>
 					</Button>
-					{event?.isRegistered && new Date() > new Date(event?.endTime) ? (
+					{event?.isRegistered && !event?.isFeedback && new Date() > new Date(event?.endTime) ? (
 						<Button variant='text' onClick={handleFeedbackClick}>
 							<Typography mr={2} variant='button'>
 								Feedback
+							</Typography>
+							<FeedbackIcon></FeedbackIcon>
+						</Button>
+					) : event?.isRegistered && event?.isFeedback && new Date() > new Date(event?.endTime) ? (
+						<Button variant='text' color='secondary'>
+							<Typography mr={2} variant='button'>
+								Đã Feedback
 							</Typography>
 							<FeedbackIcon></FeedbackIcon>
 						</Button>
@@ -84,9 +86,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 								<Typography variant='body2' fontWeight={500}>
 									{`${translateDayOfWeek(moment(event?.startTime).format('dddd'))} ${moment(
 										event?.startTime
-									)
-										.subtract(0, 'days')
-										.calendar()}`}
+									).format('L')}`}
 								</Typography>
 								<Typography variant='body1' fontWeight={600}>
 									{`${moment(event?.startTime).format('LT')} - ${moment(event?.endTime).format(

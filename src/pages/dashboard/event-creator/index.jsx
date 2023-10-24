@@ -42,6 +42,7 @@ function EventCreatorPage() {
 	const [userData, setUserData] = useState()
 	const [loading, setLoading] = useState(false)
 	const [filter, setFilter] = useState('all')
+	const [filterType, setFilterType] = useState('all')
 
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
@@ -59,6 +60,7 @@ function EventCreatorPage() {
 				return response.json()
 			})
 			.then(function (data) {
+				console.log(data)
 				setEventList(data)
 				setEventListFiltered(data)
 				setLoading(false)
@@ -75,27 +77,22 @@ function EventCreatorPage() {
 		switch (filter) {
 			case 'all':
 				setEventListFiltered(eventList)
-				toast.success('Lọc toàn bộ sự kiện')
 
 				return
 			case 'approved':
 				setEventListFiltered(eventList?.filter(event => event?.isApproved))
-				toast.success('Lọc các sự kiện đã được duyệt')
 
 				return
 			case 'pending':
 				setEventListFiltered(eventList?.filter(event => !event?.isApproved))
-				toast.success('Lọc các sự kiện chưa được duyệt')
 
 				return
 			case 'upcoming':
 				setEventListFiltered(eventList?.filter(event => new Date() < new Date(event?.startTime)))
-				toast.success('Lọc các sự kiện sắp diễn ra')
 
 				return
 			case 'past':
 				setEventListFiltered(eventList?.filter(event => new Date() > new Date(event?.endTime)))
-				toast.success('Lọc các sự kiện đã diễn ra')
 
 				return
 			default:
@@ -125,18 +122,28 @@ function EventCreatorPage() {
 						DANH SÁCH SỰ KIỆN
 					</Typography>
 				</Stack>
-				<FormControl variant='outlined' size='small'>
-					<InputLabel>Bộ lọc</InputLabel>
-					<Select label='Status' defaultValue='all' onChange={e => setFilter(e.target.value)}>
-						<MenuItem value='all'>Tất cả</MenuItem>
-						<MenuItem value='approved'>Đã duyệt</MenuItem>
-						<MenuItem value='pending'>Chưa duyệt</MenuItem>
-						<MenuItem value='upcoming'>Sắp diễn ra</MenuItem>
-						<MenuItem value='past'>Đã qua</MenuItem>
-					</Select>
-				</FormControl>
+				<Stack direction={'row'} gap={2}>
+					<FormControl variant='outlined' size='small'>
+						<InputLabel>Trạng thái</InputLabel>
+						<Select label='Status' defaultValue='all' onChange={e => setFilter(e.target.value)}>
+							<MenuItem value='all'>Tất cả</MenuItem>
+							<MenuItem value='approved'>Đã duyệt</MenuItem>
+							<MenuItem value='pending'>Chưa duyệt</MenuItem>
+							<MenuItem value='upcoming'>Sắp diễn ra</MenuItem>
+							<MenuItem value='past'>Đã qua</MenuItem>
+						</Select>
+					</FormControl>
+					<FormControl variant='outlined' size='small'>
+						<InputLabel>Thể loại</InputLabel>
+						<Select label='Status' defaultValue='all' onChange={e => setFilterType(e.target.value)}>
+							<MenuItem value='all'>Tất cả</MenuItem>
+							<MenuItem value='public'>Toàn trường</MenuItem>
+							<MenuItem value='internal'>Nội bộ</MenuItem>
+						</Select>
+					</FormControl>
+				</Stack>
 			</Stack>
-			<EventList eventList={eventListFiltered} setEventList={setEventList}></EventList>
+			<EventList filterType={filterType} eventList={eventListFiltered} setEventList={setEventList}></EventList>
 		</Container>
 	)
 }

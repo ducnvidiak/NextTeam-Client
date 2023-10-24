@@ -69,18 +69,16 @@ function EventItem({ event, setEventList, eventList, userData }) {
 				setOpenFeedbackModal={setOpenFeedbackModal}
 				event={event}
 				userData={userData}
+				setEventList={setEventList}
 			></FeedbackModal>
 			<RegisterEventModal
-						event={event}
-						openRegisterModal={openRegisterModal}
-						setOpenRegisterModal={setOpenRegisterModal}
-
-						// anchor={anchor}
-						// toggleDrawer={() => toggleDrawer(anchor, false)}
-						setState={setState}
-						state={state}
-						setEventList={setEventList}
-					></RegisterEventModal>
+				event={event}
+				openRegisterModal={openRegisterModal}
+				setOpenRegisterModal={setOpenRegisterModal}
+				setState={setState}
+				state={state}
+				setEventList={setEventList}
+			></RegisterEventModal>
 			{['left', 'right', 'top', 'bottom'].map(anchor => (
 				<>
 					<SwipeableDrawer
@@ -159,7 +157,7 @@ function EventItem({ event, setEventList, eventList, userData }) {
 								variant='contained'
 								fullWidth
 								sx={{ marginTop: 4 }}
-								onClick={() => userData?.id ? setOpenRegisterModal(true) : router.push("/auth/login")}
+								onClick={() => (userData?.id ? setOpenRegisterModal(true) : router.push('/auth/login'))}
 							>
 								Đăng ký
 							</Button>
@@ -203,9 +201,7 @@ function EventList({ filter }) {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data)
-				setEventList(data?.filter(event => event?.isApproved))
-				setEventListFiltered(data?.filter(event => event?.isApproved))
+				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData])
@@ -214,33 +210,31 @@ function EventList({ filter }) {
 		switch (filter) {
 			case 'all':
 				setEventListFiltered(eventList)
-				toast.success('Lọc toàn bộ sự kiện')
 
 				return
 			case 'registered':
 				setEventListFiltered(eventList?.filter(event => event?.isRegistered))
-				toast.success('Lọc các sự kiện bạn đã đăng ký')
 
 				return
 			case 'upcoming':
 				setEventListFiltered(eventList?.filter(event => new Date() < new Date(event?.startTime)))
-				toast.success('Lọc các sự kiện sắp diễn ra')
 
 				return
 			case 'past':
 				setEventListFiltered(eventList?.filter(event => new Date() > new Date(event?.endTime)))
-				toast.success('Lọc các sự kiện đã diễn ra')
 
 				return
 			default:
 				return
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filter])
 
 	useEffect(() => {
 		setEventListFiltered(eventList)
 	}, [eventList])
+
+	console.log(eventList)
 
 	return (
 		<>

@@ -40,7 +40,7 @@ import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
 import EventManagement from './EventManagement'
 import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
-import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp'
 
 function EventItem({ event, setEventList, eventList, index }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
@@ -79,7 +79,7 @@ function EventItem({ event, setEventList, eventList, index }) {
 				event={event}
 				setEventList={setEventList}
 			></EventManagement>
-			
+
 			{['left', 'right', 'top', 'bottom'].map(anchor => (
 				<>
 					<SwipeableDrawer
@@ -98,14 +98,13 @@ function EventItem({ event, setEventList, eventList, index }) {
 					</SwipeableDrawer>
 				</>
 			))}
-			{new Date() > new Date(eventList[index]?.endTime) &&
-				new Date() < new Date(eventList[index - 1]?.endTime) && (
-					<Divider sx={{ marginTop: 5, color: 'green' }}>
-						<Stack direction={'column'} alignItems={'center'} gap={2}>
-							<Chip label='ĐÃ QUA' color='error' />
-						</Stack>
-					</Divider>
-				)}
+			{new Date() > new Date(eventList[index]?.endTime) && new Date() < new Date(eventList[index - 1]?.endTime) && (
+				<Divider sx={{ marginTop: 5, color: 'green' }}>
+					<Stack direction={'column'} alignItems={'center'} gap={2}>
+						<Chip label='ĐÃ QUA' color='error' />
+					</Stack>
+				</Divider>
+			)}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
 					{new Date() > new Date(event?.endTime) && !event?.isApproved ? (
@@ -124,7 +123,7 @@ function EventItem({ event, setEventList, eventList, index }) {
 
 					// onClick={toggleDrawer('right', true)}
 				>
-					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
+					<CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
 							{moment(event?.startTime).format('LT')}
 						</Typography>
@@ -160,24 +159,27 @@ function EventItem({ event, setEventList, eventList, index }) {
 					/>
 				</Card>
 			</Stack>
-			
 		</>
 	)
 }
 
-function EventList({ eventList, setEventList }) {
+function EventList({ eventList, setEventList, filterType }) {
+	console.log(filterType);
+	
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-				{eventList?.map((event, index) => (
-					<EventItem
-						key={event.id}
-						event={event}
-						setEventList={setEventList}
-						index={index}
-						eventList={eventList}
-					></EventItem>
-				))}
+				{eventList
+					?.filter(event => event?.type == filterType || filterType == 'all')
+					.map((event, index) => (
+						<EventItem
+							key={event.id}
+							event={event}
+							setEventList={setEventList}
+							index={index}
+							eventList={eventList}
+						></EventItem>
+					))}
 			</Container>
 		</>
 	)
