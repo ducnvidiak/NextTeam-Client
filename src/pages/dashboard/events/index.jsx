@@ -30,8 +30,7 @@ function EventDashboard() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('data')
-				console.log(data)
+				
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
@@ -39,10 +38,8 @@ function EventDashboard() {
 	}, [userData])
 
 	useEffect(() => {
-		console.log(filter)
 		switch (filter) {
 			case 'all':
-				console.log('!!!', eventList)
 				setEventListFiltered(eventList)
 
 				return
@@ -59,8 +56,6 @@ function EventDashboard() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filter, eventList])
-
-	console.log('!!!')
 
 	return (
 		<Container maxWidth='lg' style={{ padding: 0 }}>

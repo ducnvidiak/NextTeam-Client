@@ -55,13 +55,11 @@ export default function EventDashboard() {
 	const [openModal, setOpenModal] = useState(false)
 	const [feedback, setFeedback] = useState(null)
 
-	console.log('club id: ', cookies['clubData']?.clubId)
 	const clubId = cookies['clubData']?.clubId
 
 	useEffect(() => {
 		getAllEvents().then(response => {
 			setEvents(response)
-			console.log(response)
 		})
 	}, [])
 

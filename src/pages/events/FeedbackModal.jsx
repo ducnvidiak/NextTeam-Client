@@ -42,8 +42,6 @@ function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal, event, userDat
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('data!!!!')
-				console.log(data)
 				toast.success('Gửi feedback thành công!!!!')
 				setOpenFeedbackModal(false)
 				setEventList(data)

@@ -54,7 +54,6 @@ function ActivityProposals() {
 	const [openModal, setOpenModal] = useState(false)
 
 	const router = useRouter()
-	console.log('club id: ', cookies['clubData']?.clubId)
 	const clubId = cookies['clubData']?.clubId
 
 	useEffect(() => {
@@ -64,11 +63,9 @@ function ActivityProposals() {
 	useEffect(() => {
 		if (userData) {
 			getProposalsByUserId(userData.id).then(response => {
-				console.log('proposals: ', response)
 				setProposals(response)
 			})
 			getAllProposalFilesByUserId(userData.id).then(response => {
-				console.log('file records: ', response)
 				setFileRecords(response)
 			})
 		}
@@ -83,7 +80,6 @@ function ActivityProposals() {
 		if (hasFile) setLoading(true)
 
 		deleteProposalById(deleteProposal.id).then(response => {
-			console.log('delete response: ', response)
 
 			if (response?.message == 'success') {
 				if (hasFile) setLoading(false)

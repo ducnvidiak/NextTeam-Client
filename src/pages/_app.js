@@ -27,6 +27,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 // ** Global css styles
 import '../../styles/globals.css'
 import '../../styles/forgot.scss'
+import Decentralization from 'src/layouts/Decentralization'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -48,7 +49,14 @@ const App = props => {
 	const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
 	// Variables
-	const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
+	const getLayout =
+		Component.getLayout ??
+		(page => (
+			<Decentralization>
+				{' '}
+				<UserLayout>{page}</UserLayout>
+			</Decentralization>
+		))
 
 	return (
 		<CacheProvider value={emotionCache}>
@@ -60,7 +68,6 @@ const App = props => {
 				/>
 				<meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
 				<meta name='viewport' content='initial-scale=1, width=device-width' />
-				
 			</Head>
 
 			<SettingsProvider>

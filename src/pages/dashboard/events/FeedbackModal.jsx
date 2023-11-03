@@ -43,11 +43,11 @@ function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal,event, userData
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data)
+				
 				toast.success('Gửi feedback thành công!!!!')
 				setOpenFeedbackModal(false)
 				setEventList(data)
-				console.log(data)
+				
 			})
 			.catch(error => {
 				console.error('Error:', error)

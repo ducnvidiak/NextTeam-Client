@@ -5,7 +5,7 @@ import { Card, CardContent, Typography, Table, TableBody, TableCell, TableRow } 
 const ClubBalance = ({ clubBalances, clubNames }) => (
 	<Card>
 		<CardContent>
-			<Typography variant='h5'>Điểm hoạt động câu lạc bộ</Typography>
+			<Typography variant='h5'>Số dư các câu lạc bộ</Typography>
 			<Table>
 				<TableBody>
 					{clubBalances?.map((balance, index) => (

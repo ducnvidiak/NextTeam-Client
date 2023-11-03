@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -79,6 +79,8 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 	}
 }))
 
+var toastFlag = false
+
 const RegisterPage = () => {
 	// ** States
 
@@ -103,6 +105,19 @@ const RegisterPage = () => {
 	// ** Hook
 	const theme = useTheme()
 	const router = useRouter()
+	const [urlParams, setUrlParams] = useState()
+	useEffect(() => {
+		setUrlParams(new URLSearchParams(window.location.search))
+	}, [])
+	if (urlParams?.get('fail') == '1') {
+		if (!toastFlag) {
+			toast.error('Tài khoản Google chưa được đăng ký')
+			setEmail(urlParams?.get('email') ?? '')
+			setFirstname(urlParams?.get('family_name') ?? '')
+			setLastname(urlParams?.get('given_name') ?? '')
+			toastFlag = true
+		}
+	}
 
 	const handleSubmit = async event => {
 		event.preventDefault() // 👈️ prevent page refresh
@@ -146,7 +161,7 @@ const RegisterPage = () => {
 					return response.json()
 				})
 				.then(function (data) {
-					console.log(data)
+					
 
 					if (data.code == 0) {
 						toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
