@@ -318,7 +318,7 @@ function EditPlans() {
 												label={file.name}
 												onDelete={() => {
 													const updatedList = [...newFiles]
-													updatedList.splice(newFiles.indexOf(fileRecord), 1)
+													updatedList.splice(newFiles.indexOf(file), 1)
 													setNewFiles(updatedList)
 												}}
 												variant='outlined'

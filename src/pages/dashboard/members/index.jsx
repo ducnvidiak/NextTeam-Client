@@ -19,7 +19,7 @@ import NativeSelect from '@mui/material/NativeSelect'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useCookies } from 'react-cookie'
 
-import { getListOfAllUserForManage } from 'src/api-utils/apiUtils'
+import { getListOfAllUserByClubId } from 'src/api-utils/apiUtils'
 import { useState } from 'react'
 import { useEffect } from 'react'
 
@@ -41,7 +41,7 @@ const UserList = () => {
 	const clubId = cookies['clubData']?.clubId
 
 	useEffect(() => {
-		getListOfAllUserForManage(clubId).then(data => {
+		getListOfAllUserByClubId(clubId).then(data => {
 			setUserList(data)
 		})
 	}, [clubId])

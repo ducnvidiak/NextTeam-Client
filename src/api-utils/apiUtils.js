@@ -108,7 +108,7 @@ const getAllMajors = async () => {
 	return json
 }
 
-const getListOfAllUser = async cludId => {
+const getListOfAllUserByClubId = async cludId => {
 	const json = await axios
 		.get('http://localhost:8080/api/userlist?type=list&clubId=' + cludId)
 		.then(response => {
@@ -601,7 +601,7 @@ module.exports = {
 	getUserInfo,
 	changeUserPass,
 	getAllMajors,
-	getListOfAllUser,
+	getListOfAllUserByClubId,
 	getProposalsByUserId,
 	getProposalByPropId,
 	deleteProposalById,
