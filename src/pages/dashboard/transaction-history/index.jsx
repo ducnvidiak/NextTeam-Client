@@ -36,6 +36,7 @@ import { Magnify } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import PaymentDetail from './PaymentDetail'
+import moment from 'moment/moment'
 
 function TransactionHistory() {
 	const router = useRouter()
@@ -260,14 +261,14 @@ function TransactionHistory() {
 													color='textSecondary'
 													style={{ fontSize: '0.7rem' }}
 												>
-													Tạo mới: {row?.createdAt}
+													Tạo mới: {moment(row?.createdAt).format('DD/MM/YY, h:mm A')}
 												</Typography>
 												<Typography
 													variant='body2'
 													color='textSecondary'
 													style={{ fontSize: '0.7rem' }}
 												>
-													Cập nhật: {row?.updatedAt}
+													Cập nhật: {moment(row?.updatedAt).format('DD/MM/YY, h:mm A')}
 												</Typography>
 											</div>
 										</TableCell>

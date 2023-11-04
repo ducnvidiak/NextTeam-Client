@@ -48,6 +48,7 @@ import EditPrivateNotification from './EditPrivateNotification'
 import CancelIcon from '@mui/icons-material/Cancel'
 import Decentralization from 'src/layouts/Decentralization'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
+import moment from 'moment/moment'
 
 const NotificationCreator = () => {
 	const router = useRouter()
@@ -341,7 +342,9 @@ const NotificationCreator = () => {
 										.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 										.map(row => (
 											<TableRow key={row.id}>
-												<TableCell>{row.createdAt}</TableCell>
+												<TableCell>
+													{moment(row.createdAt).format('DD/MM/YY, h:mm A')}
+												</TableCell>
 												<TableCell>{row.title}</TableCell>
 
 												<TableCell>
@@ -423,7 +426,9 @@ const NotificationCreator = () => {
 										.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 										.map(row => (
 											<TableRow key={row.id}>
-												<TableCell>{row.createdAt}</TableCell>
+												<TableCell>
+													{moment(row.createdAt).format('DD/MM/YY, h:mm A')}
+												</TableCell>
 												<TableCell>{row.title}</TableCell>
 												<TableCell>
 													{row.firstname} {row.lastname}

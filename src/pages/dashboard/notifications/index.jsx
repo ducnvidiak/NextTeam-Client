@@ -28,6 +28,7 @@ import TabContext from '@mui/lab/TabContext'
 import { Chip } from '@mui/material'
 import NotificationDetail from './NotificationDetail'
 import { getUserInfo } from 'src/utils/info'
+import moment from 'moment/moment'
 
 const Notifications = () => {
 	const [state, dispatch] = useReducer((state, action) => action, 0)
@@ -198,7 +199,7 @@ const Notifications = () => {
 								>
 									<Grid container spacing={0}>
 										<Grid item xs={4} md={2}>
-											{notification.createdAt}
+											{moment(notification.createdAt).format('DD/MM/YY, h:mm A')}
 										</Grid>
 										<Grid item xs={8} md={10}>
 											<Typography variant='body1' style={{ fontWeight: 'bold' }}>

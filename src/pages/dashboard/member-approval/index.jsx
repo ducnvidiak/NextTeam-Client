@@ -42,6 +42,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import ViewInfo from './ViewInfo'
 import CreateInterview from './CreateInterview'
 import Interview from './Interview'
+import moment from 'moment/moment'
 
 const MemberApproval = () => {
 	const router = useRouter()
@@ -276,7 +277,9 @@ const MemberApproval = () => {
 										</TableCell>
 										<TableCell>{row?.user.username}</TableCell>
 										<TableCell>{row?.dept.name}</TableCell>
-										<TableCell>{row?.engagement.createdAt}</TableCell>
+										<TableCell>
+											{moment(row?.engagement.createdAt).format('DD/MM/YY, h:mm A')}
+										</TableCell>
 										<TableCell>
 											<Chip
 												color={statusObj[row?.engagement.status]?.color}
@@ -304,16 +307,28 @@ const MemberApproval = () => {
 											) : (
 												''
 											)}
-
-											<Button
-												variant='contained'
-												size='small'
-												onClick={() => {
-													handleInterview(row)
-												}}
-											>
-												{row.engagement.status == '2' ? 'Phỏng vấn' : 'Cập nhật'}
-											</Button>
+											{row.engagement.status == '2' && (
+												<Button
+													variant='contained'
+													size='small'
+													onClick={() => {
+														handleInterview(row)
+													}}
+												>
+													Phỏng vấn
+												</Button>
+											)}
+											{row.engagement.status != '2' && row.engagement.status != '0' && (
+												<Button
+													variant='contained'
+													size='small'
+													onClick={() => {
+														handleInterview(row)
+													}}
+												>
+													Cập nhật
+												</Button>
+											)}
 										</TableCell>
 									</TableRow>
 								))}

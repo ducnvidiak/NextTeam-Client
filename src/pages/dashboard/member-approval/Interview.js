@@ -49,6 +49,7 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 // Import styles
 import '@react-pdf-viewer/core/lib/styles/index.css'
 import '@react-pdf-viewer/default-layout/lib/styles/index.css'
+import moment from 'moment/moment'
 
 // Styled component for the triangle shaped background image
 const TriangleImg = styled('img')({
@@ -221,7 +222,10 @@ export default function Interview({
 						<span>
 							<Chip
 								icon={<AccessAlarmIcon />}
-								label={'Gửi lúc: ' + applicationDetail?.engagement?.createdAt}
+								label={
+									'Gửi lúc: ' +
+									moment(applicationDetail?.engagement?.createdAt).format('DD/MM/YY, h:mm A')
+								}
 								sx={{
 									height: 24,
 									fontSize: '0.75rem',
@@ -304,11 +308,15 @@ export default function Interview({
 											</Typography>
 											<Typography variant='body1'>
 												<strong>Ngày ứng tuyển: </strong>
-												{applicationDetail?.engagement?.createdAt}
+												{moment(applicationDetail?.engagement?.createdAt).format(
+													'DD/MM/YY, h:mm A'
+												)}
 											</Typography>
 											<Typography variant='body1'>
 												<strong>Ngày cập nhật: </strong>
-												{applicationDetail?.engagement?.updatedAt}
+												{moment(applicationDetail?.engagement?.updatedAt).format(
+													'DD/MM/YY, h:mm A'
+												)}
 											</Typography>
 										</CardContent>
 									</Card>
@@ -345,7 +353,12 @@ export default function Interview({
 												<CardContent>
 													<Chip
 														icon={<AccessAlarmIcon />}
-														label={'Tạo vào: ' + applicationDetail?.interview?.createdAt}
+														label={
+															'Tạo vào: ' +
+															moment(applicationDetail?.interview?.createdAt).format(
+																'DD/MM/YY, h:mm A'
+															)
+														}
 														sx={{
 															height: 24,
 															fontSize: '0.75rem',
@@ -357,7 +370,10 @@ export default function Interview({
 													<Chip
 														icon={<AccessAlarmIcon />}
 														label={
-															'Cập nhật vào: ' + applicationDetail?.interview?.updatedAt
+															'Cập nhật vào: ' +
+															moment(applicationDetail?.interview?.updatedAt).format(
+																'DD/MM/YY, h:mm A'
+															)
 														}
 														sx={{
 															height: 24,
@@ -414,7 +430,10 @@ export default function Interview({
 													<Chip
 														icon={<AccessAlarmIcon />}
 														label={
-															'Cập nhật vào: ' + applicationDetail?.engagement?.updatedAt
+															'Cập nhật vào: ' +
+															moment(applicationDetail?.engagement?.updatedAt).format(
+																'DD/MM/YY, h:mm A'
+															)
 														}
 														sx={{
 															height: 24,
@@ -444,7 +463,6 @@ export default function Interview({
 															</MenuItem>
 															<MenuItem value={1}>Duyệt đơn</MenuItem>
 															<MenuItem value={3}>Từ chối</MenuItem>
-															<MenuItem value={4}>Drop out</MenuItem>
 														</Select>
 													</FormControl>
 													<DialogActions>

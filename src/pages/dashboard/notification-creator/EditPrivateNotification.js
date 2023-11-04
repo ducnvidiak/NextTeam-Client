@@ -194,7 +194,7 @@ export default function EditPrivateNotification({
 											{...props}
 											value={option?.id}
 										>
-											{option?.firstname} {option?.lastname} ({option?.studentCode}) -{' '}
+											{option?.firstname} {option?.lastname} ({option?.username}) -{' '}
 											{option?.email}
 										</Box>
 									)}

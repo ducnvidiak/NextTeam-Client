@@ -26,6 +26,7 @@ import {
 	Typography
 } from '@mui/material'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
+import moment from 'moment/moment'
 
 export default function PaymentDetail({
 	paymentDataDetail,
@@ -92,7 +93,7 @@ export default function PaymentDetail({
 					<span>
 						<Chip
 							icon={<AccessAlarmIcon />}
-							label={'Tạo vào: ' + paymentDataDetail?.[0]?.createdAt}
+							label={'Tạo vào: ' + moment(paymentDataDetail?.[0]?.createdAt).format('DD/MM/YY, h:mm A')}
 							sx={{
 								height: 24,
 								fontSize: '0.75rem',
@@ -176,7 +177,7 @@ export default function PaymentDetail({
 													''
 												)}
 											</TableCell>
-											<TableCell>{row?.updatedAt}</TableCell>
+											<TableCell>{moment(row?.updatedAt).format('DD/MM/YY, h:mm A')}</TableCell>
 										</TableRow>
 									))}
 								</TableBody>

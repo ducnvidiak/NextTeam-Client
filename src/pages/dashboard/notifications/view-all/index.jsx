@@ -27,6 +27,7 @@ import Magnify from 'mdi-material-ui/Magnify'
 import { Chip } from '@mui/material'
 import NotificationDetail from '../NotificationDetail'
 import { getUserInfo } from 'src/utils/info'
+import moment from 'moment/moment'
 
 const TableStickyHeader = () => {
 	const router = useRouter()
@@ -185,7 +186,7 @@ const TableStickyHeader = () => {
 										key={row.id}
 										sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}
 									>
-										<TableCell>{row.createdAt}</TableCell>
+										<TableCell>{moment(row.createdAt).format('DD/MM/YY, h:mm A')}</TableCell>
 										<TableCell>
 											<Chip
 												label={statusObj[row.type]?.label}

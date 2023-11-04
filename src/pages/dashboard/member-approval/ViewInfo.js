@@ -39,6 +39,7 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 // Import styles
 import '@react-pdf-viewer/core/lib/styles/index.css'
 import '@react-pdf-viewer/default-layout/lib/styles/index.css'
+import moment from 'moment/moment'
 
 // Styled component for the triangle shaped background image
 const TriangleImg = styled('img')({
@@ -89,7 +90,10 @@ export default function ViewInfo({ applicationDetail, handleClose, open, statusO
 						<span>
 							<Chip
 								icon={<AccessAlarmIcon />}
-								label={'Gửi lúc: ' + applicationDetail?.engagement.createdAt}
+								label={
+									'Gửi lúc: ' +
+									moment(applicationDetail?.engagement.createdAt).format('DD/MM/YY, h:mm A')
+								}
 								sx={{
 									height: 24,
 									fontSize: '0.75rem',
@@ -172,11 +176,15 @@ export default function ViewInfo({ applicationDetail, handleClose, open, statusO
 											</Typography>
 											<Typography variant='body1'>
 												<strong>Ngày ứng tuyển: </strong>
-												{applicationDetail?.engagement?.createdAt}
+												{moment(applicationDetail?.engagement?.createdAt).format(
+													'DD/MM/YY, h:mm A'
+												)}
 											</Typography>
 											<Typography variant='body1'>
 												<strong>Ngày cập nhật: </strong>
-												{applicationDetail?.engagement?.updatedAt}
+												{moment(applicationDetail?.engagement?.updatedAt).format(
+													'DD/MM/YY, h:mm A'
+												)}
 											</Typography>
 										</CardContent>
 									</Card>
@@ -190,11 +198,15 @@ export default function ViewInfo({ applicationDetail, handleClose, open, statusO
 											<div>
 												<Typography variant='body1'>
 													<strong>Thời gian bắt đầu: </strong>
-													{applicationDetail?.interview?.startTime}
+													{moment(applicationDetail?.interview?.startTime).format(
+														'DD/MM/YY, h:mm A'
+													)}
 												</Typography>
 												<Typography variant='body1'>
 													<strong>Thời gian kết thúc: </strong>
-													{applicationDetail?.interview?.endTime}
+													{moment(applicationDetail?.interview?.endTime).format(
+														'DD/MM/YY, h:mm A'
+													)}
 												</Typography>
 												<Typography variant='body1'>
 													<strong>Nhận xét: </strong>
@@ -214,7 +226,9 @@ export default function ViewInfo({ applicationDetail, handleClose, open, statusO
 												</Typography>
 												<Typography variant='body1'>
 													<strong>Ngày cập nhật: </strong>
-													{applicationDetail?.interview?.updatedAt}
+													{moment(applicationDetail?.interview?.updatedAt).format(
+														'DD/MM/YY, h:mm A'
+													)}
 												</Typography>
 											</div>
 										) : (

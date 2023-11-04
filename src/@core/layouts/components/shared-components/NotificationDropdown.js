@@ -26,6 +26,7 @@ import BellOutline from 'mdi-material-ui/BellOutline'
 import PerfectScrollbarComponent from 'react-perfect-scrollbar'
 import { getUserInfo } from 'src/utils/info'
 import NotificationDetail from 'src/pages/dashboard/notifications/NotificationDetail'
+import moment from 'moment/moment'
 
 // ** Styled Menu component
 const Menu = styled(MuiMenu)(({ theme }) => ({
@@ -101,6 +102,7 @@ const NotificationDropdown = () => {
 	const [scroll, setScroll] = useState('paper')
 
 	function handleClickOpen(id, title, content, type, createdAt, hasSeen) {
+		console.log('Hi')
 		setNotificationDetail({
 			id: id,
 			title: title,
@@ -194,7 +196,7 @@ const NotificationDropdown = () => {
 				})
 				.catch(error => console.error('Error:', error))
 		}
-	}, [cookies, userData, state, notificationsData])
+	}, [cookies, notificationsData, userData?.id])
 
 	const updateView = (id, type, hasSeen) => {
 		if (hasSeen == 0) {
@@ -279,7 +281,19 @@ const NotificationDropdown = () => {
 				<ScrollWrapper>
 					{notificationsData.map(notification => {
 						return (
-							<MenuItem key={notification.id}>
+							<MenuItem
+								key={notification.id}
+								onClick={() => {
+									handleClickOpen(
+										notification?.id,
+										notification?.title,
+										notification?.content,
+										notification?.type,
+										notification?.createdAt,
+										notification?.hasSeen
+									)
+								}}
+							>
 								<Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
 									<Box
 										sx={{
@@ -289,16 +303,6 @@ const NotificationDropdown = () => {
 											overflow: 'hidden',
 											flexDirection: 'column'
 										}}
-										onClick={() =>
-											handleClickOpen(
-												notification?.id,
-												notification?.title,
-												notification?.content,
-												notification?.type,
-												notification?.createdAt,
-												notification?.hasSeen
-											)
-										}
 									>
 										<MenuItemTitle>{notification.title}</MenuItemTitle>
 										<MenuItemSubtitle variant='caption'>
@@ -327,7 +331,7 @@ const NotificationDropdown = () => {
 													/>
 												)}
 											</span>
-											{' ' + notification.createdAt}
+											{moment(notification?.createdAt).format('DD/MM/YY, h:mm A')}
 										</MenuItemSubtitle>
 									</Box>
 									<Typography variant='caption' sx={{ color: 'text.disabled' }}></Typography>
