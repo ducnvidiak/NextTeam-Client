@@ -27,6 +27,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 // ** Global css styles
 import '../../styles/globals.css'
 import '../../styles/forgot.scss'
+import Decentralization from 'src/layouts/Decentralization'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -48,7 +49,14 @@ const App = props => {
 	const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
 	// Variables
-	const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
+	const getLayout =
+		Component.getLayout ??
+		(page => (
+			<Decentralization>
+				{' '}
+				<UserLayout>{page}</UserLayout>
+			</Decentralization>
+		))
 
 	return (
 		<CacheProvider value={emotionCache}>

@@ -34,6 +34,15 @@ import { ToastContainer, toast } from 'react-toastify'
 import { convertFormat } from '.'
 import { getUserInfo } from 'src/utils/info'
 import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
+import moment from 'moment'
+import { translateDayOfWeek } from 'src/ultis/dateTime'
+
+export const combineDateTime = (datetimeA, datetimeB) => {
+	const [date1, time1] = datetimeA.split('T')
+	const [date2, time2] = datetimeB.split('T')
+
+	return date1 + 'T' + time2
+}
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -55,48 +64,30 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	const [userData, setUserData] = useState()
 	const [isShowModal, setIsShowModal] = useState(false)
 	const [fileName, setFileName] = useState('')
-
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
-	const [newEvent, setNewEvent] = useState({
-		...event,
-		startTime: event?.startTime,
-		endTime: event?.endTime,
-		locationId: locationList.filter((item, index) => {
-			return item.name == event?.locationName
-		})[0]?.id
-	})
-	console.log('newEvent')
-	console.log(newEvent)
+	const [newEvent, setNewEvent] = useState({})
 
 	const handleDateChange = date => {
-		const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm')
-		const startString = `${formattedDate.substring(0, 11)}T${newEvent?.startTime.slice(-5)}`
-		const endString = `${formattedDate.substring(0, 11)}T${newEvent?.endTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
-			startTime: startString,
-			endTime: endString
+			dateTime: date
 		})
 	}
 
 	const handleStartTimeChange = time => {
-		const formattedTime = dayjs(time).format('YYYY-MM-DDTHH:mm')
-		const combinedString = `${newEvent?.startTime.substring(0, 11)}T${formattedTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
-			startTime: combinedString
+			startTime: time
 		})
 	}
 
 	const handleEndTimeChange = time => {
-		const formattedTime = dayjs(time).format('YYYY-MM-DDTHH:mm')
-		const combinedString = `${newEvent.endTime.substring(0, 11)}T${formattedTime.slice(-5)}`
 		setNewEvent({
 			...newEvent,
-			endTime: combinedString
+			endTime: time
 		})
 	}
 
@@ -113,7 +104,6 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	const changeBanner = async e => {
 		const file = e.target.files[0]
 		if (file) {
-			// Tạo formData để gửi tệp hình ảnh lên imgbb
 			const formData = new FormData()
 			formData.append('image', file)
 
@@ -146,21 +136,27 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
+			fetch(`http://localhost:8080/admin-events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
-					startTime: new Date(convertToTimestamp(newEvent?.startTime)),
-					endTime: new Date(convertToTimestamp(newEvent?.endTime)),
-					registeredBy: userData?.id
-
-					// clubId: userData?.clubId
+					startTime: combineDateTime(
+						moment(new Date(newEvent.dateTime)).format(),
+						moment(new Date(newEvent.startTime)).format()
+					),
+					endTime: combineDateTime(
+						moment(new Date(newEvent.dateTime)).format(),
+						moment(new Date(newEvent.endTime)).format()
+					),
+					registeredBy: userData?.id,
+					clubId: userData?.clubId
 				}),
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8'
 				}
 			})
 				.then(function (response) {
+
 					return response.json()
 				})
 				.then(function (data) {
@@ -181,32 +177,28 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				setIsValidate(false)
 				error.errors.forEach(err => toast.error(err))
 			}
+			console.log(error)
 		}
 	}
 
 	const handleDelete = () => {
 		setOpen(true)
-		fetch(`http://localhost:8080/events?cmd=delete&eventId=${event.id}`, {
+		fetch(`http://localhost:8080/admin-events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
 			}
 		})
 			.then(function (response) {
-				console.log('11111')
-				console.log(response)
 
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('222222')
-
 				setEventList(data)
+				
 				toast.success('Xóa sự kiện thành công!!!')
 			})
 			.catch(error => {
-				console.log('3333')
-
 				console.error('Error:', error)
 
 				toast.error('Có lỗi xảy ra khi xóa sự kiện, vui lòng thử lại')
@@ -231,18 +223,17 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	}, [])
 
 	useEffect(() => {
-		if (locationList.length > 0) {
-			setNewEvent({
-				...event,
-				startTime: convertFormat(event?.startTime),
-				endTime: convertFormat(event?.endTime),
-				locationId: locationList.filter((item, index) => {
-					return item.name == event?.locationName
-				})[0]?.id
-			})
-		}
+		setNewEvent({
+			...event,
+			dateTime: dayjs(event?.startTime),
+			startTime: dayjs(event?.startTime),
+			endTime: dayjs(event.endTime),
+			locationId: locationList.filter((item, index) => {
+				return item.name == event?.locationName
+			})[0]?.id
+		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [locationList])
+	}, [event, locationList])
 
 	return (
 		<Container maxWidth={'lg'} sx={{ padding: '0 60px !important' }}>
@@ -275,13 +266,15 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						<Typography marginBottom={1} width={'20%'}>
 							Thời gian:
 						</Typography>
-						<Typography marginBottom={1}>6:00 PM</Typography>
+						<Typography marginBottom={1}>{`${translateDayOfWeek(
+							moment(event?.startTime).format('dddd')
+						)} ${moment(event?.startTime).format('L')}`}</Typography>
 					</Stack>
 					<Stack direction={'row'} gap={2}>
 						<Typography marginBottom={1} width={'20%'}>
 							Địa điểm:
 						</Typography>
-						<Typography marginBottom={1}>Phòng 201</Typography>
+						<Typography marginBottom={1}>{event?.locationName}</Typography>
 					</Stack>
 				</DialogContent>
 				<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>
@@ -302,7 +295,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					id='outlined-basic'
 					label='Tên sự kiện'
 					variant='outlined'
-					defaultValue={newEvent.name}
+					value={newEvent.name}
 					onChange={event => setNewEvent({ ...newEvent, name: event.target.value })}
 					sx={{ mb: 4 }}
 					error={newEvent.name === '' && !isValidate}
@@ -312,7 +305,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					label='Mô tả sự kiện'
 					multiline
 					rows={10}
-					defaultValue={newEvent.description}
+					defaultValue={newEvent?.description}
 					onChange={event => setNewEvent({ ...newEvent, description: event.target.value })}
 					error={newEvent.description === '' && !isValidate}
 				/>
@@ -362,20 +355,20 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 									helperText: 'MM/DD/YYYY'
 								}
 							}}
-							defaultValue={dayjs(newEvent?.startTime)}
+							value={dayjs(newEvent?.startTime)}
 							sx={{ flex: 1 }}
 							onChange={handleDateChange}
 						/>
 						<TimePicker
 							sx={{ flex: 1 }}
 							label='Bắt đầu'
-							defaultValue={dayjs(newEvent?.startTime)}
+							value={dayjs(newEvent?.startTime)}
 							onChange={handleStartTimeChange}
 						/>
 						<TimePicker
 							sx={{ flex: 1 }}
 							label='Kết thúc'
-							defaultValue={dayjs(newEvent.endTime)}
+							value={dayjs(newEvent?.endTime)}
 							onChange={handleEndTimeChange}
 						/>
 					</Stack>
@@ -433,7 +426,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						Upload file
 						<VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} />
 					</Button>
-					<Typography variant='body'>FES-TECHSpeak.docx</Typography>
+					<Typography variant='body'>{fileName ? fileName : 'Kịch bản club day.xlsx'}</Typography>
 				</Stack>
 			</Stack>
 			<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>

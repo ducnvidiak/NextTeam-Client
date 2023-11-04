@@ -19,8 +19,8 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 		<>
 			<Box sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 500, padding: 4 }} role='presentation'>
 				<Stack direction={'row'} justifyContent={'space-between'} marginBottom={2}>
-					<Button variant='text'>
-						<CloseIcon onClick={toggleDrawer(anchor, false)}></CloseIcon>
+					<Button variant='text' onClick={toggleDrawer(anchor, false)}>
+						<CloseIcon></CloseIcon>
 					</Button>
 					<Button variant='text' onClick={handleFeedbackClick}>
 						<Typography mr={2} variant='button'>

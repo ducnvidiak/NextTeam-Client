@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, Fragment, useRef, useEffect } from 'react'
+import { useState, Fragment, useRef, useEffect, useContext } from 'react'
 import { useCookies } from 'react-cookie'
 
 // ** Next Import
@@ -49,6 +49,7 @@ import Groups3Icon from '@mui/icons-material/Groups3'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { getUserInfo } from 'src/utils/info'
 import HowToRegIcon from '@mui/icons-material/HowToReg'
+import { RoleContext } from 'src/layouts/Decentralization'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -99,7 +100,7 @@ const UserDropdown = props => {
 					return response.json()
 				})
 				.then(function (data) {
-					console.log(data)
+					
 					setClubOfMeData(data)
 				})
 				.catch(error => console.error('Error:', error))
@@ -174,6 +175,8 @@ const UserDropdown = props => {
 		setOpen(false)
 	}
 
+	const roleContext = useContext(RoleContext)
+
 	return (
 		<Fragment key={settings.avatarVersion}>
 			<Modal
@@ -226,7 +229,15 @@ const UserDropdown = props => {
 					alt={userData?.lastname}
 					onClick={handleDropdownOpen}
 					sx={{ width: 40, height: 40 }}
-					src={settings?.avatarURL || userData?.avatarURL}
+					src={
+						settings?.avatarURL ||
+						userData?.avatarURL ||
+						(userData?.gender == '0'
+							? '/images/avatars/5.png'
+							: userData?.gender == '1'
+							? '/images/avatars/6.png'
+							: null)
+					}
 				/>
 			</Badge>
 			<ToastContainer></ToastContainer>
@@ -247,7 +258,15 @@ const UserDropdown = props => {
 						>
 							<Avatar
 								alt={userData?.lastname}
-								src={settings?.avatarURL || userData?.avatarURL}
+								src={
+									settings?.avatarURL ||
+									userData?.avatarURL ||
+									(userData?.gender == '0'
+										? '/images/avatars/5.png'
+										: userData?.gender == '1'
+										? '/images/avatars/6.png'
+										: null)
+								}
 								sx={{ width: '2.5rem', height: '2.5rem' }}
 							/>
 						</Badge>
@@ -273,6 +292,7 @@ const UserDropdown = props => {
 					</Box>
 				</Box>
 				<Divider sx={{ mt: 0, mb: 1 }} />
+
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<AccountOutline sx={{ marginRight: 2 }} />
@@ -289,19 +309,31 @@ const UserDropdown = props => {
 						</Link>
 					</Box>
 				</MenuItem>
-
-				<MenuItem
-					sx={{ p: 0 }}
-					onClick={() => {
-						handleDropdownClose()
-						setOpen(true)
-					}}
-				>
+				{roleContext.systemRole == 1 ? (
+					<MenuItem sx={{ p: 0 }}>
 					<Box sx={styles}>
 						<Groups3Icon sx={{ marginRight: 2 }} />
-						<Button>CLB của bạn</Button>
+						<Link passHref href={`/admin`}>
+							<Button>Trang quản trị</Button>
+						</Link>
 					</Box>
 				</MenuItem>
+					
+				) : (
+					<MenuItem
+						sx={{ p: 0 }}
+						onClick={() => {
+							handleDropdownClose()
+							setOpen(true)
+						}}
+					>
+						<Box sx={styles}>
+							<Groups3Icon sx={{ marginRight: 2 }} />
+							<Button>CLB của bạn</Button>
+						</Box>
+					</MenuItem>
+				)}
+
 				<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
 					<Box sx={styles}>
 						<LockIcon sx={{ marginRight: 2 }} />

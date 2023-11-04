@@ -82,7 +82,6 @@ export default function EditPrivateNotification({
 				if (data.id == null) {
 					toast.error(data)
 				} else {
-					console.log('Chỉnh sửa thông báo thành công')
 					toast.success('Chỉnh sửa thông báo thành công!')
 					router.push('/admin/notifications')
 					handleClose()

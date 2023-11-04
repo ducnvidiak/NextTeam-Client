@@ -101,7 +101,6 @@ function Treasurer() {
 		setOpenPaymentDetailDialog(false)
 		dispatch({ type: 'trigger' })
 		setBalance(difference)
-		console.log(balance)
 		updateBalance()
 	}
 

@@ -11,7 +11,6 @@ function PaymentResult() {
 	const [paymentData, setPaymentData] = useState([])
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [userData, setUserData] = useState()
-	console.log(router.query.vnp_Amount)
 
 	useEffect(() => {
 		if (router.query.vnp_TransactionStatus) {

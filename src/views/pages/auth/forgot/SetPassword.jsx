@@ -50,13 +50,13 @@ function SetPassword(props) {
 		<div className='step'>
 			<Box sx={{ mb: 6 }}>
 				<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-					Successfully Verification
+					Xác minh thành công
 				</Typography>
-				<Typography variant='body2'>Enter your new password!</Typography>
+				<Typography variant='body2'>Hãy nhập mật khẩu mới của bạn!</Typography>
 			</Box>
 			<form noValidate autoComplete='off' onSubmit={handleSubmit2}>
 				<FormControl fullWidth>
-					<InputLabel htmlFor='auth-login-password'>Password</InputLabel>
+					<InputLabel htmlFor='auth-login-password'>Mật khẩu</InputLabel>
 					<OutlinedInput
 						label='Password'
 						value={values.password}
@@ -80,7 +80,7 @@ function SetPassword(props) {
 				</FormControl>
 
 				<Button fullWidth size='large' variant='contained' type='submit' sx={{ marginBottom: 7 }}>
-					Confirm
+					Xác nhận
 				</Button>
 			</form>
 		</div>

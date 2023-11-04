@@ -97,7 +97,7 @@ const Notifications = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						console.log(data)
+						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))
@@ -119,7 +119,7 @@ const Notifications = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						console.log(data)
+						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))
@@ -131,7 +131,7 @@ const Notifications = () => {
 		if (userData)
 			fetch(
 				'http://localhost:8080/notification?action=list-10-noti&clubId=' +
-					cookies['clubData'].clubId +
+					cookies['clubData']?.clubId +
 					'&userId=' +
 					userData?.id,
 				{

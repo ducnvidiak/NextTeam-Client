@@ -28,7 +28,7 @@ function NewProposal() {
 	const [isFocused, setIsFocused] = useState(false)
 	const [fileList, setFileList] = useState([])
 
-	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
+	const [cookies, setCookie, removeCookie] = useCookies(['userData', 'clubId'])
 	const [userData, setUserData] = useState()
 
 	const [loading, setLoading] = useState(false)
@@ -40,6 +40,8 @@ function NewProposal() {
 
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
+
+	const clubId = cookies['clubData']?.clubId
 
 	const [titleEmpty, setTitleEmpty] = useState(false)
 	const [contentEmpty, setContentEmpty] = useState(false)
@@ -101,7 +103,6 @@ function NewProposal() {
 				const fileContent = await readFile(fileList[i])
 				formData.append(`filescontent[${i}]`, fileContent)
 
-				console.log(formData.get(`filescontent[${i}]`))
 
 				formData.append(`filesname[${i}]`, fileList[i].name)
 				formData.append(`filesType[${i}]`, fileList[i].type)
@@ -110,11 +111,12 @@ function NewProposal() {
 			formData.append('numOfFile', numOfFile)
 			formData.append('title', title)
 			formData.append('content', content)
-			formData.append('clubId', 1)
+			formData.append('clubId', clubId)
 
 			if (numOfFile > 0) setLoading(true)
 
 			await createProposal(formData, userData.id).then(response => {
+				(response)
 				if (response?.status == 'success') {
 					toast.success('Gửi đề xuất thành công')
 					router.push('./')
@@ -130,9 +132,6 @@ function NewProposal() {
 
 	return (
 		<Fragment>
-			<Typography variant='h5' sx={{ fontWeight: '600', marginBottom: '10px' }}>
-				Thêm đề xuất mới
-			</Typography>
 			<Paper
 				sx={{
 					width: '100%',
@@ -140,6 +139,20 @@ function NewProposal() {
 					position: 'relative'
 				}}
 			>
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						borderBottom: '2px solid #f27123',
+						height: '58px',
+						padding: '0 10px'
+					}}
+				>
+					<Typography variant='h5' sx={{ fontWeight: '600', marginLeft: '10px' }}>
+						Thêm đề xuất mới
+					</Typography>
+				</Box>
 				<Box
 					sx={{
 						width: '100%',
@@ -224,8 +237,8 @@ function NewProposal() {
 
 						<TextField
 							id='title'
-							variant='standard'
-							sx={{ width: 'calc(100% - 30px)', marginLeft: '30px', marginTop: '8px' }}
+							variant='outlined'
+							sx={{ width: 'calc(100% - 30px)', marginTop: '8px' }}
 							value={title}
 							onChange={event => {
 								if (event.target.value.length > 0) setTitleEmpty(false)
@@ -243,8 +256,8 @@ function NewProposal() {
 							minRows={6}
 							style={{
 								width: 'calc(100% - 30px)',
-								marginLeft: '30px',
-								borderRadius: '10px',
+
+								borderRadius: '5px',
 								padding: '20px',
 								fontSize: '18px',
 								resize: 'none'
@@ -319,7 +332,7 @@ function NewProposal() {
 						justifyContent: 'space-between',
 						position: 'absolute',
 						width: '100%',
-						bottom: '30px',
+						bottom: '10px',
 						padding: '0 30px'
 					}}
 				>

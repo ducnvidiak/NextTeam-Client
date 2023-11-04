@@ -49,7 +49,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 	useEffect(() => {
 		setCurrentUserInfo({ ...userInfo })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userInfo.id])
+	}, [userInfo?.id])
 
 	const [country, setCountry] = useState(
 		userInfo?.homeTown != '' && userInfo?.homeTown != null
@@ -85,7 +85,6 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 				} else {
 					toast.error('Fail to change detail info!')
 				}
-				console.log('update detail info: ', response)
 			})
 		}
 	}
@@ -115,7 +114,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							type='text'
 							label='Mã sinh viên'
 							placeholder='DE160488'
-							value={currentUserInfo?.username.toUpperCase() || ''}
+							value={currentUserInfo?.username?.toUpperCase() || ''}
 							error={studentCodeError.status}
 							onChange={event => {
 								const validStudentCode = validateStudentCode(event.target.value)
@@ -360,7 +359,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 							>
 								<FormControlLabel value='Male' label='Nam' control={<Radio />} />
 								<FormControlLabel value='Female' label='Nữ' control={<Radio />} />
-								<FormControlLabel value='Others' label='Đười ươi' control={<Radio />} />
+								<FormControlLabel value='Others' label='Khác' control={<Radio />} />
 							</RadioGroup>
 						</FormControl>
 					</Grid>

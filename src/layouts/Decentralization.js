@@ -12,8 +12,8 @@ function return404Error(router) {
 }
 
 function Decentralization(props) {
-	const [cookies] = useCookies(['userData', 'clubData'])
 	const router = useRouter()
+	const [cookies] = useCookies(['userData', 'clubData'])
 
 	const [userData, setUserData] = useState()
 	const [userSubrole, setUserSubrole] = useState()
@@ -38,7 +38,7 @@ function Decentralization(props) {
 	if (!userData || userData.isAdmin == undefined) {
 		contextValue = { ...contextValue, systemRole: -1 }
 	} else if (userData.isAdmin == false) {
-		contextValue = { ...contextValue, systemRole: 0, clubRole: userSubrole.roleId }
+		contextValue = { ...contextValue, systemRole: 0, clubRole: userSubrole?.roleId }
 	} else if (userData.isAdmin == true) {
 		contextValue = { ...contextValue, systemRole: 1 }
 	}

@@ -114,7 +114,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					return response.json()
 				})
 				.then(function (data) {
-					console.log('data')
 					setEventList(data)
 					toast.success('Tạo sự kiện thành công, đang chờ kiểm duyệt...')
 					setOpenEventCreatorModal(false)

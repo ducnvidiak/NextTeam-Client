@@ -48,7 +48,6 @@ function PaymentForm() {
 	}
 
 	const handlePay = row => {
-		console.log(row)
 		fetch(`http://localhost:8080/vnpayajax?amount=${row?.amount}&id=${row?.id}`, {
 			method: 'GET',
 			headers: {

@@ -192,7 +192,7 @@ const NotificationDropdown = () => {
 				})
 				.then(function (data) {
 					setNotificationsData(data)
-					console.log(notificationsData)
+					
 				})
 				.catch(error => console.error('Error:', error))
 		}
@@ -211,7 +211,7 @@ const NotificationDropdown = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						console.log(data)
+						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))
@@ -232,7 +232,7 @@ const NotificationDropdown = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						console.log(data)
+						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))

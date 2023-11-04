@@ -1,4 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, Typography } from '@mui/material'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { toast } from 'react-toastify'
@@ -25,20 +26,19 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 			}
 		})
 			.then(function (response) {
-
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('new data')
-				console.log(data)
 				setEventList(data)
 				toast.success('Đăng ký sự kiện thành công!!!!')
 				setOpenRegisterModal(false)
-				toggleDrawer(anchor, false)
+
+				// toggleDrawer(anchor, false)
 			})
 			.catch(error => {
 				console.error('Error:', error)
-				toggleDrawer(anchor, false)
+
+				// toggleDrawer(anchor, false)
 				setOpenRegisterModal(false)
 				toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
 			})
@@ -62,9 +62,6 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 					</Typography>
 				</DialogTitle>
 				<DialogContent sx={{ paddingX: 16 }}>
-					{/* <DialogContentText id='alert-dialog-description' marginBottom={2}>
-					Bạn có muốn đăng ký tham gia sự kiện với các thông tin dưới đây không?
-					</DialogContentText> */}
 					<Typography fontWeight={600} marginBottom={1} variant='h6'>
 						Thông tin sự kiện:
 					</Typography>
@@ -80,13 +77,15 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 						<Typography marginBottom={1} width={'20%'}>
 							Thời gian:
 						</Typography>
-						<Typography marginBottom={1}>6:00 PM</Typography>
+						<Typography marginBottom={1}>{`${moment(event?.startTime).format('LT')} ${moment(
+							event?.startTime
+						).format('L')}`}</Typography>
 					</Stack>
 					<Stack direction={'row'} gap={2}>
 						<Typography marginBottom={1} width={'20%'}>
 							Địa điểm:
 						</Typography>
-						<Typography marginBottom={1}>Phòng 201</Typography>
+						<Typography marginBottom={1}>{event?.location}</Typography>
 					</Stack>
 					<Divider variant='middle'></Divider>
 

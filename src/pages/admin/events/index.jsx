@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -7,96 +7,341 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import classes from './styles.module.scss'
+import { useCookies } from 'react-cookie'
+import { TextareaAutosize } from '@mui/base'
 
-import Button from '@mui/material/Button'
+import {
+	Card,
+	Box,
+	CardContent,
+	Container,
+	Stack,
+	Modal,
+	Typography,
+	Button,
+	Divider,
+	SwipeableDrawer,
+	Drawer,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	Chip
+} from '@mui/material'
 
-function createData(name, calories, fat, carbs, files) {
-	return { name, calories, fat, carbs, files }
-}
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import InboxIcon from '@mui/icons-material/MoveToInbox'
+import MailIcon from '@mui/icons-material/Mail'
 
-const rows = [
-	createData(
-		'Dever',
-		'Đêm nhạc đa dạng',
-		'Một buổi biểu diễn âm nhạc đa dạng với sự tham gia của các ban nhạc và nghệ sĩ trẻ, từ pop, rock, jazz đến EDM và hip-hop. Mục tiêu là mang đến cho khán giả một đêm nhạc tràn đầy sôi động và đa phong cách.',
-		'Thời gian: 15/10/2023, từ 18:00 đến 22:00 Địa điểm: Nhà hát Thành phố',
-		'plan.docx'
-	),
-	createData(
-		'Gdsc',
-		'Triển lãm nghệ thuật đương đại',
-		'Triển lãm nghệ thuật đương đại với sự tham gia của các nghệ sĩ trẻ, bao gồm hội họa, điêu khắc, ảnh nghệ thuật và nhiều hình thức khác. Sự kiện nhằm thúc đẩy sự sáng tạo và truyền cảm hứng cho các tác phẩm nghệ thuật mới.',
-		'Thời gian: 25/11/2023, từ 10:00 đến 18:00 Địa điểm: Trung tâm Nghệ thuật và Văn hóa',
-		'chi tiết.docx'
-	),
-	createData(
-		'Fve',
-		'Ngày hội thể thao',
-		'Một ngày hội thể thao vui vẻ và năng động với các hoạt động như bóng đá, bóng chuyền, cầu lông, và các trò chơi thể thao độc đáo khác. Sự kiện nhằm khích lệ sự tham gia và rèn luyện sức khỏe cho các thành viên trong một môi trường thân thiện và hào hứng.',
-		'Thời gian: 30/09/2023, từ 14:00 đến 18:00 Địa điểm: Sân vận động thành phố',
-		'hình ảnh.png'
-	),
-	createData(
-		'Sner',
-		'Hội thảo công nghệ mới',
-		'Một hội thảo thú vị về công nghệ mới nhất, bao gồm trình diễn và thảo luận về trí tuệ nhân tạo, blockchain, thực tế ảo, và các xu hướng công nghệ tiên tiến khác. Sự kiện nhằm tạo cơ hội cho các thành viên tìm hiểu và chia sẻ kiến thức về những phát triển công nghệ đang diễn ra.',
-		'Thời gian: 12/10/2023, từ 09:00 đến 16:00 Địa điểm: Trung tâm Hội nghị và Triển lãm',
-		'thông tin.docx'
-	),
-	createData(
-		'Kever',
-		'Ngày dọn dẹp môi trường',
-		'Một ngày dành cho hoạt động dọn dẹp môi trường, bao gồm thu gom rác, trồng cây và xây dựng các hoạt động bảo vệ thiên nhiên. Sự kiện nhằm tạo ý thức về bảo vệ môi trường và khuyến khích sự tham gia tích cực của các thành viên để xây dựng một môi trường xanh và sạch hơn.',
-		'Thời gian: 05/11/2023, từ 08:00 đến 12:00 Địa điểm: Công viên thành phố',
-		'kế hoạch.png'
-	)
-]
+import InfoIcon from '@mui/icons-material/Info'
+import Groups2Icon from '@mui/icons-material/Groups2'
+import CakeIcon from '@mui/icons-material/Cake'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
+import CloseIcon from '@mui/icons-material/Close'
+
+import { getAllEvents, updateEventStatus } from 'src/api-utils/apiUtils'
+import { toast } from 'react-toastify'
 
 export default function EventDashboard() {
+	const [events, setEvents] = useState([])
+	const [selectedEvent, setSelectedEvent] = useState(null)
+	const [selectedConfirmEvent, setSelectedConfirmEvent] = useState(null)
+	const [status, setStatus] = useState(null)
+	const [cookies, setCookie] = useCookies(['clubData'])
+	const [openModal, setOpenModal] = useState(false)
+	const [feedback, setFeedback] = useState(null)
+
+	const clubId = cookies['clubData']?.clubId
+
+	useEffect(() => {
+		getAllEvents().then(response => {
+			setEvents(response)
+		})
+	}, [])
+
+	const [state, setState] = useState({
+		top: false,
+		left: false,
+		bottom: false,
+		right: false
+	})
+
+	const filteredEvents = events?.filter(event => event.clubId == clubId)
+
+	const toggleDrawer = (anchor, open) => event => {
+		if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+			return
+		}
+
+		setState({ ...state, [anchor]: open })
+	}
+
+	const list = anchor => (
+		<Box sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 500, padding: 4 }} role='presentation'>
+			<Stack direction={'row'} marginBottom={2}>
+				<Button variant='text'>
+					<CloseIcon onClick={toggleDrawer(anchor, false)}></CloseIcon>
+				</Button>
+			</Stack>
+			{/* <Divider /> */}
+			<Card sx={{ padding: 2 }}>
+				<img
+					src={selectedEvent?.bannerUrl}
+					alt=''
+					style={{
+						height: '300px',
+						width: '100%',
+						objectFit: 'cover',
+						borderRadius: 8,
+						display: 'block'
+					}}
+				></img>
+				<CardContent sx={{ padding: 4 }}>
+					<Typography variant='h6' fontWeight={700} marginBottom={4}>
+						{selectedEvent?.name}
+					</Typography>
+					<Box sx={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
+						<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>
+							<Groups2Icon></Groups2Icon>
+						</Box>
+						<Box>
+							<Typography variant='body2' fontWeight={500}>
+								Tổ chức
+							</Typography>
+							<Typography variant='body1' fontWeight={600}>
+								{selectedEvent?.clubSubname}
+							</Typography>
+						</Box>
+					</Box>
+					<Box sx={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+						<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>
+							<LocationOnIcon></LocationOnIcon>
+						</Box>
+						<Box>
+							<Typography variant='body2' fontWeight={500}>
+								Tại
+							</Typography>
+							<Typography variant='body1' fontWeight={600}>
+								{selectedEvent?.locationName}
+							</Typography>
+						</Box>
+					</Box>
+				</CardContent>
+			</Card>
+			<Card sx={{ marginTop: 4 }}>
+				<Stack direction={'row'} alignItems={'flex-end'} gap={2} padding={2}>
+					<InfoIcon sx={{ marginBottom: 1 }}></InfoIcon>
+					<Typography variant='h6' fontWeight={700}>
+						Mô tả sự kiện
+					</Typography>
+				</Stack>
+				<Divider sx={{ margin: 0 }}></Divider>
+				<CardContent sx={{ padding: 6 }}>
+					<Typography sx={'body1'}>{selectedEvent?.description}</Typography>
+				</CardContent>
+			</Card>
+			{/* <Button variant='contained' fullWidth sx={{ marginTop: 4 }}>
+				Đăng ký
+			</Button> */}
+		</Box>
+	)
+
+	const handleConfirmAction = (event, status) => {
+		setSelectedConfirmEvent(event)
+		setStatus(status)
+		setOpenModal(true)
+	}
+
+	const handleUpdateStatus = (uevent, status, feedback) => {
+		updateEventStatus(uevent.id, status, feedback).then(response => {
+			if (response?.status == 'success') {
+				const updateEvents = events.map(event => {
+					if (event.id != uevent.id) return event
+					else return { ...event, isApproved: status }
+				})
+				toast.success('Đã cập nhật')
+				setEvents(updateEvents)
+				setFeedback(null)
+			} else {
+				toast.error('Vui lòng thử lại sau')
+			}
+		})
+	}
+
+	const handleCloseModal = () => {
+		setOpenModal(false)
+	}
+
+	const handleAction = () => {
+		setOpenModal(false)
+		handleUpdateStatus(selectedConfirmEvent, status, feedback)
+	}
+
 	return (
-		<TableContainer component={Paper}>
-			<h1 className={classes.ml_2}>Phệ duyệt sự kiện</h1>
-			<Table sx={{ minWidth: 650 }} aria-label='simple table'>
-				<TableHead>
-					<TableRow>
-						<TableCell>Câu lạc bộ</TableCell>
-						<TableCell align='left'>Sự kiện</TableCell>
-						<TableCell align='left'>Nội dung</TableCell>
-						<TableCell align='center'>Files đính kèm</TableCell>
-						<TableCell align='center'>Thời gian/ Địa điểm</TableCell>
-						<TableCell align='center'>Hành động</TableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody>
-					{rows.map(row => (
-						<TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-							<TableCell component='th' scope='row'>
-								{row.name}
-							</TableCell>
-							<TableCell align='left'>{row.calories}</TableCell>
-							<TableCell align='left'>{row.fat}</TableCell>
-							<TableCell align='center' sx={{ width: '150px' }}>
-								<div className={classes.filebox}>{row.files}</div>
-							</TableCell>
-							<TableCell align='left' sx={{ width: '150px' }}>
-								{row.carbs}
-							</TableCell>
-							<TableCell
-								align='center'
-								sx={{
-									width: '300px',
-									gap: '20px'
-								}}
-							>
-								<Button variant='contained' sx={{ marginRight: '20px' }}>
-									Chấp nhận
-								</Button>
-								<Button variant='outlined'>Từ chối</Button>
-							</TableCell>
+		<Fragment>
+			<TableContainer component={Paper}>
+				<Table sx={{ minWidth: 650 }} aria-label='simple table'>
+					<TableHead>
+						<TableRow>
+							<TableCell>Câu lạc bộ</TableCell>
+							<TableCell align='left'>Sự kiện</TableCell>
+
+							<TableCell align='center'>Thời gian/ Địa điểm</TableCell>
+							<TableCell align='center'>Trạng thái</TableCell>
+							<TableCell align='center'>Hành động</TableCell>
 						</TableRow>
-					))}
-				</TableBody>
-			</Table>
-		</TableContainer>
+					</TableHead>
+					<TableBody>
+						{events?.map(event => (
+							<TableRow key={event.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+								<TableCell component='th' scope='row' sx={{ width: '120px' }}>
+									{event.clubSubname}
+								</TableCell>
+								<TableCell align='left'>{event.name}</TableCell>
+
+								<TableCell align='left' sx={{ width: '250px' }}>
+									{event.startTime} tới {event.endTime} tại {event.locationName}
+								</TableCell>
+								<TableCell align='left' sx={{ width: '30px' }}>
+									<Chip
+										label={event.isApproved}
+										color={
+											event.isApproved == 'accepted'
+												? 'success'
+												: event.isApproved == 'rejected'
+												? 'error'
+												: 'primary'
+										}
+									/>
+								</TableCell>
+								<TableCell
+									align='center'
+									sx={{
+										width: '450px',
+										gap: '10px'
+									}}
+								>
+									<Button
+										variant='contained'
+										size='small'
+										sx={{ marginRight: '10px' }}
+										onClick={e => {
+											setSelectedEvent(event)
+											toggleDrawer('right', true)(e)
+										}}
+									>
+										Xem chi tiết
+									</Button>
+									<Button
+										variant='contained'
+										size='small'
+										sx={{ marginRight: '10px' }}
+										onClick={() => {
+											handleConfirmAction(event, 'accepted')
+										}}
+									>
+										Chấp nhận
+									</Button>
+									<Button
+										variant='outlined'
+										size='small'
+										onClick={() => {
+											handleConfirmAction(event, 'rejected')
+										}}
+									>
+										Từ chối
+									</Button>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+			{['left', 'right', 'top', 'bottom'].map(anchor => (
+				<Fragment key={anchor}>
+					<Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
+						{list(anchor)}
+					</Drawer>
+				</Fragment>
+			))}
+			<Modal
+				open={openModal}
+				onClose={handleCloseModal}
+				aria-labelledby='proposal deleting'
+				aria-describedby='modal for confirm delete proposal'
+			>
+				<Paper
+					sx={{
+						width: '650px',
+						position: 'absolute',
+						top: '10%',
+						left: '50%',
+						transform: 'translateX(-50%)',
+						paddingBottom: '100px'
+					}}
+				>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							height: '50px',
+							padding: '0 20px',
+							borderBottom: '2px solid orange'
+						}}
+					>
+						<Typography variant='h6'>Xác nhận hành động của bạn?</Typography>
+					</Box>
+
+					<Box
+						sx={{
+							padding: '0 20px'
+						}}
+					>
+						<InputLabel htmlFor='response' sx={{ margin: '30px 0 20px' }}>
+							Bạn có thể thêm phản hồi khi xác nhận hành động
+						</InputLabel>
+						<TextareaAutosize
+							maxRows={3}
+							minRows={3}
+							style={{
+								width: 'calc(100% - 70px)',
+								marginLeft: '30px',
+								borderRadius: '10px',
+								padding: '20px',
+								fontSize: '18px',
+								resize: 'none'
+							}}
+							spellCheck='false'
+							value={feedback}
+							onChange={event => {
+								setFeedback(event.target.value)
+							}}
+						/>
+					</Box>
+
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: '20px',
+							position: 'absolute',
+							bottom: '15px',
+							right: '20px'
+						}}
+					>
+						<Button variant='contained' onClick={handleAction}>
+							Xác nhận
+						</Button>
+						<Button variant='outlined' onClick={handleCloseModal}>
+							Hủy
+						</Button>
+					</Box>
+				</Paper>
+			</Modal>
+		</Fragment>
 	)
 }

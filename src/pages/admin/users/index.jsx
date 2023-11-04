@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@mui/styles'
-import { IconButton } from '@mui/material'
 import {
 	Card,
 	CardContent,
@@ -18,8 +17,7 @@ import {
 	DialogContent,
 	DialogActions,
 	Select,
-	MenuItem,
-	TextField
+	MenuItem
 } from '@mui/material'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -37,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 		gap: theme.spacing(2)
 	}
 }))
-const ORIGIN_URL = 'http://localhost:8080/api/user?cmd='
+const ORIGIN_URL = 'http://localhost:8080/api/user_manager?cmd='
 
 const AdminManageUsers = () => {
 	const [users, setUsers] = useState([])
@@ -101,7 +99,7 @@ const AdminManageUsers = () => {
 						closeOnClick: true,
 						pauseOnHover: true,
 						draggable: true
-					  })
+					})
 				})
 		} else {
 			fetch(`${ORIGIN_URL}unblock&id=${selectedUser.id}`)
@@ -118,7 +116,7 @@ const AdminManageUsers = () => {
 						closeOnClick: true,
 						pauseOnHover: true,
 						draggable: true
-					  })
+					})
 				})
 		}
 		handleBlockDialogClose()
@@ -127,7 +125,6 @@ const AdminManageUsers = () => {
 	const handleGrantPermission = () => {
 		if (selectedRole === 'Quản trị viên') {
 			const DCT_ADMIN_URL = `${ORIGIN_URL}dct_admin&id=${selectedUser.id}`
-			console.log(DCT_ADMIN_URL)
 			fetch(DCT_ADMIN_URL)
 				.then(res => res.json())
 				.then(result => {
@@ -142,8 +139,9 @@ const AdminManageUsers = () => {
 						closeOnClick: true,
 						pauseOnHover: true,
 						draggable: true
-					  })
-				}).catch(error =>{
+					})
+				})
+				.catch(error => {
 					toast.error('Phân quyền thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
@@ -151,11 +149,10 @@ const AdminManageUsers = () => {
 						closeOnClick: true,
 						pauseOnHover: true,
 						draggable: true
-					  })
+					})
 				})
 		} else {
 			const DCT_USER_URL = `${ORIGIN_URL}dct_admin&id=${selectedUser.id}`
-			console.log(DCT_USER_URL)
 			fetch(DCT_USER_URL)
 				.then(res => res.json())
 				.then(result => {
@@ -169,7 +166,7 @@ const AdminManageUsers = () => {
 						closeOnClick: true,
 						pauseOnHover: true,
 						draggable: true
-					  })
+					})
 				})
 		}
 		handlePermissionDialogClose()
@@ -194,8 +191,8 @@ const AdminManageUsers = () => {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{users.map(user => (
-								<TableRow key={user.id}>
+							{users?.map(user => (
+								<TableRow key={user?.id}>
 									<TableCell>{user.id}</TableCell>
 									<TableCell>{user.firstname + ' ' + user.lastname}</TableCell>
 									<TableCell>{user.username}</TableCell>

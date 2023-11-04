@@ -17,8 +17,9 @@ import FormControl from '@mui/material/FormControl'
 import NativeSelect from '@mui/material/NativeSelect'
 
 import CircularProgress from '@mui/material/CircularProgress'
+import { useCookies } from 'react-cookie'
 
-import { getListOfAllUser } from '../../../utils/apiUtils'
+import { getListOfAllUserForManage } from 'src/api-utils/apiUtils'
 import { useState } from 'react'
 import { useEffect } from 'react'
 
@@ -30,28 +31,28 @@ import Link from 'next/link'
 const UserList = () => {
 	const [userList, setUserList] = useState(null)
 	const [filterBy, setFilterBy] = useState('')
+	const [cookies, setCookie] = useCookies(['clubData'])
 
 	const listOfUserName = userList?.map(user => user.fullname)
 	const router = useRouter()
-
-	console.log('user list: ', userList)
+	
+	const clubId = cookies['clubData']?.clubId
 
 	useEffect(() => {
-		getListOfAllUser().then(data => {
+		getListOfAllUserForManage(clubId).then(data => {
 			setUserList(data)
 		})
-	}, [])
+	}, [clubId])
 
 	function handleClick(id) {
-		router.push('http://localhost:3000/dashboard/members/info/' + id)
+		router.push('./members/info/' + id)
 	}
 
 	return (
 		<Paper
 			sx={{
 				width: '100%',
-				height: '100%',
-				borderRadius: '15px'
+				height: '100%'
 			}}
 		>
 			<Box
@@ -61,7 +62,7 @@ const UserList = () => {
 					alignItems: 'center',
 					height: '60px',
 					padding: '0 20px',
-					borderBottom: '2px solid #F8C883'
+					borderBottom: '2px solid #f27123'
 				}}
 			>
 				<Typography variant='h6'>Danh sách thành viên</Typography>
@@ -135,7 +136,7 @@ const UserList = () => {
 										width: '90px',
 										height: '90px',
 										borderRadius: '1000px',
-										border: '3px solid #f58a38',
+										border: '3px solid #f27123',
 										overflow: 'hidden'
 									}}
 								>
@@ -147,7 +148,14 @@ const UserList = () => {
 											':hover': { transform: 'scale(1.2)' }
 										}}
 										alt='avatar'
-										src={user.avatarURL}
+										src={
+											user?.avatarURL ||
+											(user.gender == '0'
+												? '/images/avatars/5.png'
+												: user.gender == '1'
+												? '/images/avatars/6.png'
+												: '')
+										}
 									/>
 								</Box>
 								<Box
@@ -163,7 +171,7 @@ const UserList = () => {
 									<Typography
 										variant='subtitle1'
 										sx={{
-											backgroundColor: 'orange',
+											backgroundColor: '#f27123',
 											display: 'inline-block',
 											padding: '0 5px',
 											borderRadius: '5px',
@@ -187,7 +195,7 @@ const UserList = () => {
 										}
 									}}
 								>
-									<MoreHorizIcon sx={{ color: 'orange', fontSize: '32px' }} />
+									<MoreHorizIcon sx={{ color: '#f27123', fontSize: '32px' }} />
 								</Box>
 							</Box>
 						</Card>
