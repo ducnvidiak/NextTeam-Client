@@ -1,4 +1,4 @@
-const root = 'http://localhost:8080/'
+const root = 'https://nextteam.azurewebsites.net/'
 
 async function postAPI(link, json, contentType = 'application/x-www-form-urlencoded; charset=UTF-8') {
 	if (!(link.startsWith`https://` || link.startsWith`http://`)) {
