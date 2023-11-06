@@ -8,7 +8,7 @@ import DashboardLayout from 'src/@core/layouts/DashboardLayout'
 import AdminLayout from 'src/@core/layouts/AdminLayout'
 
 // ** Navigation Imports
-import { adminLayoutVavigation, landingLayoutVavigation, dashboardLayoutVavigation } from 'src/navigation'
+import { adminLayoutVavigation, landingLayoutVavigation, dashboardLayoutVavigation, memberLayoutNavigation } from 'src/navigation'
 
 // ** Component Import
 import VerticalLandingBarContent from './components/vertical/LandingAppContent'
@@ -19,6 +19,10 @@ import VerticalAdminAppBarContent from './components/vertical/AdminAppBarContent
 import { useSettings } from 'src/@core/hooks/useSettings'
 import BlankLayout from 'src/@core/layouts/LandingLayout'
 import { useRouter } from 'next/router'
+import Decentralization, { RoleContext } from './Decentralization'
+import { useCookies } from 'react-cookie'
+import { getUserInfo, getUserSubrole } from 'src/utils/info'
+import { useContext, useEffect, useState } from 'react'
 
 const UserLayout = ({ children }) => {
 	// ** Hooks
@@ -52,9 +56,35 @@ const UserLayout = ({ children }) => {
 		)
 	}
 
-	// const [layout, setLayout] = useState('hui')
+	var contextValue = {}
 
 	const router = useRouter()
+	
+	const [cookies] = useCookies(['userData', 'clubData'])
+	const [userData, setUserData] = useState('?')
+	const [userSubrole, setUserSubrole] = useState()
+
+	const roleContext = useContext(RoleContext)
+
+	useEffect(() => {
+		;(async () => {
+			const res = await getUserInfo(cookies.userData)
+			if (res?.isAdmin == undefined) {
+				setUserData('???')
+			} else {
+				setUserData(res)
+			}
+		})()
+	}, [cookies])
+
+	useEffect(() => {
+		if (cookies['clubData'])
+			(async () => {
+				const res = await getUserSubrole(cookies.userData, cookies.clubData.clubId)
+				setUserSubrole(res)
+			})()
+	}, [cookies, userData])
+
 
 	return (
 		<>
@@ -63,7 +93,7 @@ const UserLayout = ({ children }) => {
 					hidden={hidden}
 					settings={settings}
 					saveSettings={saveSettings}
-					verticalNavItems={dashboardLayoutVavigation()} // Navigation Items
+					verticalNavItems={roleContext.clubRole == '1' ? memberLayoutNavigation(): dashboardLayoutVavigation()} // Navigation Items
 					afterVerticalNavMenuContent={UpgradeToProImg}
 					verticalAppBarContent={(
 						props // AppBar Content

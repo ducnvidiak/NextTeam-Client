@@ -184,11 +184,11 @@ const RecoverPassword = () => {
 						}}
 					>
 						<Typography variant='body2' sx={{ marginRight: 2 }}>
-							Remember your password?
+							Nhớ mật khẩu? 
 						</Typography>
 						<Typography variant='body2'>
 							<Link passHref href='/auth/login/'>
-								<LinkStyled>Go back to login</LinkStyled>
+								<LinkStyled>Đăng nhập ngay</LinkStyled>
 							</Link>
 						</Typography>
 					</Box>

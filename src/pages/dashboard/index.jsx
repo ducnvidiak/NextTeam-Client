@@ -39,7 +39,6 @@ const Dashboard = () => {
 				.then(res => res.json())
 				.then(result => {
 					setData(result)
-					console.log(result)
 				})
 		}
 		refreshData()
@@ -51,11 +50,11 @@ const Dashboard = () => {
 				<Grid item xs={12} md={12}>
 					<ClubStructure data={data} />
 				</Grid>
-				<Grid item xs={12} md={6}>
+				<Grid item xs={12} md={5.9} sx={{ marginLeft: 3 }}>
 					<Trophy data={data} />
 				</Grid>
 
-				<Grid item xs={12} md={6}>
+				<Grid item xs={12} md={5.9} >
 					<Event data={data} />
 				</Grid>
 
@@ -76,12 +75,10 @@ const Dashboard = () => {
 					<Grid container spacing={6}>
 						<Grid item xs={6}>
 							<CardStatisticsVerticalComponent
-								stats={data.balance}
+								stats={data?.balance}
 								icon={<Poll />}
 								color='success'
-								
 								title='Số dư'
-								
 							/>
 						</Grid>
 						<Grid item xs={6}>
@@ -90,28 +87,22 @@ const Dashboard = () => {
 								title='Điểm Hoạt Động'
 								trend='negative'
 								color='secondary'
-								
-								
 								icon={<CurrencyUsd />}
 							/>
 						</Grid>
 						<Grid item xs={6}>
 							<CardStatisticsVerticalComponent
-								stats={data.total_report}
+								stats={data?.total_report}
 								trend='negative'
-								
 								title='Số báo cáo'
-								
 								icon={<BriefcaseVariantOutline />}
 							/>
 						</Grid>
 						<Grid item xs={6}>
 							<CardStatisticsVerticalComponent
-								stats={data.total_post}
+								stats={data?.total_post}
 								color='warning'
 								trend='negative'
-							
-								
 								title='Số bài viết'
 								icon={<HelpCircleOutline />}
 							/>

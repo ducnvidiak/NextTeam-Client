@@ -46,11 +46,12 @@ export const dashboardLayoutVavigation = () => {
 			icon: NotificationsIcon,
 			path: '/dashboard/notifications'
 		},
-		{
-			title: 'Hoạt động',
-			icon: AssignmentIcon,
-			path: '/dashboard/activities'
-		},
+
+		// {
+		// 	title: 'Hoạt động',
+		// 	icon: AssignmentIcon,
+		// 	path: '/dashboard/activities'
+		// },
 		{
 			title: 'Sự kiện',
 			path: '/dashboard/events',
@@ -83,11 +84,12 @@ export const dashboardLayoutVavigation = () => {
 		{
 			sectionTitle: 'Tài liệu'
 		},
-		{
-			title: 'Kho lưu trữ',
-			icon: StorageIcon,
-			path: '/dashboard/document-storage'
-		},
+
+		// {
+		// 	title: 'Kho lưu trữ',
+		// 	icon: StorageIcon,
+		// 	path: '/dashboard/document-storage'
+		// },
 		{
 			title: 'Đề xuất hoạt động',
 			path: '/dashboard/activity-proposals',
@@ -101,11 +103,12 @@ export const dashboardLayoutVavigation = () => {
 			icon: PriceChangeIcon,
 			path: '/dashboard/treasurer'
 		},
-		{
-			title: 'Điểm danh',
-			icon: FactCheckIcon,
-			path: '/dashboard/attendances'
-		},
+
+		// {
+		// 	title: 'Điểm danh',
+		// 	icon: FactCheckIcon,
+		// 	path: '/dashboard/attendances'
+		// },
 		{
 			title: 'Duyệt thành viên',
 			icon: HowToRegIcon,
@@ -136,30 +139,99 @@ export const dashboardLayoutVavigation = () => {
 			title: 'Quản lý hoạt động',
 			path: '/dashboard/activity-creator'
 		},
-		{
-			icon: MeetingRoomIcon,
-			title: 'Cơ sở vật chất',
-			path: '/dashboard/infrastructures'
-		},
+
+		// {
+		// 	icon: MeetingRoomIcon,
+		// 	title: 'Cơ sở vật chất',
+		// 	path: '/dashboard/infrastructures'
+		// },
 		{
 			title: 'Kế hoạch',
 			path: '/dashboard/plans',
 			icon: FilePresentIcon
 		},
-		{
-			title: 'Báo cáo',
-			path: '/dashboard/reports',
-			icon: SummarizeIcon
-		},
-		{
-			title: 'Điểm danh',
-			path: '/dashboard/test',
-			icon: SummarizeIcon
-		},
+
+		// {
+		// 	title: 'Báo cáo',
+		// 	path: '/dashboard/reports',
+		// 	icon: SummarizeIcon
+		// },
+		// {
+		// 	title: 'Điểm danh',
+		// 	path: '/dashboard/test',
+		// 	icon: SummarizeIcon
+		// },
 		{
 			title: 'Quản lí phòng ban',
 			path: '/dashboard/department',
 			icon: NoteAddIcon
+		}
+	]
+}
+
+export const memberLayoutNavigation = () => {
+	return [
+		{
+			title: 'Trang chủ',
+			icon: HomeOutline,
+			path: '/dashboard'
+		},
+		{
+			sectionTitle: 'Thông tin'
+		},
+		{
+			title: 'Thông báo',
+			icon: NotificationsIcon,
+			path: '/dashboard/notifications'
+		},
+
+		// {
+		// 	title: 'Hoạt động',
+		// 	icon: AssignmentIcon,
+		// 	path: '/dashboard/activities'
+		// },
+		{
+			title: 'Sự kiện',
+			path: '/dashboard/events',
+			icon: CelebrationIcon
+		},
+		{
+			title: 'Điểm hoạt động',
+			icon: AssessmentIcon,
+			path: '/dashboard/ranking'
+		},
+		{
+			title: 'Thành viên',
+			icon: Groups2Icon,
+			path: '/dashboard/members'
+		},
+		{
+			sectionTitle: 'Tài chính'
+		},
+		{
+			title: 'Khoản nộp',
+			icon: PaymentsIcon,
+			path: '/dashboard/payment-form'
+		},
+		{
+			title: 'Quản lý quỹ',
+			path: '/dashboard/transaction-history',
+			icon: HistoryIcon
+		},
+
+		{
+			sectionTitle: 'Tài liệu'
+		},
+
+		// {
+		// 	title: 'Kho lưu trữ',
+		// 	icon: StorageIcon,
+		// 	path: '/dashboard/document-storage'
+		// },
+		{
+			title: 'Đề xuất hoạt động',
+			path: '/dashboard/activity-proposals',
+			icon: AddCommentIcon
 		}
 	]
 }
@@ -191,11 +263,12 @@ export const adminLayoutVavigation = () => {
 			path: '/admin/plans',
 			icon: FilePresentIcon
 		},
-		{
-			title: 'Báo cáo',
-			path: '/admin/reports',
-			icon: SummarizeIcon
-		},
+		
+		// {
+		// 	title: 'Báo cáo',
+		// 	path: '/admin/reports',
+		// 	icon: SummarizeIcon
+		// },
 		{
 			icon: CelebrationIcon,
 			title: 'Phê duyệt sự kiện',

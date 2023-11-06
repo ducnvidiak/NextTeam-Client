@@ -253,7 +253,6 @@ function ActivityCreator() {
 			cmd: 'view',
 			clubId: data.clubId
 		})
-		console.log(res)
 		if (res.code == 0) {
 			setPointsHistories(res.result)
 		}

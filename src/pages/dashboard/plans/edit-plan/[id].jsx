@@ -2,8 +2,10 @@ import { useState, useRef, useEffect } from 'react'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
 
+import { getPlanByPlanId, getPlanFilesByPlanId } from 'src/api-utils/apiUtils'
+
 import Modal from '@mui/material/Modal'
-import { createPlan } from 'src/api-utils/apiUtils'
+import { updatePlan } from 'src/api-utils/apiUtils'
 
 import { Box, Button, Chip, FormHelperText, InputLabel, Paper, TextField, Typography } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -18,33 +20,53 @@ import { AiOutlineFileUnknown } from 'react-icons/ai'
 import { BiSolidFilePdf } from 'react-icons/bi'
 import { BsFiletypePng, BsFiletypeJpg } from 'react-icons/bs'
 
-import classes from './styles.module.scss'
+import classes from '../styles.module.scss'
 
 import classNames from 'classnames'
 import { getUserInfo } from 'src/utils/info'
 import { toast } from 'react-toastify'
 
-function NewPlan() {
+function EditPlans() {
 	const [isFocused, setIsFocused] = useState(false)
-	const [fileList, setFileList] = useState([])
+	const [fileRecords, setFileRecords] = useState(null)
+	const [planId, setPlanId] = useState(null)
 
-	const [cookies, setCookie, removeCookie] = useCookies(['userData', 'clubId'])
+	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [userData, setUserData] = useState()
 
+	const [newFiles, setNewFiles] = useState([])
+	const [deleteFiles, setDeleteFiles] = useState([])
+
 	const [loading, setLoading] = useState(false)
-	const router = useRouter()
 
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
+
+	const router = useRouter()
+	const { id } = router.query
+
+	useEffect(() => {
+		setPlanId(id)
+
+		if (planId) {
+			getPlanByPlanId(planId).then(response => {
+				console.log('plans: ', response)
+				setTitle(response.title)
+				setContent(response.content)
+			})
+			getPlanFilesByPlanId(planId).then(response => {
+				console.log('file records: ', response)
+				setFileRecords(response)
+			})
+		}
+	}, [id, planId])
 
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
 
 	const [titleEmpty, setTitleEmpty] = useState(false)
 	const [contentEmpty, setContentEmpty] = useState(false)
-
-	const clubId = cookies['clubData']?.clubId
 
 	const wrapperRef = useRef(null)
 
@@ -64,14 +86,7 @@ function NewPlan() {
 
 	const onFileDrop = e => {
 		const newFiles = e.target.files
-		setFileList(current => [...current, ...newFiles])
-	}
-
-	const handleDeleteFile = file => {
-		const updatedList = [...fileList]
-
-		updatedList.splice(fileList.indexOf(file), 1)
-		setFileList(updatedList)
+		setNewFiles(current => [...current, ...newFiles])
 	}
 
 	const handleResetForm = () => {
@@ -95,34 +110,45 @@ function NewPlan() {
 	const handleSubmitForm = async () => {
 		if (title.length == 0) setTitleEmpty(true)
 		if (content.length == 0) setContentEmpty(true)
+
 		if (title.length > 0 && content.length > 0) {
 			const formData = new FormData()
-			const numOfFile = fileList.length
+			const numOfFile = newFiles.length
+			const numOfDeleteFile = deleteFiles.length
 
 			for (let i = 0; i < numOfFile; i++) {
-				const fileContent = await readFile(fileList[i])
+				const fileContent = await readFile(newFiles[i])
 				formData.append(`filescontent[${i}]`, fileContent)
 
+				console.log(formData.get(`filescontent[${i}]`))
 
-				formData.append(`filesname[${i}]`, fileList[i].name)
-				formData.append(`filesType[${i}]`, fileList[i].type)
+				formData.append(`filesname[${i}]`, newFiles[i].name)
+				formData.append(`filesType[${i}]`, newFiles[i].type)
 			}
 
+			// formData.append('deleteFileRecords', deleteFiles)
+
+			for (let i = 0; i < numOfDeleteFile; i++) {
+				console.log(deleteFiles[i].fileId)
+				console.log(deleteFiles[i].id)
+				formData.append(`deleteFileId[${i}]`, deleteFiles[i].fileId)
+			}
+
+			formData.append('numOfDeleteFile', numOfDeleteFile)
 			formData.append('numOfFile', numOfFile)
 			formData.append('title', title)
 			formData.append('content', content)
-			formData.append('clubId', clubId)
 
-			if (numOfFile > 0) setLoading(true)
+			if (numOfFile > 0 || numOfDeleteFile > 0) setLoading(true)
 
-			await createPlan(formData, 2).then(response => {
+			await updatePlan(formData, planId).then(response => {
 				if (response?.status == 'success') {
-					toast.success('Gửi kế hoạch thành công')
-					router.push('./')
+					toast.success('Cập nhật đề xuất thành công')
+					router.push('../')
 				} else {
 					toast.error('Vui lòng thử lại sau')
 				}
-				if (numOfFile > 0) setLoading(false)
+				if (numOfFile > 0 || numOfDeleteFile > 0) setLoading(false)
 			})
 		} else {
 			toast.error('Vui lòng điền đầy đủ thông tin')
@@ -141,7 +167,7 @@ function NewPlan() {
 				<Box
 					sx={{
 						width: '100%',
-						paddingBottom: '90px'
+						marginBottom: '50px'
 					}}
 				>
 					<Box
@@ -167,15 +193,14 @@ function NewPlan() {
 						/>
 
 						<InputLabel htmlFor='title' sx={{ fontSize: '20px', fontWeight: '600', margin: '30px 0 20px' }}>
-							Nội dung kế hoạch
+							Nội dung đề xuất
 						</InputLabel>
 						<TextareaAutosize
-							maxRows={3}
-							minRows={3}
+							maxRows={5}
+							minRows={5}
 							style={{
 								width: 'calc(100% - 30px)',
-
-								borderRadius: '5px',
+								borderRadius: '10px',
 								padding: '20px',
 								fontSize: '18px',
 								resize: 'none'
@@ -195,6 +220,7 @@ function NewPlan() {
 								Thông tin nay là bắt buộc
 							</FormHelperText>
 						)}
+
 						<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
 							<Box>
 								<Typography sx={{ marginTop: '20px', fontSize: '16px', fontWeight: '600' }}>
@@ -208,7 +234,53 @@ function NewPlan() {
 										gap: '10px'
 									}}
 								>
-									{fileList?.map((file, index) => {
+									{fileRecords?.map((fileRecord, index) => {
+										let avatar = (
+											<AiOutlineFileUnknown style={{ fontSize: '20px', color: 'gray' }} />
+										)
+
+										switch (fileRecord.type) {
+											case 'application/msword':
+											case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+												avatar = (
+													<AiFillFileWord style={{ fontSize: '20px', color: '#3581d7' }} />
+												)
+												break
+
+											case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+												avatar = (
+													<AiFillFileExcel style={{ fontSize: '20px', color: 'green' }} />
+												)
+												break
+
+											case 'application/pdf':
+												avatar = (
+													<BiSolidFilePdf style={{ fontSize: '20px', color: 'orange' }} />
+												)
+												break
+											case 'image/jpeg':
+												avatar = <BsFiletypeJpg style={{ fontSize: '20px' }} />
+												break
+											case 'image/png':
+												avatar = <BsFiletypePng style={{ fontSize: '20px' }} />
+										}
+
+										return (
+											<Chip
+												avatar={avatar}
+												key={index}
+												label={fileRecord.name}
+												onDelete={() => {
+													const updatedList = [...fileRecords]
+													updatedList.splice(fileRecords.indexOf(fileRecord), 1)
+													setFileRecords(updatedList)
+													setDeleteFiles(current => [...current, fileRecord])
+												}}
+												variant='outlined'
+											/>
+										)
+									})}
+									{newFiles?.map((file, index) => {
 										let avatar = (
 											<AiOutlineFileUnknown style={{ fontSize: '20px', color: 'gray' }} />
 										)
@@ -220,11 +292,13 @@ function NewPlan() {
 													<AiFillFileWord style={{ fontSize: '20px', color: '#3581d7' }} />
 												)
 												break
+
 											case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
 												avatar = (
 													<AiFillFileExcel style={{ fontSize: '20px', color: 'green' }} />
 												)
 												break
+
 											case 'application/pdf':
 												avatar = (
 													<BiSolidFilePdf style={{ fontSize: '20px', color: 'orange' }} />
@@ -243,7 +317,9 @@ function NewPlan() {
 												key={index}
 												label={file.name}
 												onDelete={() => {
-													handleDeleteFile(file)
+													const updatedList = [...newFiles]
+													updatedList.splice(newFiles.indexOf(fileRecord), 1)
+													setNewFiles(updatedList)
 												}}
 												variant='outlined'
 											/>
@@ -253,27 +329,30 @@ function NewPlan() {
 							</Box>
 							<Box
 								sx={{
-									marginTop: '30px',
-									marginRight: '30px',
 									display: 'flex',
-									justifyContent: 'flex-end'
+									flexDirection: 'column',
+									alignItems: 'center',
+									padding: '20px',
+									gap: '20px'
 								}}
 							>
-								<div
-									className={classes.dropbox}
-									ref={wrapperRef}
-									onDragEnter={onDragEnter}
-									onDragLeave={onDragLeave}
-									onDrop={onDrop}
-								>
-									<div className={classes.dropbox__label}>
-										<AiOutlineCloudUpload className={classes.upload__icon} />
-										<Typography sx={{ fontSize: '26px', fontWeight: '600', color: '#e3e3e3' }}>
-											Kéo thả files ở đây
-										</Typography>
+								<Box sx={{ marginTop: '20px' }}>
+									<div
+										className={classes.dropbox}
+										ref={wrapperRef}
+										onDragEnter={onDragEnter}
+										onDragLeave={onDragLeave}
+										onDrop={onDrop}
+									>
+										<div className={classes.dropbox__label}>
+											<AiOutlineCloudUpload className={classes.upload__icon} />
+											<Typography sx={{ fontSize: '26px', fontWeight: '600', color: '#e3e3e3' }}>
+												Kéo thả files ở đây
+											</Typography>
+										</div>
+										<input type='file' value={''} onChange={onFileDrop} multiple />
 									</div>
-									<input type='file' value={''} onChange={onFileDrop} multiple />
-								</div>
+								</Box>
 							</Box>
 						</Box>
 					</Box>
@@ -285,7 +364,7 @@ function NewPlan() {
 						justifyContent: 'space-between',
 						position: 'absolute',
 						width: '100%',
-						bottom: '20px',
+						bottom: '30px',
 						padding: '0 30px'
 					}}
 				>
@@ -324,7 +403,7 @@ function NewPlan() {
 							color: '#fff'
 						}}
 					>
-						Các file đang được tải lên, vui lòng chờ!
+						Đang cập nhật, vui lòng chờ!
 					</Typography>
 					<LinearProgress color='primary' />
 				</Box>
@@ -333,4 +412,4 @@ function NewPlan() {
 	)
 }
 
-export default NewPlan
+export default EditPlans

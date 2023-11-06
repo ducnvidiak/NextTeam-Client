@@ -62,7 +62,7 @@ function EventCreatorPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data)
+				
 				setEventList(data)
 				setEventListFiltered(data)
 				setLoading(false)

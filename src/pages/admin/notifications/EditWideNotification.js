@@ -77,11 +77,10 @@ export default function EditWideNotification({
 			})
 			.then(function (data) {
 				if (data.id == null) {
-					console.log(data)
+					
 					toast.error(data)
 				} else {
 					setWideUpdateModal(false)
-					console.log('Thay đổi thông báo thành công')
 					toast.success('Thay đổi thông báo thành công!')
 					router.push('/admin/notifications')
 					dispatch({ type: 'trigger' })

@@ -27,6 +27,7 @@ import { useRouter } from 'next/router'
 import { getUserInfo } from 'src/utils/info'
 import RegisterClub from './RegisterClub'
 
+
 function EventItem() {
 	const [state, setState] = useState({
 		top: false,
@@ -250,7 +251,7 @@ function ClubPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data)
+				
 				setClub(data)
 			})
 			.catch(error => console.error('Error:', error))

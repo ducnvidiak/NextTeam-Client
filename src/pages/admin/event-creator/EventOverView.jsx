@@ -35,6 +35,7 @@ import { convertFormat } from '.'
 import { getUserInfo } from 'src/utils/info'
 import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
 import moment from 'moment'
+import { translateDayOfWeek } from 'src/ultis/dateTime'
 
 export const combineDateTime = (datetimeA, datetimeB) => {
 	const [date1, time1] = datetimeA.split('T')
@@ -135,7 +136,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
+			fetch(`http://localhost:8080/admin-events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
@@ -155,7 +156,6 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				}
 			})
 				.then(function (response) {
-					console.log(response)
 
 					return response.json()
 				})
@@ -183,20 +183,19 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const handleDelete = () => {
 		setOpen(true)
-		fetch(`http://localhost:8080/events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
+		fetch(`http://localhost:8080/admin-events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
 			}
 		})
 			.then(function (response) {
-				console.log(response)
 
 				return response.json()
 			})
 			.then(function (data) {
 				setEventList(data)
-				console.log(data);
+				
 				toast.success('Xóa sự kiện thành công!!!')
 			})
 			.catch(error => {
@@ -267,13 +266,15 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						<Typography marginBottom={1} width={'20%'}>
 							Thời gian:
 						</Typography>
-						<Typography marginBottom={1}>6:00 PM</Typography>
+						<Typography marginBottom={1}>{`${translateDayOfWeek(
+							moment(event?.startTime).format('dddd')
+						)} ${moment(event?.startTime).format('L')}`}</Typography>
 					</Stack>
 					<Stack direction={'row'} gap={2}>
 						<Typography marginBottom={1} width={'20%'}>
 							Địa điểm:
 						</Typography>
-						<Typography marginBottom={1}>Phòng 201</Typography>
+						<Typography marginBottom={1}>{event?.locationName}</Typography>
 					</Stack>
 				</DialogContent>
 				<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>

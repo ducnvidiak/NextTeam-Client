@@ -85,7 +85,6 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 				} else {
 					toast.error('Fail to change detail info!')
 				}
-				console.log('update detail info: ', response)
 			})
 		}
 	}

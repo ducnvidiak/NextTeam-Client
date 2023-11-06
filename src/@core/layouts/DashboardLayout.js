@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useContext, useEffect, useLayoutEffect, useState } from 'react'
 
 // ** MUI Imports
 import Fab from '@mui/material/Fab'
@@ -20,6 +20,10 @@ import ScrollToTop from 'src/@core/components/scroll-to-top'
 
 // ** Styled Component
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import { RoleContext } from 'src/layouts/Decentralization'
+import { useRouter } from 'next/router'
+import { useCookies } from 'react-cookie'
+import { getUserInfo, getUserSubrole } from 'src/utils/info'
 
 const VerticalLayoutWrapper = styled('div')({
 	height: '100%',
@@ -46,6 +50,20 @@ const ContentWrapper = styled('main')(({ theme }) => ({
 	}
 }))
 
+const managerRoute = [
+	'/treasurer',
+	'/attendances',
+	'/member-approval',
+	'/member-management',
+	'/proposal-approval',
+	'/notification-creator',
+	'/event-creator',
+	'/activity-creator',
+	'/infrastructures',
+	'/plans',
+	'/reports'
+]
+
 const DashboardLayout = props => {
 	// ** Props
 	const { settings, children, scrollToTop } = props
@@ -61,6 +79,54 @@ const DashboardLayout = props => {
 	const toggleNavVisibility = () => {
 		// setNavVisible(!navVisible)
 	}
+
+	const router = useRouter()
+
+	const [cookies] = useCookies(['userData', 'clubData'])
+
+	const [userData, setUserData] = useState('?')
+
+	const [userSubrole, setUserSubrole] = useState()
+	var contextValue = {}
+
+	useEffect(() => {
+		;(async () => {
+			const res = await getUserInfo(cookies.userData)
+			if (res?.isAdmin == undefined) {
+				setUserData('???')
+			} else {
+				setUserData(res)
+			}
+		})()
+	}, [cookies])
+
+	useEffect(() => {
+		if (cookies['clubData'])
+			(async () => {
+				const res = await getUserSubrole(cookies.userData, cookies.clubData.clubId)
+				setUserSubrole(res)
+			})()
+	}, [cookies, userData])
+
+	useEffect(() => {
+		if (userData?.isAdmin == undefined && userData == '?') return
+		if (userData?.isAdmin || userData == '???') {
+			router.push('/')
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userData])
+
+	const roleContext = useContext(RoleContext)
+
+	useEffect(() => {
+		if (roleContext?.clubRole == undefined) return
+		if (roleContext?.clubRole == 1) {
+			if (managerRoute.includes(router.pathname.slice(10))) {
+				router.push('/dashboard')
+			}
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [roleContext])
 
 	return (
 		<>

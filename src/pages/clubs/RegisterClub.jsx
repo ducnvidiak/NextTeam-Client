@@ -51,7 +51,6 @@ function RegisterClub({ clubId, userId, isOpen, handleClose }) {
 				}
 			)
 			.then(response => {
-				console.log(response.data)
 				toast.success('Đăng ký tham gia câu lạc bộ thành công !', {
 					position: 'top-right',
 					autoClose: 3000, // Close the toast after 3 seconds

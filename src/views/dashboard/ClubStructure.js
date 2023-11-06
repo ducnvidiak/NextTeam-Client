@@ -1,10 +1,12 @@
 import React from 'react'
-import { Typography, Box, Container, Grid, Card, CardContent, Avatar, CardMedia, styled } from '@mui/material'
+import { Typography, Box, Container, Grid, Card, CardContent, Avatar, CardMedia, styled, Stack } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import ClubCategory from 'src/components/ClubCategory'
 import EventNoteIcon from '@mui/icons-material/EventNote' // Icon for Founding Date
 import { useRouter } from 'next/router'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import Groups2Icon from '@mui/icons-material/Groups2'
+import CakeIcon from '@mui/icons-material/Cake'
 
 const StyledBox = styled(Box)(({ theme }) => ({
 	backgroundColor: theme.palette.background.paper,
@@ -24,7 +26,7 @@ const StyledIcon = styled(AccountCircleIcon)(({ theme }) => ({
 const ClubStructure = props => {
 	const router = useRouter()
 	function handleClick(id) {
-		router.push('http://localhost:3000/dashboard/members/info/' + id)
+		router.push('/dashboard/members/info/' + id)
 	}
 	const boardMembers = [{ position: 'Chủ nhiệm câu lạc bộ', name: props?.data?.manager_club_name }]
 
@@ -44,111 +46,125 @@ const ClubStructure = props => {
 	return (
 		<Container>
 			<Card>
-				<CardMedia component='img' height='200' image={clubInfo?.banner} alt={clubInfo?.name} />
-
 				<img
-					src={clubInfo?.avatar}
+					src={clubInfo?.banner}
 					alt=''
 					style={{
-						width: '300px',
-						height: '300px',
-						objectFit: 'cover'
+						width: '100%',
+						objectFit: 'cover',
+						display: 'block'
 					}}
 				/>
-				<CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-					<Typography variant='h7' sx={{ opacity: 0.7 }}>
-						{clubInfo?.subname}
-					</Typography>
-					<Typography variant='h5' fontWeight={700} sx={{}} textTransform={'uppercase'}>
-						{clubInfo?.name}
-					</Typography>
-					<Box sx={{ display: 'flex', gap: 4, marginBottom: 4 }}>
-						<ClubCategory categoryId={clubInfo?.categoryId}></ClubCategory>
-					</Box>
-					<Typography variant='body1'>
-						<EventNoteIcon /> Ngày thành lập: {clubInfo.foundingDate}
-					</Typography>
+				<CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+					<Card sx={{ height: '140px', width: '140px' }}>
+						<img
+							src={clubInfo?.avatar}
+							alt=''
+							width={'100%'}
+							height={'100%'}
+							style={{ objectFit: 'cover' }}
+						/>
+					</Card>
 
-					<Card
-						sx={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-							padding: '20px',
-							borderRadius: '15px',
-							cursor: 'pointer',
-							marginTop: 5,
-							marginBottom: 5,
-							boxShadow: '0 0 10px #dedede'
-						}}
-						onClick={() => {
-							handleClick(clubInfo?.manager_club_id)
-						}}
-					>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-							<Box
+					<Stack direction={'column'} flex={1}>
+						<Typography variant='h7' sx={{ opacity: 0.7 }}>
+							{clubInfo?.subname}
+						</Typography>
+						<Typography variant='h5' fontWeight={700} sx={{}}>
+							{clubInfo?.name}
+						</Typography>
+						<ClubCategory categoryId={clubInfo?.categoryId}></ClubCategory>
+						<Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-end'}>
+							<Stack direction={'row'} gap={12}>
+								<Box sx={{ display: 'flex', gap: 4 }}>
+									<CakeIcon></CakeIcon>
+									<Typography variant='body1'>{clubInfo?.foundingDate}</Typography>
+								</Box>
+							</Stack>
+						</Stack>
+					</Stack>
+				</CardContent>
+				<Card
+					sx={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						padding: '5px',
+						cursor: 'pointer',
+						marginTop: 5,
+						marginBottom: 5,
+						marginLeft: 'auto',
+						marginRight: 'auto',
+						width: '95%'
+					}}
+					onClick={() => {
+						handleClick(clubInfo?.manager_club_id)
+					}}
+				>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+						<Box
+							sx={{
+								width: '90px',
+								height: '90px',
+								borderRadius: '1000px',
+								border: '3px solid #f58a38',
+								overflow: 'hidden'
+							}}
+						>
+							<Avatar
 								sx={{
 									width: '90px',
 									height: '90px',
-									borderRadius: '1000px',
-									border: '3px solid #f58a38',
-									overflow: 'hidden'
+									transition: 'transform .4s ease-in-out',
+									':hover': { transform: 'scale(1.2)' }
 								}}
-							>
-								<Avatar
-									sx={{
-										width: '90px',
-										height: '90px',
-										transition: 'transform .4s ease-in-out',
-										':hover': { transform: 'scale(1.2)' }
-									}}
-									alt='avatar'
-									src={clubInfo?.manager_ava}
-								/>
-							</Box>
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									justifyContent: 'center',
-									alignItems: 'flex-start',
-									gap: '7px'
-								}}
-							>
-								<Typography variant='h6'>Chủ nhiệm</Typography>
-								<Typography variant='h6'>{clubInfo?.manager_club_name}</Typography>
-								<Typography
-									variant='subtitle1'
-									sx={{
-										backgroundColor: 'orange',
-										display: 'inline-block',
-										padding: '0 5px',
-										borderRadius: '5px',
-										color: 'white'
-									}}
-								>
-									{clubInfo?.manager_club_username}
-								</Typography>
-							</Box>
+								alt='avatar'
+								src={clubInfo?.manager_ava}
+							/>
 						</Box>
-						<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px' }}>
-							<Box
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								justifyContent: 'center',
+								alignItems: 'flex-start',
+
+								gap: '1px'
+							}}
+						>
+							<Typography variant='h6'>Chủ nhiệm</Typography>
+							<Typography variant='h6'>{clubInfo?.manager_club_name}</Typography>
+							<Typography
+								variant='subtitle1'
 								sx={{
-									padding: '5px',
-									borderRadius: '1000px',
-									display: 'flex',
-									justifyContent: 'center',
-									alignItems: 'center',
-									':hover': {
-										backgroundColor: '#ededed'
-									}
+									backgroundColor: 'orange',
+									display: 'inline-block',
+									padding: '0 5px',
+									borderRadius: '5px',
+									color: 'white'
 								}}
 							>
-								<MoreHorizIcon sx={{ color: 'orange', fontSize: '32px' }} />
-							</Box>
+								{clubInfo?.manager_club_username}
+							</Typography>
 						</Box>
-					</Card>
-				</CardContent>
+					</Box>
+					<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px' }}>
+						<Box
+							sx={{
+								padding: '5px',
+								borderRadius: '1000px',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+								':hover': {
+									backgroundColor: '#ededed'
+								}
+							}}
+						>
+							<MoreHorizIcon sx={{ color: 'orange', fontSize: '32px' }} />
+						</Box>
+					</Box>
+				</Card>
 			</Card>
 		</Container>
 	)

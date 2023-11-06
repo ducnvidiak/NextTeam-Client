@@ -161,7 +161,7 @@ const RegisterPage = () => {
 					return response.json()
 				})
 				.then(function (data) {
-					console.log(data)
+					
 
 					if (data.code == 0) {
 						toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')

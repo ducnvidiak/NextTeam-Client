@@ -61,7 +61,6 @@ function Clubs() {
 
 	const handleChangeTab = (event, newValue) => {
 
-console.log('a')
 		setTab(newValue)
 	}
 

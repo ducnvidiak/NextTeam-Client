@@ -35,9 +35,7 @@ const UserList = () => {
 
 	const listOfUserName = userList?.map(user => user.fullname)
 	const router = useRouter()
-
-	console.log('user list: ', userList)
-	console.log('club id: ', cookies['clubData']?.clubId)
+	
 	const clubId = cookies['clubData']?.clubId
 
 	useEffect(() => {
@@ -47,7 +45,7 @@ const UserList = () => {
 	}, [clubId])
 
 	function handleClick(id) {
-		router.push('http://localhost:3000/dashboard/members/info/' + id)
+		router.push('./members/info/' + id)
 	}
 
 	return (
