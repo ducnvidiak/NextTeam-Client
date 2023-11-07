@@ -24,6 +24,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 import CakeIcon from '@mui/icons-material/Cake'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -53,7 +57,7 @@ function ClubItem({ club, index }) {
 	const [open, setOpen] = useState(false)
 	const [department, setDepartment] = useState([])
 	const [loading, setLoading] = useState(false)
-	const [cookies, setCookies] = useCookies(['userData'])
+	const [cookies, setCookies] = useCookies(['userData', 'clubData'])
 
 	//formData
 	const [departmentId, setDepartmentId] = useState('')
@@ -65,8 +69,10 @@ function ClubItem({ club, index }) {
 		;(async () => setUserId((await getUserInfo(cookies['userData'])).id))()
 	}, [cookies])
 
-	const handleClick = () => {
-		router.push(`/clubs/${club.subname}`)
+	const handleClick = (id, subname) => () => {
+		cookies['clubData']?.clubId == 'none' ? '' : router.push('/dashboard')
+		setCookies('clubData', JSON.stringify({ clubId: id, subname: subname }), { path: '/' })
+		toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
 	}
 
 	const callAPIDepartment = async clubId => {
@@ -168,11 +174,13 @@ function ClubItem({ club, index }) {
 
 						<Stack direction={'row'} gap={4}>
 							{/* <Link passHref href={`${club.subname}`}> */}
-							<Link href='/dashboard' passHref>
-								<Button variant='contained' sx={{ marginTop: 4, width: '100%' }}>
-									Truy cập
-								</Button>
-							</Link>
+							<Button
+								variant='contained'
+								sx={{ marginTop: 4, width: '100%' }}
+								onClick={handleClick(club?.id, club?.subname)}
+							>
+								Truy cập
+							</Button>
 							{/* </Link> */}
 
 							{/* <Button variant='contained'>Truy cập</Button> */}
