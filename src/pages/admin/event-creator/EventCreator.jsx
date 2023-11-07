@@ -79,6 +79,8 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	const [fileName, setFileName] = useState('')
 	const [open, setOpen] = useState(false)
 	const [userData, setUserData] = useState()
+	const [pageLoading, setPageLoading] = useState(false)
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -102,7 +104,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 				body: JSON.stringify({
 					...newEvent,
 					startTime: new Date(convertToTimestamp(newEvent.startTime)),
-					endTime: new Date(convertToTimestamp(newEvent.startTime)),
+					endTime: new Date(convertToTimestamp(newEvent.endTime)),
 					registeredBy: userData?.id
 				}),
 				headers: {

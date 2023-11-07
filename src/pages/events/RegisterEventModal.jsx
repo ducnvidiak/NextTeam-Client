@@ -1,3 +1,4 @@
+import { LoadingButton } from '@mui/lab'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, Typography } from '@mui/material'
 import moment from 'moment'
 import Link from 'next/link'
@@ -9,11 +10,14 @@ import { getUserInfo } from 'src/utils/info'
 function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, anchor, toggleDrawer, setEventList }) {
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [userData, setUserData] = useState()
+	const [loading, setLoading] = useState(false)
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	const handleSubmit = async () => {
+		setLoading(true)
 		fetch(`${process.env.NEXT_PUBLIC_API_URL}/event-registration`, {
 			method: 'POST',
 			body: JSON.stringify({
@@ -29,15 +33,13 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 			})
 			.then(function (data) {
 				setEventList(data)
+				setLoading(false)
 				toast.success('Đăng ký sự kiện thành công!!!!')
 				setOpenRegisterModal(false)
-
-				// toggleDrawer(anchor, false)
 			})
 			.catch(error => {
 				console.error('Error:', error)
-
-				// toggleDrawer(anchor, false)
+				setLoading(false)
 				setOpenRegisterModal(false)
 				toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
 			})
@@ -125,9 +127,9 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 					to update your information
 				</Typography>
 				<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>
-					<Button variant='contained' onClick={handleSubmit}>
+					<LoadingButton loading={loading} variant='contained' onClick={handleSubmit}>
 						Xác nhận
-					</Button>
+					</LoadingButton>
 					<Button variant='outlined' onClick={() => setOpenRegisterModal(false)}>
 						Hủy
 					</Button>

@@ -45,6 +45,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
 import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
+import useDrivePicker from 'react-google-drive-picker'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -97,19 +98,22 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`${process.env.NEXT_PUBLIC_API_URL}/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`, {
-				method: 'POST',
-				body: JSON.stringify({
-					...newEvent,
-					startTime: new Date(convertToTimestamp(newEvent.startTime)),
-					endTime: new Date(convertToTimestamp(newEvent.endTime)),
-					registeredBy: userData?.id,
-					clubId: cookiesClub['clubData']?.clubId
-				}),
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
+			fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`,
+				{
+					method: 'POST',
+					body: JSON.stringify({
+						...newEvent,
+						startTime: new Date(convertToTimestamp(newEvent.startTime)),
+						endTime: new Date(convertToTimestamp(newEvent.endTime)),
+						registeredBy: userData?.id,
+						clubId: cookiesClub['clubData']?.clubId
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
 				}
-			})
+			)
 				.then(function (response) {
 					return response.json()
 				})
@@ -229,6 +233,34 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		}
 	}
 
+	const [openPicker, authResponse] = useDrivePicker()
+
+	// const customViewsArray = [new google.picker.DocsView()]; // custom view
+	const handleOpenPicker = () => {
+		console.log("!!!");
+		console.log(process.env.NEXT_PUBLIC_CLIENT_ID);
+		console.log(process.env.NEXT_PUBLIC_API_KEY);
+		openPicker({
+			clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+			developerKey: process.env.NEXT_PUBLIC_API_KEY,
+			viewId: 'DOCS',
+
+			// token: token, // pass oauth token in case you already have one
+			showUploadView: true,
+			showUploadFolders: true,
+			supportDrives: true,
+			multiselect: true,
+
+			// customViews: customViewsArray, // custom view
+			callbackFunction: data => {
+				if (data.action === 'cancel') {
+					console.log('User clicked cancel/close button')
+				}
+				console.log(data)
+			}
+		})
+	}
+
 	return (
 		<Dialog
 			fullScreen
@@ -323,7 +355,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<Stack direction={'row'} gap={4}>
 							<DatePicker
-
 								disablePast
 								label='Ngày'
 								slotProps={{
@@ -359,7 +390,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 							error={!newEvent.locationId && !isValidate}
 							labelId='demo-simple-select-label'
 							id='demo-simple-select'
-							label='location'
+							label='Chọn địa điểm'
 							onChange={e => setNewEvent({ ...newEvent, locationId: e.target.value })}
 							value={newEvent.locationId}
 						>
@@ -401,9 +432,10 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 							startIcon={<CloudUploadIcon />}
 							sx={{ width: 180 }}
 							color={newEvent.planUrl === '' && !isValidate ? 'error' : 'primary'}
+							onClick={() => handleOpenPicker()}
 						>
 							Upload file
-							<VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} />
+							{/* <VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} /> */}
 						</Button>
 						<Typography variant='body'>{fileName}</Typography>
 					</Stack>

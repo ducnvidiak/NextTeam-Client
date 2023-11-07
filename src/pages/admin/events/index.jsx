@@ -25,7 +25,9 @@ import {
 	Drawer,
 	Chip,
 	Pagination,
-	TablePagination
+	TablePagination,
+	Backdrop,
+	CircularProgress
 } from '@mui/material'
 
 import InfoIcon from '@mui/icons-material/Info'
@@ -43,7 +45,8 @@ export default function EventDashboard() {
 	const [events, setEvents] = useState([])
 	const [selectedEvent, setSelectedEvent] = useState(null)
 	const [feedback, setFeedback] = useState('')
-
+	const [reviewLoading, setReviewLoading] = useState(false)
+	const [pageLoading, setPageLoading] = useState(false)
 	const [page, setPage] = useState(0)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [rows, setRows] = useState([])
@@ -58,14 +61,14 @@ export default function EventDashboard() {
 	}
 
 	useEffect(() => {
+		setPageLoading(true)
 		getAllEvents().then(response => {
+			setPageLoading(false)
 			console.log('response', response)
 			setEvents(response)
 			setRows(response)
 		})
 	}, [])
-
-	console.log(events)
 
 	const [state, setState] = useState({
 		top: false,
@@ -152,8 +155,11 @@ export default function EventDashboard() {
 		</Box>
 	)
 
-	const handleUpdateStatus = (uevent, status, feedback) => {
+	const handleUpdateStatus = async (uevent, status, feedback) => {
+		setReviewLoading(true)
 		updateEventStatus(uevent?.id, status, feedback).then(response => {
+			setReviewLoading(false)
+
 			if (response?.status == 'success') {
 				const updateEvents = events?.map(event => {
 					if (event?.id != uevent?.id) return event
@@ -167,18 +173,23 @@ export default function EventDashboard() {
 			}
 		})
 	}
-	console.log(events)
 
 	useEffect(() => {
 		setRows(events)
 	}, [events])
 
-	const handleAction = (selectedConfirmEvent, status) => {
-		handleUpdateStatus(selectedConfirmEvent, status, feedback)
+	const handleAction = async (selectedConfirmEvent, status) => {
+		await handleUpdateStatus(selectedConfirmEvent, status, feedback)
 	}
 
 	return (
 		<Fragment>
+			<Backdrop
+				sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
+				open={reviewLoading || pageLoading}
+			>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 			<Card>
 				<TableContainer component={Paper}>
 					<Table sx={{ minWidth: 650 }} aria-label='simple table'>
@@ -249,19 +260,20 @@ export default function EventDashboard() {
 											/>
 										) : (
 											<Chip
-												label='Phê duyệt'
+												label='Đã duyệt'
 												sx={{ fontSize: 16, width: '100%' }}
 												color='success'
 											/>
 										)}
 									</TableCell>
-									<TableCell align='center'>{`${moment(event?.startTime).format('L')}`}</TableCell>
+									<TableCell align='center'>{`${moment(event?.createdAt).format('L')}`}</TableCell>
 									<TableCell align='center'>
 										<ReviewButton
 											event={event}
 											setFeedback={setFeedback}
 											feedback={feedback}
 											handleAction={handleAction}
+											reviewLoading={reviewLoading}
 										></ReviewButton>
 									</TableCell>
 								</TableRow>

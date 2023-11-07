@@ -68,7 +68,9 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
-	const [newEvent, setNewEvent] = useState({})
+	const [newEvent, setNewEvent] = useState({
+		type: 'public'
+	})
 
 	const handleDateChange = date => {
 		setNewEvent({
@@ -230,7 +232,8 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 			endTime: dayjs(event.endTime),
 			locationId: locationList.filter((item, index) => {
 				return item.name == event?.locationName
-			})[0]?.id
+			})[0]?.id,
+			type: 'public'
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event, locationList])

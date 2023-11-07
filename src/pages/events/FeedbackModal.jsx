@@ -17,6 +17,7 @@ import SendIcon from '@mui/icons-material/Send'
 import { TextareaAutosize } from '@mui/base'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { LoadingButton } from '@mui/lab'
 
 const feedbackValues = ['Tệ', 'Chưa tốt', 'Ổn', 'Tốt', 'Tuyệt vời']
 
@@ -25,8 +26,10 @@ function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal, event, userDat
 		point: 3,
 		content: ''
 	})
+	const [loading, setLoading] = useState(false)
 
 	const handleSubmit = async () => {
+		setLoading(true)
 		fetch(`${process.env.NEXT_PUBLIC_API_URL}/feedbacks?cmd=create&userId=${userData?.id}`, {
 			method: 'POST',
 			body: JSON.stringify({
@@ -42,11 +45,13 @@ function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal, event, userDat
 				return response.json()
 			})
 			.then(function (data) {
+				setLoading(false)
 				toast.success('Gửi feedback thành công!!!!')
 				setOpenFeedbackModal(false)
 				setEventList(data)
 			})
 			.catch(error => {
+				setLoading(false)
 				console.error('Error:', error)
 				toast.error('Gửi feedback thất bại, vui lòng thử lại')
 				setOpenFeedbackModal(false)
@@ -117,9 +122,9 @@ function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal, event, userDat
 					/>
 				</DialogContent>
 				<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>
-					<Button variant='contained' onClick={handleSubmit}>
+					<LoadingButton loading={loading} variant='contained' onClick={handleSubmit}>
 						Xác nhận
-					</Button>
+					</LoadingButton>
 					<Button variant='outlined' onClick={() => setOpenFeedbackModal(false)}>
 						Hủy
 					</Button>
