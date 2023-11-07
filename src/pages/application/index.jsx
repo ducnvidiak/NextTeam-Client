@@ -104,7 +104,7 @@ const Application = () => {
 												size='small'
 												variant='contained'
 												color='primary'
-												value={`http://localhost:8080${row?.engagement.cvUrl}`}
+												value={`${process.env.NEXT_PUBLIC_API_URL}${row?.engagement.cvUrl}`}
 												onClick={() => handleClick(row?.engagement.cvUrl)}
 											>
 												Xem CV

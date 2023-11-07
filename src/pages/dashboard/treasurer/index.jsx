@@ -141,7 +141,7 @@ function Treasurer() {
 
 	const updateBalance = () => {
 		fetch(
-			`http://localhost:8080/payment?action=update-balance&clubId=${cookies['clubData']?.clubId}&balance=${balance}`,
+			`${process.env.NEXT_PUBLIC_API_URL}/payment?action=update-balance&clubId=${cookies['clubData']?.clubId}&balance=${balance}`,
 			{
 				method: 'GET',
 				headers: {

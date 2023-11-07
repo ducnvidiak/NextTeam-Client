@@ -118,7 +118,7 @@ const MemberApproval = () => {
 
 	useEffect(() => {
 		fetch(
-			`http://localhost:8080/engagement?action=application-list-of-club&clubId=${cookies['clubData']?.clubId}`,
+			`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=application-list-of-club&clubId=${cookies['clubData']?.clubId}`,
 			{
 				method: 'GET',
 				headers: {

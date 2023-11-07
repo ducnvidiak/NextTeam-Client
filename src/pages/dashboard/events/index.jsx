@@ -20,7 +20,7 @@ function EventDashboard() {
 
 	useEffect(() => {
 		fetch(
-			`http://localhost:8080/member-events?clubId=${cookiesClub['clubData'].clubId}&userId=${userData?.id}&cmd=list`,
+			`${process.env.NEXT_PUBLIC_API_URL}/member-events?clubId=${cookiesClub['clubData'].clubId}&userId=${userData?.id}&cmd=list`,
 			{
 				method: 'GET',
 				headers: {

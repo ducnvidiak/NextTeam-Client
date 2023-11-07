@@ -90,7 +90,7 @@ const TableStickyHeader = () => {
 			dispatch({ type: 'trigger' })
 		} else {
 			fetch(
-				`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData.id}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData.id}`,
 				{
 					method: 'GET',
 					headers: {

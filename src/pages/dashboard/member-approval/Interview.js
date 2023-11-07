@@ -330,7 +330,7 @@ export default function Interview({
 													<Box sx={{ height: '70vh' }}>
 														<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
 															<Viewer
-																fileUrl={`http://localhost:8080${applicationDetail?.engagement?.cvUrl}`}
+																fileUrl={`${process.env.NEXT_PUBLIC_API_URL}${applicationDetail?.engagement?.cvUrl}`}
 																plugins={[
 																	defaultLayoutPluginInstance,
 																	scrollModePluginInstance

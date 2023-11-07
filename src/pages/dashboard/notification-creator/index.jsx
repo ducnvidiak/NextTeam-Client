@@ -169,7 +169,7 @@ const NotificationCreator = () => {
 	const handleSearch = () => {
 		// Thực hiện tìm kiếm hoặc gọi hàm bạn muốn khi người dùng nhấn Enter
 		fetch(
-			`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}`,
+			`${process.env.NEXT_PUBLIC_API_URL}/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}`,
 			{
 				method: 'GET',
 				headers: {
