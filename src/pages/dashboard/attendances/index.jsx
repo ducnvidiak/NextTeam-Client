@@ -229,7 +229,7 @@ function AttendanceCode({ open }) {
 		return (
 			<Box variant='div' ref={ref}>
 				<iframe
-					src='http://localhost:8080/qr_code.jsp?code=123456'
+					src={`${process.env.NEXT_PUBLIC_API_URL}/qr_code.jsp?code=123456`}
 					title='W3Schools Free Online Web Tutorials'
 					scrolling='no'
 					style={{ border: 'none', backgroundColor: 'white', width: 300, height: 300 }}

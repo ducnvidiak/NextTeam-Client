@@ -42,7 +42,7 @@ import ReviewButton from './ReviewButton'
 export default function EventDashboard() {
 	const [events, setEvents] = useState([])
 	const [selectedEvent, setSelectedEvent] = useState(null)
-	const [feedback, setFeedback] = ''
+	const [feedback, setFeedback] = useState('')
 
 	const [page, setPage] = useState(0)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -59,6 +59,7 @@ export default function EventDashboard() {
 
 	useEffect(() => {
 		getAllEvents().then(response => {
+			console.log('response', response)
 			setEvents(response)
 			setRows(response)
 		})
@@ -166,6 +167,11 @@ export default function EventDashboard() {
 			}
 		})
 	}
+	console.log(events)
+
+	useEffect(() => {
+		setRows(events)
+	}, [events])
 
 	const handleAction = (selectedConfirmEvent, status) => {
 		handleUpdateStatus(selectedConfirmEvent, status, feedback)
@@ -190,7 +196,7 @@ export default function EventDashboard() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(event => (
+							{rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(event => (
 								<TableRow key={event.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
 									<TableCell
 										component='th'

@@ -142,7 +142,7 @@ const RegisterPage = () => {
 		) {
 			toast.error('Vui lòng điền những thông tin còn thiếu.')
 		} else {
-			fetch('http://localhost:8080/user-register', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/user-register`, {
 				method: 'POST',
 				body: JSON.stringify({
 					firstname: firstname,
