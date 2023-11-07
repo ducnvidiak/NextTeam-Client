@@ -97,26 +97,11 @@ const NotificationDropdown = () => {
 	const [cookies, setCookie] = useCookies(['clubData', 'userData'])
 	const [notificationDetail, setNotificationDetail] = useState()
 
+	console.log(notificationsData)
+
 	//modal
 	const [open, setOpen] = useState(false)
 	const [scroll, setScroll] = useState('paper')
-
-	function handleClickOpen(id, title, content, type, createdAt, hasSeen) {
-		console.log('Hi')
-		setNotificationDetail({
-			id: id,
-			title: title,
-			content: content,
-			type: type,
-			createdAt: createdAt
-		})
-		setOpen(true)
-		updateView(id, type, hasSeen)
-	}
-
-	const handleClose = () => {
-		setOpen(false)
-	}
 
 	const [countUnview, setCountUnview] = useState(0)
 	const [userData, setUserData] = useState()
@@ -192,11 +177,10 @@ const NotificationDropdown = () => {
 				})
 				.then(function (data) {
 					setNotificationsData(data)
-					
 				})
 				.catch(error => console.error('Error:', error))
 		}
-	}, [cookies, notificationsData, userData?.id])
+	}, [cookies, userData?.id])
 
 	const updateView = (id, type, hasSeen) => {
 		if (hasSeen == 0) {
@@ -211,7 +195,6 @@ const NotificationDropdown = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))
@@ -232,12 +215,28 @@ const NotificationDropdown = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))
 			}
 		}
+	}
+
+	function handleClickOpen(id, title, content, type, createdAt, hasSeen) {
+		console.log('Hi')
+		setNotificationDetail({
+			id: id,
+			title: title,
+			content: content,
+			type: type,
+			createdAt: createdAt
+		})
+		setOpen(true)
+		updateView(id, type, hasSeen)
+	}
+
+	const handleClose = () => {
+		setOpen(false)
 	}
 
 	return (
@@ -330,7 +329,7 @@ const NotificationDropdown = () => {
 														}}
 													/>
 												)}
-											</span>
+											</span>{' '}
 											{moment(notification?.createdAt).format('DD/MM/YY, h:mm A')}
 										</MenuItemSubtitle>
 									</Box>
