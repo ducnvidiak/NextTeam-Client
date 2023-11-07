@@ -17,31 +17,41 @@ export default function AddCategory({
 		clubId: cookies?.['clubData']?.clubId,
 		amount: ''
 	})
+	const [errorTitle, setErrorTitle] = useState(false)
+	const [errorAmount, setErrorAmount] = useState(false)
 
 	const handleSubmit = () => {
-		fetch('http://localhost:8080/payment?action=add-category', {
-			method: 'POST',
-			body: JSON.stringify(category),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-				return response.json()
+		if (category.title === '') {
+			setErrorTitle(true)
+			toast.error('Vui lòng không để trống Tên khoản nộp')
+		} else if (category.amount === '' || isNaN(category.amount)) {
+			setErrorAmount(true)
+			toast.error('Số tiền không hợp lệ')
+		} else {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=add-category`, {
+				method: 'POST',
+				body: JSON.stringify(category),
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			})
-			.then(function (data) {
-				toast.success('Thêm khoản nộp mới thành công')
-				setCategory('')
-				handleClose()
-			})
-			.catch(error => {
-				console.error('Error:', error)
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					toast.success('Thêm khoản nộp mới thành công')
+					setCategory('')
+					handleClose()
+				})
+				.catch(error => {
+					console.error('Error:', error)
 
-				toast.error('Có lỗi xảy ra khi thêm khoản nộp, vui lòng thử lại')
-			})
-			.finally(() => {
-				handleClose()
-			})
+					toast.error('Có lỗi xảy ra khi thêm khoản nộp, vui lòng thử lại')
+				})
+				.finally(() => {
+					handleClose()
+				})
+		}
 	}
 
 	return (
@@ -56,6 +66,7 @@ export default function AddCategory({
 					<DialogContentText>
 						<TextField
 							sx={{ marginTop: 5 }}
+							error={errorTitle}
 							fullWidth
 							id='outlined-multiline-static'
 							label='Tên khoản nộp'
@@ -80,6 +91,7 @@ export default function AddCategory({
 						/>
 						<TextField
 							sx={{ marginTop: 5 }}
+							error={errorAmount}
 							fullWidth
 							id='outlined-multiline-static'
 							label='Số tiền'

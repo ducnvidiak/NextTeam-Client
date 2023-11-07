@@ -29,7 +29,7 @@ export default function PayByCash({
 	})
 
 	const handleSubmit = () => {
-		fetch('http://localhost:8080/payment?action=pay-by-cash&id=' + payByCash?.id, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=pay-by-cash&id=${payByCash?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

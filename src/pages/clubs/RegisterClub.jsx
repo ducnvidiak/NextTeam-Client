@@ -42,7 +42,7 @@ function RegisterClub({ clubId, userId, isOpen, handleClose }) {
 
 		axios
 			.post(
-				`http://localhost:8080/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}`,
 				formData,
 				{
 					headers: {
