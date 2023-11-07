@@ -315,7 +315,7 @@ function Club() {
 		fetch('http://localhost:8080/api/club?cmd=delete&id=' + clubFormData.id)
 			.then(res => {
 				if (!res.ok) {
-					toast.error('Xóa câu lạc bộ thất bại', {
+					toast.error('Câu lạc bộ này đang còn thành viên hoạt động, không thể xóa !', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -337,11 +337,14 @@ function Club() {
 					pauseOnHover: true,
 					draggable: true
 				})
+
 				setIsDeleteDialogOpen(false)
 
-				setDeleteSuccess(true)
+				
 			})
-			.catch(error => {})
+			.catch(error => {
+				setIsDeleteDialogOpen(false)
+			})
 	}
 
 	const handleFileUpload = async e => {
@@ -498,13 +501,22 @@ function Club() {
 					<DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
 						Mô Tả Câu Lạc Bộ
 					</DialogContent>
-					<TextareaAutosize
+					<Input aria-label="Mô tả" id='description'
+						name='description'
+						value={clubFormData.description}
+						onChange={handleInputChange} multiline placeholder="Nhập mô tả câu lạc bộ ... " style={{
+							width: '100%',
+							height: '150px',
+							padding: 10,
+							
+							borderRadius: 5 // Set the initial border color
+						}} />
+					{/* <TextareaAutosize
 						minRows={3} // Specify the minimum number of rows
 						maxRows={10} // Optionally specify the maximum number of rows
 						aria-label='Mô tả'
 						id='description'
 						name='description'
-						placeholder='Mô tả'
 						value={clubFormData.description}
 						onChange={handleInputChange}
 						style={{
@@ -514,7 +526,7 @@ function Club() {
 							borderColor: '#ccc',
 							borderRadius: 5 // Set the initial border color
 						}}
-					/>
+					/> */}
 					{/* Tải ảnh avatar */}
 					<FormControl>
 						<FormLabel htmlFor='file-upload'>
@@ -608,21 +620,6 @@ function Club() {
 							validationErrors.balance && 'Số Dư Câu Lạc Bộ phải lớn hơn hoặc bằng 0 hoặc bỏ trống'
 						} // Display error message
 					/>
-					{/*Trạng thái  */}
-					<FormControl component='fieldset'>
-						<DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
-							Trạng thái câu lạc bộ
-						</DialogContent>
-						<RadioGroup
-							aria-label='isActive'
-							name='isActive'
-							value={clubFormData.isActive.toString()} // Chuyển đổi giá trị từ boolean sang chuỗi
-							onChange={handleInputChange}
-						>
-							<FormControlLabel value='true' control={<Radio />} label='Hoạt động' />
-							<FormControlLabel value='false' control={<Radio />} label='Không hoạt động' />
-						</RadioGroup>
-					</FormControl>
 				</DialogContent>
 				{/* Cancle dialog */}
 				<DialogActions>
@@ -701,23 +698,17 @@ function Club() {
 					<DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
 						Mô Tả Câu Lạc Bộ
 					</DialogContent>
-					<TextareaAutosize
-						minRows={3} // Specify the minimum number of rows
-						maxRows={10} // Optionally specify the maximum number of rows
-						aria-label='Mô tả'
-						id='description'
+					<Input aria-label="Mô tả" id='description'
 						name='description'
-						placeholder='Mô tả'
 						value={clubFormData.description}
-						onChange={handleInputChange}
-						style={{
+						onChange={handleInputChange} multiline placeholder="Nhập mô tả câu lạc bộ ... " style={{
 							width: '100%',
 							height: '150px',
 							padding: 10,
-							borderColor: '#ccc',
+							
 							borderRadius: 5 // Set the initial border color
-						}}
-					/>
+						}} />
+					
 
 					{/* Tải ảnh avatar */}
 					<FormControl>

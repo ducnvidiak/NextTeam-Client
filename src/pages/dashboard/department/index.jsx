@@ -15,7 +15,8 @@ import {
 	DialogTitle,
 	DialogContent,
 	DialogActions,
-	IconButton
+	IconButton,
+	FormControl
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
@@ -50,7 +51,7 @@ function Department() {
 				})
 				.then(function (data) {
 					setDepartments(data)
-					setUpdateData(false) 
+					setUpdateData(false)
 				})
 				.catch(error => console.error('Error:', error))
 		}
@@ -65,7 +66,6 @@ function Department() {
 
 	const confirmDelete = () => {
 		if (departmentToDelete) {
-			
 			const DELETE_DATA_URL = ORIGIN_URL + `?action=delete-dept&depId=${departmentToDelete.id}`
 			console.log(`Testing create url: ${DELETE_DATA_URL}`)
 			fetch(DELETE_DATA_URL)
@@ -104,18 +104,17 @@ function Department() {
 
 	// Create department dialog state
 	const [openCreateDialog, setOpenCreateDialog] = useState(false)
-	const [newDepartmentName, setNewDepartmentName] = useState('') // Add state for department name
 
 	const handleCreateDepartment = () => {
 		// Kiểm tra xem tên phòng ban có được nhập không
-		if (!newDepartmentName) {
+		if (!editedDepartmentName) {
 			setValidationErrors({ name: true })
 		}
 
 		// Handle the creation of the department here, for example, make an API call.
 
 		const CREATE_DATA_URL =
-			ORIGIN_URL + '?action=add-dept&clubId=' + cookies['clubData']?.clubId + '&name=' + newDepartmentName
+			ORIGIN_URL + '?action=add-dept&clubId=' + cookies['clubData']?.clubId + '&name=' + editedDepartmentName
 		console.log(`Testing create url: ${CREATE_DATA_URL}`)
 		fetch(CREATE_DATA_URL)
 			.then(res => {
@@ -158,7 +157,7 @@ function Department() {
 
 	const closeCreateDepartmentDialog = () => {
 		setOpenCreateDialog(false)
-		setNewDepartmentName('') // Clear the input field
+		setEditedDepartmentName('') // Clear the input field
 	}
 	const [openEditDialog, setOpenEditDialog] = useState(false)
 	const [editedDepartmentName, setEditedDepartmentName] = useState('')
@@ -167,13 +166,12 @@ function Department() {
 	// Hàm để mở dialog chỉnh sửa tên phòng ban
 	const handleOpenEditDialog = department => {
 		setEditedDepartmentId(department.id)
-		setEditedDepartmentName(department.name) // Đặt giá trị mặc định cho tên phòng ban
+		setEditedDepartmentName(department.name) 
 		setOpenEditDialog(true)
 	}
 
-	// Hàm để lưu các thay đổi trong dialog chỉnh sửa tên phòng ban
 	const handleSaveEditedDepartment = () => {
-		// Thực hiện xử lý cập nhật tên phòng ban ở đây (ví dụ: gửi API request)
+
 		const EDIT_DATA_URL =
 			ORIGIN_URL +
 			'?action=edit-dept&clubId=' +
@@ -182,7 +180,8 @@ function Department() {
 			editedDepartmentName +
 			'&depId=' +
 			editedDepartmentId
-		console.log(`Testing create url: ${EDIT_DATA_URL}`)
+		
+
 		fetch(EDIT_DATA_URL)
 			.then(res => {
 				if (!res.ok) {
@@ -215,7 +214,6 @@ function Department() {
 				console.log(error)
 			})
 
-		// Sau khi cập nhật xong, đóng dialog
 		setOpenEditDialog(false)
 	}
 
@@ -225,22 +223,23 @@ function Department() {
 			<Button variant='contained' sx={{ marginTop: 10, marginBottom: 10 }} onClick={openCreateDepartmentDialog}>
 				Thêm phòng ban
 			</Button>
-			{/* Create Department Dialog */}
+
 			<Dialog open={openCreateDialog} onClose={closeCreateDepartmentDialog}>
 				<DialogTitle>Tạo Phòng Ban Mới</DialogTitle>
 				<DialogContent>
 					<TextField
 						label='Tên phòng ban'
 						fullWidth
-						value={newDepartmentName}
-						onChange={e => setNewDepartmentName(e.target.value)}
+						value={editedDepartmentName}
+						onChange={e => setEditedDepartmentName(e.target.value)}
+						sx={{ marginTop: 5 }}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={closeCreateDepartmentDialog} color='primary'>
+					<Button onClick={closeCreateDepartmentDialog} color='warning'>
 						Hủy
 					</Button>
-					<Button onClick={handleCreateDepartment} color='primary'>
+					<Button onClick={handleCreateDepartment} color='success'>
 						Tạo
 					</Button>
 				</DialogActions>
@@ -263,10 +262,14 @@ function Department() {
 								<TableCell>
 									<IconButton onClick={() => handleOpenEditDialog(department)} color='primary'>
 										<EditIcon />
+										
 									</IconButton>
+									
 									<IconButton onClick={() => handleDelete(department)} color='secondary'>
 										<DeleteIcon />
+										
 									</IconButton>
+									
 								</TableCell>
 							</TableRow>
 						))}
@@ -282,6 +285,7 @@ function Department() {
 						fullWidth
 						value={editedDepartmentName}
 						onChange={e => setEditedDepartmentName(e.target.value)}
+						sx={{ marginTop: 5 }}
 					/>
 				</DialogContent>
 				<DialogActions>
@@ -296,17 +300,17 @@ function Department() {
 
 			{/* Dialog Form Xóa */}
 			<Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
-				<DialogTitle>Xác Nhận Xóa Câu Lạc Bộ !</DialogTitle>
+				<DialogTitle>Xác Nhận Xóa Phòng Ban !</DialogTitle>
 				<DialogContent>
 					{departmentToDelete && (
-						<Typography variant='body1'>Bạn có chắc chắn muốn xóa câu lạc bộ này không?</Typography>
+						<Typography variant='body1'>Bạn có chắc chắn muốn xóa phòng ban này ?</Typography>
 					)}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={() => setOpenDeleteDialog(false)} color='primary'>
+					<Button onClick={() => setOpenDeleteDialog(false)} color='secondary'>
 						Hủy
 					</Button>
-					<Button onClick={confirmDelete} color='secondary'>
+					<Button onClick={confirmDelete} color='error'>
 						Xóa
 					</Button>
 				</DialogActions>

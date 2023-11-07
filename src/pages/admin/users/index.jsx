@@ -39,11 +39,15 @@ const ORIGIN_URL = 'http://localhost:8080/api/user_manager?cmd='
 
 const AdminManageUsers = () => {
 	const [users, setUsers] = useState([])
+	const [clubs, setClubs] = useState([])
 	const [blockDialogOpen, setBlockDialogOpen] = useState(false)
 	const [permissionDialogOpen, setPermissionDialogOpen] = useState(false)
 	const [selectedUser, setSelectedUser] = useState(null)
 	const [selectedRole, setSelectedRole] = useState('') // State for selected role in dropdown
+	const [selectedClubId, setSelectedClubId] = useState('')
+	const [userRole, setUserRole] = useState(null);
 
+	
 	const refreshUsers = () => {
 		fetch(`${ORIGIN_URL}list`)
 			.then(res => res.json())
@@ -52,9 +56,20 @@ const AdminManageUsers = () => {
 			})
 	}
 
+	const refreshClubs = (id) => {
+		fetch(`http://localhost:8080/club-user?action=view-my-list&userId=${id}`)
+			.then(res => res.json())
+			.then(result => {
+				
+				setClubs(result)
+				console.log('Clubs', clubs)
+			})
+	}
+
 	useEffect(() => {
 		refreshUsers()
-	}, [users])
+	}, [users, selectedUser])
+
 
 	const classes = useStyles()
 
@@ -75,11 +90,13 @@ const AdminManageUsers = () => {
 
 	const handlePermissionDialogOpen = user => {
 		setSelectedUser(user)
+		refreshClubs(user.id)
 		setPermissionDialogOpen(true)
 	}
 
 	const handlePermissionDialogClose = () => {
 		setSelectedUser(null)
+		setSelectedClubId('')
 		setPermissionDialogOpen(false)
 	}
 
@@ -123,8 +140,8 @@ const AdminManageUsers = () => {
 	}
 
 	const handleGrantPermission = () => {
-		if (selectedRole === 'Quản trị viên') {
-			const DCT_ADMIN_URL = `${ORIGIN_URL}dct_admin&id=${selectedUser.id}`
+		if (selectedRole === 'Chủ nhiệm') {
+			const DCT_ADMIN_URL = `${ORIGIN_URL}dct_manager&id=${selectedUser.id}&clubId=${selectedClubId}`
 			console.log(DCT_ADMIN_URL)
 			fetch(DCT_ADMIN_URL)
 				.then(res => res.json())
@@ -153,7 +170,7 @@ const AdminManageUsers = () => {
 					})
 				})
 		} else {
-			const DCT_USER_URL = `${ORIGIN_URL}dct_admin&id=${selectedUser.id}`
+			const DCT_USER_URL = `${ORIGIN_URL}dct_member&id=${selectedUser.id}&clubId=${selectedClubId}`
 			console.log(DCT_USER_URL)
 			fetch(DCT_USER_URL)
 				.then(res => res.json())
@@ -187,8 +204,7 @@ const AdminManageUsers = () => {
 								<TableCell>ID</TableCell>
 								<TableCell>Tên người dùng</TableCell>
 								<TableCell>Tên tài khoản</TableCell>
-								<TableCell>Quyền</TableCell>
-								<TableCell>Đã chặn</TableCell>
+								<TableCell>Bị chặn</TableCell>
 								<TableCell>Thao tác</TableCell>
 							</TableRow>
 						</TableHead>
@@ -198,7 +214,6 @@ const AdminManageUsers = () => {
 									<TableCell>{user.id}</TableCell>
 									<TableCell>{user.firstname + ' ' + user.lastname}</TableCell>
 									<TableCell>{user.username}</TableCell>
-									<TableCell>{user.isAdmin == 'true' ? 'Quản Trị Viên' : 'Người Dùng'}</TableCell>
 									<TableCell>
 										<Switch
 											checked={user.isActive}
@@ -247,10 +262,23 @@ const AdminManageUsers = () => {
 				<Dialog open={permissionDialogOpen} onClose={handlePermissionDialogClose}>
 					<DialogTitle>Phân quyền cho tài khoản {selectedUser ? selectedUser.username : ''}</DialogTitle>
 					<DialogContent className={classes.dialogContent}>
+						<Typography variant='subtitle1'>Chọn câu lạc bộ:</Typography>
+						<Select value={selectedClubId|| ''} onChange={e => setSelectedClubId(e.target.value)} fullWidth>
+  {clubs?.map((club) => (
+    <MenuItem key={club.id} value={club.id}>
+      {club.name}
+    </MenuItem>
+  ))}
+</Select>
+{selectedClubId && userRole && (
+      <div>
+        Your role in is: {userRole} 
+      </div>
+    )}
 						<Typography variant='subtitle1'>Chọn quyền:</Typography>
 						<Select value={selectedRole} onChange={e => setSelectedRole(e.target.value)} fullWidth>
-							<MenuItem value='Quản trị viên'>Quản trị viên</MenuItem>
-							<MenuItem value='Người dùng'>Người dùng</MenuItem>
+							<MenuItem value='Chủ nhiệm'>Chủ nhiệm</MenuItem>
+							<MenuItem value='Thành viên'>Thành viên</MenuItem>
 						</Select>
 					</DialogContent>
 					<DialogActions>

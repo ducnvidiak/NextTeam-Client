@@ -55,16 +55,10 @@ const Dashboard = () => {
 					<Trophy data={data} />
 				</Grid>
 
-				<Grid item xs={12} md={5.9} >
+				<Grid item xs={12} md={5.9}>
 					<Event data={data} />
 				</Grid>
 
-				<Grid item xs={12} md={6}>
-					<Member data={data} />
-				</Grid>
-				<Grid item xs={12} md={6}>
-					<Balance data={data} />
-				</Grid>
 				<Grid item xs={12} md={6} lg={4}>
 					<WeeklyOverview data={data} />
 				</Grid>
@@ -109,6 +103,9 @@ const Dashboard = () => {
 							/>
 						</Grid>
 					</Grid>
+				</Grid>
+				<Grid item xs={12} md={12} sx={{ margin: '0 250px' }}>
+					<Member data={data} />
 				</Grid>
 			</Grid>
 		</ApexChartWrapper>
