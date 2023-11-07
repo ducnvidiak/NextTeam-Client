@@ -27,6 +27,7 @@ const AppBarContent = props => {
 
 	// ** Hook
 	const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
+	const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
 
 	return (
 		<Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -41,7 +42,7 @@ const AppBarContent = props => {
 					</IconButton>
 				) : null}
 			</Box>
-			<Typography variant='h5'>Câu lạc bộ: FU-DEVER</Typography>
+			<Typography variant='h5'>Câu lạc bộ: {clubData['clubData']?.subname}</Typography>
 			{/* <TextField
 				placeholder='Tìm kiếm...'
 				size='small'

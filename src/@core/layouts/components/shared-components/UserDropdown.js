@@ -100,7 +100,6 @@ const UserDropdown = props => {
 					return response.json()
 				})
 				.then(function (data) {
-					
 					setClubOfMeData(data)
 				})
 				.catch(error => console.error('Error:', error))
@@ -309,27 +308,13 @@ const UserDropdown = props => {
 						</Link>
 					</Box>
 				</MenuItem>
-				{roleContext.systemRole == 1 ? (
+				{roleContext.systemRole == 1 && (
 					<MenuItem sx={{ p: 0 }}>
-					<Box sx={styles}>
-						<Groups3Icon sx={{ marginRight: 2 }} />
-						<Link passHref href={`/admin`}>
-							<Button>Trang quản trị</Button>
-						</Link>
-					</Box>
-				</MenuItem>
-					
-				) : (
-					<MenuItem
-						sx={{ p: 0 }}
-						onClick={() => {
-							handleDropdownClose()
-							setOpen(true)
-						}}
-					>
 						<Box sx={styles}>
 							<Groups3Icon sx={{ marginRight: 2 }} />
-							<Button>CLB của bạn</Button>
+							<Link passHref href={`/admin`}>
+								<Button>Trang quản trị</Button>
+							</Link>
 						</Box>
 					</MenuItem>
 				)}
