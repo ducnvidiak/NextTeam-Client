@@ -10,6 +10,7 @@ function EmailVerification(props) {
 	const values = props.values
 	const setValues = props.setValues
 	const setStep = props.setStep
+	const setLoading = props.setLoading
 
 	const handleSubmitForm = async event => {
 		event.preventDefault()
@@ -24,7 +25,7 @@ function EmailVerification(props) {
 			event.target.disabled = false
 			clearTimeout(timeout)
 		}, 2000)
-
+		setLoading(true)
 		var res = await postAPI('forgot-password', { command: 1, email: values.email })
 
 		if (res.code == 0) {
@@ -36,6 +37,7 @@ function EmailVerification(props) {
 		} else {
 			toast.error(res.msg)
 		}
+		setLoading(false)
 	}
 
 	return (

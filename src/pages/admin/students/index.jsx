@@ -414,7 +414,7 @@ function StudentsManagement() {
 													<ErrorSpan>Chưa đăng ký</ErrorSpan>
 												)}
 											</TableBodyCell>
-											<TableBodyCell>
+											<TableBodyCell sx={{ textAlign: 'center' }}>
 												<StyledLink href='#' onClick={openModal('del', val)}>
 													xóa
 												</StyledLink>
