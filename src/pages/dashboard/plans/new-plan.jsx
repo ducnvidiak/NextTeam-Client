@@ -103,7 +103,6 @@ function NewPlan() {
 				const fileContent = await readFile(fileList[i])
 				formData.append(`filescontent[${i}]`, fileContent)
 
-
 				formData.append(`filesname[${i}]`, fileList[i].name)
 				formData.append(`filesType[${i}]`, fileList[i].type)
 			}
@@ -174,10 +173,13 @@ function NewPlan() {
 							minRows={3}
 							style={{
 								width: 'calc(100% - 30px)',
-
 								borderRadius: '5px',
-								padding: '20px',
-								fontSize: '18px',
+								paddingTop: '20px',
+								paddingLeft: '15px',
+								paddingBottom: '20px',
+								paddingRight: '15px',
+								fontFamily: 'Be Vietnam Pro,sans-serif',
+								fontSize: '16px',
 								resize: 'none'
 							}}
 							spellCheck='false'

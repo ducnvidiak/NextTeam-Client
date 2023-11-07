@@ -30,12 +30,13 @@ import Link from 'next/link'
 
 const UserList = () => {
 	const [userList, setUserList] = useState(null)
-	const [filterBy, setFilterBy] = useState('')
+	const [sortBy, setSortBy] = useState('')
 	const [cookies, setCookie] = useCookies(['clubData'])
+	const [searchValue, setSearchValue] = useState('')
 
 	const listOfUserName = userList?.map(user => user.fullname)
 	const router = useRouter()
-	
+
 	const clubId = cookies['clubData']?.clubId
 
 	useEffect(() => {
@@ -47,6 +48,10 @@ const UserList = () => {
 	function handleClick(id) {
 		router.push('./members/info/' + id)
 	}
+
+	const filteredUserList = userList?.filter(user => {
+		return user.studentCode.startsWith(searchValue) || user.fullname.startsWith(searchValue) || searchValue == ''
+	})
 
 	return (
 		<Paper
@@ -68,10 +73,14 @@ const UserList = () => {
 				<Typography variant='h6'>Danh sách thành viên</Typography>
 				<Autocomplete
 					options={listOfUserName}
+					onChange={(event, value) => {
+						if (value !== null) setSearchValue(value)
+						else setSearchValue('')
+					}}
 					renderInput={params => (
 						<TextField
 							{...params}
-							placeholder='Tìm kiếm theo tên'
+							placeholder='Tìm kiếm theo tên, mã sinh viên'
 							InputProps={{
 								...params.InputProps,
 								style: {
@@ -79,6 +88,9 @@ const UserList = () => {
 									width: '400px',
 									paddingLeft: '20px'
 								}
+							}}
+							onChange={event => {
+								setSearchValue(event.target.value)
 							}}
 							size='small'
 						/>
@@ -94,14 +106,14 @@ const UserList = () => {
 						label='Sắp xếp'
 						id='filter'
 						onChange={event => {
-							setFilterBy(event.target.value)
+							setSortBy(event.target.value)
 						}}
-						value={filterBy}
+						value={sortBy}
 						size='small'
 					>
-						<MenuItem value={'a'}>Điểm thành tích</MenuItem>
-						<MenuItem value={'b'}>Tên</MenuItem>
-						<MenuItem value={'c'}>Thời gian hoạt động</MenuItem>
+						<MenuItem value={'mark'}>Điểm thành tích</MenuItem>
+						<MenuItem value={'name'}>Tên</MenuItem>
+						<MenuItem value={'time'}>Thời gian hoạt động</MenuItem>
 					</Select>
 				</FormControl>
 			</Box>
@@ -114,7 +126,7 @@ const UserList = () => {
 						gap: '20px'
 					}}
 				>
-					{userList?.map(user => (
+					{filteredUserList?.map(user => (
 						<Card
 							key={user.id}
 							sx={{
@@ -204,78 +216,6 @@ const UserList = () => {
 			</Box>
 		</Paper>
 	)
-
-	// return (
-	// 	<div className={classes.userList}>
-	// 		<div>
-	// 			<h3>Members List</h3>
-	// 			<Card sx={{ minWidth: 120 }}>
-	// 				<FormControl fullWidth>
-	// 					<NativeSelect
-	// 						defaultValue={10}
-	// 						inputProps={{
-	// 							name: 'age',
-	// 							id: 'uncontrolled-native'
-	// 						}}
-	// 					>
-	// 						<option value={10}>All</option>
-	// 						<option value={20}>GDSC</option>
-	// 						<option value={30}>DEVER</option>
-	// 						<option value={40}>SRC</option>
-	// 					</NativeSelect>
-	// 				</FormControl>
-	// 			</Card>
-	// 		</div>
-	// 		<hr />
-	// 		<List dense sx={{ width: '100%', bgcolor: 'background.paper', padding: '20px' }}>
-	// 			{userList !== null ? (
-	// 				userList.map(member => {
-	// 					const labelId = `checkCard-list-secondary-label-${member.id}`
-
-	// 					return (
-	// 						<ListItem key={member.id} disablePadding>
-	// 							<ListItemButton
-	// 								sx={{
-	// 									height: '65px',
-	// 									backgroundColor: 'rgb(249 250 251)',
-	// 									marginBottom: '10px',
-	// 									borderRadius: '8px'
-	// 								}}
-	// 								onClick={() => {
-	// 									handleClick(member.id)
-	// 								}}
-	// 							>
-	// 								<div className={classes.carditem}>
-	// 									<div className={classes.carditem__left}>
-	// 										<ListItemAvatar>
-	// 											<Avatar alt={`Avatar ${member.fullname}`} src={member.avatarURL} />
-	// 										</ListItemAvatar>
-	// 										{/* <ListItemText
-	// 									id={labelId}
-	// 									primary={`${member.fullname}`}
-	// 									secondary={'text secondary'}
-	// 								/> */}
-	// 										<div className={classes.info}>
-	// 											<p>{member.fullname}</p>
-	// 											<span>{member.studentCode}</span>
-	// 										</div>
-	// 									</div>
-	// 									<div className={classes.logolist}>
-	// 										<div className={classes.badge}></div>
-	// 									</div>
-	// 								</div>
-	// 							</ListItemButton>
-	// 						</ListItem>
-	// 					)
-	// 				})
-	// 			) : (
-	// 				<div className={classes.content}>
-	// 					<CircularProgress />
-	// 				</div>
-	// 			)}
-	// 		</List>
-	// 	</div>
-	// )
 }
 
 export default UserList

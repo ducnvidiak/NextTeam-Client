@@ -63,6 +63,8 @@ export default function EventDashboard() {
 		})
 	}, [])
 
+	console.log(events)
+
 	const [state, setState] = useState({
 		top: false,
 		left: false,

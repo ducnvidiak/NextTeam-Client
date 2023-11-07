@@ -201,8 +201,12 @@ function EditPlans() {
 							style={{
 								width: 'calc(100% - 30px)',
 								borderRadius: '10px',
-								padding: '20px',
-								fontSize: '18px',
+								paddingTop: '20px',
+								paddingLeft: '15px',
+								paddingBottom: '20px',
+								paddingRight: '15px',
+								fontFamily: 'Be Vietnam Pro,sans-serif',
+								fontSize: '16px',
 								resize: 'none'
 							}}
 							spellCheck='false'

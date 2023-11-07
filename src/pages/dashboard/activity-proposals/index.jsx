@@ -80,7 +80,6 @@ function ActivityProposals() {
 		if (hasFile) setLoading(true)
 
 		deleteProposalById(deleteProposal.id).then(response => {
-
 			if (response?.message == 'success') {
 				if (hasFile) setLoading(false)
 

@@ -360,7 +360,7 @@ function ActivityPlans() {
 						}}
 						onClick={handleAddNewPlan}
 					>
-						<span>Thêm đề kế hoạch</span> <PostAddIcon sx={{ width: '30px', height: '30px' }} />
+						<span>Thêm kế hoạch mới</span> <PostAddIcon sx={{ width: '30px', height: '30px' }} />
 					</button>
 				</Box>
 				<Box
@@ -423,7 +423,7 @@ function ActivityPlans() {
 								borderBottom: '2px solid orange'
 							}}
 						>
-							<Typography variant='h6'>Bạn chắc chắn muốn xóa bản đề xuất này chứ?</Typography>
+							<Typography variant='h6'>Bạn chắc chắn muốn xóa bản kế hoạch này chứ?</Typography>
 						</Box>
 
 						<Box sx={{ padding: '20px' }}>

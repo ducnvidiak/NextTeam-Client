@@ -223,14 +223,18 @@ function ProposalListPage() {
 							</>
 						)}
 						{proposal.isApproved === 'approved' && (
-							<Typography variant='body2' color='textSecondary'>
-								Đã chấp nhận
-							</Typography>
+							<Chip
+								label='Đã chấp nhận'
+								size='small'
+								sx={{ backgroundColor: 'rgb(0,186,0)', color: 'floralwhite' }}
+							/>
 						)}
 						{proposal.isApproved === 'refused' && (
-							<Typography variant='body2' color='textSecondary'>
-								Đã từ chối
-							</Typography>
+							<Chip
+								label='Đã từ chối'
+								size='small'
+								sx={{ backgroundColor: 'rgb(230, 63, 41)', color: 'floralwhite' }}
+							/>
 						)}
 					</CardActions>
 				</Card>
