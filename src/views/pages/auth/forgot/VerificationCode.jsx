@@ -104,9 +104,9 @@ function VerificationCode(props) {
 		<div className='step'>
 			<Box sx={{ mb: 6 }}>
 				<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-					We sent you a verification code
+					Đã gửi mã xác minh
 				</Typography>
-				<Typography variant='body2'>Please check your email for the verification code</Typography>
+				<Typography variant='body2'>Vui lòng kiểm tra hộp thư điện tử</Typography>
 			</Box>
 			<form
 				noValidate

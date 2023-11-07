@@ -1,14 +1,17 @@
 import {
+	Badge,
 	Box,
 	Card,
 	CardContent,
 	CardMedia,
 	Container,
 	FormControl,
+	IconButton,
 	InputLabel,
 	Stack,
 	Tab,
 	Tabs,
+	Tooltip,
 	Typography
 } from '@mui/material'
 import React, { useRef, useState } from 'react'
@@ -23,11 +26,12 @@ import MenuItem from '@mui/material/MenuItem'
 import MenuList from '@mui/material/MenuList'
 import EventList from 'src/pages/events/EventList'
 import Select from '@mui/material/Select'
+import FeedbackIcon from '@mui/icons-material/Feedback'
 
 const options = ['Create a merge commit', 'Squash and merge', 'Rebase and merge']
 
 function Events() {
-	const [filter, setFilter] = useState("all")
+	const [filter, setFilter] = useState('all')
 
 	return (
 		<Container maxWidth='lg' sx={{ marginTop: 20 }}>
@@ -37,11 +41,12 @@ function Events() {
 				</Typography>
 				<FormControl variant='outlined' size='small'>
 					<InputLabel>Bộ lọc</InputLabel>
-					<Select label='filter' defaultValue='all' onChange={(e)=> setFilter(e.target.value)}>
+					<Select label='filter' defaultValue='all' onChange={e => setFilter(e.target.value)}>
 						<MenuItem value='all'>Tất cả</MenuItem>
 						<MenuItem value='registered'>Đã Đăng ký</MenuItem>
 						<MenuItem value='upcoming'>Sắp diễn ra</MenuItem>
 						<MenuItem value='past'>Đã qua</MenuItem>
+						<MenuItem value='feedback'>Feedback</MenuItem>
 					</Select>
 				</FormControl>
 			</Stack>

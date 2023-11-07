@@ -35,6 +35,7 @@ import { convertFormat } from '.'
 import { getUserInfo } from 'src/utils/info'
 import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
 import moment from 'moment'
+import { translateDayOfWeek } from 'src/ultis/dateTime'
 
 export const combineDateTime = (datetimeA, datetimeB) => {
 	const [date1, time1] = datetimeA.split('T')
@@ -133,9 +134,14 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const handleSubmit = async () => {
 		try {
+			if (event?.isApproved == 'accepted' && event?.type == 'public') {
+				toast.error('Không thể chỉnh sửa sự kiện đã phê duyệt!!!')
+
+				return
+			}
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
@@ -155,8 +161,6 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				}
 			})
 				.then(function (response) {
-					console.log(response)
-
 					return response.json()
 				})
 				.then(function (data) {
@@ -182,21 +186,25 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	}
 
 	const handleDelete = () => {
+		if (event?.isApproved == 'accepted' && event?.type == 'public') {
+			toast.error('Không thể chỉnh sửa sự kiện đã phê duyệt!!!')
+			setIsShowModal(false)
+
+			return
+		}
 		setOpen(true)
-		fetch(`http://localhost:8080/events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
 			}
 		})
 			.then(function (response) {
-				console.log(response)
-
 				return response.json()
 			})
 			.then(function (data) {
 				setEventList(data)
-				console.log(data);
+
 				toast.success('Xóa sự kiện thành công!!!')
 			})
 			.catch(error => {
@@ -267,13 +275,15 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						<Typography marginBottom={1} width={'20%'}>
 							Thời gian:
 						</Typography>
-						<Typography marginBottom={1}>6:00 PM</Typography>
+						<Typography marginBottom={1}>{`${translateDayOfWeek(
+							moment(event?.startTime).format('dddd')
+						)} ${moment(event?.startTime).format('L')}`}</Typography>
 					</Stack>
 					<Stack direction={'row'} gap={2}>
 						<Typography marginBottom={1} width={'20%'}>
 							Địa điểm:
 						</Typography>
-						<Typography marginBottom={1}>Phòng 201</Typography>
+						<Typography marginBottom={1}>{event?.location}</Typography>
 					</Stack>
 				</DialogContent>
 				<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>
@@ -298,6 +308,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					onChange={event => setNewEvent({ ...newEvent, name: event.target.value })}
 					sx={{ mb: 4 }}
 					error={newEvent.name === '' && !isValidate}
+					disabled={event?.isApproved == 'accepted' && event?.type == 'public'}
 				/>
 				<TextField
 					id='outlined-multiline-static'
@@ -307,6 +318,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					defaultValue={newEvent?.description}
 					onChange={event => setNewEvent({ ...newEvent, description: event.target.value })}
 					error={newEvent.description === '' && !isValidate}
+					disabled={event?.isApproved == 'accepted' && event?.type == 'public'}
 				/>
 				<Stack direction={'row'} justifyContent={'space-between'}>
 					<Typography marginY={4} variant='h6'>
@@ -314,6 +326,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					</Typography>
 					<label htmlFor='image-upload'>
 						<Button
+							disabled={event?.isApproved == 'accepted' && event?.type == 'public'}
 							variant='contained'
 							component='span'
 							startIcon={<CloudUpload />}
@@ -324,13 +337,16 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						</Button>
 					</label>
 				</Stack>
-				<Input
-					accept='image/*'
-					id='image-upload'
-					type='file'
-					style={{ display: 'none' }}
-					onChange={e => changeBanner(e)}
-				/>
+				{event?.isApproved !== 'accepted' && (
+					<Input
+						accept='image/*'
+						id='image-upload'
+						type='file'
+						style={{ display: 'none' }}
+						onChange={e => changeBanner(e)}
+					/>
+				)}
+
 				{newEvent?.bannerUrl && (
 					<Card>
 						<CardMedia
@@ -357,18 +373,21 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 							value={dayjs(newEvent?.startTime)}
 							sx={{ flex: 1 }}
 							onChange={handleDateChange}
+							disabled={event?.isApproved == 'accepted' && event?.type == 'public'}
 						/>
 						<TimePicker
 							sx={{ flex: 1 }}
 							label='Bắt đầu'
 							value={dayjs(newEvent?.startTime)}
 							onChange={handleStartTimeChange}
+							disabled={event?.isApproved == 'accepted' && event?.type == 'public'}
 						/>
 						<TimePicker
 							sx={{ flex: 1 }}
 							label='Kết thúc'
 							value={dayjs(newEvent?.endTime)}
 							onChange={handleEndTimeChange}
+							disabled={event?.isApproved == 'accepted' && event?.type == 'public'}
 						/>
 					</Stack>
 				</LocalizationProvider>
@@ -379,9 +398,10 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					<InputLabel id='demo-simple-select-label'>Chọn địa điểm</InputLabel>
 					{locationList.length > 0 && (
 						<Select
+							disabled={event?.isApproved == 'accepted' && event?.type == 'public'}
 							labelId='demo-simple-select-label'
 							id='demo-simple-select'
-							label='location'
+							label='Chọn địa điểm'
 							onChange={e => setNewEvent({ ...newEvent, locationId: e.target.value })}
 							defaultValue={
 								locationList.filter((item, index) => item.name === newEvent.locationName)[0]?.id
@@ -399,12 +419,12 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				<Typography marginY={4} variant='h6'>
 					Loại hình tổ chức
 				</Typography>
-				<ButtonGroup>
+				<ButtonGroup disabled={event?.isApproved == 'accepted' && event?.type == 'public'}>
 					<Button
 						key='one'
 						variant={newEvent.type === 'public' ? 'contained' : 'outlined'}
 						color={'primary'}
-						onClick={() => setNewEvent({ ...newEvent, type: 'public' })}
+						onClick={() => event?.isApproved !== 'accepted' && setNewEvent({ ...newEvent, type: 'public' })}
 					>
 						Toàn trường
 					</Button>
@@ -412,7 +432,9 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						key='two'
 						variant={newEvent.type === 'internal' ? 'contained' : 'outlined'}
 						color={'primary'}
-						onClick={() => setNewEvent({ ...newEvent, type: 'internal' })}
+						onClick={() =>
+							event?.isApproved !== 'accepted' && setNewEvent({ ...newEvent, type: 'internal' })
+						}
 					>
 						Nội bộ
 					</Button>
@@ -421,7 +443,13 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					Kế hoạch tổ chức
 				</Typography>
 				<Stack direction={'row'} alignItems={'center'} gap={4}>
-					<Button component='label' variant='contained' startIcon={<CloudUploadIcon />} sx={{ width: 180 }}>
+					<Button
+						disabled={event?.isApproved == 'accepted' && event?.type == 'public'}
+						component='label'
+						variant='contained'
+						startIcon={<CloudUploadIcon />}
+						sx={{ width: 180 }}
+					>
 						Upload file
 						<VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} />
 					</Button>
@@ -429,10 +457,14 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				</Stack>
 			</Stack>
 			<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>
-				<Button variant='contained' onClick={handleSubmit}>
+				<Button disabled={event?.isApproved == 'accepted' && event?.type == 'public'} variant='contained' onClick={handleSubmit}>
 					Lưu thay đổi
 				</Button>
-				<Button variant='outlined' onClick={() => setIsShowModal(true)}>
+				<Button
+					disabled={event?.isApproved == 'accepted' && event?.type == 'public'}
+					variant='outlined'
+					onClick={() => setIsShowModal(true)}
+				>
 					Hủy bỏ sự kiện
 				</Button>
 			</DialogActions>

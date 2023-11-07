@@ -43,6 +43,7 @@ import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp'
 
 function EventItem({ event, setEventList, eventList, index }) {
+	console.log(event);
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
 	const [openEventManagememntModal, setOpenEventManagememntModal] = useState(false)
@@ -61,9 +62,6 @@ function EventItem({ event, setEventList, eventList, index }) {
 
 		setState({ ...state, [anchor]: open })
 	}
-
-	console.log('event', event);
-
 
 	return (
 		<>
@@ -135,7 +133,9 @@ function EventItem({ event, setEventList, eventList, index }) {
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
 							<Typography variant='body1'>
-								{event?.clubId === 0 ? 'IC-PDPD' : event?.clubSubname}
+								{
+									event?.clubSubname ?? 'FPT University'
+								}
 							</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
@@ -167,7 +167,6 @@ function EventItem({ event, setEventList, eventList, index }) {
 }
 
 function EventList({ eventList, setEventList, filterType }) {
-	console.log(filterType)
 
 	return (
 		<>

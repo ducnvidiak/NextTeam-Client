@@ -44,7 +44,6 @@ function NewPlan() {
 	const [titleEmpty, setTitleEmpty] = useState(false)
 	const [contentEmpty, setContentEmpty] = useState(false)
 
-	console.log('club id: ', cookies['clubData']?.clubId)
 	const clubId = cookies['clubData']?.clubId
 
 	const wrapperRef = useRef(null)
@@ -104,7 +103,6 @@ function NewPlan() {
 				const fileContent = await readFile(fileList[i])
 				formData.append(`filescontent[${i}]`, fileContent)
 
-				console.log(formData.get(`filescontent[${i}]`))
 
 				formData.append(`filesname[${i}]`, fileList[i].name)
 				formData.append(`filesType[${i}]`, fileList[i].type)

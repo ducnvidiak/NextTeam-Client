@@ -89,10 +89,9 @@ function NotificationCreator() {
 			})
 			.then(function (data) {
 				if (data.id == null) {
-					console.log(data)
+					
 					toast.error(data)
 				} else {
-					console.log('Gửi thông báo thành công')
 					toast.success('Gửi thông báo thành công!')
 					router.push('/admin/notifications')
 				}
@@ -136,10 +135,9 @@ function NotificationCreator() {
 			})
 			.then(function (data) {
 				if (data.id == null) {
-					console.log(data)
+					
 					toast.error(data)
 				} else {
-					console.log('Gửi thông báo thành công')
 					toast.success('Gửi thông báo thành công!')
 					router.push('/admin/notifications')
 				}
@@ -155,7 +153,7 @@ function NotificationCreator() {
 	}))
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/club-user?action=view-list-user`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-list-user`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

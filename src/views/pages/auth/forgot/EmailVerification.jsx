@@ -42,10 +42,10 @@ function EmailVerification(props) {
 		<div className='step'>
 			<Box sx={{ mb: 6 }}>
 				<Typography variant='h6' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-					Lead you back to the journey! 👈🏼
+					Tìm lại chính mình! 👈🏼
 				</Typography>
 				<Typography variant='body2'>
-					Please enter your email so that we can send you a code to reset your password!
+					Vui lòng nhập email để chúng mình có thể gửi mã để đặt lại mật khẩu của bạn.
 				</Typography>
 			</Box>
 
@@ -60,7 +60,7 @@ function EmailVerification(props) {
 				/>
 
 				<Button fullWidth size='large' variant='contained' type='submit' sx={{ marginBottom: 7 }}>
-					Next
+					Tiếp
 				</Button>
 			</form>
 		</div>

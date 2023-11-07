@@ -40,7 +40,6 @@ export default function PaymentDetail({
 	const [page, setPage] = useState(0)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 
-	console.log(paymentDetailFilter)
 
 	const paymentFormObj = {
 		cash: { color: 'primary', label: 'Thanh toán tiền mặt' },
@@ -48,7 +47,7 @@ export default function PaymentDetail({
 	}
 
 	const payByCash = id => {
-		fetch(`http://localhost:8080/payment?action=pay-by-cash&id=${id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=pay-by-cash&id=${id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import EventList from 'src/pages/dashboard/events/EventList'
 import { getUserInfo } from 'src/utils/info'
+import 'dotenv/config'
+
 
 function EventDashboard() {
 	const [eventList, setEventList] = useState()
@@ -30,8 +32,6 @@ function EventDashboard() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('data')
-				console.log(data)
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
@@ -39,10 +39,8 @@ function EventDashboard() {
 	}, [userData])
 
 	useEffect(() => {
-		console.log(filter)
 		switch (filter) {
 			case 'all':
-				console.log('!!!', eventList)
 				setEventListFiltered(eventList)
 
 				return
@@ -59,8 +57,6 @@ function EventDashboard() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filter, eventList])
-
-	console.log('!!!')
 
 	return (
 		<Container maxWidth='lg' style={{ padding: 0 }}>

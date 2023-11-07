@@ -97,12 +97,12 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
 					startTime: new Date(convertToTimestamp(newEvent.startTime)),
-					endTime: new Date(convertToTimestamp(newEvent.startTime)),
+					endTime: new Date(convertToTimestamp(newEvent.endTime)),
 					registeredBy: userData?.id,
 					clubId: cookiesClub['clubData']?.clubId
 				}),
@@ -114,7 +114,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					return response.json()
 				})
 				.then(function (data) {
-					console.log('data')
 					setEventList(data)
 					toast.success('Tạo sự kiện thành công, đang chờ kiểm duyệt...')
 					setOpenEventCreatorModal(false)
@@ -133,7 +132,9 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					console.error('Error:', error)
 					toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
 				})
-				.finally(() => {})
+				.finally(() => {
+					setOpen(false)
+				})
 		} catch (error) {
 			setOpen(false)
 			if (error?.name === 'ValidationError') {

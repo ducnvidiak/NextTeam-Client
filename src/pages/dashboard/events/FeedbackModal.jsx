@@ -28,7 +28,7 @@ function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal,event, userData
 	})
 
 	const handleSubmit = async () => {
-		fetch(`http://localhost:8080/feedbacks?cmd=create&userId=${userData?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/feedbacks?cmd=create&userId=${userData?.id}`, {
 			method: 'POST',
 			body: JSON.stringify({
 				...feedback,
@@ -43,11 +43,11 @@ function FeedbackModal({ openFeedbackModal, setOpenFeedbackModal,event, userData
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data)
+				
 				toast.success('Gửi feedback thành công!!!!')
 				setOpenFeedbackModal(false)
 				setEventList(data)
-				console.log(data)
+				
 			})
 			.catch(error => {
 				console.error('Error:', error)

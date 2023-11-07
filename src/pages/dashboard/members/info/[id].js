@@ -39,7 +39,6 @@ const UserInfoView = () => {
 
 	const router = useRouter()
 
-	console.log(userInfo)
 	useEffect(() => {
 		if (userInfo?.major !== undefined && userInfo?.major !== null && majors != null) {
 			setMajorName(majors.find(major => major.id == userInfo?.major))

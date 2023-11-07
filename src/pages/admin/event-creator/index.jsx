@@ -52,7 +52,7 @@ function EventCreatorPage() {
 
 	useEffect(() => {
 		setLoading(true)
-		fetch(`http://localhost:8080/admin-events?cmd=list`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/review-event-servlet?cmd=list`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -62,7 +62,7 @@ function EventCreatorPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data)
+				
 				setEventList(data)
 				setEventListFiltered(data)
 				setLoading(false)

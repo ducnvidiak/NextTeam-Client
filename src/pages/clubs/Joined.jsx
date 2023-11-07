@@ -69,8 +69,6 @@ function ClubItem({ club, index }) {
 		router.push(`/clubs/${club.subname}`)
 	}
 
-	
-
 	const callAPIDepartment = async clubId => {
 		try {
 			setLoading(true)
@@ -116,8 +114,6 @@ function ClubItem({ club, index }) {
 
 	return (
 		<>
-			<RegisterClub clubId={clubId} userId={userId} isOpen={open} handleClose={handleClose} />
-
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'5%'}>
 					<Typography variant='h5'>{index + 1}.</Typography>
@@ -172,30 +168,14 @@ function ClubItem({ club, index }) {
 
 						<Stack direction={'row'} gap={4}>
 							{/* <Link passHref href={`${club.subname}`}> */}
-							<Button onClick={handleClick} variant='contained' sx={{ marginTop: 4, width: '50%' }}>
-								Xem chi tiết
-							</Button>
+							<Link href='/dashboard' passHref>
+								<Button variant='contained' sx={{ marginTop: 4, width: '100%' }}>
+									Truy cập
+								</Button>
+							</Link>
 							{/* </Link> */}
 
-							{club?.isJoined ? (
-								<Button
-									variant='outlined'
-									color='secondary'
-									sx={{ marginTop: 4, width: '50%' }}
-									onClick={() => handleClickOpen(club.id)}
-									disabled
-								>
-									Đã tham gia
-								</Button>
-							) : (
-								<Button
-									variant='outlined'
-									sx={{ marginTop: 4, width: '50%' }}
-									onClick={() => handleClickOpen(club.id)}
-								>
-									Đăng ký tham gia
-								</Button>
-							)}
+							{/* <Button variant='contained'>Truy cập</Button> */}
 						</Stack>
 					</CardContent>
 				</Card>
@@ -240,9 +220,11 @@ function ClubList() {
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 60px !important' }}>
-				{clubs?.map((club, index) => (
-					<ClubItem key={index} club={club} index={index}></ClubItem>
-				))}
+				{clubs
+					?.filter(club => club.isJoined)
+					.map((club, index) => (
+						<ClubItem key={index} club={club} index={index}></ClubItem>
+					))}
 			</Container>
 		</>
 	)

@@ -1,5 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, Typography } from '@mui/material'
 import moment from 'moment'
+import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { toast } from 'react-toastify'
@@ -29,8 +30,6 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('new data')
-				console.log(data)
 				setEventList(data)
 				toast.success('Đăng ký sự kiện thành công!!!!')
 				setOpenRegisterModal(false)
@@ -87,7 +86,7 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 						<Typography marginBottom={1} width={'20%'}>
 							Địa điểm:
 						</Typography>
-						<Typography marginBottom={1}>{event?.location}</Typography>
+						<Typography marginBottom={1}>{event?.locationName}</Typography>
 					</Stack>
 					<Divider variant='middle'></Divider>
 
@@ -119,6 +118,14 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 						<Typography marginBottom={1}>thangtvb.dev@gmail.com</Typography>
 					</Stack>
 				</DialogContent>
+				<Typography align='center'>
+					Your information is not correct?{' '}
+					<Link href={'/user/' + userData?.id} passHref style={{ color: '#f27023' }}>
+						Click here
+						{/* <Typography style={{ color: '#f27023' }}>Click here</Typography> */}
+					</Link>{' '}
+					to update your information
+				</Typography>
 				<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>
 					<Button variant='contained' onClick={handleSubmit}>
 						Xác nhận

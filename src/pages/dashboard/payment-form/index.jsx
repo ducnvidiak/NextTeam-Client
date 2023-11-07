@@ -20,7 +20,7 @@ function PaymentForm() {
 	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/payment?action=list-of-me&userId=${userData?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-of-me&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -47,8 +47,7 @@ function PaymentForm() {
 	}
 
 	const handlePay = row => {
-		console.log(row)
-		fetch(`http://localhost:8080/vnpayajax?amount=${row?.amount}&id=${row?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/vnpayajax?amount=${row?.amount}&id=${row?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

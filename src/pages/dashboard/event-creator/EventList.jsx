@@ -107,7 +107,9 @@ function EventItem({ event, setEventList, eventList, index }) {
 			)}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
-					{event?.isApproved == 'rejected' ? (
+					{event?.type == 'internal' ? (
+						<Chip label='Nội bộ' variant='outlined' color='success'></Chip>
+					) : event?.isApproved == 'rejected' ? (
 						<Chip label='Từ chối' sx={{ mb: 4, fontSize: 16 }} color='error' />
 					) : event?.isApproved == 'pending' ? (
 						<Chip label='Đang chờ' sx={{ mb: 4, fontSize: 16 }} color='warning' />
@@ -118,7 +120,13 @@ function EventItem({ event, setEventList, eventList, index }) {
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
 				</Stack>
 				<Card
-					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
+					sx={{
+						width: '75%',
+						minHeight: 220,
+						display: 'flex',
+						justifyContent: 'space-between',
+						cursor: 'pointer'
+					}}
 					marginBottom={10}
 				>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
@@ -131,9 +139,7 @@ function EventItem({ event, setEventList, eventList, index }) {
 
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
-							<Typography variant='body1'>
-								{event?.clubSubname}
-							</Typography>
+							<Typography variant='body1'>{event?.clubSubname}</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<LocationOnIcon></LocationOnIcon>
@@ -164,8 +170,6 @@ function EventItem({ event, setEventList, eventList, index }) {
 }
 
 function EventList({ eventList, setEventList, filterType }) {
-	console.log(filterType)
-
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>

@@ -37,7 +37,7 @@ const Application = () => {
 	}
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/engagement?action=application-list-of-user&userId=${userData?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=application-list-of-user&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -48,7 +48,7 @@ const Application = () => {
 			})
 			.then(function (data) {
 				setApplication(data)
-				console.log(data)
+				
 			})
 			.catch(error => console.error('Error:', error))
 	}, [userData])

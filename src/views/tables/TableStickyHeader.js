@@ -259,6 +259,7 @@ const TableStickyHeader = props => {
 				page={page}
 				onPageChange={handleChangePage}
 				onRowsPerPageChange={handleChangeRowsPerPage}
+				showFirstButton
 			/>
 		</Paper>
 	)

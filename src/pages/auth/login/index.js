@@ -86,7 +86,6 @@ const LoginPage = () => {
 	if (urlParams?.get('googleLogin')) {
 		toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
 		router.push('/')
-		console.log(urlParams.get('successData').replaceAll(' ', '+'))
 		setTimeout(() => {
 			setCookie('userData', urlParams.get('successData').replaceAll(' ', '+'), {
 				path: '/'
@@ -118,23 +117,20 @@ const LoginPage = () => {
 			})
 
 			if (res.id == null) {
-				console.log(res)
 				toast.error(res)
 			} else {
 				if (save) {
 				}
 				if (!save) {
 				}
-				console.log('cookies: ', res.res)
-				console.log('Đăng nhập thành công')
 				toast.success('Đăng nhập thành công, đang chuyển hướng sang trang chủ!')
 				setTimeout(() => {
-					router.push('/')
 					setTimeout(() => {
 						setCookie('userData', res.res, {
 							path: '/'
 						})
 						saveSettings({ ...settings, avatarURL: res.res.avatarURL })
+						router.push('/')
 					}, 1000)
 				}, 1000)
 			}
@@ -157,7 +153,7 @@ const LoginPage = () => {
 			// 	})
 			// 	.then(function (data) {
 			// 		if (data.id == null) {
-			// 			console.log(data)
+			// 			
 			// 			toast.error(data)
 			// 		} else {
 			// 			if (save) {

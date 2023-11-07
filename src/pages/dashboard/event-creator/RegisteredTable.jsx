@@ -12,7 +12,7 @@ function RegisteredTable({ event }) {
 	const [eventRegistrations, setEventRegistrations] = useState([])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/event-registration?eventId=${event?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/event-registration?eventId=${event?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -22,8 +22,7 @@ function RegisteredTable({ event }) {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('data')
-				console.log(data)
+				
 				setEventRegistrations(data)
 			})
 			.catch(error => console.error('Error:', error))

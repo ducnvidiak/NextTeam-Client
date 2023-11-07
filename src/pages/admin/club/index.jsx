@@ -189,8 +189,7 @@ function Club() {
 			clubFormData.balance +
 			'&isActive=' +
 			clubFormData.isActive
-		console.log('test')
-		console.log(url_fetch)
+
 		fetch(url_fetch)
 			.then(res => {
 				if (!res.ok) {

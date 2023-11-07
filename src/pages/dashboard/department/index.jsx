@@ -31,7 +31,6 @@ function Department() {
 	const [cookies, setCookie] = useCookies(['clubData'])
 	const [updateData, setUpdateData] = useState(false)
 	const loadDataUrl = ORIGIN_URL + '?action=list-dept&clubId=' + cookies['clubData']?.clubId
-	console.log(loadDataUrl)
 
 	const [validationErrors, setValidationErrors] = useState({
 		name: false
@@ -67,7 +66,6 @@ function Department() {
 	const confirmDelete = () => {
 		if (departmentToDelete) {
 			const DELETE_DATA_URL = ORIGIN_URL + `?action=delete-dept&depId=${departmentToDelete.id}`
-			console.log(`Testing create url: ${DELETE_DATA_URL}`)
 			fetch(DELETE_DATA_URL)
 				.then(res => {
 					if (!res.ok) {
