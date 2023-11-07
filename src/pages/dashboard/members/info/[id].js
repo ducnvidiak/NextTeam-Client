@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 // ** MUI Imports
-import { Box, Grid, Avatar, Paper, Typography, Button } from '@mui/material'
+import { Box, Grid, Avatar, Paper, Typography, Button, TextField, InputAdornment } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
 import 'react-datepicker/dist/react-datepicker.css'
@@ -118,88 +118,132 @@ const UserInfoView = () => {
 				</Box>
 				<Grid container sx={{ marginTop: '20px', padding: '0 10px' }} spacing={6}>
 					<Grid item xs={6}>
-						<Grid container>
-							<Grid item xs={1}>
-								<EmailIcon />
-							</Grid>
-							<Grid item xs={11}>
-								<Typography variant='subtitle1'>{userInfo?.email}</Typography>
-							</Grid>
-						</Grid>
+						<TextField
+							fullWidth
+							id='email-readonly'
+							label='Email'
+							value={userInfo?.email}
+							InputProps={{
+								readOnly: true,
+								startAdornment: (
+									<InputAdornment position='start'>
+										<EmailIcon />
+									</InputAdornment>
+								)
+							}}
+						/>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container>
-							<Grid item xs={1}>
-								<SchoolIcon />
-							</Grid>
-							<Grid item xs={11}>
-								<Typography variant='subtitle1'>{majorName?.name || 'chưa cập nhật'}</Typography>
-							</Grid>
-						</Grid>
+						<TextField
+							fullWidth
+							id='major-readonly'
+							label='Major'
+							value={majorName?.name || 'Chưa cập nhật'}
+							InputProps={{
+								readOnly: true,
+								startAdornment: (
+									<InputAdornment position='start'>
+										<SchoolIcon />
+									</InputAdornment>
+								)
+							}}
+						/>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container>
-							<Grid item xs={1}>
-								<LocalPhoneIcon />
-							</Grid>
-							<Grid item xs={11}>
-								<Typography variant='subtitle1'>{userInfo?.phoneNumber}</Typography>
-							</Grid>
-						</Grid>
+						<TextField
+							fullWidth
+							id='phone-readonly'
+							label='Phone'
+							value={userInfo?.phoneNumber}
+							InputProps={{
+								readOnly: true,
+								startAdornment: (
+									<InputAdornment position='start'>
+										<LocalPhoneIcon />
+									</InputAdornment>
+								)
+							}}
+						/>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container>
-							<Grid item xs={1}>
-								<CakeIcon />
-							</Grid>
-							<Grid item xs={11}>
-								<Typography variant='subtitle1'>{userInfo?.dob}</Typography>
-							</Grid>
-						</Grid>
+						<TextField
+							fullWidth
+							id='dob-readonly'
+							label='Date of birth'
+							value={userInfo?.dob}
+							InputProps={{
+								readOnly: true,
+								startAdornment: (
+									<InputAdornment position='start'>
+										<CakeIcon />
+									</InputAdornment>
+								)
+							}}
+						/>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container>
-							<Grid item xs={1}>
-								<LocationCityIcon />
-							</Grid>
-							<Grid item xs={11}>
-								<Typography variant='subtitle1'>
-									{country?.name} - {state.name}
-								</Typography>
-							</Grid>
-						</Grid>
+						<TextField
+							fullWidth
+							id='address-readonly'
+							label='Hometown'
+							value={`${country?.name} - ${state.name}`}
+							InputProps={{
+								readOnly: true,
+								startAdornment: (
+									<InputAdornment position='start'>
+										<LocationCityIcon />
+									</InputAdornment>
+								)
+							}}
+						/>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container>
-							<Grid item xs={1}>
-								<TransgenderIcon />
-							</Grid>
-							<Grid item xs={11}>
-								<Typography variant='subtitle1'>
-									{userInfo?.gender == '1' ? 'Female' : 'Male'}
-								</Typography>
-							</Grid>
-						</Grid>
+						<TextField
+							fullWidth
+							id='gender-readonly'
+							label='Gender'
+							value={userInfo?.gender == '1' ? 'Female' : 'Male'}
+							InputProps={{
+								readOnly: true,
+								startAdornment: (
+									<InputAdornment position='start'>
+										<TransgenderIcon />
+									</InputAdornment>
+								)
+							}}
+						/>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container>
-							<Grid item xs={1}>
-								<FacebookIcon />
-							</Grid>
-							<Grid item xs={11}>
-								<Typography variant='subtitle1'>{userInfo?.facebookUrl}</Typography>
-							</Grid>
-						</Grid>
+						<TextField
+							fullWidth
+							id='facebook-readonly'
+							label='Facebook'
+							value={userInfo?.facebookUrl}
+							InputProps={{
+								readOnly: true,
+								startAdornment: (
+									<InputAdornment position='start'>
+										<FacebookIcon />
+									</InputAdornment>
+								)
+							}}
+						/>
 					</Grid>
 					<Grid item xs={6}>
-						<Grid container>
-							<Grid item xs={1}>
-								<LinkedInIcon />
-							</Grid>
-							<Grid item xs={11}>
-								<Typography variant='subtitle1'>{userInfo?.linkedInUrl}</Typography>
-							</Grid>
-						</Grid>
+						<TextField
+							fullWidth
+							id='linkedin-readonly'
+							label='LinkedIn'
+							value={userInfo?.linkedInUrl}
+							InputProps={{
+								readOnly: true,
+								startAdornment: (
+									<InputAdornment position='start'>
+										<LinkedInIcon />
+									</InputAdornment>
+								)
+							}}
+						/>
 					</Grid>
 				</Grid>
 				<Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '50px' }}>
