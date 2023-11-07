@@ -53,8 +53,6 @@ export const getUserInfo = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/user?id=' + id)
 		.then(response => {
-			
-
 			return response.data
 		})
 		.catch(error => {
@@ -93,8 +91,6 @@ export const getAllMajors = async () => {
 	const json = await axios
 		.get('http://localhost:8080/api/allMajors')
 		.then(response => {
-			
-
 			return response.data
 		})
 		.catch(error => {
@@ -110,8 +106,6 @@ export const getListOfAllUser = async () => {
 	const json = await axios
 		.get('http://localhost:8080/api/userlist')
 		.then(response => {
-			
-
 			return response.data
 		})
 		.catch(error => {
