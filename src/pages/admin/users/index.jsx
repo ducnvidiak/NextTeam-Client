@@ -21,6 +21,8 @@ import {
 } from '@mui/material'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -38,6 +40,8 @@ const useStyles = makeStyles(theme => ({
 const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/user_manager?cmd=`
 
 const AdminManageUsers = () => {
+	const [loading, setLoading] = useState(true);
+
 	const [users, setUsers] = useState([])
 	const [clubs, setClubs] = useState([])
 	const [blockDialogOpen, setBlockDialogOpen] = useState(false)
@@ -53,6 +57,7 @@ const AdminManageUsers = () => {
 			.then(res => res.json())
 			.then(result => {
 				setUsers(result)
+				setLoading(false)
 			})
 	}
 
@@ -114,7 +119,7 @@ const AdminManageUsers = () => {
 					setUsers(prevUsers =>
 						prevUsers.map(user => (user.id === selectedUser.id ? { ...user, isActive: false } : user))
 					)
-					toast.success('Mở chặn thành công', {
+					toast.success('Chặn thành công', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -123,7 +128,7 @@ const AdminManageUsers = () => {
 						draggable: true
 					})
 				}).catch(error =>{
-					toast.error('Mở chặn thất bại', {
+					toast.error('Chặn thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -145,7 +150,7 @@ const AdminManageUsers = () => {
 					setUsers(prevUsers =>
 						prevUsers.map(user => (user.id === selectedUser.id ? { ...user, isActive: true } : user))
 					)
-					toast.success('Chặn thành công', {
+					toast.success('Mở chặn thành công', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -154,7 +159,7 @@ const AdminManageUsers = () => {
 						draggable: true
 					})
 				}).catch(error =>{
-					toast.error('Chặn thất bại', {
+					toast.error('Mở chặn thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -239,7 +244,13 @@ const AdminManageUsers = () => {
 	}
 
 	return (
+		
+
 		<Card className={classes.root}>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+                <CircularProgress color='inherit' />
+            </Backdrop>
+
 			<CardContent>
 				<Typography variant='h6' gutterBottom>
 					Quản lý người dùng trên nền tảng
@@ -251,7 +262,7 @@ const AdminManageUsers = () => {
 								<TableCell>ID</TableCell>
 								<TableCell>Tên người dùng</TableCell>
 								<TableCell>Tên tài khoản</TableCell>
-								<TableCell>Bị chặn</TableCell>
+								<TableCell>Đã chặn</TableCell>
 								<TableCell>Thao tác</TableCell>
 							</TableRow>
 						</TableHead>

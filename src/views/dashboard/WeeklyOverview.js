@@ -15,11 +15,13 @@ import DotsVertical from 'mdi-material-ui/DotsVertical'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 
 const WeeklyOverview = props => {
-	const currentDate = new Date();
-    const currentMonthIndex = currentDate.getMonth();
+	const currentDate = new Date()
+	const currentMonthIndex = currentDate.getMonth()
 
-    const total_event_months = Array.isArray(props?.data?.total_event_months) ? props.data.total_event_months.slice(0, currentMonthIndex + 1) : [];
-	
+	const total_event_months = Array.isArray(props?.data?.total_event_months)
+		? props.data.total_event_months.slice(0, currentMonthIndex + 1)
+		: []
+
 	const currentMonthEvents = total_event_months[total_event_months.length - 1] || 0
 
 	const previousMonthEvents = total_event_months[total_event_months.length - 2] || 0
@@ -59,12 +61,12 @@ const WeeklyOverview = props => {
 		},
 		dataLabels: { enabled: false },
 		colors: [
-			theme.palette.background.default,
-			theme.palette.background.default,
-			theme.palette.background.default,
 			theme.palette.primary.main,
-			theme.palette.background.default,
-			theme.palette.background.default
+			theme.palette.primary.main,
+			theme.palette.primary.main,
+			theme.palette.primary.main,
+			theme.palette.primary.main,
+			theme.palette.primary.main
 		],
 		states: {
 			hover: {
@@ -131,9 +133,11 @@ const WeeklyOverview = props => {
 				/>
 				<Box sx={{ mb: 7, display: 'flex', alignItems: 'center' }}>
 					<Typography variant='h5' sx={{ mr: 4 }}>
-					{percentageIncrease.toFixed(2)}%
+						{percentageIncrease.toFixed(2)}%
 					</Typography>
-					<Typography variant='body2'>Số lượng sự kiện của câu lạc bộ tăng {percentageIncrease.toFixed(2)}% so với tháng trước</Typography>
+					<Typography variant='body2'>
+						Số lượng sự kiện của câu lạc bộ tăng {percentageIncrease.toFixed(2)}% so với tháng trước
+					</Typography>
 				</Box>
 				<Button fullWidth variant='contained'>
 					Chi tiết
