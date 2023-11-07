@@ -69,6 +69,7 @@
 		"clsx": "^1.1.1",
 		"country-state-city": "^3.2.1",
 		"dayjs": "^1.11.10",
+		"dotenv": "^16.3.1",
 		"install": "^0.13.0",
 		"material-ui-popup-state": "^5.0.9",
 		"mdi-material-ui": "^7.1.0",

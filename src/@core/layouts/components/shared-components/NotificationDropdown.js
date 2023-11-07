@@ -147,10 +147,7 @@ const NotificationDropdown = () => {
 	useEffect(() => {
 		if (cookies['clubData'] != null) {
 			fetch(
-				'http://localhost:8080/notification?action=list-10-noti&clubId=' +
-					cookies['clubData']?.clubId +
-					'&userId=' +
-					userData?.id,
+				`${process.env.NEXT_PUBLIC_API_URL}/notification?action=list-10-noti&clubId=${cookies['clubData']?.clubId}&userId=${userData?.id}`,
 				{
 					method: 'GET',
 					headers: {
@@ -166,7 +163,7 @@ const NotificationDropdown = () => {
 				})
 				.catch(error => console.error('Error:', error))
 		} else {
-			fetch('http://localhost:8080/notification?action=list-wide-noti', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=list-wide-noti`, {
 				method: 'GET',
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8'
@@ -185,7 +182,7 @@ const NotificationDropdown = () => {
 	const updateView = (id, type, hasSeen) => {
 		if (hasSeen == 0) {
 			if (type == 'private') {
-				fetch('http://localhost:8080/notification?action=update-view-private-email&id=' + id, {
+				fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=update-view-private-email&id=${id}`, {
 					method: 'GET',
 					headers: {
 						'Content-type': 'application/json; charset=UTF-8'
@@ -200,10 +197,7 @@ const NotificationDropdown = () => {
 					.catch(error => console.error('Error:', error))
 			} else {
 				fetch(
-					'http://localhost:8080/notification?action=update-view-public-email&id=' +
-						id +
-						'&userId=' +
-						userData.id,
+					`${process.env.NEXT_PUBLIC_API_URL}/notification?action=update-view-public-email&id=${id}&userId=${userData.id}`,
 					{
 						method: 'GET',
 						headers: {

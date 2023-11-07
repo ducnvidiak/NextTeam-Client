@@ -62,7 +62,7 @@ function NotificationCreator() {
 			toast.error('Không được để trống Tiêu đề hoặc nội dung')
 		} else {
 			if (save) {
-				fetch('http://localhost:8080/notification?action=send-public-email', {
+				fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=send-public-email`, {
 					method: 'POST',
 					body: JSON.stringify({
 						clubId: clubData['clubData']?.clubId,
@@ -78,7 +78,7 @@ function NotificationCreator() {
 					})
 					.catch(error => console.error('Error:', error))
 			}
-			fetch('http://localhost:8080/notification?action=add-noti', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=add-noti`, {
 				method: 'POST',
 				body: JSON.stringify({
 					clubId: clubData['clubData']?.clubId,
@@ -110,7 +110,7 @@ function NotificationCreator() {
 			toast.error('Không được để trống Tiêu đề, Nội dung hoặc người nhận')
 		} else {
 			if (save) {
-				fetch('http://localhost:8080/notification?action=send-private-email', {
+				fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=send-private-email`, {
 					method: 'POST',
 					body: JSON.stringify({
 						clubId: clubData['clubData']?.clubId,
@@ -127,7 +127,7 @@ function NotificationCreator() {
 					})
 					.catch(error => console.error('Error:', error))
 			}
-			fetch('http://localhost:8080/notification?action=add-private-noti', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=add-private-noti`, {
 				method: 'POST',
 				body: JSON.stringify({
 					clubId: clubData['clubData']?.clubId,
@@ -163,12 +163,15 @@ function NotificationCreator() {
 
 	useEffect(() => {
 		if (cookies['clubData'])
-			fetch(`http://localhost:8080/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
-				method: 'GET',
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
+			fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
 				}
-			})
+			)
 				.then(function (response) {
 					return response.json()
 				})

@@ -62,6 +62,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 					<CardContent sx={{ padding: 4 }}>
 						<Typography variant='h6' fontWeight={700} marginBottom={4}>
 							{event?.name}
+							{event?.clubSubname &&
 							<Link href={`http://localhost:3000/clubs/${event?.clubSubname}`} passHref>
 								<Stack
 									direction={'row'}
@@ -77,6 +78,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 									<KeyboardArrowRightIcon></KeyboardArrowRightIcon>
 								</Stack>
 							</Link>
+}
 						</Typography>
 						<Box sx={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
 							<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>

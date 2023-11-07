@@ -15,7 +15,7 @@ function PaymentResult() {
 	useEffect(() => {
 		if (router.query.vnp_TransactionStatus) {
 			fetch(
-				`http://localhost:8080/payment?action=pay-by-online&id=${router.query.vnp_OrderInfo}&status=${router.query.vnp_TransactionStatus}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/payment?action=pay-by-online&id=${router.query.vnp_OrderInfo}&status=${router.query.vnp_TransactionStatus}`,
 				{
 					method: 'GET',
 					headers: {

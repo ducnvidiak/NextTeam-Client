@@ -32,7 +32,7 @@ export default function AddExpense({
 			setErrorAmount(true)
 			toast.error('Số dư không đủ để chi tiền')
 		} else {
-			fetch('http://localhost:8080/payment?action=add-expense', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=add-expense`, {
 				method: 'POST',
 				body: JSON.stringify(expense),
 				headers: {

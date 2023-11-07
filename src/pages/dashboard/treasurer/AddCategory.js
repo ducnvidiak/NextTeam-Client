@@ -28,7 +28,7 @@ export default function AddCategory({
 			setErrorAmount(true)
 			toast.error('Số tiền không hợp lệ')
 		} else {
-			fetch('http://localhost:8080/payment?action=add-category', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=add-category`, {
 				method: 'POST',
 				body: JSON.stringify(category),
 				headers: {

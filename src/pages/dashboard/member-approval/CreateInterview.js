@@ -108,7 +108,7 @@ export default function CreateInterview({
 		})
 	}
 	useEffect(() => {
-		fetch(`http://localhost:8080/location`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/location`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -134,16 +134,7 @@ export default function CreateInterview({
 			toast.error('Vui lòng nhập các trường bắt buộc')
 		} else {
 			fetch(
-				'http://localhost:8080/engagement?action=set-interview&club=' +
-					applicationDetail?.club.subname +
-					'&name=' +
-					fullname +
-					'&location=' +
-					interview?.location +
-					'&note=' +
-					interview?.note +
-					'&email=' +
-					applicationDetail?.user.email,
+				`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=set-interview&club=${applicationDetail?.club.subname}&name=${fullname}&location=${interview?.location}&note=${interview?.note}&email=${applicationDetail?.user.email}`,
 				{
 					method: 'POST',
 					body: JSON.stringify({

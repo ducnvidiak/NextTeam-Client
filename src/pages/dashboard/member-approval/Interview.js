@@ -109,7 +109,7 @@ export default function Interview({
 	}, [applicationDetail, userData])
 
 	const handleSubmit = async () => {
-		fetch('http://localhost:8080/engagement?action=interview', {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=interview`, {
 			method: 'POST',
 			body: JSON.stringify(interviewDetail),
 			headers: {
@@ -136,7 +136,7 @@ export default function Interview({
 	const handleStatusSubmit = async () => {
 		if (status == '1') {
 			fetch(
-				'http://localhost:8080/engagement?action=approve-application&id=' + applicationDetail?.engagement?.id,
+				`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=approve-application&id=${applicationDetail?.engagement?.id}`,
 				{
 					method: 'GET',
 					headers: {
@@ -156,7 +156,7 @@ export default function Interview({
 		}
 		if (status == '3') {
 			fetch(
-				'http://localhost:8080/engagement?action=reject-application&id=' + applicationDetail?.engagement?.id,
+				`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=reject-application&id=${applicationDetail?.engagement?.id}`,
 				{
 					method: 'GET',
 					headers: {
@@ -176,7 +176,7 @@ export default function Interview({
 		}
 		if (status == '4') {
 			fetch(
-				'http://localhost:8080/engagement?action=drop-out-application&id=' + applicationDetail?.engagement?.id,
+				`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=drop-out-application&id=${applicationDetail?.engagement?.id}`,
 				{
 					method: 'GET',
 					headers: {
@@ -338,7 +338,7 @@ export default function Interview({
 													<Box sx={{ height: '70vh' }}>
 														<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
 															<Viewer
-																fileUrl={`http://localhost:8080${applicationDetail?.engagement?.cvUrl}`}
+																fileUrl={`${process.env.NEXT_PUBLIC_API_URL}${applicationDetail?.engagement?.cvUrl}`}
 																plugins={[
 																	defaultLayoutPluginInstance,
 																	scrollModePluginInstance

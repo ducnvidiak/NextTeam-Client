@@ -119,7 +119,7 @@ const MemberApproval = () => {
 
 	useEffect(() => {
 		fetch(
-			`http://localhost:8080/engagement?action=application-list-of-club&clubId=${cookies['clubData']?.clubId}`,
+			`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=application-list-of-club&clubId=${cookies['clubData']?.clubId}`,
 			{
 				method: 'GET',
 				headers: {
@@ -234,7 +234,7 @@ const MemberApproval = () => {
 						</FormControl>
 					</Container>
 
-					<TextField
+					{/* <TextField
 						placeholder='Tìm kiếm...'
 						size='small'
 						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
@@ -245,7 +245,7 @@ const MemberApproval = () => {
 								</InputAdornment>
 							)
 						}}
-					/>
+					/> */}
 				</div>
 
 				<Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -301,6 +301,7 @@ const MemberApproval = () => {
 													onClick={() => {
 														handleCreatInterview(row)
 													}}
+													sx={{ width: '100%' }}
 												>
 													Tạo phỏng vấn
 												</Button>
@@ -314,6 +315,7 @@ const MemberApproval = () => {
 													onClick={() => {
 														handleInterview(row)
 													}}
+													sx={{ width: '100%' }}
 												>
 													Phỏng vấn
 												</Button>
@@ -325,6 +327,7 @@ const MemberApproval = () => {
 													onClick={() => {
 														handleInterview(row)
 													}}
+													sx={{ width: '100%' }}
 												>
 													Cập nhật
 												</Button>

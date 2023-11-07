@@ -136,7 +136,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/admin-events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin-events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
@@ -183,7 +183,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const handleDelete = () => {
 		setOpen(true)
-		fetch(`http://localhost:8080/admin-events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin-events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -397,7 +397,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						</Select>
 					)}
 				</FormControl>
-				<Typography marginY={4} variant='h6'>
+				{/* <Typography marginY={4} variant='h6'>
 					Loại hình tổ chức
 				</Typography>
 				<ButtonGroup>
@@ -417,7 +417,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					>
 						Nội bộ
 					</Button>
-				</ButtonGroup>
+				</ButtonGroup> */}
 				<Typography marginY={4} variant='h6'>
 					Kế hoạch tổ chức
 				</Typography>

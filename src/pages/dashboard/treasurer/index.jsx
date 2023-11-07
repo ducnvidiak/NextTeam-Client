@@ -126,7 +126,7 @@ function Treasurer() {
 
 	const getApiPaymentDetail = id => {
 		setOpenPaymentDetailDialog(true)
-		fetch(`http://localhost:8080/payment?action=list-payments-in-category&categoryId=${id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-payments-in-category&categoryId=${id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -143,7 +143,7 @@ function Treasurer() {
 
 	const updateBalance = () => {
 		fetch(
-			`http://localhost:8080/payment?action=update-balance&clubId=${cookies['clubData']?.clubId}&balance=${balance}`,
+			`${process.env.NEXT_PUBLIC_API_URL}/payment?action=update-balance&clubId=${cookies['clubData']?.clubId}&balance=${balance}`,
 			{
 				method: 'GET',
 				headers: {
@@ -159,12 +159,15 @@ function Treasurer() {
 	}
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})
@@ -260,7 +263,7 @@ function Treasurer() {
 						</FormControl>
 					</Container>
 					<Chip label={'Số dư: ' + balance?.toLocaleString()} color='primary' sx={{ marginRight: 5 }} />
-					<TextField
+					{/* <TextField
 						placeholder='Tìm kiếm...'
 						size='small'
 						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
@@ -275,7 +278,7 @@ function Treasurer() {
 							setSearch(event.target.value)
 							handleSearch()
 						}}
-					/>
+					/> */}
 				</div>
 
 				<Paper sx={{ width: '100%', overflow: 'hidden' }}>

@@ -101,12 +101,15 @@ const NotificationCreator = () => {
 	}
 
 	const deletePublicNoti = event => {
-		fetch('http://localhost:8080/notification?action=delete-public-noti&id=' + publicNotificationDetail?.id, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			`${process.env.NEXT_PUBLIC_API_URL}/notification?action=delete-public-noti&id=${publicNotificationDetail?.id}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})
@@ -126,12 +129,15 @@ const NotificationCreator = () => {
 	}
 
 	const deletePrivateNoti = event => {
-		fetch('http://localhost:8080/notification?action=delete-private-noti&id=' + privateNotificationDetail?.id, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			`${process.env.NEXT_PUBLIC_API_URL}/notification?action=delete-private-noti&id=${privateNotificationDetail?.id}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})
@@ -170,7 +176,7 @@ const NotificationCreator = () => {
 	const handleSearch = () => {
 		// Thực hiện tìm kiếm hoặc gọi hàm bạn muốn khi người dùng nhấn Enter
 		fetch(
-			`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}`,
+			`${process.env.NEXT_PUBLIC_API_URL}/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}`,
 			{
 				method: 'GET',
 				headers: {
@@ -188,7 +194,7 @@ const NotificationCreator = () => {
 	}
 
 	useEffect(() => {
-		fetch('http://localhost:8080/notification?action=list-noti&clubId=' + cookies['clubData'].clubId, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=list-noti&clubId=${cookies['clubData'].clubId}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -203,12 +209,15 @@ const NotificationCreator = () => {
 			})
 			.catch(error => console.error('Error:', error))
 
-		fetch('http://localhost:8080/notification?action=list-private-noti&clubId=' + cookies['clubData'].clubId, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			`${process.env.NEXT_PUBLIC_API_URL}/notification?action=list-private-noti&clubId=${cookies['clubData'].clubId}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})
@@ -301,34 +310,6 @@ const NotificationCreator = () => {
 					</div>
 					<CardContent>
 						<TabPanel value='1' sx={{ p: 0 }}>
-							<div
-								style={{
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-									paddingRight: '10px'
-								}}
-							>
-								<CardHeader title='Tất cả thông báo' titleTypographyProps={{ variant: 'h6' }} />
-								<TextField
-									placeholder='Tìm kiếm...'
-									size='small'
-									sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position='start'>
-												<Magnify fontSize='small' />
-											</InputAdornment>
-										)
-									}}
-									onChange={event => {
-										setSearch(event.target.value)
-										handleSearch()
-									}}
-									onKeyPress={handleEnterKeyPress} // Gọi handleEnterKeyPress khi có sự kiện keypress
-								/>
-							</div>
-
 							<Table>
 								<TableHead>
 									<TableRow>
@@ -383,34 +364,6 @@ const NotificationCreator = () => {
 							/>
 						</TabPanel>
 						<TabPanel value='2' sx={{ p: 0 }}>
-							<div
-								style={{
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-									paddingRight: '10px'
-								}}
-							>
-								<CardHeader title='Tất cả thông báo' titleTypographyProps={{ variant: 'h6' }} />
-								<TextField
-									placeholder='Tìm kiếm...'
-									size='small'
-									sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position='start'>
-												<Magnify fontSize='small' />
-											</InputAdornment>
-										)
-									}}
-									onChange={event => {
-										setSearch(event.target.value)
-										handleSearch()
-									}}
-									onKeyPress={handleEnterKeyPress} // Gọi handleEnterKeyPress khi có sự kiện keypress
-								/>
-							</div>
-
 							<Table>
 								<TableHead>
 									<TableRow>
