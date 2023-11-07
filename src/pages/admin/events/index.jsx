@@ -59,6 +59,7 @@ export default function EventDashboard() {
 
 	useEffect(() => {
 		getAllEvents().then(response => {
+			console.log('response', response)
 			setEvents(response)
 			setRows(response)
 		})
@@ -195,7 +196,7 @@ export default function EventDashboard() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(event => (
+							{rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(event => (
 								<TableRow key={event.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
 									<TableCell
 										component='th'
