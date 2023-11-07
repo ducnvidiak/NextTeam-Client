@@ -4,8 +4,6 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { toast } from 'react-toastify'
-import { registerToEvent } from 'src/apis/eventRegistration'
-import { postAPI } from 'src/ultis/requestAPI'
 import { getUserInfo } from 'src/utils/info'
 
 function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, anchor, toggleDrawer, setEventList }) {
@@ -16,7 +14,7 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal, an
 	}, [cookies])
 
 	const handleSubmit = async () => {
-		fetch('http://localhost:8080/event-registration', {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/event-registration`, {
 			method: 'POST',
 			body: JSON.stringify({
 				eventId: event.id,

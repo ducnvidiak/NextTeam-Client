@@ -11,13 +11,11 @@ import PieChartIcon from '@mui/icons-material/PieChart'
 
 const COLORS = ['#f27123', '#61a330', '#2b2827']
 
-const data = [
-	{ name: 'Đã diễn ra', value: 60 },
-	{ name: 'Chuẩn bị', value: 30 }
-]
-
 const EventChart = props => {
-	const totalValue = data.reduce((prev, curr) => prev + curr.value, 0)
+	const data = [
+		{ name: 'Đã kết thúc', value: props?.data?.total_event_occur },
+		{ name: 'Sắp diễn ra', value: props?.data?.total_event - props?.data?.total_event_occur }
+	]
 
 	const handleButtonClick = () => {
 		window.location.href = '/dashboard/events'
@@ -39,7 +37,7 @@ const EventChart = props => {
 								<Box component='span' sx={{ display: 'inline-flex', alignItems: 'center' }}>
 									<PieChartIcon color='action' />
 									<Box sx={{ ml: 1 }}>
-										{Math.round((item.value / totalValue) * 100)}% {item.name}
+										{Math.round((item.value / props?.data?.total_event) * 100)}% {item.name}
 									</Box>
 								</Box>
 							</Typography>

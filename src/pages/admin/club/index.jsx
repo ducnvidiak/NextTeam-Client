@@ -11,16 +11,19 @@ import TextField from '@mui/material/TextField'
 import { Button, FormControl, FormLabel, Input, Card, CardMedia, InputLabel, Select, MenuItem } from '@mui/material'
 import { CloudUpload } from '@mui/icons-material'
 import DialogContentText from '@mui/material/DialogContentText'
-import TextareaAutosize from '@mui/material/TextareaAutosize'
 import FormHelperText from '@mui/material/FormHelperText'
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
 
 function Club() {
 	const nameRef = useRef(null)
 	const subnameRef = useRef(null)
 	const categoryIdRef = useRef(null)
+
+	const [loading, setLoading] = useState(true)
 
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
@@ -78,12 +81,8 @@ function Club() {
 				setResultClubCate(result)
 			})
 	}
-	useEffect(() => {
-		refreshClubCategories()
-	}, []) // Gọi refreshClubCategories một lần khi component được tạo
 
 	useEffect(() => {
-		// Chỉ gọi lại refreshClubCategories khi result thay đổi
 		refreshClubCategories()
 	}, [resultClubCate])
 
@@ -92,6 +91,7 @@ function Club() {
 			.then(res => res.json())
 			.then(result => {
 				setClubs(result)
+				setLoading(false)
 			})
 	}
 
@@ -133,7 +133,6 @@ function Club() {
 	}
 
 	const handleCreateClub = () => {
-		// Kiểm tra các trường dữ liệu và hiển thị thông báo lỗi nếu cần
 		const errors = {}
 		if (!clubFormData.name) {
 			errors.name = true
@@ -338,8 +337,6 @@ function Club() {
 				})
 
 				setIsDeleteDialogOpen(false)
-
-				
 			})
 			.catch(error => {
 				setIsDeleteDialogOpen(false)
@@ -433,6 +430,9 @@ function Club() {
 
 	return (
 		<div>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 			{/* Button Create Dialog */}
 			<Button
 				onClick={openCreateDialog}
@@ -500,16 +500,22 @@ function Club() {
 					<DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
 						Mô Tả Câu Lạc Bộ
 					</DialogContent>
-					<Input aria-label="Mô tả" id='description'
+					<Input
+						aria-label='Mô tả'
+						id='description'
 						name='description'
 						value={clubFormData.description}
-						onChange={handleInputChange} multiline placeholder="Nhập mô tả câu lạc bộ ... " style={{
+						onChange={handleInputChange}
+						multiline
+						placeholder='Nhập mô tả câu lạc bộ ... '
+						style={{
 							width: '100%',
 							height: '150px',
 							padding: 10,
-							
+
 							borderRadius: 5 // Set the initial border color
-						}} />
+						}}
+					/>
 					{/* <TextareaAutosize
 						minRows={3} // Specify the minimum number of rows
 						maxRows={10} // Optionally specify the maximum number of rows
@@ -602,23 +608,6 @@ function Club() {
 							</Card>
 						)}
 					</FormControl>
-
-					{/*Số dư */}
-					<TextField
-						autoFocus
-						margin='dense'
-						id='balance'
-						name='balance'
-						label='Số Dư Câu Lạc Bộ'
-						type='number'
-						fullWidth
-						value={clubFormData.balance}
-						onChange={handleInputChange}
-						error={validationErrors.balance} // Add error prop
-						helperText={
-							validationErrors.balance && 'Số Dư Câu Lạc Bộ phải lớn hơn hoặc bằng 0 hoặc bỏ trống'
-						} // Display error message
-					/>
 				</DialogContent>
 				{/* Cancle dialog */}
 				<DialogActions>
@@ -697,17 +686,22 @@ function Club() {
 					<DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>
 						Mô Tả Câu Lạc Bộ
 					</DialogContent>
-					<Input aria-label="Mô tả" id='description'
+					<Input
+						aria-label='Mô tả'
+						id='description'
 						name='description'
 						value={clubFormData.description}
-						onChange={handleInputChange} multiline placeholder="Nhập mô tả câu lạc bộ ... " style={{
+						onChange={handleInputChange}
+						multiline
+						placeholder='Nhập mô tả câu lạc bộ ... '
+						style={{
 							width: '100%',
 							height: '150px',
 							padding: 10,
-							
+
 							borderRadius: 5 // Set the initial border color
-						}} />
-					
+						}}
+					/>
 
 					{/* Tải ảnh avatar */}
 					<FormControl>
@@ -785,37 +779,9 @@ function Club() {
 							</Card>
 						)}
 					</FormControl>
-					<TextField
-						margin='dense'
-						id='movementPoint'
-						name='movementPoint'
-						label='Điểm Hoạt Động Câu Lạc Bộ'
-						type='text'
-						fullWidth
-						value={clubFormData.movementPoint}
-						onChange={handleInputChange}
-						error={validationErrors.movementPoint} // Add error prop
-						helperText={
-							validationErrors.movementPoint &&
-							'Điểm Hoạt Động Câu Lạc Bộ phải lớn hơn hoặc bằng 0 hoặc bỏ trống'
-						} // Display error message
-					/>
+
 					{/*Số dư */}
-					<TextField
-						autoFocus
-						margin='dense'
-						id='balance'
-						name='balance'
-						label='Số Dư Câu Lạc Bộ'
-						type='number'
-						fullWidth
-						value={clubFormData.balance}
-						onChange={handleInputChange}
-						error={validationErrors.balance} // Add error prop
-						helperText={
-							validationErrors.balance && 'Số dư Câu Lạc Bộ phải lớn hơn hoặc bằng 0 hoặc bỏ trống'
-						} // Display error message
-					/>
+
 					<>
 						<FormControl component='fieldset'>
 							<DialogContent id='form-dialog-title' sx={{ paddingLeft: 0 }}>

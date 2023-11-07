@@ -220,7 +220,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 
 	const callAPI = async () => {
 		try {
-			const res = await getAPI(`http://localhost:8080/location`)
+			const res = await getAPI(`${process.env.NEXT_PUBLIC_API_URL}/location`)
 			setLocationList(res)
 		} catch (error) {
 			console.log(error)

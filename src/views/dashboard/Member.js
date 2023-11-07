@@ -7,7 +7,7 @@ const Member = props => {
 	const currentDate = new Date()
 	const currentMonthIndex = currentDate.getMonth()
     const total_enga_months = Array.isArray(props?.data?.total_enga_months) ? props.data.total_enga_months.slice(0, currentMonthIndex + 1) : [];
-const months = ['Th 1', 'Th 2', 'Th 3', 'Th 4', 'Th 5', 'Th 6', 'Th 7', 'Th 8', 'Th 9', 'Th 10', 'Th 11', 'Th 12'].slice(0, currentMonthIndex);
+const months = ['Th 1', 'Th 2', 'Th 3', 'Th 4', 'Th 5', 'Th 6', 'Th 7', 'Th 8', 'Th 9', 'Th 10', 'Th 11', 'Th 12'].slice(0, currentMonthIndex + 1);
 
 let membersData = months.map((month, index) => {
     return { month: month, so_thanh_vien: total_enga_months[index] || 0 };

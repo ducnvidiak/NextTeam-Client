@@ -45,7 +45,7 @@ export default function ViewPDF({ viewCvModal, handleClose, cv }) {
 						<Box sx={{ marginTop: '8vh', height: '85vh' }}>
 							<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
 								<Viewer
-									fileUrl={`${process.env.NEXT_PUBLIC_API_URL}${cv?.cvUrl}`}
+									fileUrl={cv?.cvUrl}
 									plugins={[defaultLayoutPluginInstance, scrollModePluginInstance]}
 									scrollMode={ScrollMode.Vertical}
 								/>

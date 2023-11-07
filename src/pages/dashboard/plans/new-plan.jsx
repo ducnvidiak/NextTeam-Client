@@ -50,6 +50,8 @@ function NewPlan() {
 
 	const outline = classNames(isFocused ? classes.outline__orange : '')
 
+	console.log('post path: ', process.env.NEXT_PUBLIC_API_URL + 'api/plans?id=' + id)
+
 	const handleFocus = () => {
 		setIsFocused(true)
 	}
@@ -114,7 +116,7 @@ function NewPlan() {
 
 			if (numOfFile > 0) setLoading(true)
 
-			await createPlan(formData, 2).then(response => {
+			await createPlan(formData, clubId).then(response => {
 				if (response?.status == 'success') {
 					toast.success('Gửi kế hoạch thành công')
 					router.push('./')

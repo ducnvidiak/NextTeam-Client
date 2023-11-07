@@ -26,6 +26,8 @@ import moment from 'moment'
 import { useRouter } from 'next/router'
 import { getUserInfo } from 'src/utils/info'
 import RegisterClub from './RegisterClub'
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
 
 require('moment/locale/vi')
 
@@ -176,7 +178,7 @@ function ClubPage() {
 	const [userData, setUserData] = useState()
 	const [open, setOpen] = useState(false)
 	const [clubId, setClubId] = useState()
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(true)
 
 	const formattedDate = moment(club?.createdAt).format('LL')
 
@@ -208,7 +210,7 @@ function ClubPage() {
 
 	useEffect(() => {
 		let url_query = ''
-		console.log('subname', router.query.clubId)
+		
 		if (userData?.id == undefined) {
 			url_query = `${process.env.NEXT_PUBLIC_API_URL}/club-detail?subname=${router.query.clubId}`
 		} else {
@@ -225,7 +227,9 @@ function ClubPage() {
 			})
 			.then(function (data) {
 				setClub(data)
+				setLoading(false)
 				getAPIEvents()
+
 			})
 			.catch(error => console.error('Error:', error))
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -255,6 +259,10 @@ function ClubPage() {
 
 	return (
 		<Container maxWidth='lg' sx={{ marginTop: 20 }}>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+                <CircularProgress color='inherit' />
+            </Backdrop>
+
 			<RegisterClub clubId={club.id} userId={userId} isOpen={open} handleClose={handleClose} />
 
 			<Card>
