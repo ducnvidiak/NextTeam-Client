@@ -210,7 +210,9 @@ function ClubList() {
 					const res = await getAPI(`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=list-res`)
 					setClubs(res)
 				} else {
-					const res = await getAPI(`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=list-res&userId=${userData?.id}`)
+					const res = await getAPI(
+						`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=list-res&userId=${userData?.id}`
+					)
 					setClubs(res)
 				}
 			} catch (error) {

@@ -17,6 +17,9 @@ import { useState } from 'react'
 import { getAPI } from 'src/ultis/requestAPI'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { uploadCv } from 'src/utils/Config'
+import { v4 } from 'uuid'
+import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -34,37 +37,57 @@ function RegisterClub({ clubId, userId, isOpen, handleClose }) {
 	const [department, setDepartment] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [cv, setCv] = useState()
+	const [url, setUrl] = useState()
 	const [departmentId, setDepartmentId] = useState('')
 
 	const handleUpload = () => {
-		const formData = new FormData()
-		formData.append('cvUrl', cv)
-
-		axios
-			.post(
-				`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}`,
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data'
-					}
+		const cvfile = ref(uploadCv, `files/${v4()}`)
+		const uploadTask = uploadBytesResumable(cvfile, cv)
+		uploadTask.on(
+			'state_changed',
+			snapshot => {
+				// Observe state change events such as progress, pause, and resume
+				// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+				const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+				console.log('Upload is ' + progress + '% done')
+				switch (snapshot.state) {
+					case 'paused':
+						console.log('Upload is paused')
+						break
+					case 'running':
+						console.log('Upload is running')
+						break
 				}
-			)
-			.then(response => {
-				toast.success('Đăng ký tham gia câu lạc bộ thành công !', {
-					position: 'top-right',
-					autoClose: 3000, // Close the toast after 3 seconds
-					hideProgressBar: false,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true
-				})
+			},
+			error => {
+				// Handle unsuccessful uploads
+			},
+			() => {
+				// Handle successful uploads on complete
+				// For instance, get the download URL: https://firebasestorage.googleapis.com/...
+				getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+					console.log('File available at', downloadURL)
+					axios
+						.get(
+							`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}&cvUrl=` +
+								downloadURL,
+							{
+								headers: {
+									'Content-type': 'application/json; charset=UTF-8'
+								}
+							}
+						)
+						.then(response => {
+							toast.success('Đăng ký tham gia câu lạc bộ thành công !')
 
-				handleClose()
-			})
-			.catch(error => {
-				console.error(error)
-			})
+							handleClose()
+						})
+						.catch(error => {
+							console.error(error)
+						})
+				})
+			}
+		)
 	}
 
 	const callAPIDepartment = async clubId => {

@@ -114,7 +114,7 @@ function NewPlan() {
 
 			if (numOfFile > 0) setLoading(true)
 
-			await createPlan(formData, 2).then(response => {
+			await createPlan(formData, clubId).then(response => {
 				if (response?.status == 'success') {
 					toast.success('Gửi kế hoạch thành công')
 					router.push('./')

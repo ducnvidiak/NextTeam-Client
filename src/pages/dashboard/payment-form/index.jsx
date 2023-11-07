@@ -48,7 +48,7 @@ function PaymentForm() {
 	}
 
 	const handlePay = row => {
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/vnpayajax?amount=${row?.amount}&id=${row?.id}`, {
+		fetch(`http://localhost:8080/vnpayajax?amount=${row?.amount}&id=${row?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

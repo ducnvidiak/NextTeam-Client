@@ -23,7 +23,8 @@ import axios from 'axios'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
 import CakeIcon from '@mui/icons-material/Cake'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -52,7 +53,7 @@ function ClubItem({ club, index }) {
 
 	const [open, setOpen] = useState(false)
 	const [department, setDepartment] = useState([])
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(true)
 	const [cookies, setCookies] = useCookies(['userData'])
 
 	//formData
@@ -116,6 +117,9 @@ function ClubItem({ club, index }) {
 
 	return (
 		<>
+			
+
+
 			<RegisterClub clubId={clubId} userId={userId} isOpen={open} handleClose={handleClose} />
 
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
@@ -206,7 +210,7 @@ function ClubItem({ club, index }) {
 
 function ClubList() {
 	const [clubs, setClubs] = useState([])
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(true)
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [userData, setUserData] = useState()
 	useEffect(() => {
@@ -221,9 +225,11 @@ function ClubList() {
 				if (uid == undefined) {
 					const res = await getAPI(`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=list-res`)
 					setClubs(res)
+					setLoading(false)
 				} else {
 					const res = await getAPI(`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=list-res&userId=${userData?.id}`)
 					setClubs(res)
+					setLoading(false)
 				}
 			} catch (error) {
 				console.log(error)
@@ -239,6 +245,9 @@ function ClubList() {
 
 	return (
 		<>
+		<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+                <CircularProgress color='inherit' />
+            </Backdrop>
 			<Container maxWidth={'lg'} sx={{ padding: '0 60px !important' }}>
 				{clubs?.map((club, index) => (
 					<ClubItem key={index} club={club} index={index}></ClubItem>

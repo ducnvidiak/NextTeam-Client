@@ -153,7 +153,7 @@ const LoginPage = () => {
 			// 	})
 			// 	.then(function (data) {
 			// 		if (data.id == null) {
-			// 			
+			//
 			// 			toast.error(data)
 			// 		} else {
 			// 			if (save) {
@@ -342,7 +342,7 @@ const LoginPage = () => {
 					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 						<Link
 							passHref
-							href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:8080/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
+							href='https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=https://nextteam.azurewebsites.net/login-google&response_type=code&client_id=314493880440-he0s6oe3g6rt0lth4k7q2t7n5pjdk75e.apps.googleusercontent.com&approval_prompt=force'
 						>
 							<Button
 								fullWidth
