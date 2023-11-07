@@ -336,7 +336,7 @@ export default function Interview({
 											<TabPanel value='1'>
 												<CardContent>
 													<Box sx={{ height: '70vh' }}>
-														<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
+														<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js'>
 															<Viewer
 																fileUrl={applicationDetail?.engagement?.cvUrl}
 																plugins={[

@@ -240,7 +240,7 @@ export default function ViewInfo({ applicationDetail, handleClose, open, statusO
 									<CardHeader title='CV của ứng viên' />
 									<CardContent>
 										<Box sx={{ height: '85vh' }}>
-											<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
+											<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js'>
 												<Viewer
 													fileUrl={applicationDetail?.engagement?.cvUrl}
 													plugins={[defaultLayoutPluginInstance, scrollModePluginInstance]}
