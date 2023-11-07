@@ -12,7 +12,7 @@ const updateUserAvatar = async (imgSrc, id) => {
 		}
 
 		const json = await axios
-			.put(process.env.NEXT_PUBLIC_API_URL + '/api/userAvatar?id=' + id, formData, config)
+			.put(process.env.NEXT_PUBLIC_API_URL + 'api/userAvatar?id=' + id, formData, config)
 			.then(response => {
 				return response.data
 			})
@@ -36,7 +36,7 @@ const updateUserInfo = async objectData => {
 	}
 
 	const json = await axios
-		.put(process.env.NEXT_PUBLIC_API_URL + '/api/user', data, config)
+		.put(process.env.NEXT_PUBLIC_API_URL + 'api/user', data, config)
 		.then(response => {
 			return response.data
 		})
@@ -51,7 +51,7 @@ const updateUserInfo = async objectData => {
 
 const getUserInfo = async id => {
 	const json = await axios
-		.get(process.env.NEXT_PUBLIC_API_URL + '/api/user?id=' + id)
+		.get(process.env.NEXT_PUBLIC_API_URL + 'api/user?id=' + id)
 		.then(response => {
 			return response.data
 		})
@@ -74,7 +74,7 @@ const changeUserPass = async (authInfo, id) => {
 	}
 
 	const json = await axios
-		.put(process.env.NEXT_PUBLIC_API_URL + '/api/userAuth?id=' + id, data, config)
+		.put(process.env.NEXT_PUBLIC_API_URL + 'api/userAuth?id=' + id, data, config)
 		.then(response => {
 			return response.data
 		})
@@ -89,7 +89,7 @@ const changeUserPass = async (authInfo, id) => {
 
 const getAllMajors = async () => {
 	const json = await axios
-		.get(process.env.NEXT_PUBLIC_API_URL + '/api/allMajors')
+		.get(process.env.NEXT_PUBLIC_API_URL + 'api/allMajors')
 		.then(response => {
 			return response.data
 		})
@@ -104,7 +104,7 @@ const getAllMajors = async () => {
 
 const getListOfAllUserByClubId = async cludId => {
 	const json = await axios
-		.get(process.env.NEXT_PUBLIC_API_URL + '/api/userlist?type=list&clubId=' + cludId)
+		.get(process.env.NEXT_PUBLIC_API_URL + 'api/userlist?type=list&clubId=' + cludId)
 		.then(response => {
 			return response.data
 		})
@@ -125,7 +125,7 @@ const createProposal = async (formData, id) => {
 	}
 
 	const json = await axios
-		.post(process.env.NEXT_PUBLIC_API_URL + '/api/proposal?id=' + id, formData, config)
+		.post(process.env.NEXT_PUBLIC_API_URL + 'api/proposal?id=' + id, formData, config)
 		.then(response => {
 			return response.data
 		})
@@ -302,11 +302,7 @@ const updateEventStatus = async (id, status, feedback) => {
 	formData.append('feedback', feedback)
 
 	const json = await axios
-		.put(
-			process.env.NEXT_PUBLIC_API_URL + 'admin-events?id=' + id + '&status=' + status,
-			formData,
-			config
-		)
+		.put(process.env.NEXT_PUBLIC_API_URL + 'admin-events?id=' + id + '&status=' + status, formData, config)
 		.then(response => {
 			return response.data
 		})
@@ -409,7 +405,7 @@ const getAllEvents = async () => {
 
 const getAllProposalByClubId = async id => {
 	const json = await axios
-		.get(process.env.NEXT_PUBLIC_API_URL + '/api/proposal?type=byClubId&id=' + id)
+		.get(process.env.NEXT_PUBLIC_API_URL + 'api/proposal?type=byClubId&id=' + id)
 		.then(response => {
 			return response.data
 		})
@@ -424,7 +420,7 @@ const getAllProposalByClubId = async id => {
 
 const getAllProposalFilesByClubId = async id => {
 	const json = await axios
-		.get(process.env.NEXT_PUBLIC_API_URL + '/api/proposal_files?type=much&id=' + id)
+		.get(process.env.NEXT_PUBLIC_API_URL + 'api/proposal_files?type=much&id=' + id)
 		.then(response => {
 			return response.data
 		})
@@ -445,10 +441,7 @@ const updateProposalStatus = async (id, status) => {
 	}
 
 	const json = await axios
-		.put(
-			process.env.NEXT_PUBLIC_API_URL + '/api/proposal?type=status&id=' + id + '&status=' + status,
-			config
-		)
+		.put(process.env.NEXT_PUBLIC_API_URL + 'api/proposal?type=status&id=' + id + '&status=' + status, config)
 		.then(response => {
 			return response.data
 		})
@@ -459,7 +452,7 @@ const updateProposalStatus = async (id, status) => {
 
 const getListOfAllUserForManage = async id => {
 	const json = await axios
-		.get(process.env.NEXT_PUBLIC_API_URL + '/api/userlist?type=managelist&clubId=' + id)
+		.get(process.env.NEXT_PUBLIC_API_URL + 'api/userlist?type=managelist&clubId=' + id)
 		.then(response => {
 			return response.data
 		})
@@ -474,7 +467,7 @@ const getListOfAllUserForManage = async id => {
 
 const getDepartmentByClubId = async id => {
 	const json = await axios
-		.get(process.env.NEXT_PUBLIC_API_URL + '/department?action=list-dept&clubId=' + id)
+		.get(process.env.NEXT_PUBLIC_API_URL + 'department?action=list-dept&clubId=' + id)
 		.then(response => {
 			return response.data
 		})
@@ -496,9 +489,8 @@ const changeDepartment = async (memberId, departmentId, clubId) => {
 
 	const json = await axios
 		.put(
-			'http://' +
-				process.env.NEXT_PUBLIC_API_URL +
-				'/department?clubId=' +
+			process.env.NEXT_PUBLIC_API_URL +
+				'department?clubId=' +
 				clubId +
 				'&depId=' +
 				departmentId +
@@ -523,9 +515,8 @@ const changeMemberStatus = async (memberId, clubId, status) => {
 
 	const json = await axios
 		.put(
-			'http://' +
-				process.env.NEXT_PUBLIC_API_URL +
-				'/engagement?clubId=' +
+			process.env.NEXT_PUBLIC_API_URL +
+				'engagement?clubId=' +
 				clubId +
 				'&status=' +
 				status +
@@ -543,7 +534,7 @@ const changeMemberStatus = async (memberId, clubId, status) => {
 
 const getAllPlansForAdmin = async () => {
 	const json = await axios
-		.get(process.env.NEXT_PUBLIC_API_URL + '/api/plans?type=all')
+		.get(process.env.NEXT_PUBLIC_API_URL + 'api/plans?type=all')
 		.then(response => {
 			console.log(response.data)
 
@@ -560,7 +551,7 @@ const getAllPlansForAdmin = async () => {
 
 const getAllPlanFiles = async () => {
 	const json = await axios
-		.get(process.env.NEXT_PUBLIC_API_URL + '/api/plan_files?type=all')
+		.get(process.env.NEXT_PUBLIC_API_URL + 'api/plan_files?type=all')
 		.then(response => {
 			console.log(response.data)
 
