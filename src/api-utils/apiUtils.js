@@ -237,6 +237,8 @@ const createPlan = async (formData, id) => {
 		}
 	}
 
+	console.log('post path: ', process.env.NEXT_PUBLIC_API_URL + 'api/plans?id=' + id)
+
 	const json = await axios
 		.post(process.env.NEXT_PUBLIC_API_URL + 'api/plans?id=' + id, formData, config)
 		.then(response => {
