@@ -156,7 +156,7 @@ function EventList() {
 	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/events?userId=${userData.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/events?userId=${userData.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

@@ -210,7 +210,7 @@ function EventList({ filter }) {
 
 	useEffect(() => {
 		if (!userData) return
-		fetch(`http://localhost:8080/events?cmd=list&userId=${userData?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/events?cmd=list&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

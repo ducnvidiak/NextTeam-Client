@@ -97,7 +97,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,

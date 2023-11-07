@@ -97,7 +97,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/admin-events?cmd=create`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin-events?cmd=create`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,

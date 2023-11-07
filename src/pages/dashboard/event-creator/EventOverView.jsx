@@ -141,7 +141,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 			}
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
@@ -193,7 +193,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 			return
 		}
 		setOpen(true)
-		fetch(`http://localhost:8080/events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/events?cmd=delete&eventId=${event.id}&userId=${userData?.id}`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

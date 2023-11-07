@@ -21,7 +21,6 @@ import { useCookies } from 'react-cookie'
 
 const AppBarContent = props => {
 	const [cookies, setCookies] = useCookies(['clubData'])
-	console.log(cookies);
 
 	// ** Props
 	const { hidden, settings, saveSettings, toggleNavVisibility } = props

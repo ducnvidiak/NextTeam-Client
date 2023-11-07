@@ -124,7 +124,7 @@ function Treasurer() {
 
 	const getApiPaymentDetail = id => {
 		setOpenPaymentDetailDialog(true)
-		fetch(`http://localhost:8080/payment?action=list-payments-in-category&categoryId=${id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-payments-in-category&categoryId=${id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -157,7 +157,7 @@ function Treasurer() {
 	}
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
