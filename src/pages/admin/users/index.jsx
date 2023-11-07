@@ -103,7 +103,12 @@ const AdminManageUsers = () => {
 	const handleBlockUser = selectedUser => {
 		if (selectedUser.isActive) {
 			fetch(`${ORIGIN_URL}block&id=${selectedUser.id}`)
-				.then(res => res.json())
+				.then(res =>{ 
+					if (!res.ok) {
+						throw new Error('Network response was not ok')
+					}
+					
+					return res.json()})
 				.then(result => {
 					// Assuming the server responds with the updated user data
 					setUsers(prevUsers =>
@@ -117,16 +122,39 @@ const AdminManageUsers = () => {
 						pauseOnHover: true,
 						draggable: true
 					})
+				}).catch(error =>{
+					toast.error('Mở chặn thất bại', {
+						position: 'top-right',
+						autoClose: 3000, // Close the toast after 3 seconds
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true
+					})
 				})
 		} else {
 			fetch(`${ORIGIN_URL}unblock&id=${selectedUser.id}`)
-				.then(res => res.json())
+				.then(res =>{ 
+					if (!res.ok) {
+						throw new Error('Network response was not ok')
+					}
+					
+					return res.json()})
 				.then(result => {
 					// Assuming the server responds with the updated user data
 					setUsers(prevUsers =>
 						prevUsers.map(user => (user.id === selectedUser.id ? { ...user, isActive: true } : user))
 					)
 					toast.success('Chặn thành công', {
+						position: 'top-right',
+						autoClose: 3000, // Close the toast after 3 seconds
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true
+					})
+				}).catch(error =>{
+					toast.error('Chặn thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -144,7 +172,12 @@ const AdminManageUsers = () => {
 			const DCT_ADMIN_URL = `${ORIGIN_URL}dct_manager&id=${selectedUser.id}&clubId=${selectedClubId}`
 			console.log(DCT_ADMIN_URL)
 			fetch(DCT_ADMIN_URL)
-				.then(res => res.json())
+				.then(res =>{ 
+					if (!res.ok) {
+						throw new Error('Network response was not ok')
+					}
+					
+					return res.json()})
 				.then(result => {
 					// Assuming the server responds with the updated user data
 					setUsers(prevUsers =>
@@ -173,12 +206,26 @@ const AdminManageUsers = () => {
 			const DCT_USER_URL = `${ORIGIN_URL}dct_member&id=${selectedUser.id}&clubId=${selectedClubId}`
 			console.log(DCT_USER_URL)
 			fetch(DCT_USER_URL)
-				.then(res => res.json())
+				.then(res =>{ 
+					if (!res.ok) {
+						throw new Error('Network response was not ok')
+					}
+					
+					return res.json()})
 				.then(result => {
 					setUsers(prevUsers =>
 						prevUsers.map(user => (user.id === selectedUser.id ? { ...user, isAdmin: false } : user))
 					)
 					toast.success('Phân quyền thành công', {
+						position: 'top-right',
+						autoClose: 3000, // Close the toast after 3 seconds
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true
+					})
+				}).catch(error => {
+					toast.error('Phân quyền thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -216,7 +263,7 @@ const AdminManageUsers = () => {
 									<TableCell>{user.username}</TableCell>
 									<TableCell>
 										<Switch
-											checked={user.isActive}
+											checked={!user.isActive}
 											color='primary'
 											onChange={() =>
 												user.isActive
