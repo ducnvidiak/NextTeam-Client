@@ -47,11 +47,11 @@ export const dashboardLayoutVavigation = () => {
 			path: '/dashboard/notifications'
 		},
 
-		// {
-		// 	title: 'Hoạt động',
-		// 	icon: AssignmentIcon,
-		// 	path: '/dashboard/activities'
-		// },
+		{
+			title: 'Hoạt động',
+			icon: AssignmentIcon,
+			path: '/dashboard/activities'
+		},
 		{
 			title: 'Sự kiện',
 			path: '/dashboard/events',
@@ -185,13 +185,13 @@ export const memberLayoutNavigation = () => {
 			path: '/dashboard/notifications'
 		},
 
-		// {
-		// 	title: 'Hoạt động',
-		// 	icon: AssignmentIcon,
-		// 	path: '/dashboard/activities'
-		// },
 		{
-			title: 'Sự kiện',
+			title: 'Hoạt động',
+			icon: AssignmentIcon,
+			path: '/dashboard/activities'
+		},
+		{
+			title: 'Sự kiện...',
 			path: '/dashboard/events',
 			icon: CelebrationIcon
 		},

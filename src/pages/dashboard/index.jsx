@@ -28,7 +28,7 @@ import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import Event from 'src/views/dashboard/Event'
 
 const Dashboard = () => {
-	const ORIGIN_URL = 'http://localhost:8080/api/statis?clubId='
+	const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/statis?clubId=`
 	const [cookies, setCookie] = useCookies(['clubData'])
 	const [data, setData] = useState([])
 	const clubId = cookies['clubData']?.clubId
@@ -54,16 +54,10 @@ const Dashboard = () => {
 					<Trophy data={data} />
 				</Grid>
 
-				<Grid item xs={12} md={5.9} >
+				<Grid item xs={12} md={5.9}>
 					<Event data={data} />
 				</Grid>
 
-				<Grid item xs={12} md={6}>
-					<Member data={data} />
-				</Grid>
-				<Grid item xs={12} md={6}>
-					<Balance data={data} />
-				</Grid>
 				<Grid item xs={12} md={6} lg={4}>
 					<WeeklyOverview data={data} />
 				</Grid>
@@ -108,6 +102,9 @@ const Dashboard = () => {
 							/>
 						</Grid>
 					</Grid>
+				</Grid>
+				<Grid item xs={12} md={12} sx={{ margin: '0 250px' }}>
+					<Member data={data} />
 				</Grid>
 			</Grid>
 		</ApexChartWrapper>

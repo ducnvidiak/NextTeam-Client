@@ -28,6 +28,7 @@ import TabContext from '@mui/lab/TabContext'
 import { Chip } from '@mui/material'
 import NotificationDetail from './NotificationDetail'
 import { getUserInfo } from 'src/utils/info'
+import moment from 'moment/moment'
 
 const Notifications = () => {
 	const [state, dispatch] = useReducer((state, action) => action, 0)
@@ -86,7 +87,7 @@ const Notifications = () => {
 	const updateView = (id, type, hasSeen) => {
 		if (hasSeen == 0) {
 			if (type == 'private') {
-				fetch('http://localhost:8080/notification?action=update-view-private-email&id=' + id, {
+				fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=update-view-private-email&id=${id}`, {
 					method: 'GET',
 					headers: {
 						'Content-type': 'application/json; charset=UTF-8'
@@ -96,17 +97,13 @@ const Notifications = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))
 			}
 			if (type == 'public') {
 				fetch(
-					'http://localhost:8080/notification?action=update-view-public-email&id=' +
-						id +
-						'&userId=' +
-						userData.id,
+					`${process.env.NEXT_PUBLIC_API_URL}/notification?action=update-view-public-email&id=${id}&userId=${userData.id}`,
 					{
 						method: 'GET',
 						headers: {
@@ -118,7 +115,6 @@ const Notifications = () => {
 						return response.json()
 					})
 					.then(function (data) {
-						
 						dispatch({ type: 'trigger' })
 					})
 					.catch(error => console.error('Error:', error))
@@ -129,10 +125,7 @@ const Notifications = () => {
 	useEffect(() => {
 		if (userData)
 			fetch(
-				'http://localhost:8080/notification?action=list-10-noti&clubId=' +
-					cookies['clubData']?.clubId +
-					'&userId=' +
-					userData?.id,
+				`${process.env.NEXT_PUBLIC_API_URL}/notification?action=list-10-noti&clubId=${cookies['clubData']?.clubId}&userId=${userData?.id}`,
 				{
 					method: 'GET',
 					headers: {
@@ -198,7 +191,7 @@ const Notifications = () => {
 								>
 									<Grid container spacing={0}>
 										<Grid item xs={4} md={2}>
-											{notification.createdAt}
+											{moment(notification.createdAt).format('DD/MM/YY, h:mm A')}
 										</Grid>
 										<Grid item xs={8} md={10}>
 											<Typography variant='body1' style={{ fontWeight: 'bold' }}>

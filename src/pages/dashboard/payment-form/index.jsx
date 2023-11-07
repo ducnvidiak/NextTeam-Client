@@ -6,6 +6,7 @@ import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
 import CircularProgress from '@mui/material/CircularProgress'
 import Backdrop from '@mui/material/Backdrop'
+import moment from 'moment/moment'
 
 function PaymentForm() {
 	const router = useRouter()
@@ -20,7 +21,7 @@ function PaymentForm() {
 	}, [cookies])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/payment?action=list-of-me&userId=${userData?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-of-me&userId=${userData?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -47,7 +48,7 @@ function PaymentForm() {
 	}
 
 	const handlePay = row => {
-		fetch(`http://localhost:8080/vnpayajax?amount=${row?.amount}&id=${row?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/vnpayajax?amount=${row?.amount}&id=${row?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -85,7 +86,7 @@ function PaymentForm() {
 								<CardContent>
 									<Grid container spacing={1}>
 										<Grid item xs={2} md={2}>
-											{row?.createdAt}
+											{moment(row?.createdAt).format('DD/MM/YY, h:mm A')}
 										</Grid>
 										<Grid item xs={6} md={6}>
 											<Typography variant='body1' style={{ fontWeight: 'bold' }}>

@@ -97,13 +97,13 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`http://localhost:8080/admin-events?cmd=create`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin-events?cmd=create`, {
 				method: 'POST',
 				body: JSON.stringify({
 					...newEvent,
 					startTime: new Date(convertToTimestamp(newEvent.startTime)),
 					endTime: new Date(convertToTimestamp(newEvent.startTime)),
-					registeredBy: userData?.id,
+					registeredBy: userData?.id
 				}),
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8'
@@ -149,7 +149,8 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		setNewEvent({
 			...newEvent,
 			startTime: startString,
-			endTime: endString
+			endTime: endString,
+			type: 'public',
 		})
 	}
 
@@ -320,7 +321,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<Stack direction={'row'} gap={4}>
 							<DatePicker
-
 								disablePast
 								label='Ngày'
 								slotProps={{
@@ -367,7 +367,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 							))}
 						</Select>
 					</FormControl>
-					<Typography marginY={4} variant='h6'>
+					{/* <Typography marginY={4} variant='h6'>
 						Loại hình tổ chức
 					</Typography>
 					<ButtonGroup>
@@ -387,7 +387,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 						>
 							Nội bộ
 						</Button>
-					</ButtonGroup>
+					</ButtonGroup> */}
 					<Typography marginY={4} variant='h6'>
 						Kế hoạch tổ chức
 					</Typography>

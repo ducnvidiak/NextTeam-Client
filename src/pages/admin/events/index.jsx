@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper'
 import classes from './styles.module.scss'
 import { useCookies } from 'react-cookie'
 import { TextareaAutosize } from '@mui/base'
+import SplitButton from './SplitButton'
 
 import {
 	Card,
@@ -22,20 +23,10 @@ import {
 	Divider,
 	SwipeableDrawer,
 	Drawer,
-	FormControl,
-	InputLabel,
-	MenuItem,
-	Select,
-	Chip
+	Chip,
+	Pagination,
+	TablePagination
 } from '@mui/material'
-
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import MailIcon from '@mui/icons-material/Mail'
 
 import InfoIcon from '@mui/icons-material/Info'
 import Groups2Icon from '@mui/icons-material/Groups2'
@@ -45,21 +36,31 @@ import CloseIcon from '@mui/icons-material/Close'
 
 import { getAllEvents, updateEventStatus } from 'src/api-utils/apiUtils'
 import { toast } from 'react-toastify'
+import moment from 'moment'
+import ReviewButton from './ReviewButton'
 
 export default function EventDashboard() {
 	const [events, setEvents] = useState([])
 	const [selectedEvent, setSelectedEvent] = useState(null)
-	const [selectedConfirmEvent, setSelectedConfirmEvent] = useState(null)
-	const [status, setStatus] = useState(null)
-	const [cookies, setCookie] = useCookies(['clubData'])
-	const [openModal, setOpenModal] = useState(false)
-	const [feedback, setFeedback] = useState(null)
+	const [feedback, setFeedback] = ''
 
-	const clubId = cookies['clubData']?.clubId
+	const [page, setPage] = useState(0)
+	const [rowsPerPage, setRowsPerPage] = useState(10)
+	const [rows, setRows] = useState([])
+
+	const handleChangePage = (event, newPage) => {
+		setPage(newPage)
+	}
+
+	const handleChangeRowsPerPage = event => {
+		setRowsPerPage(+event.target.value)
+		setPage(0)
+	}
 
 	useEffect(() => {
 		getAllEvents().then(response => {
 			setEvents(response)
+			setRows(response)
 		})
 	}, [])
 
@@ -71,8 +72,6 @@ export default function EventDashboard() {
 		bottom: false,
 		right: false
 	})
-
-	const filteredEvents = events?.filter(event => event.clubId == clubId)
 
 	const toggleDrawer = (anchor, open) => event => {
 		if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -152,17 +151,11 @@ export default function EventDashboard() {
 		</Box>
 	)
 
-	const handleConfirmAction = (event, status) => {
-		setSelectedConfirmEvent(event)
-		setStatus(status)
-		setOpenModal(true)
-	}
-
 	const handleUpdateStatus = (uevent, status, feedback) => {
-		updateEventStatus(uevent.id, status, feedback).then(response => {
+		updateEventStatus(uevent?.id, status, feedback).then(response => {
 			if (response?.status == 'success') {
-				const updateEvents = events.map(event => {
-					if (event.id != uevent.id) return event
+				const updateEvents = events?.map(event => {
+					if (event?.id != uevent?.id) return event
 					else return { ...event, isApproved: status }
 				})
 				toast.success('Đã cập nhật')
@@ -174,95 +167,113 @@ export default function EventDashboard() {
 		})
 	}
 
-	const handleCloseModal = () => {
-		setOpenModal(false)
-	}
-
-	const handleAction = () => {
-		setOpenModal(false)
+	const handleAction = (selectedConfirmEvent, status) => {
 		handleUpdateStatus(selectedConfirmEvent, status, feedback)
 	}
 
 	return (
 		<Fragment>
-			<TableContainer component={Paper}>
-				<Table sx={{ minWidth: 650 }} aria-label='simple table'>
-					<TableHead>
-						<TableRow>
-							<TableCell>Câu lạc bộ</TableCell>
-							<TableCell align='left'>Sự kiện</TableCell>
-
-							<TableCell align='center'>Thời gian/ Địa điểm</TableCell>
-							<TableCell align='center'>Trạng thái</TableCell>
-							<TableCell align='center'>Hành động</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{events?.map(event => (
-							<TableRow key={event.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-								<TableCell component='th' scope='row' sx={{ width: '120px' }}>
-									{event.clubSubname}
+			<Card>
+				<TableContainer component={Paper}>
+					<Table sx={{ minWidth: 650 }} aria-label='simple table'>
+						<TableHead>
+							<TableRow>
+								<TableCell align='center' width={100}>
+									Câu lạc bộ
 								</TableCell>
-								<TableCell align='left'>{event.name}</TableCell>
-
-								<TableCell align='left' sx={{ width: '250px' }}>
-									{event.startTime} tới {event.endTime} tại {event.locationName}
+								<TableCell align='center' width={400}>
+									Sự kiện
 								</TableCell>
-								<TableCell align='left' sx={{ width: '30px' }}>
-									<Chip
-										label={event.isApproved}
-										color={
-											event.isApproved == 'accepted'
-												? 'success'
-												: event.isApproved == 'rejected'
-												? 'error'
-												: 'primary'
-										}
-									/>
-								</TableCell>
-								<TableCell
-									align='center'
-									sx={{
-										width: '450px',
-										gap: '10px'
-									}}
-								>
-									<Button
-										variant='contained'
-										size='small'
-										sx={{ marginRight: '10px' }}
-										onClick={e => {
-											setSelectedEvent(event)
-											toggleDrawer('right', true)(e)
-										}}
-									>
-										Xem chi tiết
-									</Button>
-									<Button
-										variant='contained'
-										size='small'
-										sx={{ marginRight: '10px' }}
-										onClick={() => {
-											handleConfirmAction(event, 'accepted')
-										}}
-									>
-										Chấp nhận
-									</Button>
-									<Button
-										variant='outlined'
-										size='small'
-										onClick={() => {
-											handleConfirmAction(event, 'rejected')
-										}}
-									>
-										Từ chối
-									</Button>
-								</TableCell>
+								<TableCell align='center'>Trạng thái</TableCell>
+								<TableCell align='center'>Ngày tạo</TableCell>
+								<TableCell align='center' width={200}></TableCell>
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
+						</TableHead>
+						<TableBody>
+						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(event => (
+								<TableRow key={event.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+									<TableCell
+										component='th'
+										scope='row'
+										sx={{
+											width: '120px',
+											display: 'flex',
+											flexDirection: 'column',
+											alignItems: 'center'
+										}}
+									>
+										<img
+											src={
+												event.clubAvatarUrl ??
+												'https://res.cloudinary.com/de41uvd76/image/upload/v1699091537/fpt_tqucac.jpg'
+											}
+											alt=''
+											style={{ width: 40, height: 40, display: 'block' }}
+										></img>
+										<Typography align='center' fontWeight={500}>
+											{event.clubSubname ?? 'FPT University'}
+										</Typography>
+									</TableCell>
+									<TableCell align='left'>
+										<Typography
+											style={{
+												overflow: 'hidden',
+												display: '-webkit-box',
+												WebkitBoxOrient: 'vertical',
+												WebkitLineClamp: 2,
+												textOverflow: 'ellipsis',
+												cursor: 'pointer'
+											}}
+											onClick={e => {
+												setSelectedEvent(event)
+												toggleDrawer('right', true)(e)
+											}}
+										>
+											{event.name}
+										</Typography>
+									</TableCell>
+									<TableCell align='left'>
+										{event?.isApproved == 'rejected' ? (
+											<Chip label='Từ chối' sx={{ fontSize: 16, width: '100%' }} color='error' />
+										) : event?.isApproved == 'pending' ? (
+											<Chip
+												label='Đang chờ'
+												sx={{ fontSize: 16, width: '100%' }}
+												color='warning'
+											/>
+										) : (
+											<Chip
+												label='Phê duyệt'
+												sx={{ fontSize: 16, width: '100%' }}
+												color='success'
+											/>
+										)}
+									</TableCell>
+									<TableCell align='center'>{`${moment(event?.startTime).format('L')}`}</TableCell>
+									<TableCell align='center'>
+										<ReviewButton
+											event={event}
+											setFeedback={setFeedback}
+											feedback={feedback}
+											handleAction={handleAction}
+										></ReviewButton>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</TableContainer>
+				<TablePagination
+					rowsPerPageOptions={[10, 25, 100]}
+					component='div'
+					count={20}
+					rowsPerPage={10}
+					page={0}
+					onPageChange={handleChangePage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
+			</Card>
+
 			{['left', 'right', 'top', 'bottom'].map(anchor => (
 				<Fragment key={anchor}>
 					<Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
@@ -270,80 +281,6 @@ export default function EventDashboard() {
 					</Drawer>
 				</Fragment>
 			))}
-			<Modal
-				open={openModal}
-				onClose={handleCloseModal}
-				aria-labelledby='proposal deleting'
-				aria-describedby='modal for confirm delete proposal'
-			>
-				<Paper
-					sx={{
-						width: '650px',
-						position: 'absolute',
-						top: '10%',
-						left: '50%',
-						transform: 'translateX(-50%)',
-						paddingBottom: '100px'
-					}}
-				>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							height: '50px',
-							padding: '0 20px',
-							borderBottom: '2px solid orange'
-						}}
-					>
-						<Typography variant='h6'>Xác nhận hành động của bạn?</Typography>
-					</Box>
-
-					<Box
-						sx={{
-							padding: '0 20px'
-						}}
-					>
-						<InputLabel htmlFor='response' sx={{ margin: '30px 0 20px' }}>
-							Bạn có thể thêm phản hồi khi xác nhận hành động
-						</InputLabel>
-						<TextareaAutosize
-							maxRows={3}
-							minRows={3}
-							style={{
-								width: 'calc(100% - 70px)',
-								marginLeft: '30px',
-								borderRadius: '10px',
-								padding: '20px',
-								fontSize: '18px',
-								resize: 'none'
-							}}
-							spellCheck='false'
-							value={feedback}
-							onChange={event => {
-								setFeedback(event.target.value)
-							}}
-						/>
-					</Box>
-
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							gap: '20px',
-							position: 'absolute',
-							bottom: '15px',
-							right: '20px'
-						}}
-					>
-						<Button variant='contained' onClick={handleAction}>
-							Xác nhận
-						</Button>
-						<Button variant='outlined' onClick={handleCloseModal}>
-							Hủy
-						</Button>
-					</Box>
-				</Paper>
-			</Modal>
 		</Fragment>
 	)
 }
