@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import EventList from 'src/pages/dashboard/events/EventList'
 import { getUserInfo } from 'src/utils/info'
-import 'dotenv/config'
-
 
 function EventDashboard() {
 	const [eventList, setEventList] = useState()

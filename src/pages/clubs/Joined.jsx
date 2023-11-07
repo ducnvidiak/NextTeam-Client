@@ -207,10 +207,10 @@ function ClubList() {
 				setLoading(true)
 				const uid = userData?.id
 				if (uid == undefined) {
-					const res = await getAPI(`http://localhost:8080/api/club?cmd=list-res`)
+					const res = await getAPI(`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=list-res`)
 					setClubs(res)
 				} else {
-					const res = await getAPI(`http://localhost:8080/api/club?cmd=list-res&userId=${userData?.id}`)
+					const res = await getAPI(`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=list-res&userId=${userData?.id}`)
 					setClubs(res)
 				}
 			} catch (error) {

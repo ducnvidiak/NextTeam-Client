@@ -53,7 +53,6 @@ const getUserInfo = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/user?id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -92,7 +91,6 @@ const getAllMajors = async () => {
 	const json = await axios
 		.get('http://localhost:8080/api/allMajors')
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -108,7 +106,6 @@ const getListOfAllUser = async cludId => {
 	const json = await axios
 		.get('http://localhost:8080/api/userlist?type=list&clubId=' + cludId)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -130,7 +127,6 @@ const createProposal = async (formData, id) => {
 	const json = await axios
 		.post('http://localhost:8080/api/proposal?id=' + id, formData, config)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {})
@@ -148,7 +144,6 @@ const updateProposal = async (formData, id) => {
 	const json = await axios
 		.put('http://localhost:8080/api/proposal?type=content&id=' + id, formData, config)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {})
@@ -160,7 +155,6 @@ const getProposalByPropId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal?type=byProposalId&id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -176,7 +170,6 @@ const getProposalsByUserId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal?type=byUserId&id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -192,7 +185,6 @@ const deleteProposalById = async id => {
 	const json = await axios
 		.delete('http://localhost:8080/api/proposal?id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -208,7 +200,7 @@ const getProposalFilesByPropId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal_files?type=one&id=' + id)
 		.then(response => {
-			(response.data)
+			response.data
 
 			return response.data
 		})
@@ -225,7 +217,6 @@ const getAllProposalFilesByUserId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal_files?type=many&id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -249,7 +240,6 @@ const createPlan = async (formData, id) => {
 	const json = await axios
 		.post('http://localhost:8080/api/plans?id=' + id, formData, config)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {})
@@ -310,7 +300,6 @@ const updateEventStatus = async (id, status, feedback) => {
 	const json = await axios
 		.put('http://localhost:8080/admin-events?id=' + id + '&status=' + status, formData, config)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {})
@@ -322,7 +311,6 @@ const getPlanByPlanId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/plans?type=byPlanId&id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -338,7 +326,6 @@ const getPlansByClubId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/plans?type=byClubId&id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -354,7 +341,6 @@ const deletePlanById = async id => {
 	const json = await axios
 		.delete('http://localhost:8080/api/plans?id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -370,7 +356,6 @@ const getPlanFilesByPlanId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/plan_files?type=one&id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -386,7 +371,6 @@ const getAllPlanFilesByClubId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/plan_files?type=many&id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -402,7 +386,6 @@ const getAllEvents = async () => {
 	const json = await axios
 		.get('http://localhost:8080/review-event-servlet?cmd=list')
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -418,7 +401,6 @@ const getAllProposalByClubId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal?type=byClubId&id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -434,7 +416,6 @@ const getAllProposalFilesByClubId = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/proposal_files?type=much&id=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -456,7 +437,6 @@ const updateProposalStatus = async (id, status) => {
 	const json = await axios
 		.put('http://localhost:8080/api/proposal?type=status&id=' + id + '&status=' + status, config)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {})
@@ -468,7 +448,6 @@ const getListOfAllUserForManage = async id => {
 	const json = await axios
 		.get('http://localhost:8080/api/userlist?type=managelist&clubId=' + id)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -482,9 +461,8 @@ const getListOfAllUserForManage = async id => {
 
 const getDepartmentByClubId = async id => {
 	const json = await axios
-		.get('http://localhost:8080/department?action=list-dept&clubId=' + id)
+		.get(`${process.env.NEXT_PUBLIC_API_URL}/department?action=list-dept&clubId=${id}`)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {
@@ -509,7 +487,6 @@ const changeDepartment = async (memberId, departmentId, clubId) => {
 			config
 		)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {})
@@ -527,7 +504,6 @@ const changeMemberStatus = async (memberId, clubId, status) => {
 	const json = await axios
 		.put('http://localhost:8080/engagement?clubId=' + clubId + '&status=' + status + '&userId=' + memberId, config)
 		.then(response => {
-
 			return response.data
 		})
 		.catch(error => {})

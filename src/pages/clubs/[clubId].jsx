@@ -27,8 +27,9 @@ import { useRouter } from 'next/router'
 import { getUserInfo } from 'src/utils/info'
 import RegisterClub from './RegisterClub'
 
+require('moment/locale/vi')
 
-function EventItem() {
+function EventItem({ bannerUrl, name, clubSubname, locationName, description, time }) {
 	const [state, setState] = useState({
 		top: false,
 		left: false,
@@ -54,7 +55,7 @@ function EventItem() {
 			{/* <Divider /> */}
 			<Card sx={{ padding: 2 }}>
 				<img
-					src='http://res.cloudinary.com/de41uvd76/image/upload/v1694451011/z6jcsotpsznwdwavuklm.png'
+					src={bannerUrl}
 					alt=''
 					style={{
 						height: '300px',
@@ -66,7 +67,7 @@ function EventItem() {
 				></img>
 				<CardContent sx={{ padding: 4 }}>
 					<Typography variant='h6' fontWeight={700} marginBottom={4}>
-						Zoom | FES-TECHSpeak #03 | CHANGE TO CHANCE - Công nghệ AI & Ứng dụng trong đồ họa sáng tạo
+						{name}
 					</Typography>
 					<Box sx={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
 						<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>
@@ -77,7 +78,7 @@ function EventItem() {
 								Tổ chức
 							</Typography>
 							<Typography variant='body1' fontWeight={600}>
-								FU-DEVER
+								{clubSubname}
 							</Typography>
 						</Box>
 					</Box>
@@ -90,7 +91,7 @@ function EventItem() {
 								Tại
 							</Typography>
 							<Typography variant='body1' fontWeight={600}>
-								Phòng 210
+								{locationName}
 							</Typography>
 						</Box>
 					</Box>
@@ -105,14 +106,7 @@ function EventItem() {
 				</Stack>
 				<Divider sx={{ margin: 0 }}></Divider>
 				<CardContent sx={{ padding: 6 }}>
-					<Typography sx={'body1'}>
-						🎤 Host: Anh Lê Ngọc Tuấn - Giám đốc Trải nghiệm Công Nghệ, Ban Công tác học đường, Tổ chức giáo
-						dục FPT ​🗣️ Diễn giả: ​Anh Vũ Hồng Chiên - Giám đốc Trung tâm Nghiên cứu và Ứng dụng Trí tuệ
-						nhân tạo Quy Nhơn (QAI - FPT Software) ​Anh Đặng Việt Hùng - Design Manager tại Gianty chi nhánh
-						Đà Nẵng ​Topic: ​• Giải mã công nghệ “Generative AI" và xu hướng ứng dụng trong các nghề nghiệp
-						tương lai • Nghề thiết kế đồ họa và ứng dụng công cụ AI trong thiết kế • Thảo luận chủ đề AI có
-						thay thế được chuyên gia đồ họa và thiết kế trong sáng tạo, xây dựng ứng dụng?
-					</Typography>
+					<Typography sx={'body1'}>{description}</Typography>
 				</CardContent>
 			</Card>
 			<Button variant='contained' fullWidth sx={{ marginTop: 4 }}>
@@ -137,8 +131,8 @@ function EventItem() {
 			))}
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'15%'}>
-					<Typography variant='h5'>Aug 24</Typography>
-					<Typography variant='h7'>Thursday</Typography>
+					<Typography variant='h5'>{moment(time).format('MMM')}</Typography>
+					<Typography variant='h7'>{moment(time).format('dddd').toUpperCase()}</Typography>
 				</Stack>
 				<Card
 					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
@@ -147,25 +141,22 @@ function EventItem() {
 				>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
-							6:00 PM
+							{moment(time).format('LT')}
 						</Typography>
 						<Typography variant='h6' fontWeight={700} sx={{ flex: 1 }}>
-							Zoom | FES-TECHSpeak #03 | CHANGE TO CHANCE - Công nghệ AI & Ứng dụng trong đồ họa sáng tạo
+							{name}
 						</Typography>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
-							<Typography variant='body1'>Phòng 210</Typography>
+							<Typography variant='body1'>{locationName}</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<LocationOnIcon></LocationOnIcon>
 							<Typography variant='body1'>FU-DEVER</Typography>
 						</Box>
-						{/* <Button variant='contained' sx={{ marginTop: 4, width: '50%' }}>
-              Đăng ký
-            </Button> */}
 					</CardContent>
 					<img
-						src='http://res.cloudinary.com/de41uvd76/image/upload/v1694451011/z6jcsotpsznwdwavuklm.png'
+						src={bannerUrl}
 						alt=''
 						style={{
 							width: '300px',
@@ -180,42 +171,23 @@ function EventItem() {
 
 function ClubPage() {
 	const [club, setClub] = useState({})
+	const [events, setEvents] = useState([])
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [userData, setUserData] = useState()
 	const [open, setOpen] = useState(false)
 	const [clubId, setClubId] = useState()
 	const [loading, setLoading] = useState(false)
-	const dateString = club.createdAt
 
-	// Create Date object from the string
-	const date = new Date(dateString)
-
-	// Define options for toLocaleDateString
-	const options = { year: 'numeric', month: 'short', day: 'numeric' }
-
-	// Format the date
-	const formattedDate = date.toLocaleDateString('en-US', options)
+	const formattedDate = moment(club?.createdAt).format('LL')
 
 	const handleClose = () => {
 		setOpen(false)
 	}
 
-	const callAPIDepartment = async clubId => {
-		try {
-			setLoading(true)
-			const res = await getAPI('/department?action=list-dept&clubId=' + clubId)
-			setDepartment(res)
-		} catch (error) {
-			console.log(error)
-		} finally {
-			setLoading(false)
-		}
-	}
-
 	const [userId, setUserId] = useState()
 
 	useEffect(() => {
-		;(async () => setUserId((await getUserInfo(cookies['userData'])).id))()
+		;(async () => setUserId((await getUserInfo(cookies['userData']))?.id))()
 	}, [cookies])
 
 	useEffect(() => {
@@ -236,10 +208,11 @@ function ClubPage() {
 
 	useEffect(() => {
 		let url_query = ''
+		console.log('subname', router.query.clubId)
 		if (userData?.id == undefined) {
-			url_query = `http://localhost:8080/club-detail?subname=${router.query.clubId}`
+			url_query = `${process.env.NEXT_PUBLIC_API_URL}/club-detail?subname=${router.query.clubId}`
 		} else {
-			url_query = `http://localhost:8080/club-detail?subname=${router.query.clubId}&userId=${userData?.id}`
+			url_query = `${process.env.NEXT_PUBLIC_API_URL}/club-detail?subname=${router.query.clubId}&userId=${userData?.id}`
 		}
 		fetch(url_query, {
 			method: 'GET',
@@ -251,12 +224,34 @@ function ClubPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				
 				setClub(data)
+				getAPIEvents()
 			})
 			.catch(error => console.error('Error:', error))
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userData])
+	}, [userData, router.query.clubId])
+
+	console.log('Club', club)
+
+	const getAPIEvents = useEffect(() => {
+		let url_query = `${process.env.NEXT_PUBLIC_API_URL}/events-club?clubId=${club.id}`
+		console.log('test', url_query)
+		fetch(url_query, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
+			}
+		})
+			.then(function (response) {
+				return response.json()
+			})
+			.then(function (data) {
+				setEvents(data)
+			})
+			.catch(error => console.error('Error:', error))
+	}, [club])
+
+	console.log('events', events)
 
 	return (
 		<Container maxWidth='lg' sx={{ marginTop: 20 }}>
@@ -290,12 +285,28 @@ function ClubPage() {
 							{club?.name}
 						</Typography>
 						<ClubCategory categoryId={club?.categoryId}></ClubCategory>
+						<Box mt={5}>
+							<Typography
+								variant='body1'
+								sx={{
+									flex: 1,
+									overflow: 'hidden',
+									display: '-webkit-box',
+									WebkitBoxOrient: 'vertical',
+									WebkitLineClamp: 3,
+									whiteSpace: 'pre-wrap'
+								}}
+							>
+								{club.description}
+							</Typography>
+						</Box>
 						<Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-end'}>
 							<Stack direction={'row'} gap={12}>
 								<Box sx={{ display: 'flex', gap: 4 }}>
 									<Groups2Icon></Groups2Icon>
 									<Typography variant='body1'>{club?.numberOfMembers} thành viên</Typography>
 								</Box>
+
 								<Box sx={{ display: 'flex', gap: 4 }}>
 									<CakeIcon></CakeIcon>
 									<Typography variant='body1'>{formattedDate}</Typography>
@@ -324,26 +335,26 @@ function ClubPage() {
 					</Stack>
 				</CardContent>
 			</Card>
-			{/* <Container maxWidth='lg' sx={{ marginTop: 20 }}>
+			<Container maxWidth='lg' sx={{ marginTop: 20 }}>
 				<Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-end'} marginBottom={10}>
 					<Typography fontSize={32} fontWeight={600}>
 						CÁC SỰ KIỆN
 					</Typography>
-					<FormControl variant='outlined' size='small'>
-						<InputLabel>Bộ lọc</InputLabel>
-						<Select label='Status' defaultValue='active'>
-							<MenuItem value='active'>Sự kiện trong tháng</MenuItem>
-							<MenuItem value='inactive'>Đã Đăng ký</MenuItem>
-							<MenuItem value='pending'>Sự kiện đã qua</MenuItem>
-						</Select>
-					</FormControl>
 				</Stack>
 				<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-					{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]?.map((event, index) => (
-						<EventItem key={index}></EventItem>
+					{events?.map((event, index) => (
+						<EventItem
+							key={index}
+							bannerUrl={event.bannerUrl}
+							name={event.name}
+							clubSubname={event.clubSubname}
+							locationName={event.locationName}
+							description={event.description}
+							time={event.startTime}
+						></EventItem>
 					))}
 				</Container>
-			</Container> */}
+			</Container>
 		</Container>
 	)
 }
