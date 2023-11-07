@@ -26,12 +26,18 @@ import Balance from 'src/views/dashboard/Balance'
 import TotalEarning from 'src/views/dashboard/TotalEarning'
 import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import Event from 'src/views/dashboard/Event'
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
 
 const Dashboard = () => {
+	
 	const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/statis?clubId=`
+	const [loading,setLoading] = useState(true)
 	const [cookies, setCookie] = useCookies(['clubData'])
 	const [data, setData] = useState([])
 	const clubId = cookies['clubData']?.clubId
+
+	console.log(`${ORIGIN_URL}${clubId}`);
 
 	useEffect(() => {
 		const refreshData = () => {
@@ -39,6 +45,8 @@ const Dashboard = () => {
 				.then(res => res.json())
 				.then(result => {
 					setData(result)
+					
+					setLoading(false)
 				})
 		}
 		refreshData()
@@ -46,6 +54,9 @@ const Dashboard = () => {
 
 	return (
 		<ApexChartWrapper>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+                <CircularProgress color='inherit' />
+            </Backdrop>
 			<Grid container spacing={6}>
 				<Grid item xs={12} md={12}>
 					<ClubStructure data={data} />
