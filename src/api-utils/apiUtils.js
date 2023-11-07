@@ -125,7 +125,7 @@ const createProposal = async (formData, id) => {
 	}
 
 	const json = await axios
-		.post(process.env.NEXT_PUBLIC_API_URL + 'api/proposal?id=' + id, formData, config)
+		.post(process.env.NEXT_PUBLIC_API_URL + '/api/proposal?id=' + id, formData, config)
 		.then(response => {
 			return response.data
 		})
@@ -238,7 +238,7 @@ const createPlan = async (formData, id) => {
 	}
 
 	const json = await axios
-		.post(process.env.NEXT_PUBLIC_API_URL + 'api/plans?id=' + id, formData, config)
+		.post(process.env.NEXT_PUBLIC_API_URL + '/api/plans?id=' + id, formData, config)
 		.then(response => {
 			return response.data
 		})
