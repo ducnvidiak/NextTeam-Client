@@ -42,6 +42,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import ViewInfo from './ViewInfo'
 import CreateInterview from './CreateInterview'
 import Interview from './Interview'
+import moment from 'moment/moment'
 
 const MemberApproval = () => {
 	const router = useRouter()
@@ -118,7 +119,7 @@ const MemberApproval = () => {
 
 	useEffect(() => {
 		fetch(
-			`http://localhost:8080/engagement?action=application-list-of-club&clubId=${cookies['clubData']?.clubId}`,
+			`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=application-list-of-club&clubId=${cookies['clubData']?.clubId}`,
 			{
 				method: 'GET',
 				headers: {
@@ -233,7 +234,7 @@ const MemberApproval = () => {
 						</FormControl>
 					</Container>
 
-					<TextField
+					{/* <TextField
 						placeholder='Tìm kiếm...'
 						size='small'
 						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
@@ -244,7 +245,7 @@ const MemberApproval = () => {
 								</InputAdornment>
 							)
 						}}
-					/>
+					/> */}
 				</div>
 
 				<Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -276,7 +277,9 @@ const MemberApproval = () => {
 										</TableCell>
 										<TableCell>{row?.user.username}</TableCell>
 										<TableCell>{row?.dept.name}</TableCell>
-										<TableCell>{row?.engagement.createdAt}</TableCell>
+										<TableCell>
+											{moment(row?.engagement.createdAt).format('DD/MM/YY, h:mm A')}
+										</TableCell>
 										<TableCell>
 											<Chip
 												color={statusObj[row?.engagement.status]?.color}
@@ -298,22 +301,37 @@ const MemberApproval = () => {
 													onClick={() => {
 														handleCreatInterview(row)
 													}}
+													sx={{ width: '100%' }}
 												>
 													Tạo phỏng vấn
 												</Button>
 											) : (
 												''
 											)}
-
-											<Button
-												variant='contained'
-												size='small'
-												onClick={() => {
-													handleInterview(row)
-												}}
-											>
-												{row.engagement.status == '2' ? 'Phỏng vấn' : 'Cập nhật'}
-											</Button>
+											{row.engagement.status == '2' && (
+												<Button
+													variant='contained'
+													size='small'
+													onClick={() => {
+														handleInterview(row)
+													}}
+													sx={{ width: '100%' }}
+												>
+													Phỏng vấn
+												</Button>
+											)}
+											{row.engagement.status != '2' && row.engagement.status != '0' && (
+												<Button
+													variant='contained'
+													size='small'
+													onClick={() => {
+														handleInterview(row)
+													}}
+													sx={{ width: '100%' }}
+												>
+													Cập nhật
+												</Button>
+											)}
 										</TableCell>
 									</TableRow>
 								))}

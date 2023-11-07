@@ -8,6 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Slide from '@mui/material/Slide'
 import { Chip, Grid } from '@mui/material'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
+import moment from 'moment'
 
 export default function NotificationDetail({ notificationDetail, handleClose, open }) {
 	function validateContent(content) {
@@ -44,7 +45,7 @@ export default function NotificationDetail({ notificationDetail, handleClose, op
 						<span>
 							<Chip
 								icon={<AccessAlarmIcon />}
-								label={notificationDetail?.createdAt}
+								label={moment(notificationDetail?.createdAt).format('DD/MM/YY, h:mm A')}
 								sx={{
 									height: 24,
 									fontSize: '0.75rem',

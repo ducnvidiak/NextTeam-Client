@@ -27,6 +27,7 @@ import Magnify from 'mdi-material-ui/Magnify'
 import { Chip } from '@mui/material'
 import NotificationDetail from '../NotificationDetail'
 import { getUserInfo } from 'src/utils/info'
+import moment from 'moment/moment'
 
 const TableStickyHeader = () => {
 	const router = useRouter()
@@ -90,7 +91,7 @@ const TableStickyHeader = () => {
 			dispatch({ type: 'trigger' })
 		} else {
 			fetch(
-				`http://localhost:8080/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData.id}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/notification?action=search-noti&search=${search}&clubId=${cookies['clubData'].clubId}&userId=${userData.id}`,
 				{
 					method: 'GET',
 					headers: {
@@ -110,10 +111,7 @@ const TableStickyHeader = () => {
 
 	useEffect(() => {
 		fetch(
-			'http://localhost:8080/notification?action=list-noti&clubId=' +
-				cookies['clubData']?.clubId +
-				'&userId=' +
-				userData?.id,
+			`${process.env.NEXT_PUBLIC_API_URL}/notification?action=list-noti&clubId=${cookies['clubData']?.clubId}&userId=${userData?.id}`,
 			{
 				method: 'GET',
 				headers: {
@@ -150,7 +148,7 @@ const TableStickyHeader = () => {
 					}}
 				>
 					<CardHeader title='Tất cả thông báo' titleTypographyProps={{ variant: 'h6' }} />
-					<TextField
+					{/* <TextField
 						placeholder='Tìm kiếm...'
 						size='small'
 						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
@@ -165,7 +163,7 @@ const TableStickyHeader = () => {
 							setSearch(event.target.value)
 							handleSearch()
 						}}
-					/>
+					/> */}
 				</div>
 
 				<Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -185,7 +183,7 @@ const TableStickyHeader = () => {
 										key={row.id}
 										sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}
 									>
-										<TableCell>{row.createdAt}</TableCell>
+										<TableCell>{moment(row.createdAt).format('DD/MM/YY, h:mm A')}</TableCell>
 										<TableCell>
 											<Chip
 												label={statusObj[row.type]?.label}

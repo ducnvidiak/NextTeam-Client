@@ -45,7 +45,7 @@ export default function EditPrivateNotification({
 
 	const handleSubmitPrivate = event => {
 		if (save) {
-			fetch('http://localhost:8080/notification?action=send-private-email', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=send-private-email`, {
 				method: 'POST',
 				body: JSON.stringify({
 					clubId: null,
@@ -62,7 +62,7 @@ export default function EditPrivateNotification({
 				})
 				.catch(error => console.error('Error:', error))
 		}
-		fetch('http://localhost:8080/notification?action=update-private-noti', {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=update-private-noti`, {
 			method: 'POST',
 			body: JSON.stringify({
 				id: privateNotificationDetail?.id,
@@ -92,12 +92,15 @@ export default function EditPrivateNotification({
 	}
 
 	useEffect(() => {
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})

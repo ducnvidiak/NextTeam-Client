@@ -36,6 +36,7 @@ import { Magnify } from 'mdi-material-ui'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import PaymentDetail from './PaymentDetail'
+import moment from 'moment/moment'
 
 function TransactionHistory() {
 	const router = useRouter()
@@ -134,12 +135,15 @@ function TransactionHistory() {
 	}
 
 	useEffect(() => {
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})
@@ -215,7 +219,7 @@ function TransactionHistory() {
 						</FormControl>
 					</Container>
 					<Chip label={'Số dư: ' + difference.toLocaleString()} color='primary' sx={{ marginRight: 5 }} />
-					<TextField
+					{/* <TextField
 						placeholder='Tìm kiếm...'
 						size='small'
 						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
@@ -230,7 +234,7 @@ function TransactionHistory() {
 							setSearch(event.target.value)
 							handleSearch()
 						}}
-					/>
+					/> */}
 				</div>
 
 				<Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -260,14 +264,14 @@ function TransactionHistory() {
 													color='textSecondary'
 													style={{ fontSize: '0.7rem' }}
 												>
-													Tạo mới: {row?.createdAt}
+													Tạo mới: {moment(row?.createdAt).format('DD/MM/YY, h:mm A')}
 												</Typography>
 												<Typography
 													variant='body2'
 													color='textSecondary'
 													style={{ fontSize: '0.7rem' }}
 												>
-													Cập nhật: {row?.updatedAt}
+													Cập nhật: {moment(row?.updatedAt).format('DD/MM/YY, h:mm A')}
 												</Typography>
 											</div>
 										</TableCell>

@@ -53,7 +53,7 @@ export default function EditPublicNotification({
 
 	const handleSubmit = event => {
 		if (save) {
-			fetch('http://localhost:8080/notification?action=send-public-email', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=send-public-email`, {
 				method: 'POST',
 				body: JSON.stringify(notificationDetailEdit),
 				headers: {
@@ -65,7 +65,7 @@ export default function EditPublicNotification({
 				})
 				.catch(error => console.error('Error:', error))
 		}
-		fetch('http://localhost:8080/notification?action=update-public-noti', {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=update-public-noti`, {
 			method: 'POST',
 			body: JSON.stringify(notificationDetailEdit),
 			headers: {
