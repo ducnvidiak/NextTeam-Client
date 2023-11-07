@@ -118,7 +118,6 @@ function EditProposal() {
 				const fileContent = await readFile(newFiles[i])
 				formData.append(`filescontent[${i}]`, fileContent)
 
-
 				formData.append(`filesname[${i}]`, newFiles[i].name)
 				formData.append(`filesType[${i}]`, newFiles[i].type)
 			}
@@ -267,8 +266,12 @@ function EditProposal() {
 								width: 'calc(100% - 30px)',
 								marginLeft: '30px',
 								borderRadius: '10px',
-								padding: '20px',
-								fontSize: '18px',
+								paddingTop: '20px',
+								paddingLeft: '15px',
+								paddingBottom: '20px',
+								paddingRight: '15px',
+								fontFamily: 'Be Vietnam Pro,sans-serif',
+								fontSize: '16px',
 								resize: 'none'
 							}}
 							spellCheck='false'
@@ -336,6 +339,7 @@ function EditProposal() {
 									/>
 								)
 							})}
+
 							{newFiles?.map((file, index) => {
 								let avatar = <AiOutlineFileUnknown style={{ fontSize: '20px', color: 'gray' }} />
 
@@ -366,7 +370,7 @@ function EditProposal() {
 										label={file.name}
 										onDelete={() => {
 											const updatedList = [...newFiles]
-											updatedList.splice(newFiles.indexOf(fileRecord), 1)
+											updatedList.splice(newFiles.indexOf(file), 1)
 											setNewFiles(updatedList)
 										}}
 										variant='outlined'

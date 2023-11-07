@@ -242,7 +242,7 @@ export default function ViewInfo({ applicationDetail, handleClose, open, statusO
 										<Box sx={{ height: '85vh' }}>
 											<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
 												<Viewer
-													fileUrl={`${process.env.NEXT_PUBLIC_API_URL}${applicationDetail?.engagement?.cvUrl}`}
+													fileUrl={applicationDetail?.engagement?.cvUrl}
 													plugins={[defaultLayoutPluginInstance, scrollModePluginInstance]}
 													scrollMode={ScrollMode.Vertical}
 												/>

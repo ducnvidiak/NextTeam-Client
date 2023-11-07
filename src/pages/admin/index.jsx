@@ -16,13 +16,21 @@ import {
 	TableRow,
 	Paper
 } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
+
 
 import dynamic from 'next/dynamic'
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 const Dashboard = () => {
+	const [loading, setLoading] = useState(true);
+
+
 	const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/statis?clubId=1`
+
+	console.log('orgin url', ORIGIN_URL)
 
 	const [data, setData] = useState([])
 
@@ -32,18 +40,24 @@ const Dashboard = () => {
 				.then(res => res.json())
 				.then(result => {
 					setData(result)
+					setLoading(false)
 				})
 		}
 		refreshData()
 	}, [])
 
 	const cd = Array.isArray(data?.clubCounter) ? data?.clubCounter : []
-	const clubData = cd?.map(club => club.name)
-	const eventCounts = cd?.map(club => club.eventCount)
-	const memberCounts = cd?.map(club => club.memberCount)
-	const clubBalances = cd?.map(club => club.balance)
-	const clubScores = cd?.map(club => club.activiyPoint)
-	const clubPlans = cd?.map(club => club.planCount)
+
+	const uniqueClubs = cd.filter((club, index, self) => self.findIndex(c => c.name === club.name) === index)
+
+	const clubData = [...new Set(cd?.map(club => club.name))]
+
+	const eventCounts = uniqueClubs?.map(club => club.eventCount)
+	const memberCounts = (uniqueClubs || []).filter(club => club.memberCount > 0).map(club => club.memberCount)
+
+	const clubBalances = uniqueClubs?.map(club => club.balance)
+	const clubScores = uniqueClubs?.map(club => club.activiyPoint)
+	const clubPlans = uniqueClubs?.map(club => club.planCount)
 
 	const upcomingEvents = cd?.map(club => ({
 		club: club.name,
@@ -58,7 +72,7 @@ const Dashboard = () => {
 		},
 		plotOptions: {
 			bar: {
-				columnWidth: '20%' // Specifies the width of the column as a percentage of the available space
+				columnWidth: '30%' // Specifies the width of the column as a percentage of the available space
 			}
 		},
 		xaxis: {
@@ -97,6 +111,9 @@ const Dashboard = () => {
 
 	return (
 		<div>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+                <CircularProgress color='inherit' />
+            </Backdrop>
 			<Card>
 				<CardContent>
 					<Typography variant='h5' component='div'>

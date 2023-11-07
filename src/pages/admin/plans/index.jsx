@@ -116,7 +116,7 @@ function PlanListPage() {
 					marginRight: '50px'
 				}}
 			>
-				<Typography variant='h5'>Các đề xuất</Typography>
+				<Typography variant='h5'>Các bản kế hoạch</Typography>
 				<Box sx={{ display: 'flex', gap: '30px', justifyContent: 'space-between', alignItems: 'center' }}>
 					<FormControl>
 						<InputLabel size='small' id='filter-label'>
@@ -223,15 +223,20 @@ function PlanListPage() {
 								</Button>
 							</>
 						)}
+
 						{plan.isApproved === 'accepted' && (
-							<Typography variant='body2' color='textSecondary'>
-								Đã chấp nhận
-							</Typography>
+							<Chip
+								label='Đã chấp nhận'
+								size='small'
+								sx={{ backgroundColor: 'rgb(0,186,0)', color: 'floralwhite' }}
+							/>
 						)}
 						{plan.isApproved === 'rejected' && (
-							<Typography variant='body2' color='textSecondary'>
-								Đã từ chối
-							</Typography>
+							<Chip
+								label='Đã từ chối'
+								size='small'
+								sx={{ backgroundColor: 'rgb(230, 63, 41)', color: 'floralwhite' }}
+							/>
 						)}
 					</CardActions>
 				</Card>

@@ -21,6 +21,8 @@ import {
 } from '@mui/material'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -38,6 +40,8 @@ const useStyles = makeStyles(theme => ({
 const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/user_manager?cmd=`
 
 const AdminManageUsers = () => {
+	const [loading, setLoading] = useState(true);
+
 	const [users, setUsers] = useState([])
 	const [clubs, setClubs] = useState([])
 	const [blockDialogOpen, setBlockDialogOpen] = useState(false)
@@ -53,6 +57,7 @@ const AdminManageUsers = () => {
 			.then(res => res.json())
 			.then(result => {
 				setUsers(result)
+				setLoading(false)
 			})
 	}
 
@@ -103,13 +108,27 @@ const AdminManageUsers = () => {
 	const handleBlockUser = selectedUser => {
 		if (selectedUser.isActive) {
 			fetch(`${ORIGIN_URL}block&id=${selectedUser.id}`)
-				.then(res => res.json())
+				.then(res =>{ 
+					if (!res.ok) {
+						throw new Error('Network response was not ok')
+					}
+					
+					return res.json()})
 				.then(result => {
 					// Assuming the server responds with the updated user data
 					setUsers(prevUsers =>
 						prevUsers.map(user => (user.id === selectedUser.id ? { ...user, isActive: false } : user))
 					)
-					toast.success('Mở chặn thành công', {
+					toast.success('Chặn thành công', {
+						position: 'top-right',
+						autoClose: 3000, // Close the toast after 3 seconds
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true
+					})
+				}).catch(error =>{
+					toast.error('Chặn thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -120,13 +139,27 @@ const AdminManageUsers = () => {
 				})
 		} else {
 			fetch(`${ORIGIN_URL}unblock&id=${selectedUser.id}`)
-				.then(res => res.json())
+				.then(res =>{ 
+					if (!res.ok) {
+						throw new Error('Network response was not ok')
+					}
+					
+					return res.json()})
 				.then(result => {
 					// Assuming the server responds with the updated user data
 					setUsers(prevUsers =>
 						prevUsers.map(user => (user.id === selectedUser.id ? { ...user, isActive: true } : user))
 					)
-					toast.success('Chặn thành công', {
+					toast.success('Mở chặn thành công', {
+						position: 'top-right',
+						autoClose: 3000, // Close the toast after 3 seconds
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true
+					})
+				}).catch(error =>{
+					toast.error('Mở chặn thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -144,7 +177,12 @@ const AdminManageUsers = () => {
 			const DCT_ADMIN_URL = `${ORIGIN_URL}dct_manager&id=${selectedUser.id}&clubId=${selectedClubId}`
 			console.log(DCT_ADMIN_URL)
 			fetch(DCT_ADMIN_URL)
-				.then(res => res.json())
+				.then(res =>{ 
+					if (!res.ok) {
+						throw new Error('Network response was not ok')
+					}
+					
+					return res.json()})
 				.then(result => {
 					// Assuming the server responds with the updated user data
 					setUsers(prevUsers =>
@@ -173,12 +211,26 @@ const AdminManageUsers = () => {
 			const DCT_USER_URL = `${ORIGIN_URL}dct_member&id=${selectedUser.id}&clubId=${selectedClubId}`
 			console.log(DCT_USER_URL)
 			fetch(DCT_USER_URL)
-				.then(res => res.json())
+				.then(res =>{ 
+					if (!res.ok) {
+						throw new Error('Network response was not ok')
+					}
+					
+					return res.json()})
 				.then(result => {
 					setUsers(prevUsers =>
 						prevUsers.map(user => (user.id === selectedUser.id ? { ...user, isAdmin: false } : user))
 					)
 					toast.success('Phân quyền thành công', {
+						position: 'top-right',
+						autoClose: 3000, // Close the toast after 3 seconds
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true
+					})
+				}).catch(error => {
+					toast.error('Phân quyền thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
 						hideProgressBar: false,
@@ -192,7 +244,13 @@ const AdminManageUsers = () => {
 	}
 
 	return (
+		
+
 		<Card className={classes.root}>
+			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
+                <CircularProgress color='inherit' />
+            </Backdrop>
+
 			<CardContent>
 				<Typography variant='h6' gutterBottom>
 					Quản lý người dùng trên nền tảng
@@ -204,7 +262,7 @@ const AdminManageUsers = () => {
 								<TableCell>ID</TableCell>
 								<TableCell>Tên người dùng</TableCell>
 								<TableCell>Tên tài khoản</TableCell>
-								<TableCell>Bị chặn</TableCell>
+								<TableCell>Đã chặn</TableCell>
 								<TableCell>Thao tác</TableCell>
 							</TableRow>
 						</TableHead>
@@ -216,10 +274,10 @@ const AdminManageUsers = () => {
 									<TableCell>{user.username}</TableCell>
 									<TableCell>
 										<Switch
-											checked={user.isActive}
+											checked={!user.isActive}
 											color='primary'
 											onChange={() =>
-												user.isActive
+												user?.isActive
 													? handleBlockDialogOpen(user)
 													: handleUnBlockDialogOpen(user)
 											}
@@ -243,13 +301,13 @@ const AdminManageUsers = () => {
 				</TableContainer>
 				<Dialog open={blockDialogOpen} onClose={handleBlockDialogClose}>
 					<DialogTitle>
-						{selectedUser && selectedUser.isActive ? 'Mở chặn người dùng' : 'Chặn người dùng'}
+						{selectedUser && selectedUser.isActive ? 'Chặn người dùng' : 'Mở chặn người dùng'}
 					</DialogTitle>
 					<DialogContent className={classes.dialogContent}>
 						<Typography variant='subtitle1'>
 							{selectedUser && selectedUser.isActive
-								? 'Bạn có chắc chắn mở chặn người dùng này ?'
-								: 'Bạn có chắc chắn chặn người dùng này ?'}
+								? 'Bạn có chắc chắn chặn người dùng này ?'
+								: 'Bạn có chắc chắn mở chặn người dùng này ?'}
 						</Typography>
 					</DialogContent>
 					<DialogActions>

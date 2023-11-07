@@ -14,7 +14,7 @@ import SendIcon from '@mui/icons-material/Send'
 import { useState } from 'react'
 import moment from 'moment'
 
-function ReviewButton({ event, setFeedback, handleAction }) {
+function ReviewButton({ event,feedback, setFeedback, handleAction }) {
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
 
 	const handleAccept = () => {

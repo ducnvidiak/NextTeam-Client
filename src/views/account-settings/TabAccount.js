@@ -110,7 +110,7 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 						position: toast.POSITION.TOP_RIGHT
 					})
 				} else {
-					toast.error('Fail to change info!')
+					toast.error('Email not available!')
 				}
 			})
 		}
@@ -194,28 +194,6 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 					<Grid item xs={12} sm={6}>
 						<TextField
 							fullWidth
-							type='email'
-							label='Email'
-							placeholder='ducns@example.com'
-							value={currentUserInfo?.email || ''}
-							error={emailError.status}
-							onChange={event => {
-								const validEmail = validateEmail(event.target.value)
-								if (!validEmail.valid) {
-									setEmailError({ status: true, message: validEmail.message })
-								} else {
-									setEmailError({ status: false, message: validEmail.message })
-								}
-								setCurrentUserInfo(current => {
-									return { ...current, email: event.target.value }
-								})
-							}}
-							helperText={emailError.status && emailError.message}
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							fullWidth
 							label='Họ và tên đệm'
 							placeholder='Bùi Thiên'
 							value={currentUserInfo?.firstname || ''}
@@ -253,6 +231,28 @@ const TabAccount = ({ userInfo, setUserInfo }) => {
 								})
 							}}
 							helperText={lastnameError.status && lastnameError.message}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							fullWidth
+							type='email'
+							label='Email'
+							placeholder='ducns@example.com'
+							value={currentUserInfo?.email || ''}
+							error={emailError.status}
+							onChange={event => {
+								const validEmail = validateEmail(event.target.value)
+								if (!validEmail.valid) {
+									setEmailError({ status: true, message: validEmail.message })
+								} else {
+									setEmailError({ status: false, message: validEmail.message })
+								}
+								setCurrentUserInfo(current => {
+									return { ...current, email: event.target.value }
+								})
+							}}
+							helperText={emailError.status && emailError.message}
 						/>
 					</Grid>
 

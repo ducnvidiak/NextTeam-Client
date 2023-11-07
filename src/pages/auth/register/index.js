@@ -113,8 +113,6 @@ const RegisterPage = () => {
 		if (!toastFlag) {
 			toast.error('Tài khoản Google chưa được đăng ký')
 			setEmail(urlParams?.get('email') ?? '')
-			setFirstname(urlParams?.get('family_name') ?? '')
-			setLastname(urlParams?.get('given_name') ?? '')
 			toastFlag = true
 		}
 	}
@@ -142,7 +140,7 @@ const RegisterPage = () => {
 		) {
 			toast.error('Vui lòng điền những thông tin còn thiếu.')
 		} else {
-			fetch('http://localhost:8080/user-register', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/user-register`, {
 				method: 'POST',
 				body: JSON.stringify({
 					firstname: firstname,
@@ -161,8 +159,6 @@ const RegisterPage = () => {
 					return response.json()
 				})
 				.then(function (data) {
-					
-
 					if (data.code == 0) {
 						toast.success('Đăng ký thành công, đang chuyển hướng sang đăng nhập!')
 						setTimeout(() => {
@@ -318,6 +314,25 @@ const RegisterPage = () => {
 						</Grid>
 						<TextField
 							fullWidth
+							type='text'
+							label='Mã số sinh viên'
+							name='studentCode'
+							onChange={event => {
+								const validStudentCode = validateStudentCode(event.target.value)
+								if (!validStudentCode.valid) {
+									setStudentCodeError({ status: true, message: validStudentCode.message })
+								} else {
+									setStudentCodeError({ status: false, message: validStudentCode.message })
+								}
+								setStudentCode(event.target.value)
+							}}
+							value={studentCode}
+							error={studentCodeError.status}
+							sx={{ marginBottom: 4 }}
+							helperText={studentCodeError.status && studentCodeError.message}
+						/>
+						<TextField
+							fullWidth
 							type='email'
 							label='Email'
 							name='email'
@@ -405,26 +420,6 @@ const RegisterPage = () => {
 								}
 							/>
 						</FormControl> */}
-
-						<TextField
-							fullWidth
-							type='text'
-							label='Mã số sinh viên'
-							name='studentCode'
-							onChange={event => {
-								const validStudentCode = validateStudentCode(event.target.value)
-								if (!validStudentCode.valid) {
-									setStudentCodeError({ status: true, message: validStudentCode.message })
-								} else {
-									setStudentCodeError({ status: false, message: validStudentCode.message })
-								}
-								setStudentCode(event.target.value)
-							}}
-							value={studentCode}
-							error={studentCodeError.status}
-							sx={{ marginBottom: 4 }}
-							helperText={studentCodeError.status && studentCodeError.message}
-						/>
 
 						<TextField
 							fullWidth
