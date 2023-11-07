@@ -29,7 +29,7 @@ import MeetingRoomIcon from '@mui/icons-material/MeetingRoom'
 import FilePresentIcon from '@mui/icons-material/FilePresent'
 import SummarizeIcon from '@mui/icons-material/Summarize'
 import { Account, Logout } from 'mdi-material-ui'
-import { Password } from '@mui/icons-material'
+import { Groups, Password } from '@mui/icons-material'
 
 export const dashboardLayoutVavigation = () => {
 	return [
@@ -263,7 +263,7 @@ export const adminLayoutVavigation = () => {
 			path: '/admin/plans',
 			icon: FilePresentIcon
 		},
-		
+
 		// {
 		// 	title: 'Báo cáo',
 		// 	path: '/admin/reports',
@@ -278,6 +278,11 @@ export const adminLayoutVavigation = () => {
 			icon: CelebrationIcon,
 			title: 'Quản lý sự kiện',
 			path: '/admin/event-creator'
+		},
+		{
+			icon: Groups,
+			title: 'Quản lý sinh viên',
+			path: '/admin/students'
 		}
 	]
 }

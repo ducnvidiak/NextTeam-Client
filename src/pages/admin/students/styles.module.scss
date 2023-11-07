@@ -1,0 +1,144 @@
+.dropzoneInput {
+	padding: 100px;
+	margin: auto auto;
+	margin-top: 20px;
+	border-radius: 10px;
+	border: 3px dashed rgba(0, 127, 255, 0.4);
+	width: auto;
+	text-align: center;
+	color: rgba(0, 127, 255, 0.6);
+	cursor: pointer;
+	transition: 0.35s all ease-in-out;
+
+	label,
+	p {
+		pointer-events: none;
+	}
+
+	&:hover {
+		label {
+			color: rgba(0, 127, 255, 0.8);
+		}
+	}
+
+	p {
+		margin: 0 auto;
+		width: fit-content;
+	}
+
+	&.drag {
+		border-color: rgba(0, 127, 255, 0.8);
+		color: rgba(0, 127, 255, 0.8);
+	}
+
+	&.droped {
+		border-style: solid;
+		border-color: rgba(0, 127, 255, 0.8);
+		font-size: 25px;
+
+		p,
+		label {
+			display: none;
+		}
+
+		&.error {
+			color: red;
+			border-style: dashed;
+			border-color: rgba(255, 0, 0, 0.8);
+			color: rgba(255, 0, 0, 0.8);
+		}
+		&.success {
+			padding: 50px;
+			color: green;
+			border-style: dashed;
+			border-color: rgba(0, 128, 0, 0.8);
+			color: rgba(0, 128, 0, 0.8);
+		}
+	}
+}
+
+.progressBar {
+	width: 100%;
+	margin-top: 20px;
+	.mainBar {
+		width: 100%;
+		height: 20px;
+		border-radius: 10px;
+		background-color: rgba(0, 127, 255, 0.25);
+		overflow: hidden;
+		.barStatus {
+			transition: 0.1s width ease-in-out;
+			width: 0;
+			height: 100%;
+			border-radius: 10px;
+			background-color: rgba(0, 127, 255, 1);
+			margin: auto;
+		}
+	}
+	p {
+		margin: 0;
+		text-align: center;
+	}
+	&.hidden {
+		display: none;
+	}
+}
+
+.dropzoneInput {
+	padding: 100px;
+	margin: auto auto;
+	margin-top: 20px;
+	border-radius: 10px;
+	border: 3px dashed rgba(0, 127, 255, 0.4);
+	width: auto;
+	text-align: center;
+	color: rgba(0, 127, 255, 0.6);
+	cursor: pointer;
+	transition: 0.35s all ease-in-out;
+
+	label,
+	p {
+		pointer-events: none;
+	}
+
+	&:hover {
+		label {
+			color: rgba(0, 127, 255, 0.8);
+		}
+	}
+
+	p {
+		margin: 0 auto;
+		width: fit-content;
+	}
+
+	&.drag {
+		border-color: rgba(0, 127, 255, 0.8);
+		color: rgba(0, 127, 255, 0.8);
+	}
+
+	&.droped {
+		border-style: solid;
+		border-color: rgba(0, 127, 255, 0.8);
+		font-size: 25px;
+
+		p,
+		label {
+			display: none;
+		}
+
+		&.error {
+			color: red;
+			border-style: dashed;
+			border-color: rgba(255, 0, 0, 0.8);
+			color: rgba(255, 0, 0, 0.8);
+		}
+		&.success {
+			padding: 50px;
+			color: green;
+			border-style: dashed;
+			border-color: rgba(0, 128, 0, 0.8);
+			color: rgba(0, 128, 0, 0.8);
+		}
+	}
+}
