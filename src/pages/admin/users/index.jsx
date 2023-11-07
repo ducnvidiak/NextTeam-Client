@@ -266,7 +266,7 @@ const AdminManageUsers = () => {
 											checked={!user.isActive}
 											color='primary'
 											onChange={() =>
-												user.isActive
+												user?.isActive
 													? handleBlockDialogOpen(user)
 													: handleUnBlockDialogOpen(user)
 											}
@@ -290,13 +290,13 @@ const AdminManageUsers = () => {
 				</TableContainer>
 				<Dialog open={blockDialogOpen} onClose={handleBlockDialogClose}>
 					<DialogTitle>
-						{selectedUser && selectedUser.isActive ? 'Mở chặn người dùng' : 'Chặn người dùng'}
+						{selectedUser && selectedUser.isActive ? 'Chặn người dùng' : 'Mở chặn người dùng'}
 					</DialogTitle>
 					<DialogContent className={classes.dialogContent}>
 						<Typography variant='subtitle1'>
 							{selectedUser && selectedUser.isActive
-								? 'Bạn có chắc chắn mở chặn người dùng này ?'
-								: 'Bạn có chắc chắn chặn người dùng này ?'}
+								? 'Bạn có chắc chắn chặn người dùng này ?'
+								: 'Bạn có chắc chắn mở chặn người dùng này ?'}
 						</Typography>
 					</DialogContent>
 					<DialogActions>
