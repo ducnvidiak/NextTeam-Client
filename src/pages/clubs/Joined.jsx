@@ -24,6 +24,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 
+// **Toasify Imports
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 import CakeIcon from '@mui/icons-material/Cake'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -53,7 +57,7 @@ function ClubItem({ club, index }) {
 	const [open, setOpen] = useState(false)
 	const [department, setDepartment] = useState([])
 	const [loading, setLoading] = useState(false)
-	const [cookies, setCookies] = useCookies(['userData'])
+	const [cookies, setCookies] = useCookies(['userData', 'clubData'])
 
 	//formData
 	const [departmentId, setDepartmentId] = useState('')
@@ -65,11 +69,11 @@ function ClubItem({ club, index }) {
 		;(async () => setUserId((await getUserInfo(cookies['userData'])).id))()
 	}, [cookies])
 
-	const handleClick = () => {
-		router.push(`/clubs/${club.subname}`)
+	const handleClick = (id, subname) => () => {
+		cookies['clubData']?.clubId == 'none' ? '' : router.push('/dashboard')
+		setCookies('clubData', JSON.stringify({ clubId: id, subname: subname }), { path: '/' })
+		toast.success('Bạn đang được chuyển tới trang của câu lạc bộ.')
 	}
-
-	
 
 	const callAPIDepartment = async clubId => {
 		try {
@@ -116,8 +120,6 @@ function ClubItem({ club, index }) {
 
 	return (
 		<>
-			<RegisterClub clubId={clubId} userId={userId} isOpen={open} handleClose={handleClose} />
-
 			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
 				<Stack direction={'column'} width={'5%'}>
 					<Typography variant='h5'>{index + 1}.</Typography>
@@ -172,30 +174,16 @@ function ClubItem({ club, index }) {
 
 						<Stack direction={'row'} gap={4}>
 							{/* <Link passHref href={`${club.subname}`}> */}
-							<Button onClick={handleClick} variant='contained' sx={{ marginTop: 4, width: '50%' }}>
-								Xem chi tiết
+							<Button
+								variant='contained'
+								sx={{ marginTop: 4, width: '100%' }}
+								onClick={handleClick(club?.id, club?.subname)}
+							>
+								Truy cập
 							</Button>
 							{/* </Link> */}
 
-							{club?.isJoined ? (
-								<Button
-									variant='outlined'
-									color='secondary'
-									sx={{ marginTop: 4, width: '50%' }}
-									onClick={() => handleClickOpen(club.id)}
-									disabled
-								>
-									Đã tham gia
-								</Button>
-							) : (
-								<Button
-									variant='outlined'
-									sx={{ marginTop: 4, width: '50%' }}
-									onClick={() => handleClickOpen(club.id)}
-								>
-									Đăng ký tham gia
-								</Button>
-							)}
+							{/* <Button variant='contained'>Truy cập</Button> */}
 						</Stack>
 					</CardContent>
 				</Card>
@@ -240,9 +228,11 @@ function ClubList() {
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 60px !important' }}>
-				{clubs?.map((club, index) => (
-					<ClubItem key={index} club={club} index={index}></ClubItem>
-				))}
+				{clubs
+					?.filter(club => club.isJoined)
+					.map((club, index) => (
+						<ClubItem key={index} club={club} index={index}></ClubItem>
+					))}
 			</Container>
 		</>
 	)

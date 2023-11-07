@@ -44,7 +44,7 @@ export default function EditWideNotification({
 
 	const handleSubmit = event => {
 		if (save) {
-			fetch('http://localhost:8080/notification?action=send-public-email', {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=send-public-email`, {
 				method: 'POST',
 				body: JSON.stringify({
 					clubId: null,
@@ -60,7 +60,7 @@ export default function EditWideNotification({
 				})
 				.catch(error => console.error('Error:', error))
 		}
-		fetch('http://localhost:8080/notification?action=update-public-noti', {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=update-public-noti`, {
 			method: 'POST',
 			body: JSON.stringify({
 				id: wideNotificationDetail?.id,
@@ -77,7 +77,6 @@ export default function EditWideNotification({
 			})
 			.then(function (data) {
 				if (data.id == null) {
-					
 					toast.error(data)
 				} else {
 					setWideUpdateModal(false)

@@ -90,7 +90,7 @@ const UserDropdown = props => {
 
 	useEffect(() => {
 		if (userData)
-			fetch(`http://localhost:8080/club-user?action=view-my-list&userId=${userData?.id}`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-my-list&userId=${userData?.id}`, {
 				method: 'GET',
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8'
@@ -100,7 +100,6 @@ const UserDropdown = props => {
 					return response.json()
 				})
 				.then(function (data) {
-					
 					setClubOfMeData(data)
 				})
 				.catch(error => console.error('Error:', error))
@@ -309,27 +308,13 @@ const UserDropdown = props => {
 						</Link>
 					</Box>
 				</MenuItem>
-				{roleContext.systemRole == 1 ? (
+				{roleContext.systemRole == 1 && (
 					<MenuItem sx={{ p: 0 }}>
-					<Box sx={styles}>
-						<Groups3Icon sx={{ marginRight: 2 }} />
-						<Link passHref href={`/admin`}>
-							<Button>Trang quản trị</Button>
-						</Link>
-					</Box>
-				</MenuItem>
-					
-				) : (
-					<MenuItem
-						sx={{ p: 0 }}
-						onClick={() => {
-							handleDropdownClose()
-							setOpen(true)
-						}}
-					>
 						<Box sx={styles}>
 							<Groups3Icon sx={{ marginRight: 2 }} />
-							<Button>CLB của bạn</Button>
+							<Link passHref href={`/admin`}>
+								<Button>Trang quản trị</Button>
+							</Link>
 						</Box>
 					</MenuItem>
 				)}

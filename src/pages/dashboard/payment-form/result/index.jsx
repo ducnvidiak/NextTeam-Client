@@ -15,7 +15,7 @@ function PaymentResult() {
 	useEffect(() => {
 		if (router.query.vnp_TransactionStatus) {
 			fetch(
-				`http://localhost:8080/payment?action=pay-by-online&id=${router.query.vnp_TxnRef}&status=${router.query.vnp_TransactionStatus}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/payment?action=pay-by-online&id=${router.query.vnp_OrderInfo}&status=${router.query.vnp_TransactionStatus}`,
 				{
 					method: 'GET',
 					headers: {
@@ -125,7 +125,7 @@ function PaymentResult() {
 						Số tiền: {(parseInt(router?.query?.vnp_Amount, 10) / 100).toLocaleString()}
 					</Typography>
 					<Typography variant='subtitle2' gutterBottom>
-						Mô tả giao dịch: {router?.query?.vnp_OrderInfo}
+						Mã giao dịch trên NextTeam: {router?.query?.vnp_OrderInfo}
 					</Typography>
 
 					<Typography variant='subtitle2' gutterBottom>

@@ -17,13 +17,17 @@ import { Typography } from '@mui/material'
 import Link from 'next/link'
 
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { useCookies } from 'react-cookie'
 
 const AppBarContent = props => {
+	const [cookies, setCookies] = useCookies(['clubData'])
+
 	// ** Props
 	const { hidden, settings, saveSettings, toggleNavVisibility } = props
 
 	// ** Hook
 	const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
+	const [clubData, setclubData, removeclubData] = useCookies(['clubData'])
 
 	return (
 		<Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -38,7 +42,8 @@ const AppBarContent = props => {
 					</IconButton>
 				) : null}
 			</Box>
-			<TextField
+			<Typography variant='h5'>Câu lạc bộ: {clubData['clubData']?.subname}</Typography>
+			{/* <TextField
 				placeholder='Tìm kiếm...'
 				size='small'
 				sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '50%' }}
@@ -49,7 +54,7 @@ const AppBarContent = props => {
 						</InputAdornment>
 					)
 				}}
-			/>
+			/> */}
 			{/* <Typography variant='h4' sx={{ color: '#F27123' }}>
         FU-DEVER
       </Typography> */}

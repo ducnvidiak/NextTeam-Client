@@ -121,7 +121,7 @@ function EventItem({ event, setEventList, userData }) {
 					) : null}
 				</Stack>
 				<Card sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }} marginBottom={10}>
-					<CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
+					<CardContent sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
 							{moment(event?.startTime).format('LT')}
 						</Typography>

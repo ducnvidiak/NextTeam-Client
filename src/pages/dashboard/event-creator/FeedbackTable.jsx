@@ -12,7 +12,7 @@ function FeedbackTable({ event }) {
 	const [feedbacks, setFeedbacks] = useState([])
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/feedbacks?cmd=list&eventId=${event?.id}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/feedbacks?cmd=list&eventId=${event?.id}`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

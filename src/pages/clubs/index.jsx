@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import ClubList from './ClubList'
 import Ranking from './Ranking'
+import Joined from './Joined'
 
 const FormControl = styled(MuiFormControl)(({ theme }) => ({
 	'& .MuiFormLabel-root.Mui-focused': {
@@ -118,12 +119,16 @@ function Clubs() {
 			<TabContext value={tab}>
 				<TabList variant='fullWidth' onChange={handleChangeTab} aria-label='full width tabs example'>
 					<Tab value='1' label='Danh sách' />
-					<Tab value='2' label='Xếp hạng' />
+					<Tab value='2' label='Câu lạc bộ của bạn' />
+					<Tab value='3' label='Xếp hạng' />
 				</TabList>
 				<TabPanel value='1'>
 					<ClubList></ClubList>
 				</TabPanel>
 				<TabPanel value='2'>
+					<Joined></Joined>
+				</TabPanel>
+				<TabPanel value='3'>
 					<Ranking></Ranking>
 				</TabPanel>
 			</TabContext>

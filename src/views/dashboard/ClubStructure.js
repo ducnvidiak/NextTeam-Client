@@ -40,7 +40,8 @@ const ClubStructure = props => {
 		manager_ava: props?.data?.manager_club_ava,
 		manager_club_name: props?.data?.manager_club_name,
 		manager_club_username: props?.data?.manager_club_username,
-		manager_club_id: props?.data?.manager_club_id
+		manager_club_id: props?.data?.manager_club_id,
+		description: props?.data?.description
 	}
 
 	return (
@@ -74,6 +75,21 @@ const ClubStructure = props => {
 							{clubInfo?.name}
 						</Typography>
 						<ClubCategory categoryId={clubInfo?.categoryId}></ClubCategory>
+						<Box mt={5}>
+							<Typography
+								variant='body1'
+								sx={{
+									flex: 1,
+									overflow: 'hidden',
+									display: '-webkit-box',
+									WebkitBoxOrient: 'vertical',
+									WebkitLineClamp: 3,
+									whiteSpace: 'pre-wrap'
+								}}
+							>
+								{clubInfo?.description}
+							</Typography>
+						</Box>
 						<Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-end'}>
 							<Stack direction={'row'} gap={12}>
 								<Box sx={{ display: 'flex', gap: 4 }}>
@@ -107,7 +123,7 @@ const ClubStructure = props => {
 								width: '90px',
 								height: '90px',
 								borderRadius: '1000px',
-								border: '3px solid #f58a38',
+								border: '3px solid #F27123',
 								overflow: 'hidden'
 							}}
 						>
@@ -132,12 +148,12 @@ const ClubStructure = props => {
 								gap: '1px'
 							}}
 						>
-							<Typography variant='h6'>Chủ nhiệm</Typography>
-							<Typography variant='h6'>{clubInfo?.manager_club_name}</Typography>
+							<Typography variant='body1'>Chủ nhiệm</Typography>
+							<Typography variant='body1'>{clubInfo?.manager_club_name}</Typography>
 							<Typography
 								variant='subtitle1'
 								sx={{
-									backgroundColor: 'orange',
+									backgroundColor: '#F27123',
 									display: 'inline-block',
 									padding: '0 5px',
 									borderRadius: '5px',
@@ -161,7 +177,7 @@ const ClubStructure = props => {
 								}
 							}}
 						>
-							<MoreHorizIcon sx={{ color: 'orange', fontSize: '32px' }} />
+							
 						</Box>
 					</Box>
 				</Card>

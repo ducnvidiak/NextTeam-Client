@@ -30,7 +30,6 @@ function EventDashboard() {
 				return response.json()
 			})
 			.then(function (data) {
-				
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))

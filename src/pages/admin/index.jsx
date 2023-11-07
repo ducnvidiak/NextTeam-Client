@@ -22,7 +22,7 @@ import dynamic from 'next/dynamic'
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 const Dashboard = () => {
-	const ORIGIN_URL = 'http://localhost:8080/api/statis?clubId=1'
+	const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/statis?clubId=1`
 
 	const [data, setData] = useState([])
 

@@ -50,14 +50,35 @@ function NotificationCreator() {
 	const [isSearchable, setIsSearchable] = useState(true)
 	const [userMember, setUserMember] = useState([])
 	const [clubList, setClubList] = useState([])
+	const [errorTitle, setErrorTitle] = useState(false)
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue)
 	}
 
 	const handleSubmit = event => {
-		if (save) {
-			fetch('http://localhost:8080/notification?action=send-public-email', {
+		if (title === '' || content === '') {
+			setErrorTitle(true)
+			toast.error('Không được để trống Tiêu đề hoặc nội dung')
+		} else {
+			if (save) {
+				fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=send-public-email`, {
+					method: 'POST',
+					body: JSON.stringify({
+						clubId: null,
+						title: title.trim(),
+						content: content.trim()
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				})
+					.then(function (response) {
+						return response.json()
+					})
+					.catch(error => console.error('Error:', error))
+			}
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=add-noti`, {
 				method: 'POST',
 				body: JSON.stringify({
 					clubId: null,
@@ -71,37 +92,42 @@ function NotificationCreator() {
 				.then(function (response) {
 					return response.json()
 				})
+				.then(function (data) {
+					if (data.id == null) {
+						toast.error(data)
+					} else {
+						toast.success('Gửi thông báo thành công!')
+						router.push('/admin/notifications')
+					}
+				})
 				.catch(error => console.error('Error:', error))
 		}
-		fetch('http://localhost:8080/notification?action=add-noti', {
-			method: 'POST',
-			body: JSON.stringify({
-				clubId: null,
-				title: title.trim(),
-				content: content.trim()
-			}),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				if (data.id == null) {
-					
-					toast.error(data)
-				} else {
-					toast.success('Gửi thông báo thành công!')
-					router.push('/admin/notifications')
-				}
-			})
-			.catch(error => console.error('Error:', error))
 	}
 
 	const handleSubmitPrivate = event => {
-		if (save) {
-			fetch('http://localhost:8080/notification?action=send-private-email', {
+		if (title === '' || content === '' || sendTo === '') {
+			setErrorTitle(true)
+			toast.error('Không được để trống Tiêu đề, Nội dung hoặc người nhận')
+		} else {
+			if (save) {
+				fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=send-private-email`, {
+					method: 'POST',
+					body: JSON.stringify({
+						clubId: null,
+						sendTo: sendTo,
+						title: title.trim(),
+						content: content.trim()
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				})
+					.then(function (response) {
+						return response.json()
+					})
+					.catch(error => console.error('Error:', error))
+			}
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/notification?action=add-private-noti`, {
 				method: 'POST',
 				body: JSON.stringify({
 					clubId: null,
@@ -116,33 +142,16 @@ function NotificationCreator() {
 				.then(function (response) {
 					return response.json()
 				})
+				.then(function (data) {
+					if (data.id == null) {
+						toast.error(data)
+					} else {
+						toast.success('Gửi thông báo thành công!')
+						router.push('/admin/notifications')
+					}
+				})
 				.catch(error => console.error('Error:', error))
 		}
-		fetch('http://localhost:8080/notification?action=add-private-noti', {
-			method: 'POST',
-			body: JSON.stringify({
-				clubId: null,
-				sendTo: sendTo,
-				title: title.trim(),
-				content: content.trim()
-			}),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
-			}
-		})
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				if (data.id == null) {
-					
-					toast.error(data)
-				} else {
-					toast.success('Gửi thông báo thành công!')
-					router.push('/admin/notifications')
-				}
-			})
-			.catch(error => console.error('Error:', error))
 	}
 
 	const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
@@ -153,7 +162,7 @@ function NotificationCreator() {
 	}))
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/club-user?action=view-list-user`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-list-user`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -166,7 +175,7 @@ function NotificationCreator() {
 				setUserMember(data)
 			})
 			.catch(error => console.error('Error:', error))
-		fetch('http://localhost:8080/api/club?cmd=list')
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=list`)
 			.then(res => res.json())
 			.then(result => {
 				setClubList(result)
@@ -193,6 +202,7 @@ function NotificationCreator() {
 												label='Tiêu đề'
 												id='title'
 												name='title'
+												error={errorTitle}
 												onChange={event => setTitle(event.target.value)}
 											/>
 										</Grid>
@@ -256,6 +266,7 @@ function NotificationCreator() {
 												label='Tiêu đề'
 												id='title'
 												name='title'
+												error={errorTitle}
 												onChange={event => setTitle(event.target.value)}
 											/>
 										</Grid>
