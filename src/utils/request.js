@@ -1,4 +1,4 @@
-const root = 'https://nextteam.azurewebsites.net/'
+const root = `${process.env.NEXT_PUBLIC_API_URL}`
 
 async function postAPI(link, json, contentType = 'application/x-www-form-urlencoded; charset=UTF-8') {
 	if (!(link.startsWith`https://` || link.startsWith`http://`)) {

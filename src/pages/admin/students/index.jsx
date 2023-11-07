@@ -94,12 +94,12 @@ function StudentsManagement() {
 
 	async function importSubmission(event) {
 		function setupProgressBar() {
-			document.querySelector('.progressBar').classList.remove('hidden')
+			document.querySelector(`.${classes.progressBar}`).classList.remove(classes.hidden)
 		}
 
 		function setProgressBarStatus(num, total) {
-			var progressBar = document.querySelector('.progressBar .mainBar .barStatus')
-			var percent = document.querySelector('.progressBar p')
+			var progressBar = document.querySelector(`.${classes.progressBar} ${classes.mainBar} ${classes.barStatus}`)
+			var percent = document.querySelector(`.${classes.progressBar} p`)
 
 			var value = (num * 100.0) / total
 			progressBar.style.width = value + '%'
@@ -131,7 +131,7 @@ function StudentsManagement() {
 				const gender = row['Giới tính']
 
 				// Post data to an API endpoint (assuming you have a 'post' function)
-				const result = await postAPI('' + form.id, {})
+				const result = await postAPI('', {})
 
 				if (result.status !== 0) {
 					console.error('There is some error occurred!')
@@ -141,7 +141,7 @@ function StudentsManagement() {
 				setProgressBarStatus(i, jsonData.length)
 			}
 
-			processing = false
+			setProcessing(false)
 			closePopup()
 			show(currIndex)
 		}
