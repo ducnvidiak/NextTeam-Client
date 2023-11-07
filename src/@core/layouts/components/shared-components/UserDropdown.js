@@ -90,7 +90,7 @@ const UserDropdown = props => {
 
 	useEffect(() => {
 		if (userData)
-			fetch(`http://localhost:8080/club-user?action=view-my-list&userId=${userData?.id}`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-my-list&userId=${userData?.id}`, {
 				method: 'GET',
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8'

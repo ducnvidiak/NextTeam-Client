@@ -94,7 +94,7 @@ export default function EditPrivateNotification({
 
 	useEffect(() => {
 		if (cookies['clubData'])
-			fetch(`http://localhost:8080/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-club-member&clubId=${clubData['clubData']?.clubId}`, {
 				method: 'GET',
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8'

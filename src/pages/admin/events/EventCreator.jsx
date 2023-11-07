@@ -93,8 +93,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal }) {
 						id='outlined-basic'
 						label='Tên sự kiện'
 						variant='outlined'
-						
-						// defaultValue={'Zoom | FES-TECHSpeak #02 | BORN 2 BOND - Xây dựng và phát triển Câu lạc bộ'}
 						sx={{ mb: 4 }}
 					/>
 					<TextField
@@ -102,15 +100,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal }) {
 						label='Mô tả sự kiện'
 						multiline
 						rows={10}
-
-						// defaultValue={`🎤 Host: Anh Lê Ngọc Tuấn - Giám đốc Trải nghiệm Công Nghệ, Ban Công tác học đường, Tổ chức giáo dục FPT
-                        // ​🗣️ Diễn giả: 
-                        // ​Anh Vũ Hồng Chiên - Giám đốc Trung tâm Nghiên cứu và Ứng dụng Trí tuệ nhân tạo Quy Nhơn (QAI - FPT Software)
-                        // ​Anh Đặng Việt Hùng - Design Manager tại Gianty chi nhánh Đà Nẵng
-                        // ​Topic:
-                        // ​• Giải mã công nghệ “Generative AI" và xu hướng ứng dụng trong các nghề nghiệp tương lai 
-                        // • Nghề thiết kế đồ họa và ứng dụng công cụ AI trong thiết kế 
-                        // • Thảo luận chủ đề AI có thay thế được chuyên gia đồ họa và thiết kế trong sáng tạo, xây dựng ứng dụng?`}
 					/>
 					<Stack direction={'row'} justifyContent={'space-between'}>
 						<Typography marginY={4} variant='h6'>
@@ -128,24 +117,11 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal }) {
 						</label>
 					</Stack>
 					<Input
-						accept='image/*' // Chỉ cho phép tải lên các tệp hình ảnh
+						accept='image/*' 
 						id='image-upload'
 						type='file'
-
-						//   onChange={handleBannerImageUpload}
 						style={{ display: 'none' }}
 					/>
-					{/* <Card>
-						<CardMedia
-							component='img'
-							alt='Selected Image'
-							height='100%'
-							width='100%'
-							image={
-								'https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,quality=75,width=960,height=480/event-covers/w9/21154ed7-dc92-4c28-b582-9a5adb206fa7'
-							}
-						/>
-					</Card> */}
 					<Typography marginY={4} variant='h6'>
 						Thời gian sự kiện
 					</Typography>
@@ -158,17 +134,11 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal }) {
 										helperText: 'MM/DD/YYYY'
 									}
 								}}
-
-								// defaultValue={dayjs('2022-04-17')}
 								sx={{ flex: 1 }}
 							/>
 							<TimePicker sx={{ flex: 1 }} label='Bắt đầu' 
-
-							// defaultValue={dayjs('2022-04-17T15:30')} 
 							/>
 							<TimePicker sx={{ flex: 1 }} label='Kết thúc'
-
-							// defaultValue={dayjs('2022-04-17T20:30')} 
 							/>
 						</Stack>
 					</LocalizationProvider>

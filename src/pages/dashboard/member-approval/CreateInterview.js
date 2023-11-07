@@ -103,7 +103,7 @@ export default function CreateInterview({
 		})
 	}
 	useEffect(() => {
-		fetch(`http://localhost:8080/location`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/location`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
