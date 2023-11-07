@@ -210,9 +210,9 @@ function ClubPage() {
 		let url_query = ''
 		console.log('subname', router.query.clubId)
 		if (userData?.id == undefined) {
-			url_query = `http://localhost:8080/club-detail?subname=${router.query.clubId}`
+			url_query = `${process.env.NEXT_PUBLIC_API_URL}/club-detail?subname=${router.query.clubId}`
 		} else {
-			url_query = `http://localhost:8080/club-detail?subname=${router.query.clubId}&userId=${userData?.id}`
+			url_query = `${process.env.NEXT_PUBLIC_API_URL}/club-detail?subname=${router.query.clubId}&userId=${userData?.id}`
 		}
 		fetch(url_query, {
 			method: 'GET',
@@ -234,7 +234,7 @@ function ClubPage() {
 	console.log('Club', club)
 
 	const getAPIEvents = useEffect(() => {
-		let url_query = `http://localhost:8080/events-club?clubId=${club.id}`
+		let url_query = `${process.env.NEXT_PUBLIC_API_URL}/events-club?clubId=${club.id}`
 		console.log('test', url_query)
 		fetch(url_query, {
 			method: 'GET',

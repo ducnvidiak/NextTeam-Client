@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 		gap: theme.spacing(2)
 	}
 }))
-const ORIGIN_URL = 'http://localhost:8080/api/user_manager?cmd='
+const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/user_manager?cmd=`
 
 const AdminManageUsers = () => {
 	const [users, setUsers] = useState([])
@@ -57,7 +57,7 @@ const AdminManageUsers = () => {
 	}
 
 	const refreshClubs = (id) => {
-		fetch(`http://localhost:8080/club-user?action=view-my-list&userId=${id}`)
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-my-list&userId=${id}`)
 			.then(res => res.json())
 			.then(result => {
 				

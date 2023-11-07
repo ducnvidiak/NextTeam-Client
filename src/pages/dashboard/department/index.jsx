@@ -27,7 +27,7 @@ import 'react-toastify/dist/ReactToastify.css'
 function Department() {
 	const [departments, setDepartments] = useState([])
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
-	const ORIGIN_URL = 'http://localhost:8080/department'
+	const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/department`
 	const [cookies, setCookie] = useCookies(['clubData'])
 	const [updateData, setUpdateData] = useState(false)
 	const loadDataUrl = ORIGIN_URL + '?action=list-dept&clubId=' + cookies['clubData']?.clubId

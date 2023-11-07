@@ -72,7 +72,7 @@ function Club() {
 	}
 
 	const refreshClubCategories = () => {
-		fetch('http://localhost:8080/api/club-categories?cmd=list')
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/club-categories?cmd=list`)
 			.then(res => res.json())
 			.then(result => {
 				setResultClubCate(result)
@@ -88,7 +88,7 @@ function Club() {
 	}, [resultClubCate])
 
 	const refreshClubData = () => {
-		fetch('http://localhost:8080/api/club?cmd=list')
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=list`)
 			.then(res => res.json())
 			.then(result => {
 				setClubs(result)
@@ -173,7 +173,7 @@ function Club() {
 		}
 
 		const url_fetch =
-			'http://localhost:8080/api/club?cmd=add&name=' +
+			`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=add&name=` +
 			clubFormData.name +
 			'&subname=' +
 			clubFormData.subname +
@@ -257,7 +257,7 @@ function Club() {
 		}
 
 		const url_fetch =
-			'http://localhost:8080/api/club?cmd=update&name=' +
+			`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=update&name=` +
 			clubFormData.name +
 			'&subname=' +
 			clubFormData.subname +
@@ -311,7 +311,7 @@ function Club() {
 	}
 
 	const handleDeleteClub = () => {
-		fetch('http://localhost:8080/api/club?cmd=delete&id=' + clubFormData.id)
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/club?cmd=delete&id=` + clubFormData.id)
 			.then(res => {
 				if (!res.ok) {
 					toast.error('Câu lạc bộ này đang còn thành viên hoạt động, không thể xóa !', {

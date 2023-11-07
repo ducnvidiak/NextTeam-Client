@@ -28,7 +28,7 @@ import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import Event from 'src/views/dashboard/Event'
 
 const Dashboard = () => {
-	const ORIGIN_URL = 'http://localhost:8080/api/statis?clubId='
+	const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/statis?clubId=`
 	const [cookies, setCookie] = useCookies(['clubData'])
 	const [data, setData] = useState([])
 	const clubId = cookies['clubData']?.clubId
