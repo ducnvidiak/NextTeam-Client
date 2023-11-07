@@ -387,6 +387,8 @@ const getAllPlanFilesByClubId = async id => {
 }
 
 const getAllEvents = async () => {
+	console.log('!!!', process.env.NEXT_PUBLIC_API_URL)
+
 	const json = await axios
 		.get(process.env.NEXT_PUBLIC_API_URL + 'review-event-servlet?cmd=list')
 		.then(response => {

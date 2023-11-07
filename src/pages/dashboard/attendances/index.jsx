@@ -193,9 +193,6 @@ function Attendance({ eid, cmd, setOpen }) {
 			>
 				{cmd == 'take' && (
 					<>
-						<StyledButton variant='outlined' onClick={handleCreate('code')}>
-							Tạo mã
-						</StyledButton>
 						<StyledButton variant='outlined' onClick={handleCreate('qr')}>
 							Tạo mã QR
 						</StyledButton>
@@ -228,7 +225,17 @@ function AttendanceCode({ open }) {
 	// 	})
 	// }, [qrCode])
 
-	if (open.cmd == 'qr') return <Box variant='div' ref={ref}></Box>
+	if (open.cmd == 'qr')
+		return (
+			<Box variant='div' ref={ref}>
+				<iframe
+					src={`${process.env.NEXT_PUBLIC_API_URL}/qr_code.jsp?code=123456`}
+					title='W3Schools Free Online Web Tutorials'
+					scrolling='no'
+					style={{ border: 'none', backgroundColor: 'white', width: 300, height: 300 }}
+				></iframe>
+			</Box>
+		)
 	if (open.cmd == 'code') return <Box></Box>
 
 	return <></>
@@ -290,6 +297,7 @@ function Attendances() {
 				onClose={() => setOpen2(false)}
 				closeAfterTransition
 				slots={{ backdrop: Backdrop }}
+				style={{ backgroundColor: '#00000099', backdropFilter: 'blur(20px)' }}
 			>
 				<Fade in={open2 != false}>
 					<Box sx={{ ...style, width: 'fit-content', height: 'fit-content', minWidth: 50, minHeight: 50 }}>
