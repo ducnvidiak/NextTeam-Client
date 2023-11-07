@@ -102,7 +102,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 				body: JSON.stringify({
 					...newEvent,
 					startTime: new Date(convertToTimestamp(newEvent.startTime)),
-					endTime: new Date(convertToTimestamp(newEvent.startTime)),
+					endTime: new Date(convertToTimestamp(newEvent.endTime)),
 					registeredBy: userData?.id,
 					clubId: cookiesClub['clubData']?.clubId
 				}),
@@ -132,7 +132,9 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					console.error('Error:', error)
 					toast.error('Có lỗi xảy ra khi đăng ký sự kiện, vui lòng thử lại')
 				})
-				.finally(() => {})
+				.finally(() => {
+					setOpen(false)
+				})
 		} catch (error) {
 			setOpen(false)
 			if (error?.name === 'ValidationError') {

@@ -23,7 +23,8 @@ import {
 	MenuItem,
 	Stack,
 	SwipeableDrawer,
-	Typography
+	Tooltip,
+	Typography,
 } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
@@ -41,6 +42,9 @@ import { getUserInfo } from 'src/utils/info'
 import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
+import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator } from '@mui/lab'
+import { withStyles } from '@mui/styles'
+import { getDotTimelineColor } from 'src/ultis/timeline'
 
 function EventItem({ event, setEventList, eventList, userData }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
@@ -98,8 +102,8 @@ function EventItem({ event, setEventList, eventList, userData }) {
 					</SwipeableDrawer>
 				</>
 			))}
-			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
-				<Stack direction={'column'} width={'15%'}>
+			<Stack direction={'row'} justifyContent={'space-between'}>
+				<Stack direction={'column'} alignItems={'center'} width={'15%'}>
 					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
 
@@ -108,7 +112,7 @@ function EventItem({ event, setEventList, eventList, userData }) {
 							<Typography variant='h7' mt={4}>
 								Đánh giá: {event?.avgRating}
 							</Typography>
-							<Stack direction={'row'}>
+							<Stack direction={'row'} mb={4}>
 								{[1, 2, 3, 4, 5].map((value, index) =>
 									value <= event?.avgRating.toFixed() ? (
 										<StarIcon key={index} color='primary'></StarIcon>
@@ -119,26 +123,39 @@ function EventItem({ event, setEventList, eventList, userData }) {
 							</Stack>
 						</>
 					) : null}
+					{event?.isRegistered && !event?.isFeedback && new Date() > new Date(event?.endTime) ? (
+						<Tooltip title='Đánh giá sự kiện' placement='bottom'>
+							<Button variant='contained' onClick={() => setOpenFeedbackModal(true)}>
+								Feedback
+							</Button>
+						</Tooltip>
+					) : event?.isRegistered && event?.isFeedback && new Date() > new Date(event?.endTime) ? (
+						<Tooltip title='Bạn đã feedback cho sự kiện này rồi' placement='bottom'>
+							<Button variant='outlined' disableTouchRipple>
+								Feedback
+							</Button>
+						</Tooltip>
+					) : null}
 				</Stack>
 				<Card sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }} marginBottom={10}>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
 							{`${moment(event?.startTime).format('LT')} - ${moment(event?.endTime).format('LT')}`}
 						</Typography>
-						<Typography
-							variant='h6'
-							fontWeight={700}
-							sx={{ flex: 1, cursor: 'pointer' }}
-							onClick={toggleDrawer('right', true)}
-						>
-							{event?.name}
-						</Typography>
+						<Tooltip title='Xem thông tin sự kiện' placement='left-start'>
+							<Typography
+								variant='h6'
+								fontWeight={700}
+								sx={{ flex: 1, cursor: 'pointer' }}
+								onClick={toggleDrawer('right', true)}
+							>
+								{event?.name}
+							</Typography>
+						</Tooltip>
 
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
-							<Typography variant='body1'>
-								{event?.clubId === 0 ? 'IC-PDPD' : event?.clubSubname}
-							</Typography>
+							<Typography variant='body1'>{event?.clubSubname ?? 'FPT University'}</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<LocationOnIcon></LocationOnIcon>
@@ -203,7 +220,8 @@ function EventList({ filter }) {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log(data);
+				console.log('data')
+				console.log(data)
 				setEventList(data)
 			})
 			.catch(error => console.error('Error:', error))
@@ -227,6 +245,15 @@ function EventList({ filter }) {
 				setEventListFiltered(eventList?.filter(event => new Date() > new Date(event?.endTime)))
 
 				return
+
+			case 'feedback':
+				setEventListFiltered(
+					eventList?.filter(
+						event => event?.isRegistered && !event?.isFeedback && new Date() > new Date(event?.endTime)
+					)
+				)
+
+				return
 			default:
 				return
 		}
@@ -237,22 +264,39 @@ function EventList({ filter }) {
 		setEventListFiltered(eventList)
 	}, [eventList])
 
-
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-				{eventListFiltered?.map((event, index) => (
-					<EventItem
-						key={event.id}
-						event={event}
-						setEventList={setEventList}
-						eventList={eventList}
-						userData={userData}
-					></EventItem>
-				))}
+				<Timeline>
+					{eventListFiltered?.map((event, index) => (
+						<MUITimelineItem key={event.id}>
+							<TimelineSeparator>
+								<TimelineDot color={getDotTimelineColor(event?.startTime)}/>
+								<TimelineConnector />
+							</TimelineSeparator>
+							<TimelineContent>
+									<EventItem
+										key={event.id}
+										event={event}
+										setEventList={setEventList}
+										eventList={eventList}
+										userData={userData}
+									></EventItem>
+							</TimelineContent>
+						</MUITimelineItem>
+					))}
+				</Timeline>
 			</Container>
 		</>
 	)
 }
+
+const MUITimelineItem = withStyles({
+	missingOppositeContent: {
+	  "&:before": {
+		display: "none"
+	  }
+	}
+  })(TimelineItem);
 
 export default EventList

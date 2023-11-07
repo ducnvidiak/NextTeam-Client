@@ -397,7 +397,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						</Select>
 					)}
 				</FormControl>
-				<Typography marginY={4} variant='h6'>
+				{/* <Typography marginY={4} variant='h6'>
 					Loại hình tổ chức
 				</Typography>
 				<ButtonGroup>
@@ -417,7 +417,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 					>
 						Nội bộ
 					</Button>
-				</ButtonGroup>
+				</ButtonGroup> */}
 				<Typography marginY={4} variant='h6'>
 					Kế hoạch tổ chức
 				</Typography>

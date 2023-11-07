@@ -82,11 +82,11 @@ function EventCreatorPage() {
 
 				return
 			case 'approved':
-				setEventListFiltered(eventList?.filter(event => event?.isApproved))
+				setEventListFiltered(eventList?.filter(event => event?.isApproved == 'accepted'))
 
 				return
 			case 'pending':
-				setEventListFiltered(eventList?.filter(event => !event?.isApproved))
+				setEventListFiltered(eventList?.filter(event => event?.isApproved == 'pending'))
 
 				return
 			case 'upcoming':
@@ -137,7 +137,7 @@ function EventCreatorPage() {
 					</FormControl>
 					<FormControl variant='outlined' size='small'>
 						<InputLabel>Thể loại</InputLabel>
-						<Select label='Status' defaultValue='all' onChange={e => setFilterType(e.target.value)}>
+						<Select label='Thể loại' defaultValue='all' onChange={e => setFilterType(e.target.value)}>
 							<MenuItem value='all'>Tất cả</MenuItem>
 							<MenuItem value='public'>Toàn trường</MenuItem>
 							<MenuItem value='internal'>Nội bộ</MenuItem>

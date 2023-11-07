@@ -52,7 +52,7 @@ function EventCreatorPage() {
 
 	useEffect(() => {
 		setLoading(true)
-		fetch(`http://localhost:8080/admin-events?cmd=list`, {
+		fetch(`http://localhost:8080/review-event-servlet?cmd=list`, {
 			method: 'GET',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'

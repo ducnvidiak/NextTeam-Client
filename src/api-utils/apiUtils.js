@@ -400,7 +400,7 @@ const getAllPlanFilesByClubId = async id => {
 
 const getAllEvents = async () => {
 	const json = await axios
-		.get('http://localhost:8080/admin-events?cmd=list')
+		.get('http://localhost:8080/review-event-servlet?cmd=list')
 		.then(response => {
 
 			return response.data

@@ -10,6 +10,7 @@ function RegisterEventModal({ event, openRegisterModal, setOpenRegisterModal }) 
 				aria-labelledby='alert-dialog-title'
 				aria-describedby='alert-dialog-description'
 				maxWidth={'md'}
+				fullWidth
 			>
 				<DialogTitle id='alert-dialog-title' sx={{ paddingX: 16, pt: 16 }}>
 					<Typography textAlign={'center'} variant='h5' mb={2}>
