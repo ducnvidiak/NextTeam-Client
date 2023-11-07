@@ -50,8 +50,6 @@ function NewPlan() {
 
 	const outline = classNames(isFocused ? classes.outline__orange : '')
 
-	console.log('post path: ', process.env.NEXT_PUBLIC_API_URL + 'api/plans?id=')
-
 	const handleFocus = () => {
 		setIsFocused(true)
 	}
@@ -77,7 +75,6 @@ function NewPlan() {
 	}
 
 	const handleResetForm = () => {
-		console.log('post path: ', process.env.NEXT_PUBLIC_API_URL + 'api/plans?id=')
 		setTitle('')
 		setContent('')
 		setFileList([])
