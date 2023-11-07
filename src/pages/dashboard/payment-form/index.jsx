@@ -6,6 +6,7 @@ import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
 import CircularProgress from '@mui/material/CircularProgress'
 import Backdrop from '@mui/material/Backdrop'
+import moment from 'moment/moment'
 
 function PaymentForm() {
 	const router = useRouter()
@@ -85,7 +86,7 @@ function PaymentForm() {
 								<CardContent>
 									<Grid container spacing={1}>
 										<Grid item xs={2} md={2}>
-											{row?.createdAt}
+											{moment(row?.createdAt).format('DD/MM/YY, h:mm A')}
 										</Grid>
 										<Grid item xs={6} md={6}>
 											<Typography variant='body1' style={{ fontWeight: 'bold' }}>

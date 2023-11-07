@@ -103,7 +103,6 @@ function NewProposal() {
 				const fileContent = await readFile(fileList[i])
 				formData.append(`filescontent[${i}]`, fileContent)
 
-
 				formData.append(`filesname[${i}]`, fileList[i].name)
 				formData.append(`filesType[${i}]`, fileList[i].type)
 			}
@@ -116,7 +115,7 @@ function NewProposal() {
 			if (numOfFile > 0) setLoading(true)
 
 			await createProposal(formData, userData.id).then(response => {
-				(response)
+				response
 				if (response?.status == 'success') {
 					toast.success('Gửi đề xuất thành công')
 					router.push('./')
@@ -136,7 +135,8 @@ function NewProposal() {
 				sx={{
 					width: '100%',
 					height: '100%',
-					position: 'relative'
+					position: 'relative',
+					paddingBottom: '50px'
 				}}
 			>
 				<Box
@@ -234,7 +234,6 @@ function NewProposal() {
 						<InputLabel htmlFor='title' sx={{ fontSize: '20px', fontWeight: '600' }}>
 							Tiêu đề
 						</InputLabel>
-
 						<TextField
 							id='title'
 							variant='outlined'
@@ -247,7 +246,6 @@ function NewProposal() {
 							error={titleEmpty}
 							helperText={titleEmpty && 'Thông tin này là bắt buộc'}
 						/>
-
 						<InputLabel htmlFor='title' sx={{ fontSize: '20px', fontWeight: '600', margin: '30px 0 20px' }}>
 							Nội dung đề xuất
 						</InputLabel>
@@ -256,10 +254,13 @@ function NewProposal() {
 							minRows={6}
 							style={{
 								width: 'calc(100% - 30px)',
-
 								borderRadius: '5px',
-								padding: '20px',
-								fontSize: '18px',
+								paddingTop: '20px',
+								paddingLeft: '15px',
+								paddingBottom: '20px',
+								paddingRight: '15px',
+								fontFamily: 'Be Vietnam Pro,sans-serif',
+								fontSize: '16px',
 								resize: 'none'
 							}}
 							spellCheck='false'
@@ -272,12 +273,12 @@ function NewProposal() {
 								setContent(event.target.value)
 							}}
 						/>
+
 						{contentEmpty && (
 							<FormHelperText sx={{ color: 'red', marginLeft: '30px' }}>
 								Thông tin nay là bắt buộc
 							</FormHelperText>
 						)}
-
 						<Typography sx={{ marginTop: '20px', fontSize: '16px', fontWeight: '600' }}>
 							Files đính kèm:
 						</Typography>
@@ -332,7 +333,7 @@ function NewProposal() {
 						justifyContent: 'space-between',
 						position: 'absolute',
 						width: '100%',
-						bottom: '10px',
+						bottom: '20px',
 						padding: '0 30px'
 					}}
 				>

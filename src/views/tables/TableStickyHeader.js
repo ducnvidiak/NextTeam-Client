@@ -235,7 +235,7 @@ const TableStickyHeader = props => {
 														<Button
 															variant='contained'
 															color='error'
-															startIcon={<DeleteIcon />}
+															endIcon={<DeleteIcon />}
 															onClick={() => props.openDeleteClubHandle(row)}
 														>
 															Xóa

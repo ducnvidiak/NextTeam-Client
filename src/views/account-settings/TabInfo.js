@@ -73,7 +73,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 
 	const handleSubmit = event => {
 		event.preventDefault()
-		if (studentCodeError.status || phoneNumberError.status) {
+		if (studentCodeError.status || phoneNumberError.status || dobError.status) {
 			toast.error('Vui lòng điền thông tin hợp lệ.')
 		} else {
 			updateUserInfo(currentUserInfo).then(response => {
@@ -83,7 +83,7 @@ const TabInfo = ({ userInfo, setUserInfo, majors }) => {
 						position: toast.POSITION.TOP_RIGHT
 					})
 				} else {
-					toast.error('Fail to change detail info!')
+					toast.error('Fail to change detail info (Student code not available)!')
 				}
 			})
 		}

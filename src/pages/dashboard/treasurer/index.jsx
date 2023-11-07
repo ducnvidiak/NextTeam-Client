@@ -39,6 +39,7 @@ import AddCategory from './AddCategory'
 import PayByCash from './PayByCash'
 import AddExpense from './AddExpense'
 import PaymentDetail from './PaymentDetail'
+import moment from 'moment/moment'
 
 function Treasurer() {
 	const router = useRouter()
@@ -72,6 +73,7 @@ function Treasurer() {
 	const handleAddExpense = () => {
 		setOpenAddExpenseDialog(true)
 	}
+	console.log(paymentData)
 
 	// Tính tổng của items.amount với items.status='in'
 	var totalInAmount = paymentData.reduce(function (sum, item) {
@@ -157,12 +159,15 @@ function Treasurer() {
 	}
 
 	useEffect(() => {
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`, {
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8'
+		fetch(
+			`${process.env.NEXT_PUBLIC_API_URL}/payment?action=list-payments-by-category&clubId=${cookies['clubData']?.clubId}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8'
+				}
 			}
-		})
+		)
 			.then(function (response) {
 				return response.json()
 			})
@@ -224,6 +229,7 @@ function Treasurer() {
 				handleClose={handleClose}
 				handleAddExpense={handleAddExpense}
 				cookies={cookies}
+				balance={balance}
 			></AddExpense>
 			<ToastContainer></ToastContainer>
 
@@ -257,7 +263,7 @@ function Treasurer() {
 						</FormControl>
 					</Container>
 					<Chip label={'Số dư: ' + balance?.toLocaleString()} color='primary' sx={{ marginRight: 5 }} />
-					<TextField
+					{/* <TextField
 						placeholder='Tìm kiếm...'
 						size='small'
 						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 }, width: '30%' }}
@@ -272,7 +278,7 @@ function Treasurer() {
 							setSearch(event.target.value)
 							handleSearch()
 						}}
-					/>
+					/> */}
 				</div>
 
 				<Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -302,14 +308,14 @@ function Treasurer() {
 													color='textSecondary'
 													style={{ fontSize: '0.7rem' }}
 												>
-													Tạo mới: {row?.createdAt}
+													Tạo mới: {moment(row?.createdAt).format('DD/MM/YY, h:mm A')}
 												</Typography>
 												<Typography
 													variant='body2'
 													color='textSecondary'
 													style={{ fontSize: '0.7rem' }}
 												>
-													Cập nhật: {row?.updatedAt}
+													Cập nhật: {moment(row?.updatedAt).format('DD/MM/YY, h:mm A')}
 												</Typography>
 											</div>
 										</TableCell>

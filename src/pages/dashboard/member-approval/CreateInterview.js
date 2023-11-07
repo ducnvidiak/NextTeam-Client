@@ -27,6 +27,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
 
 import { ToastContainer, toast } from 'react-toastify'
+import moment from 'moment/moment'
 
 // Styled component for the triangle shaped background image
 const TriangleImg = styled('img')({
@@ -64,6 +65,10 @@ export default function CreateInterview({
 	const theme = useTheme()
 	const imageSrc = theme.palette.mode === 'light' ? 'triangle-light.png' : 'triangle-dark.png'
 	const [locationList, setLocationList] = useState([])
+	const [errorStartTime, setErrorStartTime] = useState(false)
+	const [errorEndTime, setErrorEndTime] = useState(false)
+	const [errorLocation, setErrorLocation] = useState(false)
+	const [errorDate, setErrorDate] = useState(false)
 
 	const [interview, setInterview] = useState({
 		startTime: '',
@@ -76,8 +81,8 @@ export default function CreateInterview({
 	// Hàm xử lý khi thay đổi DatePicker
 	const handleDateChange = date => {
 		const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm')
-		const startString = `${formattedDate.substring(0, 11)}T${interview.startTime.slice(-5)}`
-		const endString = `${formattedDate.substring(0, 11)}T${interview.endTime.slice(-5)}`
+		const startString = `${formattedDate.substring(0, 11)}T${interview?.startTime.slice(-5)}`
+		const endString = `${formattedDate.substring(0, 11)}T${interview?.endTime.slice(-5)}`
 		setInterview({
 			...interview,
 			startTime: startString,
@@ -121,46 +126,45 @@ export default function CreateInterview({
 	const fullname = applicationDetail?.user.firstname + ' ' + applicationDetail?.user.lastname
 
 	const handleSubmit = async () => {
-		fetch(
-			'http://localhost:8080/engagement?action=set-interview&club=' +
-				applicationDetail?.club.subname +
-				'&name=' +
-				fullname +
-				'&location=' +
-				interview?.location +
-				'&note=' +
-				interview?.note +
-				'&email=' +
-				applicationDetail?.user.email,
-			{
-				method: 'POST',
-				body: JSON.stringify({
-					...interview,
-					startTime: new Date(convertToTimestamp(interview.startTime)),
-					endTime: new Date(convertToTimestamp(interview.endTime)),
-					engagementId: applicationDetail?.engagement.id
-				}),
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
+		if (interview.startTime === '' || interview.endTime === '' || interview.location === '') {
+			setErrorDate(true)
+			setErrorStartTime(true)
+			setErrorEndTime(true)
+			setErrorLocation(true)
+			toast.error('Vui lòng nhập các trường bắt buộc')
+		} else {
+			fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=set-interview&club=${applicationDetail?.club.subname}&name=${fullname}&location=${interview?.location}&note=${interview?.note}&email=${applicationDetail?.user.email}`,
+				{
+					method: 'POST',
+					body: JSON.stringify({
+						...interview,
+						startTime: new Date(convertToTimestamp(interview?.startTime)),
+						endTime: new Date(convertToTimestamp(interview?.endTime)),
+						engagementId: applicationDetail?.engagement.id
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
 				}
-			}
-		)
-			.then(function (response) {
-				return response.json()
-			})
-			.then(function (data) {
-				toast.success('Tạo lịch phỏng vấn thành công')
-				setOpenCreateInterviewDialog(false)
-				dispatch({ type: 'trigger' })
-			})
-			.catch(error => {
-				console.error('Error:', error)
+			)
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					toast.success('Tạo lịch phỏng vấn thành công')
+					setOpenCreateInterviewDialog(false)
+					dispatch({ type: 'trigger' })
+				})
+				.catch(error => {
+					console.error('Error:', error)
 
-				toast.error('Có lỗi xảy ra khi tạo lịch phỏng vấn, vui lòng thử lại')
-			})
-			.finally(() => {
-				setOpenCreateInterviewDialog(false)
-			})
+					toast.error('Có lỗi xảy ra khi tạo lịch phỏng vấn, vui lòng thử lại')
+				})
+				.finally(() => {
+					setOpenCreateInterviewDialog(false)
+				})
+		}
 	}
 
 	return (
@@ -233,11 +237,11 @@ export default function CreateInterview({
 										</Typography>
 										<Typography variant='body1'>
 											<strong>Ngày ứng tuyển: </strong>
-											{applicationDetail?.engagement.createdAt}
+											{moment(applicationDetail?.engagement.createdAt).format('DD/MM/YY, h:mm A')}
 										</Typography>
 										<Typography variant='body1'>
 											<strong>Ngày cập nhật: </strong>
-											{applicationDetail?.engagement.updatedAt}
+											{moment(applicationDetail?.engagement.updatedAt).format('DD/MM/YY, h:mm A')}
 										</Typography>
 									</CardContent>
 								</Card>
@@ -250,24 +254,24 @@ export default function CreateInterview({
 											<Stack direction={'row'} gap={4}>
 												<DatePicker
 													disablePast
-													label='Ngày'
+													label='Ngày *'
 													onChange={handleDateChange}
 													sx={{ flex: 1 }}
-													required
+													error={errorDate}
 												/>
 												<TimePicker
 													sx={{ flex: 1 }}
-													label='Bắt đầu'
+													label='Bắt đầu *'
 													onChange={handleStartTimeChange}
-													required
+													error={errorStartTime}
 
 													// defaultValue={dayjs('2022-04-17T15:30')}
 												/>
 												<TimePicker
 													sx={{ flex: 1 }}
-													label='Kết thúc'
+													label='Kết thúc *'
 													onChange={handleEndTimeChange}
-													required
+													error={errorEndTime}
 
 													// defaultValue={dayjs('2022-04-17T20:30')}
 												/>
@@ -277,6 +281,7 @@ export default function CreateInterview({
 											sx={{ marginTop: 5 }}
 											id='location'
 											fullWidth
+											error={errorLocation}
 											options={locationList}
 											autoHighlight
 											getOptionLabel={option => option.name}
@@ -294,7 +299,7 @@ export default function CreateInterview({
 											renderInput={params => (
 												<TextField
 													{...params}
-													label='Địa điểm'
+													label='Địa điểm *'
 													inputProps={{
 														...params.inputProps,
 														autoComplete: 'new-password' // disable autocomplete and autofill

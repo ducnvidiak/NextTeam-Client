@@ -37,7 +37,7 @@ import Modal from '@mui/material/Modal'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 
-function ActivityProposals() {
+function ActivityPlans() {
 	const [openPreviewModal, setOpenPreviewModal] = useState(false)
 
 	const [filterBy, setFilterBy] = useState('all')
@@ -49,7 +49,7 @@ function ActivityProposals() {
 
 	const [loading, setLoading] = useState(false)
 
-	const [deleteProposal, setDeleteProposal] = useState(null)
+	const [deletePlan, setDeletePlan] = useState(null)
 
 	const [openModal, setOpenModal] = useState(false)
 
@@ -70,24 +70,25 @@ function ActivityProposals() {
 				setFileRecords(response)
 			})
 		}
-	}, [userData,clubId])
+	}, [userData, clubId])
 
 	const handleAddNewPlan = () => {
 		router.push('./plans/new-plan')
 	}
 
 	const handleDelete = () => {
-		const hasFile = fileRecords?.some(fileRecord => fileRecord.proposalId == deleteProposal.id)
+		const hasFile = fileRecords?.some(fileRecord => fileRecord.planId == deletePlan.id)
 		if (hasFile) setLoading(true)
 
-		deleteProposalById(deleteProposal.id).then(response => {
+		deletePlanById(deletePlan.id).then(response => {
+			console.log('delete response: ', response)
 
 			if (response?.message == 'success') {
 				if (hasFile) setLoading(false)
 
 				toast.success('Xóa thành công')
-				setProposals(current => current.filter(proposal => proposal.id !== deleteProposal.id))
-				setDeleteProposal(null)
+				setPlans(current => current.filter(plan => plan.id !== deletePlan.id))
+				setDeletePlan(null)
 			} else {
 				toast.error('Hệ thống đang gặp sự cố vui lòng thử lại sau')
 			}
@@ -96,13 +97,13 @@ function ActivityProposals() {
 	}
 
 	const handleConfirmDelete = id => {
-		setDeleteProposal(proposals.find(proposal => proposal.id == id))
+		setDeletePlan(plans.find(plan => plan.id == id))
 		setOpenModal(true)
 	}
 
 	const handleCloseModal = () => {
 		setOpenModal(false)
-		setDeleteProposal(null)
+		setDeletePlan(null)
 	}
 
 	const handleOpenPreview = fileRecord => {
@@ -295,7 +296,7 @@ function ActivityProposals() {
 										}
 									}}
 									onClick={() => {
-										handleConfirmDelete(proposal.id)
+										handleConfirmDelete(plan.id)
 									}}
 								>
 									<RiDeleteBinLine />
@@ -359,7 +360,7 @@ function ActivityProposals() {
 						}}
 						onClick={handleAddNewPlan}
 					>
-						<span>Thêm đề kế hoạch</span> <PostAddIcon sx={{ width: '30px', height: '30px' }} />
+						<span>Thêm kế hoạch mới</span> <PostAddIcon sx={{ width: '30px', height: '30px' }} />
 					</button>
 				</Box>
 				<Box
@@ -400,8 +401,8 @@ function ActivityProposals() {
 				<Modal
 					open={openModal}
 					onClose={handleCloseModal}
-					aria-labelledby='proposal deleting'
-					aria-describedby='modal for confirm delete proposal'
+					aria-labelledby='plan deleting'
+					aria-describedby='modal for confirm delete plan'
 				>
 					<Paper
 						sx={{
@@ -422,13 +423,13 @@ function ActivityProposals() {
 								borderBottom: '2px solid orange'
 							}}
 						>
-							<Typography variant='h6'>Bạn chắc chắn muốn xóa bản đề xuất này chứ?</Typography>
+							<Typography variant='h6'>Bạn chắc chắn muốn xóa bản kế hoạch này chứ?</Typography>
 						</Box>
 
 						<Box sx={{ padding: '20px' }}>
 							<Box sx={{ display: 'flex', alignItems: 'center' }}>
 								<Typography sx={{ color: 'rgb(86, 129, 249)', fontSize: '12px' }}>
-									<span style={{ fontSize: '20px' }}>#</span> id-{deleteProposal?.id}
+									<span style={{ fontSize: '20px' }}>#</span> id-{deletePlan?.id}
 								</Typography>
 							</Box>
 							<Box>
@@ -442,7 +443,7 @@ function ActivityProposals() {
 										color: 'black'
 									}}
 								>
-									{deleteProposal?.title}
+									{deletePlan?.title}
 								</Typography>
 								<Typography
 									sx={{
@@ -454,7 +455,7 @@ function ActivityProposals() {
 										color: 'black'
 									}}
 								>
-									{deleteProposal?.content}
+									{deletePlan?.content}
 								</Typography>
 							</Box>
 						</Box>
@@ -482,7 +483,7 @@ function ActivityProposals() {
 					open={openPreviewModal}
 					onClose={handleClosePreview}
 					aria-labelledby='preview modal'
-					aria-describedby='show preview file in a proposal'
+					aria-describedby='show preview file in a plan'
 				>
 					<Paper
 						sx={{
@@ -561,6 +562,6 @@ function ActivityProposals() {
 	)
 }
 
-export default ActivityProposals
+export default ActivityPlans
 
 // 23$@#HURury an@gmail.com

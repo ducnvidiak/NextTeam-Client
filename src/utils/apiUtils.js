@@ -12,7 +12,7 @@ export const updateUserAvatar = async (imgSrc, id) => {
 		}
 
 		const json = await axios
-			.put('http://localhost:8080/api/userAvatar?id=' + id, formData, config)
+			.put(process.env.NEXT_PUBLIC_API_URL + '/api/userAvatar?id=' + id, formData, config)
 			.then(response => {
 				return response.data
 			})
@@ -36,7 +36,7 @@ export const updateUserInfo = async objectData => {
 	}
 
 	const json = await axios
-		.put('http://localhost:8080/api/user', data, config)
+		.put(process.env.NEXT_PUBLIC_API_URL + '/api/user', data, config)
 		.then(response => {
 			return response.data
 		})
@@ -51,10 +51,8 @@ export const updateUserInfo = async objectData => {
 
 export const getUserInfo = async id => {
 	const json = await axios
-		.get('http://localhost:8080/api/user?id=' + id)
+		.get(process.env.NEXT_PUBLIC_API_URL + '/api/user?id=' + id)
 		.then(response => {
-			
-
 			return response.data
 		})
 		.catch(error => {
@@ -76,7 +74,7 @@ export const changeUserPass = async (authInfo, id) => {
 	}
 
 	const json = await axios
-		.put('http://localhost:8080/api/userAuth?id=' + id, data, config)
+		.put(process.env.NEXT_PUBLIC_API_URL + '/api/userAuth?id=' + id, data, config)
 		.then(response => {
 			return response.data
 		})
@@ -91,10 +89,8 @@ export const changeUserPass = async (authInfo, id) => {
 
 export const getAllMajors = async () => {
 	const json = await axios
-		.get('http://localhost:8080/api/allMajors')
+		.get(process.env.NEXT_PUBLIC_API_URL + '/api/allMajors')
 		.then(response => {
-			
-
 			return response.data
 		})
 		.catch(error => {
@@ -108,10 +104,8 @@ export const getAllMajors = async () => {
 
 export const getListOfAllUser = async () => {
 	const json = await axios
-		.get('http://localhost:8080/api/userlist')
+		.get(process.env.NEXT_PUBLIC_API_URL + '/api/userlist')
 		.then(response => {
-			
-
 			return response.data
 		})
 		.catch(error => {
