@@ -6,6 +6,10 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
 	TextField,
 	Typography,
 	styled
@@ -41,7 +45,7 @@ function RegisterClub({ clubId, userId, isOpen, handleClose }) {
 	const [departmentId, setDepartmentId] = useState('')
 
 	const handleUpload = () => {
-		const cvfile = ref(uploadCv, `files/${v4()}`)
+		const cvfile = ref(uploadCv, `files/${cv?.name}`)
 		const uploadTask = uploadBytesResumable(cvfile, cv)
 		uploadTask.on(
 			'state_changed',
@@ -67,10 +71,11 @@ function RegisterClub({ clubId, userId, isOpen, handleClose }) {
 				// For instance, get the download URL: https://firebasestorage.googleapis.com/...
 				getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
 					console.log('File available at', downloadURL)
+
 					axios
-						.get(
+						.post(
 							`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}&cvUrl=` +
-								downloadURL,
+								encodeURI(downloadURL),
 							{
 								headers: {
 									'Content-type': 'application/json; charset=UTF-8'
@@ -119,34 +124,22 @@ function RegisterClub({ clubId, userId, isOpen, handleClose }) {
 					Vui lòng điền những thông tin bên dưới để đăng ký tham gia vào câu lạc bộ này
 				</DialogContentText>
 				<Box sx={{ maxWidth: '50%', marginBottom: 2 }}>
-					<Autocomplete
-						id='sendTo'
-						fullWidth
-						options={department}
-						autoHighlight
-						getOptionLabel={option => option.name}
-						onChange={event => setDepartmentId(event.target.value)}
-						renderOption={(props, option) => (
-							<Box
-								component='li'
-								sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
-								{...props}
-								value={option.id}
-							>
-								{option.name}
-							</Box>
-						)}
-						renderInput={params => (
-							<TextField
-								{...params}
-								label='Ban đăng ký'
-								inputProps={{
-									...params.inputProps,
-									autoComplete: 'new-password' // disable autocomplete and autofill
-								}}
-							/>
-						)}
-					/>
+					<FormControl fullWidth>
+						<InputLabel id='demo-simple-select-label'>Ban đăng ký</InputLabel>
+						<Select
+							labelId='demo-simple-select-label'
+							id='demo-simple-select'
+							value={departmentId}
+							label='Ban đăng ký'
+							onChange={e => setDepartmentId(e.target.value)}
+						>
+							{department?.map(department => (
+								<MenuItem key={department.id} value={department.id}>
+									{department.name}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
 				</Box>
 				<Typography marginBottom={1}>Chọn CV: </Typography>
 				<Button component='label' variant='contained' startIcon={<CloudUploadIcon />} sx={{ marginBottom: 2 }}>

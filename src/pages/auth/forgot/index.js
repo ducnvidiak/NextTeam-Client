@@ -28,6 +28,7 @@ import Error404 from 'src/pages/404'
 import { useCookies } from 'react-cookie'
 import Decentralization from 'src/layouts/Decentralization'
 import ForRole from 'src/layouts/ForRole'
+import { Backdrop, CircularProgress } from '@mui/material'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -47,6 +48,7 @@ const ErrorParagraph = styled('p')(() => ({
 
 const RecoverPassword = () => {
 	const [pinRef, setPinRef] = useState()
+	const [loading, setLoading] = useState(false)
 	const router = useRouter()
 
 	// ** State
@@ -77,7 +79,13 @@ const RecoverPassword = () => {
 
 	return !cookies.userData ? (
 		<Box className='content-center'>
-			<Card sx={{ zIndex: 1 }}>
+			<Card sx={{ zIndex: 1, position: 'relative' }}>
+				<Backdrop
+					sx={{ color: '#aaa', zIndex: theme => theme.zIndex.drawer + 100, position: 'absolute' }}
+					open={loading}
+				>
+					<CircularProgress color='primary' />
+				</Backdrop>
 				<CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
 					<a href={'/'} style={{ textDecoration: 'none' }}>
 						<Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -164,13 +172,20 @@ const RecoverPassword = () => {
 								setValues={setValues}
 								setStep={setStep}
 								refFnc={setFocusForStepTwo}
+								setLoading={setLoading}
 							/>
-							<VerificationCode setRef={setPinRef} values={values} setStep={setStep} />
+							<VerificationCode
+								setRef={setPinRef}
+								values={values}
+								setStep={setStep}
+								setLoading={setLoading}
+							/>
 							<SetPassword
 								router={router}
 								changeProc={handleChange}
 								values={values}
 								setValues={setValues}
+								setLoading={setLoading}
 							/>
 						</div>
 					</div>
@@ -184,7 +199,7 @@ const RecoverPassword = () => {
 						}}
 					>
 						<Typography variant='body2' sx={{ marginRight: 2 }}>
-							Nhớ mật khẩu? 
+							Nhớ mật khẩu?
 						</Typography>
 						<Typography variant='body2'>
 							<Link passHref href='/auth/login/'>
