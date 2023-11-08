@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
 const ORIGIN_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/user_manager?cmd=`
 
 const AdminManageUsers = () => {
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(true)
 
 	const [users, setUsers] = useState([])
 	const [clubs, setClubs] = useState([])
@@ -49,9 +49,8 @@ const AdminManageUsers = () => {
 	const [selectedUser, setSelectedUser] = useState(null)
 	const [selectedRole, setSelectedRole] = useState('') // State for selected role in dropdown
 	const [selectedClubId, setSelectedClubId] = useState('')
-	const [userRole, setUserRole] = useState(null);
+	const [userRole, setUserRole] = useState('')
 
-	
 	const refreshUsers = () => {
 		fetch(`${ORIGIN_URL}list`)
 			.then(res => res.json())
@@ -61,20 +60,33 @@ const AdminManageUsers = () => {
 			})
 	}
 
-	const refreshClubs = (id) => {
+	const refreshUserRole = (id, clubId) => {
+		fetch(`${ORIGIN_URL}user_role&id=${id}&clubId=${clubId}`)
+			.then(res => res.json())
+			.then(result => {
+				setUserRole(result[0]?.role)
+			})
+	}
+
+	const refreshClubs = id => {
 		fetch(`${process.env.NEXT_PUBLIC_API_URL}/club-user?action=view-my-list&userId=${id}`)
 			.then(res => res.json())
 			.then(result => {
-				
 				setClubs(result)
 				console.log('Clubs', clubs)
 			})
 	}
 
 	useEffect(() => {
+		if (selectedClubId) {
+			// Fetch user roles based on the selected user and club
+			refreshUserRole(selectedUser.id, selectedClubId)
+		}
+	}, [selectedUser, selectedClubId])
+
+	useEffect(() => {
 		refreshUsers()
 	}, [users, selectedUser])
-
 
 	const classes = useStyles()
 
@@ -102,18 +114,20 @@ const AdminManageUsers = () => {
 	const handlePermissionDialogClose = () => {
 		setSelectedUser(null)
 		setSelectedClubId('')
+		setUserRole('')
 		setPermissionDialogOpen(false)
 	}
 
 	const handleBlockUser = selectedUser => {
 		if (selectedUser.isActive) {
 			fetch(`${ORIGIN_URL}block&id=${selectedUser.id}`)
-				.then(res =>{ 
+				.then(res => {
 					if (!res.ok) {
 						throw new Error('Network response was not ok')
 					}
-					
-					return res.json()})
+
+					return res.json()
+				})
 				.then(result => {
 					// Assuming the server responds with the updated user data
 					setUsers(prevUsers =>
@@ -127,7 +141,8 @@ const AdminManageUsers = () => {
 						pauseOnHover: true,
 						draggable: true
 					})
-				}).catch(error =>{
+				})
+				.catch(error => {
 					toast.error('Chặn thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
@@ -139,12 +154,13 @@ const AdminManageUsers = () => {
 				})
 		} else {
 			fetch(`${ORIGIN_URL}unblock&id=${selectedUser.id}`)
-				.then(res =>{ 
+				.then(res => {
 					if (!res.ok) {
 						throw new Error('Network response was not ok')
 					}
-					
-					return res.json()})
+
+					return res.json()
+				})
 				.then(result => {
 					// Assuming the server responds with the updated user data
 					setUsers(prevUsers =>
@@ -158,7 +174,8 @@ const AdminManageUsers = () => {
 						pauseOnHover: true,
 						draggable: true
 					})
-				}).catch(error =>{
+				})
+				.catch(error => {
 					toast.error('Mở chặn thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
@@ -177,17 +194,16 @@ const AdminManageUsers = () => {
 			const DCT_ADMIN_URL = `${ORIGIN_URL}dct_manager&id=${selectedUser.id}&clubId=${selectedClubId}`
 			console.log(DCT_ADMIN_URL)
 			fetch(DCT_ADMIN_URL)
-				.then(res =>{ 
+				.then(res => {
 					if (!res.ok) {
 						throw new Error('Network response was not ok')
 					}
-					
-					return res.json()})
+
+					return res.json()
+				})
 				.then(result => {
 					// Assuming the server responds with the updated user data
-					setUsers(prevUsers =>
-						prevUsers.map(user => (user.id === selectedUser.id ? { ...user, isAdmin: true } : user))
-					)
+
 					toast.success('Phân quyền thành công', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
@@ -207,20 +223,24 @@ const AdminManageUsers = () => {
 						draggable: true
 					})
 				})
+				.finally(() => {
+					setSelectedUser(null)
+					setSelectedRole('')
+					setSelectedClubId('')
+					setUserRole([])
+				})
 		} else {
 			const DCT_USER_URL = `${ORIGIN_URL}dct_member&id=${selectedUser.id}&clubId=${selectedClubId}`
 			console.log(DCT_USER_URL)
 			fetch(DCT_USER_URL)
-				.then(res =>{ 
+				.then(res => {
 					if (!res.ok) {
 						throw new Error('Network response was not ok')
 					}
-					
-					return res.json()})
+
+					return res.json()
+				})
 				.then(result => {
-					setUsers(prevUsers =>
-						prevUsers.map(user => (user.id === selectedUser.id ? { ...user, isAdmin: false } : user))
-					)
 					toast.success('Phân quyền thành công', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
@@ -229,7 +249,8 @@ const AdminManageUsers = () => {
 						pauseOnHover: true,
 						draggable: true
 					})
-				}).catch(error => {
+				})
+				.catch(error => {
 					toast.error('Phân quyền thất bại', {
 						position: 'top-right',
 						autoClose: 3000, // Close the toast after 3 seconds
@@ -239,17 +260,21 @@ const AdminManageUsers = () => {
 						draggable: true
 					})
 				})
+				.finally(() => {
+					setSelectedUser(null)
+					setSelectedRole('')
+					setSelectedClubId('')
+					setUserRole([])
+				})
 		}
 		handlePermissionDialogClose()
 	}
 
 	return (
-		
-
 		<Card className={classes.root}>
 			<Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 100 }} open={loading}>
-                <CircularProgress color='inherit' />
-            </Backdrop>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 
 			<CardContent>
 				<Typography variant='h6' gutterBottom>
@@ -321,18 +346,20 @@ const AdminManageUsers = () => {
 					<DialogTitle>Phân quyền cho tài khoản {selectedUser ? selectedUser.username : ''}</DialogTitle>
 					<DialogContent className={classes.dialogContent}>
 						<Typography variant='subtitle1'>Chọn câu lạc bộ:</Typography>
-						<Select value={selectedClubId|| ''} onChange={e => setSelectedClubId(e.target.value)} fullWidth>
-  {clubs?.map((club) => (
-    <MenuItem key={club.id} value={club.id}>
-      {club.name}
-    </MenuItem>
-  ))}
-</Select>
-{selectedClubId && userRole && (
-      <div>
-        Your role in is: {userRole} 
-      </div>
-    )}
+						<Select
+							value={selectedClubId || ''}
+							onChange={e => setSelectedClubId(e.target.value)}
+							fullWidth
+						>
+							{clubs?.map(club => (
+								<MenuItem key={club.id} value={club.id}>
+									{club.name}
+								</MenuItem>
+							))}
+						</Select>
+
+						<Typography variant="subtitle1">Vai trò hiện tại:       {userRole === 'manager' ? 'Chủ nhiệm' : userRole === 'member' ? 'Thành viên' : 'Không có vai trò nào'}
+</Typography>
 						<Typography variant='subtitle1'>Chọn quyền:</Typography>
 						<Select value={selectedRole} onChange={e => setSelectedRole(e.target.value)} fullWidth>
 							<MenuItem value='Chủ nhiệm'>Chủ nhiệm</MenuItem>

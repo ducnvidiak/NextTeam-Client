@@ -63,7 +63,7 @@ function ClubItem({ club, index }) {
 	const [userId, setUserId] = useState()
 
 	useEffect(() => {
-		;(async () => setUserId((await getUserInfo(cookies['userData'])).id))()
+		(async () => setUserId((await getUserInfo(cookies['userData'])).id))()
 	}, [cookies])
 
 	const handleClick = () => {
@@ -71,23 +71,9 @@ function ClubItem({ club, index }) {
 	}
 
 	
-
-	const callAPIDepartment = async clubId => {
-		try {
-			setLoading(true)
-			const res = await getAPI('/department?action=list-dept&clubId=' + clubId)
-			setDepartment(res)
-		} catch (error) {
-			console.log(error)
-		} finally {
-			setLoading(false)
-		}
-	}
-
 	const handleClickOpen = clubId => {
 		if (userId) {
 			setClubId(clubId)
-			callAPIDepartment(clubId)
 			setOpen(true)
 		} else {
 			router.push('/auth/login')
@@ -122,11 +108,11 @@ function ClubItem({ club, index }) {
 
 			<RegisterClub clubId={clubId} userId={userId} isOpen={open} handleClose={handleClose} />
 
-			<Stack direction={'row'} justifyContent={'space-between'} marginBottom={10}>
+			<Stack direction={'row'} justifyContent={'space-between'} mb={10}>
 				<Stack direction={'column'} width={'5%'}>
 					<Typography variant='h5'>{index + 1}.</Typography>
 				</Stack>
-				<Card sx={{ width: '95%', display: 'flex' }} marginBottom={10}>
+				<Card sx={{ width: '95%', display: 'flex' }} mb={10}>
 					<img
 						src={club.avatarUrl}
 						alt=''
@@ -186,7 +172,6 @@ function ClubItem({ club, index }) {
 									variant='outlined'
 									color='secondary'
 									sx={{ marginTop: 4, width: '50%' }}
-									onClick={() => handleClickOpen(club.id)}
 									disabled
 								>
 									Đã tham gia
