@@ -22,6 +22,7 @@ import {
 	ListItemIcon,
 	ListItemText,
 	MenuItem,
+	Skeleton,
 	Stack,
 	SwipeableDrawer,
 	Typography
@@ -41,9 +42,10 @@ import FeedbackModal from './FeedbackModal'
 import EventManagement from './EventManagement'
 import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp'
+import EventsLoading from 'src/views/EventsLoading'
 
 function EventItem({ event, setEventList, eventList, index }) {
-	console.log(event);
+	console.log(event)
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
 	const [openEventManagememntModal, setOpenEventManagememntModal] = useState(false)
@@ -113,15 +115,12 @@ function EventItem({ event, setEventList, eventList, index }) {
 					) : event?.isApproved == 'pending' ? (
 						<Chip label='Đang chờ' sx={{ mb: 4, fontSize: 16 }} color='warning' />
 					) : (
-						<Chip label='Phê duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
+						<Chip label='Đã duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
 					)}
 					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
 				</Stack>
-				<Card
-					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
-					marginBottom={10}
-				>
+				<Card sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }} marginBottom={10}>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 						<Typography variant='h7' sx={{ opacity: 0.7 }}>
 							{moment(event?.startTime).format('LT')}
@@ -132,11 +131,7 @@ function EventItem({ event, setEventList, eventList, index }) {
 
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
-							<Typography variant='body1'>
-								{
-									event?.clubSubname ?? 'FPT University'
-								}
-							</Typography>
+							<Typography variant='body1'>{event?.clubSubname ?? 'FPT University'}</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<LocationOnIcon></LocationOnIcon>
@@ -166,14 +161,15 @@ function EventItem({ event, setEventList, eventList, index }) {
 	)
 }
 
-function EventList({ eventList, setEventList, filterType }) {
+function EventList({ eventList, setEventList, filterType, pageLoading }) {
 
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-				{eventList
-					?.filter(event => event?.type == filterType || filterType == 'all')
-					.map((event, index) => (
+				{pageLoading ? (
+					<EventsLoading></EventsLoading>
+				) : (
+					eventList?.map((event, index) => (
 						<EventItem
 							key={event.id}
 							event={event}
@@ -181,7 +177,10 @@ function EventList({ eventList, setEventList, filterType }) {
 							index={index}
 							eventList={eventList}
 						></EventItem>
-					))}
+					))
+
+					// ?.filter(event => event?.type == filterType || filterType == 'all')
+				)}
 			</Container>
 		</>
 	)

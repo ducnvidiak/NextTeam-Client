@@ -42,16 +42,17 @@ function EventCreatorPage() {
 	const [eventList, setEventList] = useState()
 	const [eventListFiltered, setEventListFiltered] = useState()
 	const [userData, setUserData] = useState()
-	const [loading, setLoading] = useState(false)
 	const [filter, setFilter] = useState('all')
 	const [filterType, setFilterType] = useState('all')
+	const [pageLoading, setPageLoading] = useState(false)
 
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	useEffect(() => {
-		setLoading(true)
+		setPageLoading(true)
+
 		fetch(`${process.env.NEXT_PUBLIC_API_URL}/review-event-servlet?cmd=list`, {
 			method: 'GET',
 			headers: {
@@ -62,15 +63,14 @@ function EventCreatorPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				
 				setEventList(data)
 				setEventListFiltered(data)
-				setLoading(false)
+				setPageLoading(false)
 			})
 			.catch(error => {
 				console.error('Error:', error)
 				toast.error('Có lỗi xảy ra, vui lòng thử lại!!!')
-				setLoading(false)
+				setPageLoading(false)
 			})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
@@ -82,11 +82,11 @@ function EventCreatorPage() {
 
 				return
 			case 'approved':
-				setEventListFiltered(eventList?.filter(event => event?.isApproved))
+				setEventListFiltered(eventList?.filter(event => event?.isApproved == 'accepted'))
 
 				return
 			case 'pending':
-				setEventListFiltered(eventList?.filter(event => !event?.isApproved))
+				setEventListFiltered(eventList?.filter(event => event?.isApproved == 'pending'))
 
 				return
 			case 'upcoming':
@@ -101,8 +101,35 @@ function EventCreatorPage() {
 				return
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filter])
+	}, [filter, eventList])
 
+	useEffect(() => {
+		console.log(eventList)
+		console.log(filterType)
+
+		switch (filterType) {
+			case 'all':
+				setEventListFiltered(eventList)
+
+				return
+			case 'fpt':
+				setEventListFiltered(
+					eventList?.filter(event => {
+						return event?.clubSubname === undefined
+					})
+				)
+
+				return
+			case 'club':
+				setEventListFiltered(eventList?.filter(event => event?.clubSubname !== undefined))
+
+				return
+			default:
+				return
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filterType, eventList])
+	console.log('eventListFiltered', eventListFiltered)
 	useEffect(() => {
 		setEventListFiltered(eventList)
 	}, [eventList])
@@ -127,7 +154,7 @@ function EventCreatorPage() {
 				<Stack direction={'row'} gap={2}>
 					<FormControl variant='outlined' size='small'>
 						<InputLabel>Trạng thái</InputLabel>
-						<Select label='Status' defaultValue='all' onChange={e => setFilter(e.target.value)}>
+						<Select label='Trạng thái' defaultValue='all' onChange={e => setFilter(e.target.value)}>
 							<MenuItem value='all'>Tất cả</MenuItem>
 							<MenuItem value='approved'>Đã duyệt</MenuItem>
 							<MenuItem value='pending'>Chưa duyệt</MenuItem>
@@ -136,16 +163,21 @@ function EventCreatorPage() {
 						</Select>
 					</FormControl>
 					<FormControl variant='outlined' size='small'>
-						<InputLabel>Thể loại</InputLabel>
-						<Select label='Status' defaultValue='all' onChange={e => setFilterType(e.target.value)}>
+						<InputLabel>Tổ chức</InputLabel>
+						<Select label='Tổ chức' defaultValue='all' onChange={e => setFilterType(e.target.value)}>
 							<MenuItem value='all'>Tất cả</MenuItem>
-							<MenuItem value='public'>Toàn trường</MenuItem>
-							<MenuItem value='internal'>Nội bộ</MenuItem>
+							<MenuItem value='fpt'>FPT University</MenuItem>
+							<MenuItem value='club'>Câu lạc bộ</MenuItem>
 						</Select>
 					</FormControl>
 				</Stack>
 			</Stack>
-			<EventList filterType={filterType} eventList={eventListFiltered} setEventList={setEventList}></EventList>
+			<EventList
+				filterType={filterType}
+				eventList={eventListFiltered}
+				setEventList={setEventList}
+				pageLoading={pageLoading}
+			></EventList>
 		</Container>
 	)
 }

@@ -41,10 +41,13 @@ import FeedbackModal from './FeedbackModal'
 import EventManagement from './EventManagement'
 import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp'
+import EventsLoading from 'src/views/EventsLoading'
+import ReviewModal from './ReviewModal'
 
 function EventItem({ event, setEventList, eventList, index }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
+	const [openReviewModal, setOpenReviewModal] = useState(false)
 	const [openEventManagememntModal, setOpenEventManagememntModal] = useState(false)
 
 	const [state, setState] = useState({
@@ -73,6 +76,14 @@ function EventItem({ event, setEventList, eventList, index }) {
 				openFeedbackModal={openFeedbackModal}
 				setOpenFeedbackModal={setOpenFeedbackModal}
 			></FeedbackModal>
+			<ReviewModal
+				event={event}
+				status={event?.isApproved}
+				message={event?.response}
+				setOpenReviewModal={setOpenReviewModal}
+				openReviewModal={openReviewModal}
+			></ReviewModal>
+
 			<EventManagement
 				openEventManagememntModal={openEventManagememntModal}
 				setOpenEventManagememntModal={setOpenEventManagememntModal}
@@ -110,11 +121,21 @@ function EventItem({ event, setEventList, eventList, index }) {
 					{event?.type == 'internal' ? (
 						<Chip label='Nội bộ' variant='outlined' color='success'></Chip>
 					) : event?.isApproved == 'rejected' ? (
-						<Chip label='Từ chối' sx={{ mb: 4, fontSize: 16 }} color='error' />
+						<Chip
+							onClick={() => setOpenReviewModal(true)}
+							label='Từ chối'
+							sx={{ mb: 4, fontSize: 16 }}
+							color='error'
+						/>
 					) : event?.isApproved == 'pending' ? (
 						<Chip label='Đang chờ' sx={{ mb: 4, fontSize: 16 }} color='warning' />
 					) : (
-						<Chip label='Phê duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
+						<Chip
+							onClick={() => setOpenReviewModal(true)}
+							label='Đã duyệt'
+							sx={{ mb: 4, fontSize: 16 }}
+							color='success'
+						/>
 					)}
 					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
 					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
@@ -169,21 +190,25 @@ function EventItem({ event, setEventList, eventList, index }) {
 	)
 }
 
-function EventList({ eventList, setEventList, filterType }) {
+function EventList({ loading, eventList, setEventList, filterType }) {
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-				{eventList
-					?.filter(event => event?.type == filterType || filterType == 'all')
-					.map((event, index) => (
-						<EventItem
-							key={event.id}
-							event={event}
-							setEventList={setEventList}
-							index={index}
-							eventList={eventList}
-						></EventItem>
-					))}
+				{loading ? (
+					<EventsLoading></EventsLoading>
+				) : (
+					eventList
+						?.filter(event => event?.type == filterType || filterType == 'all')
+						.map((event, index) => (
+							<EventItem
+								key={event.id}
+								event={event}
+								setEventList={setEventList}
+								index={index}
+								eventList={eventList}
+							></EventItem>
+						))
+				)}
 			</Container>
 		</>
 	)

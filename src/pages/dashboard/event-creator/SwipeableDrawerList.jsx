@@ -44,7 +44,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 					<CardContent sx={{ padding: 4 }}>
 						<Typography variant='h6' fontWeight={700} marginBottom={4}>
 							{event?.name}
-							<Link href={`http://localhost:3000/clubs/${event?.clubSubname}`} passHref>
+							<Link href={`https://next-team-client.vercel.app/clubs/${event?.clubSubname}`} passHref>
 								<Stack
 									direction={'row'}
 									alignItems={'center'}

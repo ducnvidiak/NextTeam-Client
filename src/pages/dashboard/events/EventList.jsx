@@ -40,6 +40,7 @@ import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
 import { getUserInfo } from 'src/utils/info'
 import { mmddyyToDdmmyy, translateDayOfWeek } from 'src/ultis/dateTime'
+import EventsLoading from 'src/views/EventsLoading'
 
 function EventItem({ event, setEventList, userData }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
@@ -136,9 +137,7 @@ function EventItem({ event, setEventList, userData }) {
 
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<Groups2Icon></Groups2Icon>
-							<Typography variant='body1'>
-								{event?.clubSubname}
-							</Typography>
+							<Typography variant='body1'>{event?.clubSubname}</Typography>
 						</Box>
 						<Box sx={{ display: 'flex', gap: 4 }}>
 							<LocationOnIcon></LocationOnIcon>
@@ -181,13 +180,22 @@ function EventItem({ event, setEventList, userData }) {
 	)
 }
 
-function EventList({ eventListFiltered, setEventList, userData }) {
+function EventList({ eventListFiltered, setEventList, userData, pageLoading }) {
 	return (
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
-				{eventListFiltered?.map((event, index) => (
-					<EventItem key={event.id} event={event} setEventList={setEventList} userData={userData}></EventItem>
-				))}
+				{pageLoading ? (
+					<EventsLoading></EventsLoading>
+				) : (
+					eventListFiltered?.map((event, index) => (
+						<EventItem
+							key={event.id}
+							event={event}
+							setEventList={setEventList}
+							userData={userData}
+						></EventItem>
+					))
+				)}
 			</Container>
 		</>
 	)
