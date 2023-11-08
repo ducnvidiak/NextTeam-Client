@@ -213,8 +213,11 @@ function ClubPage() {
 		
 		if (userData?.id == undefined) {
 			url_query = `${process.env.NEXT_PUBLIC_API_URL}/club-detail?subname=${router.query.clubId}`
+			console.log('test url undef', url_query);
+
 		} else {
 			url_query = `${process.env.NEXT_PUBLIC_API_URL}/club-detail?subname=${router.query.clubId}&userId=${userData?.id}`
+			console.log('test url def', url_query);
 		}
 		fetch(url_query, {
 			method: 'GET',
@@ -235,11 +238,13 @@ function ClubPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData, router.query.clubId])
 
-	console.log('Club', club)
+	console.log('router.query.clubId', router.query.clubId)
 
 	const getAPIEvents = useEffect(() => {
 		let url_query = `${process.env.NEXT_PUBLIC_API_URL}/events-club?clubId=${club.id}`
+		
 		console.log('test', url_query)
+
 		fetch(url_query, {
 			method: 'GET',
 			headers: {
