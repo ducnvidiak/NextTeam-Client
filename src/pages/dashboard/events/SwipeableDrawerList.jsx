@@ -7,8 +7,11 @@ import CloseIcon from '@mui/icons-material/Close'
 import InfoIcon from '@mui/icons-material/Info'
 import Groups2Icon from '@mui/icons-material/Groups2'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
 
 import Link from 'next/link'
+import { translateDayOfWeek } from 'src/ultis/dateTime'
+import moment from 'moment'
 
 function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer = () => {}, setOpenFeedbackModal }) {
 	const handleFeedbackClick = () => {
@@ -53,7 +56,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 					<CardContent sx={{ padding: 4 }}>
 						<Typography variant='h6' fontWeight={700} marginBottom={4}>
 							{event?.name}
-							<Link href={`http://localhost:3000/clubs/${event?.clubSubname}`} passHref>
+							<Link href={`https://next-team-client.vercel.app/clubs/${event?.clubSubname}`} passHref>
 								<Stack
 									direction={'row'}
 									alignItems={'center'}
@@ -71,14 +74,18 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 						</Typography>
 						<Box sx={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
 							<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>
-								<Groups2Icon></Groups2Icon>
+								<AccessTimeIcon></AccessTimeIcon>
 							</Box>
 							<Box>
 								<Typography variant='body2' fontWeight={500}>
-									Tổ chức
+									{`${translateDayOfWeek(moment(event?.startTime).format('dddd'))} ${moment(
+										event?.startTime
+									).format('L')}`}
 								</Typography>
 								<Typography variant='body1' fontWeight={600}>
-									FU-DEVER
+									{`${moment(event?.startTime).format('LT')} - ${moment(event?.endTime).format(
+										'LT'
+									)}`}
 								</Typography>
 							</Box>
 						</Box>

@@ -10,6 +10,7 @@ import classes from './styles.module.scss'
 import { useCookies } from 'react-cookie'
 import { TextareaAutosize } from '@mui/base'
 import SplitButton from './SplitButton'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
 
 import {
 	Card,
@@ -40,6 +41,7 @@ import { getAllEvents, updateEventStatus } from 'src/api-utils/apiUtils'
 import { toast } from 'react-toastify'
 import moment from 'moment'
 import ReviewButton from './ReviewButton'
+import { translateDayOfWeek } from 'src/ultis/dateTime'
 
 export default function EventDashboard() {
 	const [events, setEvents] = useState([])
@@ -111,14 +113,18 @@ export default function EventDashboard() {
 					</Typography>
 					<Box sx={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
 						<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>
-							<Groups2Icon></Groups2Icon>
+							<AccessTimeIcon></AccessTimeIcon>
 						</Box>
 						<Box>
 							<Typography variant='body2' fontWeight={500}>
-								Tổ chức
+								{`${translateDayOfWeek(moment(selectedEvent?.startTime).format('dddd'))} ${moment(
+									selectedEvent?.startTime
+								).format('L')}`}
 							</Typography>
 							<Typography variant='body1' fontWeight={600}>
-								{selectedEvent?.clubSubname}
+								{`${moment(selectedEvent?.startTime).format('LT')} - ${moment(
+									selectedEvent?.endTime
+								).format('LT')}`}
 							</Typography>
 						</Box>
 					</Box>
@@ -198,11 +204,14 @@ export default function EventDashboard() {
 								<TableCell align='center' width={100}>
 									Câu lạc bộ
 								</TableCell>
-								<TableCell align='center' width={400}>
+								<TableCell align='center' width={340}>
 									Sự kiện
 								</TableCell>
-								<TableCell align='center'>Trạng thái</TableCell>
+								<TableCell align='center' width={150}>
+									Trạng thái
+								</TableCell>
 								<TableCell align='center'>Ngày tạo</TableCell>
+								<TableCell align='center'>Kế hoạch</TableCell>
 								<TableCell align='center' width={200}></TableCell>
 							</TableRow>
 						</TableHead>
@@ -267,6 +276,11 @@ export default function EventDashboard() {
 										)}
 									</TableCell>
 									<TableCell align='center'>{`${moment(event?.createdAt).format('L')}`}</TableCell>
+									<TableCell align='center'>
+										<a href={event?.planUrl} download target='_blank' rel='noreferrer'>
+											Tải kế hoạch
+										</a>
+									</TableCell>
 									<TableCell align='center'>
 										<ReviewButton
 											event={event}

@@ -36,6 +36,8 @@ import { getUserInfo } from 'src/utils/info'
 import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
 import moment from 'moment'
 import { translateDayOfWeek } from 'src/ultis/dateTime'
+import { uploadCv } from 'src/utils/Config'
+import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 
 export const combineDateTime = (datetimeA, datetimeB) => {
 	const [date1, time1] = datetimeA.split('T')
@@ -64,6 +66,8 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 	const [userData, setUserData] = useState()
 	const [isShowModal, setIsShowModal] = useState(false)
 	const [fileName, setFileName] = useState('')
+	const [planUrl, setPlanUrl] = useState('')
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -138,27 +142,29 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin-events?cmd=update&eventId=${event.id}&userId=${userData?.id}`, {
-				method: 'POST',
-				body: JSON.stringify({
-					...newEvent,
-					startTime: combineDateTime(
-						moment(new Date(newEvent.dateTime)).format(),
-						moment(new Date(newEvent.startTime)).format()
-					),
-					endTime: combineDateTime(
-						moment(new Date(newEvent.dateTime)).format(),
-						moment(new Date(newEvent.endTime)).format()
-					),
-					registeredBy: userData?.id,
-					clubId: userData?.clubId
-				}),
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
+			fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/admin-events?cmd=update&eventId=${event.id}&userId=${userData?.id}`,
+				{
+					method: 'POST',
+					body: JSON.stringify({
+						...newEvent,
+						startTime: combineDateTime(
+							moment(new Date(newEvent.dateTime)).format(),
+							moment(new Date(newEvent.startTime)).format()
+						),
+						endTime: combineDateTime(
+							moment(new Date(newEvent.dateTime)).format(),
+							moment(new Date(newEvent.endTime)).format()
+						),
+						registeredBy: userData?.id,
+						clubId: userData?.clubId
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
 				}
-			})
+			)
 				.then(function (response) {
-
 					return response.json()
 				})
 				.then(function (data) {
@@ -192,12 +198,11 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 			}
 		})
 			.then(function (response) {
-
 				return response.json()
 			})
 			.then(function (data) {
 				setEventList(data)
-				
+
 				toast.success('Xóa sự kiện thành công!!!')
 			})
 			.catch(error => {
@@ -237,6 +242,40 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event, locationList])
+
+	const handleUpload = e => {
+		setOpen(true)
+		handleChangeFile(e)
+		const cv = e.target.files[0]
+		const cvfile = ref(uploadCv, `plans/${e.target.files[0]?.name}`)
+		const uploadTask = uploadBytesResumable(cvfile, cv)
+		uploadTask.on(
+			'state_changed',
+			snapshot => {
+				const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+				console.log('Upload is ' + progress + '% done')
+				switch (snapshot.state) {
+					case 'paused':
+						console.log('Upload is paused')
+						break
+					case 'running':
+						console.log('Upload is running')
+						break
+				}
+			},
+			error => {
+				setOpen(false)
+			},
+			() => {
+				getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+					console.log('File available at', downloadURL)
+					setPlanUrl(downloadURL)
+					toast.success('Tải lên kế hoạch thành công')
+					setOpen(false)
+				})
+			}
+		)
+	}
 
 	return (
 		<Container maxWidth={'lg'} sx={{ padding: '0 60px !important' }}>
@@ -427,9 +466,17 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 				<Stack direction={'row'} alignItems={'center'} gap={4}>
 					<Button component='label' variant='contained' startIcon={<CloudUploadIcon />} sx={{ width: 180 }}>
 						Upload file
-						<VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} />
+						<VisuallyHiddenInput type='file' onChange={e => handleUpload(e)} />
 					</Button>
-					<Typography variant='body'>{fileName ? fileName : 'Kịch bản club day.xlsx'}</Typography>
+					{fileName ? (
+						<Typography variant='body'>{fileName}</Typography>
+					) : (
+						<Typography variant='body'>
+							<a href={event?.planUrl} download target='_blank' rel='noreferrer'>
+								Tải kế hoạch
+							</a>
+						</Typography>
+					)}
 				</Stack>
 			</Stack>
 			<DialogActions sx={{ paddingX: 16, pb: 16, justifyContent: 'center' }}>

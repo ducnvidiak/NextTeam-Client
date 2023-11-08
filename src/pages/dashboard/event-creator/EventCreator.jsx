@@ -45,7 +45,8 @@ import { ToastContainer, toast } from 'react-toastify'
 import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
 import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
-import useDrivePicker from 'react-google-drive-picker'
+import { uploadCv } from 'src/utils/Config'
+import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -80,6 +81,8 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	const [fileName, setFileName] = useState('')
 	const [open, setOpen] = useState(false)
 	const [userData, setUserData] = useState()
+	const [planUrl, setPlanUrl] = useState('')
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -107,7 +110,8 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 						startTime: new Date(convertToTimestamp(newEvent.startTime)),
 						endTime: new Date(convertToTimestamp(newEvent.endTime)),
 						registeredBy: userData?.id,
-						clubId: cookiesClub['clubData']?.clubId
+						clubId: cookiesClub['clubData']?.clubId,
+						planUrl: planUrl,
 					}),
 					headers: {
 						'Content-type': 'application/json; charset=UTF-8'
@@ -204,7 +208,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	const changeBanner = async e => {
 		const file = e.target.files[0]
 		if (file) {
-			// Tạo formData để gửi tệp hình ảnh lên imgbb
 			const formData = new FormData()
 			formData.append('image', file)
 
@@ -233,32 +236,38 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		}
 	}
 
-	const [openPicker, authResponse] = useDrivePicker()
-
-	// const customViewsArray = [new google.picker.DocsView()]; // custom view
-	const handleOpenPicker = () => {
-		console.log("!!!");
-		console.log(process.env.NEXT_PUBLIC_CLIENT_ID);
-		console.log(process.env.NEXT_PUBLIC_API_KEY);
-		openPicker({
-			clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-			developerKey: process.env.NEXT_PUBLIC_API_KEY,
-			viewId: 'DOCS',
-
-			// token: token, // pass oauth token in case you already have one
-			showUploadView: true,
-			showUploadFolders: true,
-			supportDrives: true,
-			multiselect: true,
-
-			// customViews: customViewsArray, // custom view
-			callbackFunction: data => {
-				if (data.action === 'cancel') {
-					console.log('User clicked cancel/close button')
+	const handleUpload = e => {
+		setOpen(true)
+		handleChangeFile(e)
+		const cv = e.target.files[0]
+		const cvfile = ref(uploadCv, `plans/${e.target.files[0]?.name}`)
+		const uploadTask = uploadBytesResumable(cvfile, cv)
+		uploadTask.on(
+			'state_changed',
+			snapshot => {
+				const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+				console.log('Upload is ' + progress + '% done')
+				switch (snapshot.state) {
+					case 'paused':
+						console.log('Upload is paused')
+						break
+					case 'running':
+						console.log('Upload is running')
+						break
 				}
-				console.log(data)
+			},
+			error => {
+				setOpen(false)
+			},
+			() => {
+				getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+					console.log('File available at', downloadURL)
+					setPlanUrl(downloadURL)
+					toast.success('Tải lên kế hoạch thành công')
+					setOpen(false)
+				})
 			}
-		})
+		)
 	}
 
 	return (
@@ -432,10 +441,9 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 							startIcon={<CloudUploadIcon />}
 							sx={{ width: 180 }}
 							color={newEvent.planUrl === '' && !isValidate ? 'error' : 'primary'}
-							onClick={() => handleOpenPicker()}
 						>
 							Upload file
-							{/* <VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} /> */}
+							<VisuallyHiddenInput type='file' onChange={e => handleUpload(e)} />
 						</Button>
 						<Typography variant='body'>{fileName}</Typography>
 					</Stack>
