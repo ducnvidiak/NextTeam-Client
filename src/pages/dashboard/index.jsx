@@ -37,7 +37,7 @@ const Dashboard = () => {
 	const [data, setData] = useState([])
 	const clubId = cookies['clubData']?.clubId
 
-	console.log(`${ORIGIN_URL}${clubId}`);
+	
 
 	useEffect(() => {
 		const refreshData = () => {
@@ -50,6 +50,7 @@ const Dashboard = () => {
 				})
 		}
 		refreshData()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [cookies, clubId])
 
 	return (
