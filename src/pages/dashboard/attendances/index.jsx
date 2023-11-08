@@ -107,13 +107,14 @@ function Attendance({ eid, cmd, setOpen }) {
 	const [attendanceData, setAttendanceData] = useState({})
 
 	useEffect(() => {
-		;(async () => {
-			const data = await postAPI('/info-utils', {
-				cmd: 'club.events.attendances',
-				data: eid
-			})
-			setRegistratorList(data.result)
-		})()
+		if (eid)
+			(async () => {
+				const data = await postAPI('/info-utils', {
+					cmd: 'club.events.attendances',
+					data: eid
+				})
+				setRegistratorList(data.result)
+			})()
 	}, [eid])
 
 	useEffect(() => {
