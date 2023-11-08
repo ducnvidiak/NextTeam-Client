@@ -35,6 +35,9 @@ import { convertFormat } from '.'
 import { getUserInfo } from 'src/utils/info'
 import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
 import moment from 'moment'
+
+require('moment/locale/vi')
+
 import { translateDayOfWeek } from 'src/ultis/dateTime'
 import { uploadCv } from 'src/utils/Config'
 import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
@@ -308,9 +311,7 @@ function EventOverView({ event, setEventList, setOpenEventManagememntModal }) {
 						<Typography marginBottom={1} width={'20%'}>
 							Thời gian:
 						</Typography>
-						<Typography marginBottom={1}>{`${translateDayOfWeek(
-							moment(event?.startTime).format('dddd')
-						)} ${moment(event?.startTime).format('L')}`}</Typography>
+						<Typography marginBottom={1}>{`${moment(event?.startTime).format('dddd').toUpperCase()} ${moment(event?.startTime).format('L')}`}</Typography>
 					</Stack>
 					<Stack direction={'row'} gap={2}>
 						<Typography marginBottom={1} width={'20%'}>

@@ -36,6 +36,8 @@ import { getAPI } from 'src/ultis/requestAPI'
 import { useCookies } from 'react-cookie'
 import moment from 'moment'
 
+require('moment/locale/vi')
+
 import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
@@ -117,8 +119,8 @@ function EventItem({ event, setEventList, eventList, index }) {
 					) : (
 						<Chip label='Đã duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
 					)}
-					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
-					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
+					<Typography variant='h5'>{moment(event?.startTime).format('L')}</Typography>
+					<Typography variant='h7'>{moment(event?.startTime).format('dddd').toUpperCase()}</Typography>
 				</Stack>
 				<Card sx={{ width: '75%', display: 'flex', justifyContent: 'space-between' }} marginBottom={10}>
 					<CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>

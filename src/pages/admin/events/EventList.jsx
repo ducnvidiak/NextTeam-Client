@@ -34,6 +34,8 @@ import { getAPI } from 'src/ultis/requestAPI'
 import { useCookies } from 'react-cookie'
 import moment from 'moment'
 
+require('moment/locale/vi')
+
 import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
@@ -97,7 +99,7 @@ function EventItem({ event }) {
 				<Stack direction={'column'} width={'15%'}>
 					<Chip label='Đã duyệt' sx={{ mb: 4, fontSize: 16 }} color='success' />
 					<Typography variant='h5'>{moment(event?.startTime).format('MMM Do YY')}</Typography>
-					<Typography variant='h7'>{moment(event?.startTime).format('dddd')}</Typography>
+					<Typography variant='h7'>{moment(event?.startTime).format('dddd').toUpperCase()}</Typography>
 				</Stack>
 				<Card
 					sx={{ width: '75%', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}

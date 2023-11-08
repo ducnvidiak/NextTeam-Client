@@ -10,6 +10,8 @@ import { Chip, Grid } from '@mui/material'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import moment from 'moment'
 
+require('moment/locale/vi')
+
 export default function NotificationDetail({ notificationDetail, handleClose, open }) {
 	function validateContent(content) {
 		// Implement your content validation logic here

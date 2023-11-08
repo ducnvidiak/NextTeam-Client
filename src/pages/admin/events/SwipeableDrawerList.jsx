@@ -13,6 +13,8 @@ import Link from 'next/link'
 import { translateDayOfWeek } from 'src/ultis/dateTime'
 import moment from 'moment'
 
+require('moment/locale/vi')
+
 function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer = () => {}, setOpenFeedbackModal }) {
 	const handleFeedbackClick = () => {
 		setOpenFeedbackModal(true)
@@ -69,7 +71,7 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 							</Box>
 							<Box>
 								<Typography variant='body2' fontWeight={500}>
-									{`${translateDayOfWeek(moment(event?.startTime).format('dddd'))} ${moment(
+									{`${moment(event?.startTime).format('dddd').toUpperCase()} ${moment(
 										event?.startTime
 									).format('L')}`}
 								</Typography>
