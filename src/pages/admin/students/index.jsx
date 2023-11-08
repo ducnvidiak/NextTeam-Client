@@ -164,6 +164,7 @@ function ImportForm({ setOpen, loadStudents }) {
 				form[1].disabled = true
 			})()
 		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[jsonData, setOpen]
 	)
 
@@ -337,6 +338,7 @@ function StudentsManagement() {
 		}
 	}
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => loadStudents(), [filter])
 
 	const openModal = (cmd, value) => event => {

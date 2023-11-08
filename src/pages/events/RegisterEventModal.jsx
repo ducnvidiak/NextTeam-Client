@@ -3,6 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Sta
 import moment from 'moment'
 
 require('moment/locale/vi')
+
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'

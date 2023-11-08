@@ -36,6 +36,7 @@ import ClubCategory from 'src/components/ClubCategory'
 import moment from 'moment'
 
 require('moment/locale/vi')
+
 import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
 import { useRouter } from 'next/router'
