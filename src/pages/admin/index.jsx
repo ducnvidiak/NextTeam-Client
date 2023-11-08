@@ -44,7 +44,8 @@ const Dashboard = () => {
 				})
 		}
 		refreshData()
-	}, [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data])
 
 	const cd = Array.isArray(data?.clubCounter) ? data?.clubCounter : []
 
