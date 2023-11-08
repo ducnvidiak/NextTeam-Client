@@ -12,6 +12,7 @@ function VerificationCode(props) {
 	const setStep = props.setStep
 	const setRef = props.setRef
 	const values = props.values
+	const setLoading = props.setLoading
 
 	const handleInputOtp = async ({ target }) => {
 		const numberCodeForm = document.querySelector('[data-number-code-form]')
@@ -50,6 +51,7 @@ function VerificationCode(props) {
 			data += input.value
 		})
 		if (data.length == 6) {
+			setLoading(true)
 			const res = await postAPI('forgot-password', { command: 2, code: data, type: values.type })
 			if (res.code == 0) {
 				setStep(3)
@@ -58,6 +60,7 @@ function VerificationCode(props) {
 					toast.error('Mã xác minh đã bị khóa!')
 				} else toast.error(res.msg.replace('__res', res.res))
 			}
+			setLoading(false)
 		}
 	}
 

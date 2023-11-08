@@ -18,6 +18,7 @@ function SetPassword(props) {
 	const values = props.values
 	const router = props.router
 	const setValues = props.setValues
+	const setLoading = props.setLoading
 
 	const handleClickShowPassword = () => {
 		setValues({ ...values, showPassword: !values.showPassword })
@@ -35,6 +36,7 @@ function SetPassword(props) {
 			event.target.disabled = false
 			clearTimeout(timeout)
 		}, 2000)
+		setLoading(true)
 		var res = await postAPI('forgot-password', { command: 3, password: values.password, email: values.email })
 		if (res.code == 0) {
 			toast.success('Khôi phục mật khẩu thành công!')
@@ -44,6 +46,7 @@ function SetPassword(props) {
 		} else {
 			toast.error(res.msg)
 		}
+		setLoading(false)
 	}
 
 	return (

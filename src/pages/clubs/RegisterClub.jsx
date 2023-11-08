@@ -6,6 +6,10 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
 	TextField,
 	Typography,
 	styled
@@ -17,6 +21,9 @@ import { useState } from 'react'
 import { getAPI } from 'src/ultis/requestAPI'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { uploadCv } from 'src/utils/Config'
+import { v4 } from 'uuid'
+import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -34,37 +41,58 @@ function RegisterClub({ clubId, userId, isOpen, handleClose }) {
 	const [department, setDepartment] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [cv, setCv] = useState()
+	const [url, setUrl] = useState()
 	const [departmentId, setDepartmentId] = useState('')
 
 	const handleUpload = () => {
-		const formData = new FormData()
-		formData.append('cvUrl', cv)
-
-		axios
-			.post(
-				`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}`,
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data'
-					}
+		const cvfile = ref(uploadCv, `files/${cv?.name}`)
+		const uploadTask = uploadBytesResumable(cvfile, cv)
+		uploadTask.on(
+			'state_changed',
+			snapshot => {
+				// Observe state change events such as progress, pause, and resume
+				// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+				const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+				console.log('Upload is ' + progress + '% done')
+				switch (snapshot.state) {
+					case 'paused':
+						console.log('Upload is paused')
+						break
+					case 'running':
+						console.log('Upload is running')
+						break
 				}
-			)
-			.then(response => {
-				toast.success('Đăng ký tham gia câu lạc bộ thành công !', {
-					position: 'top-right',
-					autoClose: 3000, // Close the toast after 3 seconds
-					hideProgressBar: false,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true
-				})
+			},
+			error => {
+				// Handle unsuccessful uploads
+			},
+			() => {
+				// Handle successful uploads on complete
+				// For instance, get the download URL: https://firebasestorage.googleapis.com/...
+				getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+					console.log('File available at', downloadURL)
 
-				handleClose()
-			})
-			.catch(error => {
-				console.error(error)
-			})
+					axios
+						.post(
+							`${process.env.NEXT_PUBLIC_API_URL}/engagement?action=add-engagement&userId=${userId}&departmentId=${departmentId}&clubId=${clubId}&cvUrl=` +
+								encodeURI(downloadURL),
+							{
+								headers: {
+									'Content-type': 'application/json; charset=UTF-8'
+								}
+							}
+						)
+						.then(response => {
+							toast.success('Đăng ký tham gia câu lạc bộ thành công !')
+
+							handleClose()
+						})
+						.catch(error => {
+							console.error(error)
+						})
+				})
+			}
+		)
 	}
 
 	const callAPIDepartment = async clubId => {
@@ -96,34 +124,22 @@ function RegisterClub({ clubId, userId, isOpen, handleClose }) {
 					Vui lòng điền những thông tin bên dưới để đăng ký tham gia vào câu lạc bộ này
 				</DialogContentText>
 				<Box sx={{ maxWidth: '50%', marginBottom: 2 }}>
-					<Autocomplete
-						id='sendTo'
-						fullWidth
-						options={department}
-						autoHighlight
-						getOptionLabel={option => option.name}
-						onChange={event => setDepartmentId(event.target.value)}
-						renderOption={(props, option) => (
-							<Box
-								component='li'
-								sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
-								{...props}
-								value={option.id}
-							>
-								{option.name}
-							</Box>
-						)}
-						renderInput={params => (
-							<TextField
-								{...params}
-								label='Ban đăng ký'
-								inputProps={{
-									...params.inputProps,
-									autoComplete: 'new-password' // disable autocomplete and autofill
-								}}
-							/>
-						)}
-					/>
+					<FormControl fullWidth>
+						<InputLabel id='demo-simple-select-label'>Ban đăng ký</InputLabel>
+						<Select
+							labelId='demo-simple-select-label'
+							id='demo-simple-select'
+							value={departmentId}
+							label='Ban đăng ký'
+							onChange={e => setDepartmentId(e.target.value)}
+						>
+							{department?.map(department => (
+								<MenuItem key={department.id} value={department.id}>
+									{department.name}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
 				</Box>
 				<Typography marginBottom={1}>Chọn CV: </Typography>
 				<Button component='label' variant='contained' startIcon={<CloudUploadIcon />} sx={{ marginBottom: 2 }}>
