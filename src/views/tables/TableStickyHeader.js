@@ -160,6 +160,7 @@ const TableStickyHeader = props => {
 			)
 		})
 		setRows(newRows)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [clubs])
 
 	const handleChangePage = (event, newPage) => {

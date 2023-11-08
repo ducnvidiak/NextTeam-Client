@@ -8,15 +8,16 @@ function EventDashboard() {
 	const [eventList, setEventList] = useState()
 	const [filter, setFilter] = useState('all')
 	const [eventListFiltered, setEventListFiltered] = useState()
-
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [cookiesClub, setCookieClub, removeCookieClub] = useCookies(['clubData'])
 	const [userData, setUserData] = useState()
+	const [pageLoading, setPageLoading] = useState(false)
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	useEffect(() => {
+		setPageLoading(true)
 		fetch(
 			`${process.env.NEXT_PUBLIC_API_URL}/member-events?clubId=${cookiesClub['clubData'].clubId}&userId=${userData?.id}&cmd=list`,
 			{
@@ -31,8 +32,12 @@ function EventDashboard() {
 			})
 			.then(function (data) {
 				setEventList(data)
+				setPageLoading(false)
 			})
-			.catch(error => console.error('Error:', error))
+			.catch(error => {
+				console.error('Error:', error)
+				setPageLoading(true)
+			})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData])
 
@@ -72,6 +77,7 @@ function EventDashboard() {
 				</FormControl>
 			</Stack>
 			<EventList
+				pageLoading={pageLoading}
 				eventListFiltered={eventListFiltered}
 				setEventList={setEventList}
 				userData={userData}

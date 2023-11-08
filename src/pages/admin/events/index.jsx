@@ -10,6 +10,7 @@ import classes from './styles.module.scss'
 import { useCookies } from 'react-cookie'
 import { TextareaAutosize } from '@mui/base'
 import SplitButton from './SplitButton'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
 
 import {
 	Card,
@@ -25,7 +26,9 @@ import {
 	Drawer,
 	Chip,
 	Pagination,
-	TablePagination
+	TablePagination,
+	Backdrop,
+	CircularProgress
 } from '@mui/material'
 
 import InfoIcon from '@mui/icons-material/Info'
@@ -38,12 +41,14 @@ import { getAllEvents, updateEventStatus } from 'src/api-utils/apiUtils'
 import { toast } from 'react-toastify'
 import moment from 'moment'
 import ReviewButton from './ReviewButton'
+import { translateDayOfWeek } from 'src/ultis/dateTime'
 
 export default function EventDashboard() {
 	const [events, setEvents] = useState([])
 	const [selectedEvent, setSelectedEvent] = useState(null)
 	const [feedback, setFeedback] = useState('')
-
+	const [reviewLoading, setReviewLoading] = useState(false)
+	const [pageLoading, setPageLoading] = useState(false)
 	const [page, setPage] = useState(0)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [rows, setRows] = useState([])
@@ -58,14 +63,14 @@ export default function EventDashboard() {
 	}
 
 	useEffect(() => {
+		setPageLoading(true)
 		getAllEvents().then(response => {
+			setPageLoading(false)
 			console.log('response', response)
 			setEvents(response)
 			setRows(response)
 		})
 	}, [])
-
-	console.log(events)
 
 	const [state, setState] = useState({
 		top: false,
@@ -108,14 +113,18 @@ export default function EventDashboard() {
 					</Typography>
 					<Box sx={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
 						<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>
-							<Groups2Icon></Groups2Icon>
+							<AccessTimeIcon></AccessTimeIcon>
 						</Box>
 						<Box>
 							<Typography variant='body2' fontWeight={500}>
-								Tổ chức
+								{`${translateDayOfWeek(moment(selectedEvent?.startTime).format('dddd'))} ${moment(
+									selectedEvent?.startTime
+								).format('L')}`}
 							</Typography>
 							<Typography variant='body1' fontWeight={600}>
-								{selectedEvent?.clubSubname}
+								{`${moment(selectedEvent?.startTime).format('LT')} - ${moment(
+									selectedEvent?.endTime
+								).format('LT')}`}
 							</Typography>
 						</Box>
 					</Box>
@@ -152,8 +161,11 @@ export default function EventDashboard() {
 		</Box>
 	)
 
-	const handleUpdateStatus = (uevent, status, feedback) => {
+	const handleUpdateStatus = async (uevent, status, feedback) => {
+		setReviewLoading(true)
 		updateEventStatus(uevent?.id, status, feedback).then(response => {
+			setReviewLoading(false)
+
 			if (response?.status == 'success') {
 				const updateEvents = events?.map(event => {
 					if (event?.id != uevent?.id) return event
@@ -167,18 +179,23 @@ export default function EventDashboard() {
 			}
 		})
 	}
-	console.log(events)
 
 	useEffect(() => {
 		setRows(events)
 	}, [events])
 
-	const handleAction = (selectedConfirmEvent, status) => {
-		handleUpdateStatus(selectedConfirmEvent, status, feedback)
+	const handleAction = async (selectedConfirmEvent, status) => {
+		await handleUpdateStatus(selectedConfirmEvent, status, feedback)
 	}
 
 	return (
 		<Fragment>
+			<Backdrop
+				sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
+				open={reviewLoading || pageLoading}
+			>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 			<Card>
 				<TableContainer component={Paper}>
 					<Table sx={{ minWidth: 650 }} aria-label='simple table'>
@@ -187,11 +204,14 @@ export default function EventDashboard() {
 								<TableCell align='center' width={100}>
 									Câu lạc bộ
 								</TableCell>
-								<TableCell align='center' width={400}>
+								<TableCell align='center' width={340}>
 									Sự kiện
 								</TableCell>
-								<TableCell align='center'>Trạng thái</TableCell>
+								<TableCell align='center' width={150}>
+									Trạng thái
+								</TableCell>
 								<TableCell align='center'>Ngày tạo</TableCell>
+								<TableCell align='center'>Kế hoạch</TableCell>
 								<TableCell align='center' width={200}></TableCell>
 							</TableRow>
 						</TableHead>
@@ -249,19 +269,25 @@ export default function EventDashboard() {
 											/>
 										) : (
 											<Chip
-												label='Phê duyệt'
+												label='Đã duyệt'
 												sx={{ fontSize: 16, width: '100%' }}
 												color='success'
 											/>
 										)}
 									</TableCell>
-									<TableCell align='center'>{`${moment(event?.startTime).format('L')}`}</TableCell>
+									<TableCell align='center'>{`${moment(event?.createdAt).format('L')}`}</TableCell>
+									<TableCell align='center'>
+										<a href={event?.planUrl} download target='_blank' rel='noreferrer'>
+											Tải kế hoạch
+										</a>
+									</TableCell>
 									<TableCell align='center'>
 										<ReviewButton
 											event={event}
 											setFeedback={setFeedback}
 											feedback={feedback}
 											handleAction={handleAction}
+											reviewLoading={reviewLoading}
 										></ReviewButton>
 									</TableCell>
 								</TableRow>

@@ -45,6 +45,8 @@ import { ToastContainer, toast } from 'react-toastify'
 import { useCookies } from 'react-cookie'
 import { getUserInfo } from 'src/utils/info'
 import { EventCreatorSchema } from 'src/ultis/yupValidation/eventManager'
+import { uploadCv } from 'src/utils/Config'
+import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -79,6 +81,8 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	const [fileName, setFileName] = useState('')
 	const [open, setOpen] = useState(false)
 	const [userData, setUserData] = useState()
+	const [planUrl, setPlanUrl] = useState('')
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
@@ -97,19 +101,23 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 		try {
 			setOpen(true)
 			await EventCreatorSchema.validate(newEvent, { abortEarly: false })
-			fetch(`${process.env.NEXT_PUBLIC_API_URL}/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`, {
-				method: 'POST',
-				body: JSON.stringify({
-					...newEvent,
-					startTime: new Date(convertToTimestamp(newEvent.startTime)),
-					endTime: new Date(convertToTimestamp(newEvent.endTime)),
-					registeredBy: userData?.id,
-					clubId: cookiesClub['clubData']?.clubId
-				}),
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8'
+			fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/manager-events?cmd=create&clubId=${cookiesClub['clubData'].clubId}`,
+				{
+					method: 'POST',
+					body: JSON.stringify({
+						...newEvent,
+						startTime: new Date(convertToTimestamp(newEvent.startTime)),
+						endTime: new Date(convertToTimestamp(newEvent.endTime)),
+						registeredBy: userData?.id,
+						clubId: cookiesClub['clubData']?.clubId,
+						planUrl: planUrl,
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
 				}
-			})
+			)
 				.then(function (response) {
 					return response.json()
 				})
@@ -200,7 +208,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 	const changeBanner = async e => {
 		const file = e.target.files[0]
 		if (file) {
-			// Tạo formData để gửi tệp hình ảnh lên imgbb
 			const formData = new FormData()
 			formData.append('image', file)
 
@@ -227,6 +234,40 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 				setOpen(false)
 			}
 		}
+	}
+
+	const handleUpload = e => {
+		setOpen(true)
+		handleChangeFile(e)
+		const cv = e.target.files[0]
+		const cvfile = ref(uploadCv, `plans/${e.target.files[0]?.name}`)
+		const uploadTask = uploadBytesResumable(cvfile, cv)
+		uploadTask.on(
+			'state_changed',
+			snapshot => {
+				const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+				console.log('Upload is ' + progress + '% done')
+				switch (snapshot.state) {
+					case 'paused':
+						console.log('Upload is paused')
+						break
+					case 'running':
+						console.log('Upload is running')
+						break
+				}
+			},
+			error => {
+				setOpen(false)
+			},
+			() => {
+				getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+					console.log('File available at', downloadURL)
+					setPlanUrl(downloadURL)
+					toast.success('Tải lên kế hoạch thành công')
+					setOpen(false)
+				})
+			}
+		)
 	}
 
 	return (
@@ -323,7 +364,6 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<Stack direction={'row'} gap={4}>
 							<DatePicker
-
 								disablePast
 								label='Ngày'
 								slotProps={{
@@ -359,7 +399,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 							error={!newEvent.locationId && !isValidate}
 							labelId='demo-simple-select-label'
 							id='demo-simple-select'
-							label='location'
+							label='Chọn địa điểm'
 							onChange={e => setNewEvent({ ...newEvent, locationId: e.target.value })}
 							value={newEvent.locationId}
 						>
@@ -403,7 +443,7 @@ function EventCreator({ openEventCreatorModal, setOpenEventCreatorModal, setEven
 							color={newEvent.planUrl === '' && !isValidate ? 'error' : 'primary'}
 						>
 							Upload file
-							<VisuallyHiddenInput type='file' onChange={e => handleChangeFile(e)} />
+							<VisuallyHiddenInput type='file' onChange={e => handleUpload(e)} />
 						</Button>
 						<Typography variant='body'>{fileName}</Typography>
 					</Stack>

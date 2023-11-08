@@ -15,7 +15,14 @@ import { translateDayOfWeek } from 'src/ultis/dateTime'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 
-function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer = () => {}, setOpenFeedbackModal, userData }) {
+function SwipeableDrawerList({
+	anchor,
+	event,
+	setOpenRegisterModal,
+	toggleDrawer = () => {},
+	setOpenFeedbackModal,
+	userData
+}) {
 	const router = useRouter()
 
 	const handleFeedbackClick = () => {
@@ -62,23 +69,23 @@ function SwipeableDrawerList({ anchor, event, setOpenRegisterModal, toggleDrawer
 					<CardContent sx={{ padding: 4 }}>
 						<Typography variant='h6' fontWeight={700} marginBottom={4}>
 							{event?.name}
-							{event?.clubSubname &&
-							<Link href={`http://localhost:3000/clubs/${event?.clubSubname}`} passHref>
-								<Stack
-									direction={'row'}
-									alignItems={'center'}
-									marginTop={2}
-									sx={{ cursor: 'pointer' }}
-									justifyItems={'flex-start'}
-								>
-									<img src={event?.clubAvatarUrl} alt='' style={{ width: 20, height: 20 }} />
-									<Typography variant='body2' marginLeft={1}>
-										{event?.clubSubname}{' '}
-									</Typography>
-									<KeyboardArrowRightIcon></KeyboardArrowRightIcon>
-								</Stack>
-							</Link>
-}
+							{event?.clubSubname && (
+								<Link href={`https://next-team-client.vercel.app/clubs/${event?.clubSubname}`} passHref>
+									<Stack
+										direction={'row'}
+										alignItems={'center'}
+										marginTop={2}
+										sx={{ cursor: 'pointer' }}
+										justifyItems={'flex-start'}
+									>
+										<img src={event?.clubAvatarUrl} alt='' style={{ width: 20, height: 20 }} />
+										<Typography variant='body2' marginLeft={1}>
+											{event?.clubSubname}{' '}
+										</Typography>
+										<KeyboardArrowRightIcon></KeyboardArrowRightIcon>
+									</Stack>
+								</Link>
+							)}
 						</Typography>
 						<Box sx={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
 							<Box sx={{ padding: '6px 8px 2px', border: '1px solid #ddd', borderRadius: 1 }}>

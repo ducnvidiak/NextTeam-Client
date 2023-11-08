@@ -13,25 +13,31 @@ import {
 import SendIcon from '@mui/icons-material/Send'
 import { useState } from 'react'
 import moment from 'moment'
+import { LoadingButton } from '@mui/lab'
+import SaveIcon from '@mui/icons-material/Save'
 
-function ReviewButton({ event,feedback, setFeedback, handleAction }) {
+function ReviewButton({ event, feedback, setFeedback, handleAction }) {
 	const [openFeedbackModal, setOpenFeedbackModal] = useState(false)
 
-	const handleAccept = () => {
-		handleAction(event, 'accepted')
+	const handleAccept = async () => {
+		await handleAction(event, 'accepted')
 		setOpenFeedbackModal(false)
 	}
 
-	const handleReject = () => {
-		handleAction(event, 'rejected')
+	const handleReject = async () => {
+		await handleAction(event, 'rejected')
 		setOpenFeedbackModal(false)
 	}
 
 	return (
 		<>
-			<Button variant='contained' onClick={() => setOpenFeedbackModal(true)} style={{ color: 'white' }}>
+			<LoadingButton
+				variant='contained'
+				onClick={() => setOpenFeedbackModal(true)}
+				style={{ color: 'white' }}
+			>
 				Xét duyệt
-			</Button>
+			</LoadingButton>
 			<Dialog
 				open={openFeedbackModal}
 				onClose={() => setOpenFeedbackModal(false)}

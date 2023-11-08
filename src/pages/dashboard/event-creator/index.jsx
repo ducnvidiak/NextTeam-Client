@@ -62,7 +62,8 @@ function EventCreatorPage() {
 				return response.json()
 			})
 			.then(function (data) {
-				
+				console.log("data");
+				console.log(data);
 				setEventList(data)
 				setEventListFiltered(data)
 				setLoading(false)
@@ -145,7 +146,7 @@ function EventCreatorPage() {
 					</FormControl>
 				</Stack>
 			</Stack>
-			<EventList filterType={filterType} eventList={eventListFiltered} setEventList={setEventList}></EventList>
+			<EventList loading={loading} filterType={filterType} eventList={eventListFiltered} setEventList={setEventList}></EventList>
 		</Container>
 	)
 }

@@ -24,7 +24,7 @@ import {
 	Stack,
 	SwipeableDrawer,
 	Tooltip,
-	Typography,
+	Typography
 } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Groups2Icon from '@mui/icons-material/Groups2'
@@ -45,6 +45,7 @@ import { useRouter } from 'next/router'
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator } from '@mui/lab'
 import { withStyles } from '@mui/styles'
 import { getDotTimelineColor } from 'src/ultis/timeline'
+import EventsLoading from 'src/views/EventsLoading'
 
 function EventItem({ event, setEventList, eventList, userData }) {
 	const [openRegisterModal, setOpenRegisterModal] = useState(false)
@@ -201,14 +202,16 @@ function EventItem({ event, setEventList, eventList, userData }) {
 function EventList({ filter }) {
 	const [eventList, setEventList] = useState()
 	const [eventListFiltered, setEventListFiltered] = useState()
-
 	const [cookies, setCookie, removeCookie] = useCookies(['userData'])
 	const [userData, setUserData] = useState()
+	const [pageLoading, setPageLoading] = useState(false)
+
 	useEffect(() => {
 		;(async () => setUserData(await getUserInfo(cookies['userData'])))()
 	}, [cookies])
 
 	useEffect(() => {
+		setPageLoading(true)
 		if (!userData) return
 		fetch(`${process.env.NEXT_PUBLIC_API_URL}/events?cmd=list&userId=${userData?.id}`, {
 			method: 'GET',
@@ -220,11 +223,14 @@ function EventList({ filter }) {
 				return response.json()
 			})
 			.then(function (data) {
-				console.log('data')
-				console.log(data)
+				console.log(data);
 				setEventList(data)
+				setPageLoading(false)
 			})
-			.catch(error => console.error('Error:', error))
+			.catch(error => {
+				console.error('Error:', error)
+				setPageLoading(false)
+			})
 	}, [userData])
 
 	useEffect(() => {
@@ -268,13 +274,16 @@ function EventList({ filter }) {
 		<>
 			<Container maxWidth={'lg'} sx={{ padding: '0 80px !important' }}>
 				<Timeline>
-					{eventListFiltered?.map((event, index) => (
-						<MUITimelineItem key={event.id}>
-							<TimelineSeparator>
-								<TimelineDot color={getDotTimelineColor(event?.startTime)}/>
-								<TimelineConnector />
-							</TimelineSeparator>
-							<TimelineContent>
+					{pageLoading ? (
+						<EventsLoading></EventsLoading>
+					) : (
+						eventListFiltered?.map((event, index) => (
+							<MUITimelineItem key={event.id}>
+								<TimelineSeparator>
+									<TimelineDot color={getDotTimelineColor(event?.startTime)} />
+									<TimelineConnector />
+								</TimelineSeparator>
+								<TimelineContent>
 									<EventItem
 										key={event.id}
 										event={event}
@@ -282,9 +291,10 @@ function EventList({ filter }) {
 										eventList={eventList}
 										userData={userData}
 									></EventItem>
-							</TimelineContent>
-						</MUITimelineItem>
-					))}
+								</TimelineContent>
+							</MUITimelineItem>
+						))
+					)}
 				</Timeline>
 			</Container>
 		</>
@@ -293,10 +303,10 @@ function EventList({ filter }) {
 
 const MUITimelineItem = withStyles({
 	missingOppositeContent: {
-	  "&:before": {
-		display: "none"
-	  }
+		'&:before': {
+			display: 'none'
+		}
 	}
-  })(TimelineItem);
+})(TimelineItem)
 
 export default EventList
