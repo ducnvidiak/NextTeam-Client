@@ -18,9 +18,11 @@ import {
 	styled,
 	useTheme
 } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import classes from './styles.module.scss'
 import { postAPI } from 'src/utils/request'
+import { ToastContainer, toast } from 'react-toastify'
+import { BsKeyFill } from 'react-icons/bs'
 
 const XLSX = require('xlsx')
 
@@ -36,6 +38,16 @@ const TableBodyRow = styled(TableRow)(({}) => ({
 }))
 
 const TableBodyCell = styled(TableCell)(({ theme }) => ({}))
+
+const SuccessSpan = styled('span')(theme => ({
+	textTransform: 'uppercase',
+	color: 'green'
+}))
+
+const ErrorSpan = styled('span')(theme => ({
+	textTransform: 'uppercase',
+	color: 'red'
+}))
 
 const style = {
 	width: '50%',
@@ -80,77 +92,80 @@ function splitFullName(fullName) {
 	return { firstName, lastName }
 }
 
-function StudentsManagement() {
-	const [open, setOpen] = React.useState(false)
+function ImportForm({ setOpen, loadStudents }) {
 	const [showPgsBar, setShowPgsBar] = React.useState(false)
 	const [dragOver, setDragOver] = React.useState(false)
 	const [processing, setProcessing] = React.useState(false)
+	const [jsonData, setJsonData] = React.useState({})
 	const theme = useTheme()
 
-	const openModal = (cmd, value) => event => {
-		event.preventDefault()
-		setOpen({ cmd, id: value })
+	function setupProgressBar() {
+		setShowPgsBar(true)
 	}
 
-	async function importSubmission(event) {
-		function setupProgressBar() {
-			document.querySelector(`.${classes.progressBar}`).classList.remove(classes.hidden)
-		}
+	function setProgressBarStatus(num, total) {
+		var progressBar = document.querySelector(`.${classes.progressBar} .${classes.mainBar} .${classes.barStatus}`)
+		var percent = document.querySelector(`.${classes.progressBar} p`)
 
-		function setProgressBarStatus(num, total) {
-			var progressBar = document.querySelector(`.${classes.progressBar} ${classes.mainBar} ${classes.barStatus}`)
-			var percent = document.querySelector(`.${classes.progressBar} p`)
+		var value = (num * 100.0) / total
+		progressBar.style.width = value + '%'
+		percent.innerHTML = value.toFixed(2) + ' %'
+	}
 
-			var value = (num * 100.0) / total
-			progressBar.style.width = value + '%'
-			percent.innerHTML = value.toFixed(2) + ' %'
-		}
-		event.preventDefault()
-		const form = event.target
-		if (form.classList.contains('error')) return
-		const file = form[0].files[0]
-		const reader = new FileReader()
-		document.getElementById('dropzoneInput').style.display = 'none'
-		setupProgressBar()
+	const importSubmission = React.useCallback(
+		event => {
+			event.preventDefault()
+			const form = event.target
+			if (form.classList.contains(classes.error)) return
+			document.getElementById('dropzoneInput').style.display = 'none'
+			setupProgressBar()
+			setProcessing(true)
 
-		reader.onload = async function (e) {
-			const data = new Uint8Array(e.target.result)
-			const workbook = XLSX.read(data, { type: 'array' })
-			const sheetName = workbook.SheetNames[0]
-			const sheet = workbook.Sheets[sheetName]
-			const jsonData = XLSX.utils.sheet_to_json(sheet)
+			var error = 0
+			;(async () => {
+				for (let i = 1; i < jsonData.length; i++) {
+					const row = jsonData[i]
 
-			for (let i = 0; i < jsonData.length; i++) {
-				const row = jsonData[i]
+					// Access cell values from the row
+					const username = row['Mã SV']
+					const { firstName, lastName } = splitFullName(row['Họ và tên'])
+					const birthDate = row['Ngày sinh']
+					const homeTown = row['Nơi sinh']
+					const gender = row['Giới tính']
 
-				// Access cell values from the row
-				const username = row['Mã SV']
-				const { firstName, lastName } = splitFullName(row['Họ và tên'])
-				const birthDate = row['Ngày sinh']
-				const homeTown = row['Nơi sinh']
-				const gender = row['Giới tính']
+					// Post data to an API endpoint (assuming you have a 'post' function)
+					const result = await postAPI('import-student', {
+						cmd: 'import',
+						username,
+						firstName,
+						lastName,
+						birthDate,
+						homeTown,
+						gender
+					})
+					if (result.status == -1) {
+						toast.error(`Lỗi ${result.status}: ${result.msg}. Nhập file thất bại!`)
+						error++
+						break
+					} else if (result.status != 0) {
+						toast.error(`Lỗi ${result.status}: ${result.msg}. Bỏ qua dòng ${i + 2}!`)
+					}
 
-				// Post data to an API endpoint (assuming you have a 'post' function)
-				const result = await postAPI('', {})
-
-				if (result.status !== 0) {
-					console.error('There is some error occurred!')
-					break
+					setProgressBarStatus(i, jsonData.length)
 				}
 
-				setProgressBarStatus(i, jsonData.length)
-			}
-
-			setProcessing(false)
-			closePopup()
-			show(currIndex)
-		}
-
-		reader.readAsArrayBuffer(file)
-		form[1].innerHTML = 'Processing...'
-		form[1].disabled = true
-		setProcessing(true)
-	}
+				if (!error) {
+					toast.success('Nhập danh sách sinh viên thành công!')
+					loadStudents()
+				}
+				setProcessing(false)
+				setOpen(false)
+				form[1].innerHTML = 'Processing...'
+				form[1].disabled = true
+			})()
+		},
+		[jsonData, setOpen]
+	)
 
 	function inputOnChange(event) {
 		const definedLength = 15
@@ -180,7 +195,6 @@ function StudentsManagement() {
 			const sheetName = workbook.SheetNames[0]
 			const sheet = workbook.Sheets[sheetName]
 			const jsonData = XLSX.utils.sheet_to_json(sheet)
-			console.log(jsonData)
 
 			let isValid = true
 			let errorLine = 0
@@ -202,6 +216,7 @@ function StudentsManagement() {
 				parent.parentElement.classList.add(classes.error)
 				parent.innerHTML = `Error at row ${errorLine}`
 			} else {
+				setJsonData(jsonData)
 				parent.classList.remove(classes.error)
 				parent.classList.add(classes.success)
 				parent.parentElement.classList.remove(classes.error)
@@ -235,6 +250,116 @@ function StudentsManagement() {
 
 	return (
 		<Box>
+			<Typography id='transition-modal-title' variant='h4' component='h1' color={theme.palette.primary.main}>
+				Nhập danh sách
+			</Typography>
+			<form id='e8Qh9TaDxUf0CqH3EgNp6Ym7JtKoR4nLvSs1Fz2XbGyIwP5dVcZ' onSubmit={importSubmission}>
+				<input
+					type='file'
+					id='file-input'
+					name='files'
+					style={{ display: 'none' }}
+					accept='.xlsx'
+					onChange={inputOnChange}
+				/>
+				<Box
+					id='dropzoneInput'
+					className={`${classes.dropzoneInput} ${dragOver ? classes.drag : ''}`}
+					onClick={() => {
+						document.getElementById('file-input').click()
+					}}
+					onDragOver={handleDragover}
+					onDragLeave={handleDragleave}
+					onDrop={handleDrop}
+				>
+					<p>Drag and drop files here</p>
+					<label>Or click here to select files</label>
+				</Box>
+				<Box className={classes.progressBar} style={{ display: showPgsBar ? 'block' : 'none' }}>
+					<Box className={classes.mainBar}>
+						<Box className={classes.barStatus}></Box>
+					</Box>
+					<p style={{ textAlign: 'center' }}>0 %</p>
+				</Box>
+				<Box sx={{ textAlign: 'center', mt: 7.5 }}>
+					<Button type='submit' variant='contained' disabled={processing}>
+						Confirm
+					</Button>
+				</Box>
+			</form>
+		</Box>
+	)
+}
+
+const DeleteForm = ({ handleClick, setOpen, data }) => {
+	const theme = useTheme()
+
+	return (
+		<Box autoComplete='off' component='div' sx={{ mt: 5 }}>
+			<Typography id='transition-modal-title' variant='h4' component='h1' color={theme.palette.primary.main}>
+				Nhập danh sách
+			</Typography>
+			<Typography variant='body1'>
+				Bạn có chắc chắn muốn xóa{' '}
+				<strong>
+					{data.firstname} {data.lastname}
+				</strong>{' '}
+				khỏi danh sách không?
+			</Typography>
+			<Box component='div' display='flex' justifyContent='center' gap={2} mt={5}>
+				<Button variant='outlined' onClick={handleClick(data.id)}>
+					Có
+				</Button>
+				<Button variant='contained' onClick={() => setOpen(false)}>
+					Không
+				</Button>
+			</Box>
+		</Box>
+	)
+}
+
+function StudentsManagement() {
+	const [open, setOpen] = React.useState(false)
+	const [filter, setFilter] = React.useState(-1)
+	const [students, setStudents] = React.useState([])
+	const _style = { ...style, width: '25%' }
+	const theme = useTheme()
+
+	async function loadStudents() {
+		const result = await postAPI('import-student', {
+			cmd: 'view',
+			filter
+		})
+
+		if (result.status == 0) {
+			console.log(result.data)
+			setStudents(result.data)
+		}
+	}
+
+	useEffect(() => loadStudents(), [filter])
+
+	const openModal = (cmd, value) => event => {
+		event.preventDefault()
+		setOpen({ cmd, id: value })
+	}
+
+	const handleClick = id => () =>
+		(async () => {
+			const result = await postAPI('import-student', {
+				cmd: 'del',
+				id
+			})
+			if (result.status == 0) {
+				setOpen(false)
+				toast.success('Đã xóa thành công!')
+				loadStudents()
+			}
+		})()
+
+	return (
+		<Box>
+			<ToastContainer></ToastContainer>
 			<Modal
 				aria-labelledby='transition-modal-title'
 				aria-describedby='transition-modal-description'
@@ -244,51 +369,9 @@ function StudentsManagement() {
 				slots={{ backdrop: Backdrop }}
 			>
 				<Fade in={open != false}>
-					<Box sx={style}>
-						<Typography
-							id='transition-modal-title'
-							variant='h4'
-							component='h1'
-							color={theme.palette.primary.main}
-						>
-							Nhập danh sách
-						</Typography>
-						<Box>
-							<Box
-								variant='form'
-								id='e8Qh9TaDxUf0CqH3EgNp6Ym7JtKoR4nLvSs1Fz2XbGyIwP5dVcZ'
-								className='error'
-								onSubmit={importSubmission}
-							>
-								<input
-									type='file'
-									id='file-input'
-									name='files'
-									style={{ display: 'none' }}
-									accept='.xlsx'
-									onChange={inputOnChange}
-								/>
-								<Box
-									id='dropzoneInput'
-									className={`${classes.dropzoneInput} ${dragOver ? classes.drag : ''}`}
-									onClick={() => {
-										document.getElementById('file-input').click()
-									}}
-									onDragOver={handleDragover}
-									onDragLeave={handleDragleave}
-									onDrop={handleDrop}
-								>
-									<p>Drag and drop files here</p>
-									<label>Or click here to select files</label>
-								</Box>
-								<div className={classes.progressBar} style={{ display: showPgsBar ? 'block' : 'none' }}>
-									<div className={classes.mainBar}>
-										<div className={classes.barStatus}></div>
-									</div>
-									<p>0 %</p>
-								</div>
-							</Box>
-						</Box>
+					<Box sx={_style}>
+						{open.cmd == 'add' && <ImportForm setOpen={setOpen} loadStudents={loadStudents} />}
+						{open.cmd == 'del' && <DeleteForm setOpen={setOpen} handleClick={handleClick} data={open.id} />}
 					</Box>
 				</Fade>
 			</Modal>
@@ -317,7 +400,28 @@ function StudentsManagement() {
 										<TableHeaderCell sx={{ textAlign: 'center' }}>Hành động</TableHeaderCell>
 									</TableRow>
 								</TableHead>
-								<TableBody></TableBody>
+								<TableBody>
+									{students.map((val, ind) => (
+										<TableBodyRow key={ind}>
+											<TableBodyCell>{val.firstname}</TableBodyCell>
+											<TableBodyCell>{val.lastname}</TableBodyCell>
+											<TableBodyCell>{val.id}</TableBodyCell>
+											<TableBodyCell sx={{ textAlign: 'right' }}>{val.birthDate}</TableBodyCell>
+											<TableBodyCell sx={{ textAlign: 'center' }}>
+												{val.isRegistered == 'true' ? (
+													<SuccessSpan>Đã đăng ký</SuccessSpan>
+												) : (
+													<ErrorSpan>Chưa đăng ký</ErrorSpan>
+												)}
+											</TableBodyCell>
+											<TableBodyCell sx={{ textAlign: 'center' }}>
+												<StyledLink href='#' onClick={openModal('del', val)}>
+													xóa
+												</StyledLink>
+											</TableBodyCell>
+										</TableBodyRow>
+									))}
+								</TableBody>
 							</Table>
 						</TableContainer>
 					</Box>
@@ -336,46 +440,6 @@ function StudentsManagement() {
             </Box> */}
 				</CardContent>
 			</Card>
-			{/* <Paper sx={{ p: 2, mb: 2 }}>
-        <Typography variant='h5'>Điểm danh</Typography>
-
-        <Box sx={{ mt: 2 }}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Tên</TableCell>
-                        <TableCell align='right'>Điểm danh</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {members.map(member => (
-                        <TableRow key={member.id}>
-                            <TableCell>{member.name}</TableCell>
-                            <TableCell align='right'>
-                                <Checkbox
-                                    checked={checked[member.id] || false}
-                                    onChange={() => handleCheck(member.id)}
-                                />
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </Box>
-
-        <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                mt: 2,
-                width: 'justifyContent'
-            }}
-        >
-            <StyledButton variant='outlined'>Tạo mã</StyledButton>
-            <StyledButton variant='outlined'>Tạo mã QR</StyledButton>
-            <StyledButton variant='contained'>Xác nhận</StyledButton>
-        </Box>
-    </Paper> */}
 		</Box>
 	)
 }

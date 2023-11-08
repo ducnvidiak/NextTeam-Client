@@ -43,7 +43,7 @@ export default function ViewPDF({ viewCvModal, handleClose, cv }) {
 				<Container>
 					<CardContent>
 						<Box sx={{ marginTop: '8vh', height: '85vh' }}>
-							<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
+							<Worker workerUrl='https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js'>
 								<Viewer
 									fileUrl={cv?.cvUrl}
 									plugins={[defaultLayoutPluginInstance, scrollModePluginInstance]}
