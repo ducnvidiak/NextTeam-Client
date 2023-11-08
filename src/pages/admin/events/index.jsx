@@ -40,6 +40,9 @@ import CloseIcon from '@mui/icons-material/Close'
 import { getAllEvents, updateEventStatus } from 'src/api-utils/apiUtils'
 import { toast } from 'react-toastify'
 import moment from 'moment'
+
+require('moment/locale/vi')
+
 import ReviewButton from './ReviewButton'
 import { translateDayOfWeek } from 'src/ultis/dateTime'
 
@@ -117,7 +120,7 @@ export default function EventDashboard() {
 						</Box>
 						<Box>
 							<Typography variant='body2' fontWeight={500}>
-								{`${translateDayOfWeek(moment(selectedEvent?.startTime).format('dddd'))} ${moment(
+								{`${moment(selectedEvent?.startTime).format('dddd')} ${moment(
 									selectedEvent?.startTime
 								).format('L')}`}
 							</Typography>
@@ -163,6 +166,7 @@ export default function EventDashboard() {
 
 	const handleUpdateStatus = async (uevent, status, feedback) => {
 		setReviewLoading(true)
+		console.log(feedback);
 		updateEventStatus(uevent?.id, status, feedback).then(response => {
 			setReviewLoading(false)
 
@@ -185,7 +189,7 @@ export default function EventDashboard() {
 	}, [events])
 
 	const handleAction = async (selectedConfirmEvent, status) => {
-		await handleUpdateStatus(selectedConfirmEvent, status, feedback)
+		await handleUpdateStatus(selectedConfirmEvent, status, feedback?.content)
 	}
 
 	return (

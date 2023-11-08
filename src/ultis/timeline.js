@@ -1,5 +1,7 @@
 import moment from 'moment'
 
+require('moment/locale/vi')
+
 export const getDotTimelineColor = startTime => {
 	const currentDate = new Date()
 	const startDate = new Date(startTime)

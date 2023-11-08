@@ -1,6 +1,8 @@
 import { LoadingButton } from '@mui/lab'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, Typography } from '@mui/material'
 import moment from 'moment'
+
+require('moment/locale/vi')
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'

@@ -35,6 +35,8 @@ import { getAPI } from 'src/ultis/requestAPI'
 import { useCookies } from 'react-cookie'
 import moment from 'moment'
 
+require('moment/locale/vi')
+
 import RegisterEventModal from './RegisterEventModal'
 import SwipeableDrawerList from './SwipeableDrawerList'
 import FeedbackModal from './FeedbackModal'
@@ -105,9 +107,8 @@ function EventItem({ event, setEventList, eventList, userData }) {
 			))}
 			<Stack direction={'row'} justifyContent={'space-between'}>
 				<Stack direction={'column'} alignItems={'center'} width={'15%'}>
-					<Typography variant='h5'>{mmddyyToDdmmyy(moment(event?.startTime).format('L'))}</Typography>
-					<Typography variant='h7'>{translateDayOfWeek(moment(event?.startTime).format('dddd'))}</Typography>
-
+					<Typography variant='h5'>{moment(event?.startTime).format('L')}</Typography>
+					<Typography variant='h7'>{moment(event?.startTime).format('dddd').toUpperCase()}</Typography>
 					{new Date() > new Date(event?.endTime) ? (
 						<>
 							<Typography variant='h7' mt={4}>

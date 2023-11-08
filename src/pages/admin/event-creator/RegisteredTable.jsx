@@ -1,5 +1,7 @@
 import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import moment from 'moment'
+
+require('moment/locale/vi')
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 

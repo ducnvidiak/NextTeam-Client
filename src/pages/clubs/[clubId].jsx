@@ -23,13 +23,16 @@ import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import ClubCategory from 'src/components/ClubCategory'
 import moment from 'moment'
+
+require('moment/locale/vi')
+
 import { useRouter } from 'next/router'
 import { getUserInfo } from 'src/utils/info'
 import RegisterClub from './RegisterClub'
 import CircularProgress from '@mui/material/CircularProgress'
 import Backdrop from '@mui/material/Backdrop'
 
-require('moment/locale/vi')
+
 
 function EventItem({ bannerUrl, name, clubSubname, locationName, description, time }) {
 	const [state, setState] = useState({

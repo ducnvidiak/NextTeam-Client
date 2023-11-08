@@ -13,6 +13,8 @@ import {
 import SendIcon from '@mui/icons-material/Send'
 import { useState } from 'react'
 import moment from 'moment'
+
+require('moment/locale/vi')
 import { LoadingButton } from '@mui/lab'
 import SaveIcon from '@mui/icons-material/Save'
 

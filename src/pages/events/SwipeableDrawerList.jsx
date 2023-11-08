@@ -13,6 +13,9 @@ import Link from 'next/link'
 import { ToastContainer, toast } from 'react-toastify'
 import { translateDayOfWeek } from 'src/ultis/dateTime'
 import moment from 'moment'
+
+require('moment/locale/vi')
+
 import { useRouter } from 'next/router'
 
 function SwipeableDrawerList({
@@ -93,7 +96,7 @@ function SwipeableDrawerList({
 							</Box>
 							<Box>
 								<Typography variant='body2' fontWeight={500}>
-									{`${translateDayOfWeek(moment(event?.startTime).format('dddd'))} ${moment(
+									{`${moment(event?.startTime).format('dddd').toUpperCase()} ${moment(
 										event?.startTime
 									).format('L')}`}
 								</Typography>
