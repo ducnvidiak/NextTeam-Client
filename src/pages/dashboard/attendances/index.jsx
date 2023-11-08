@@ -369,46 +369,6 @@ function Attendances() {
 					</Box> */}
 				</CardContent>
 			</Card>
-			{/* <Paper sx={{ p: 2, mb: 2 }}>
-				<Typography variant='h5'>Điểm danh</Typography>
-
-				<Box sx={{ mt: 2 }}>
-					<Table>
-						<TableHead>
-							<TableRow>
-								<TableCell>Tên</TableCell>
-								<TableCell align='right'>Điểm danh</TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{members.map(member => (
-								<TableRow key={member.id}>
-									<TableCell>{member.name}</TableCell>
-									<TableCell align='right'>
-										<Checkbox
-											checked={checked[member.id] || false}
-											onChange={() => handleCheck(member.id)}
-										/>
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</Box>
-
-				<Box
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						mt: 2,
-						width: 'justifyContent'
-					}}
-				>
-					<StyledButton variant='outlined'>Tạo mã</StyledButton>
-					<StyledButton variant='outlined'>Tạo mã QR</StyledButton>
-					<StyledButton variant='contained'>Xác nhận</StyledButton>
-				</Box>
-			</Paper> */}
 		</Box>
 	)
 }
